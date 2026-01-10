@@ -51,9 +51,9 @@ public class CollectCheese extends State {
         }
 
         print("Moving to cheese " +  cheeseLoc);
-        PathFinding.moveTo(cheeseLoc);
+        PathFinding.smartMoveTo(cheeseLoc);
 
-        // Can I collect ?
+        // Can I collect?
         if(rc.canPickUpCheese(cheeseLoc)){
             rc.pickUpCheese(cheeseLoc);
             cheeseLoc = null;

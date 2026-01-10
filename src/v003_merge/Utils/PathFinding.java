@@ -52,16 +52,22 @@ public class PathFinding {
         return bestDir;
     }
 
-    public static Result move() throws GameActionException {
-        return move(bestDir());
-    }
 
     // TODOS: Use Bugnav
-    public static Result moveTo(MapLocation loc) throws GameActionException {
-        return move(Robot.rc.getLocation().directionTo(loc));
+    public static Direction dirTo(MapLocation loc){
+        return Robot.rc.getLocation().directionTo(loc);
     }
 
-    public static Result move(Direction dir) throws GameActionException {
+    public static Result smartMoveTo(MapLocation loc) throws GameActionException {
+        modificatorOrientation(PathFinding.dirTo(loc));
+        return moveBest();
+    }
+
+    public static Result moveBest() throws GameActionException {
+        return moveDir(bestDir());
+    }
+
+    public static Result moveDir(Direction dir) throws GameActionException {
         RobotController rc = Robot.rc;
         if(rc.canMove(dir)){
             Robot.lastLocation = rc.getLocation();

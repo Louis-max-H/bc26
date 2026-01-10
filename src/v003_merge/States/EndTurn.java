@@ -16,7 +16,7 @@ public class EndTurn extends State {
         /**
          * Debug scores
          * */
-        if(rc.getRoundNum() <= 100 && !isKing) {
+        if(!competitiveMode && rc.getRoundNum() <= 100) {
             int startX = rc.getLocation().x - 6;
             int startY = rc.getLocation().y - 6;
             int endX = rc.getLocation().x + 7;

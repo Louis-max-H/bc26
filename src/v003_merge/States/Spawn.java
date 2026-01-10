@@ -3,12 +3,12 @@ package v003_merge.States;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 
-import java.util.Locale;
-
 import static v003_merge.States.Code.*;
 
 public class Spawn extends State {
     public int summonCount = 0;
+    public int reserveNeeded;
+    public int costCap;
     public Spawn(){
         this.name = "Spawn";
     }
@@ -25,6 +25,21 @@ public class Spawn extends State {
             return new Result(ERR, "Unit should be king to spawn rats.");
         }
 
+        // Loading parameters
+        if (gamePhase <= PHASE_START) {
+            // HYPER-AGGRESSIVE: spawn as fast as possible in first 100 rounds
+            reserveNeeded = 100;  // minimal reserve
+            costCap = 50;         // allow many rats
+        } else if (gamePhase <= PHASE_MIDLE) {
+            // Still aggressive but slightly more careful
+            reserveNeeded = 400;
+            costCap = 40;
+        } else {
+            // Late game: conservative
+            reserveNeeded = 1400;
+            costCap = 40;
+        }
+
         if(cheeseStock < 100){
             return new Result(OK, "Low on cheese, going to eco " + rc.getRawCheese());
         }
@@ -33,8 +48,8 @@ public class Spawn extends State {
             return new Result(OK, "Not enough cheese " + rc.getRawCheese() + ", " + rc.getCurrentRatCost() + "needed");
         }
 
-        // !!!!!!!!!!!!!
-        if(summonCount > 4){
+        // !!!!!!!!!!!!! Only for debug purpose
+        if(false && summonCount > 4 && !competitiveMode){
             return new Result(WARN, "Debug only!!, summon limited to 1");
         }
 

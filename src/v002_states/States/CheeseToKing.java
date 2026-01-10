@@ -4,7 +4,7 @@ import battlecode.common.GameActionException;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
 import v002_states.Robots.King;
-import v01_template.Utils.PathFinding;
+import v002_states.Utils.PathFinding;
 
 import static v002_states.States.Code.*;
 

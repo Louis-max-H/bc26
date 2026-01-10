@@ -17,6 +17,16 @@ public class Robot {
     public static int spawnRound = 0;
     public static MapLocation nearestKing;
     public static boolean isKing;
+    public static int round;
+
+    public static boolean competitiveMode = false;
+
+    // Phases
+    public static int gamePhase;
+    public static final int PHASE_START = 0;
+    public static final int PHASE_EARLY = 1;
+    public static final int PHASE_MIDLE = 2;
+    public static final int PHASE_FINAL = 3;
 
     // Directions
     public static final Direction[] directions = {
@@ -44,6 +54,17 @@ public class Robot {
 
     public void run(RobotController rc) throws GameActionException {
         Robot.rc = rc;
+        if(!competitiveMode && rc.getRoundNum() <= 2) {
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println("   This bot is running with competitiveMode set to false    ");
+            System.out.println("            Edit the flag before submitting it !            ");
+            System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+            if(competitiveMode && rc.getTeam() == Team.A) {
+                competitiveMode = false;
+                System.out.println("Competitive mode set to false because we are in teamA.");
+            }
+        }
 
         // Init states
         header("Starting at round " + Clock.getBytecodeNum() + " bytecode " + Clock.getBytecodeNum());
@@ -87,7 +108,7 @@ public class Robot {
 
     /////////////////////////////////////// Debug ///////////////////////////////////////
     public static void _debug(String msg){
-        if(rc.getRoundNum() < 40 && rc.getTeam() == Team.A) {
+        if(rc.getRoundNum() < 100 && rc.getTeam() == Team.A) {
             System.out.println(msg);
         }
     }

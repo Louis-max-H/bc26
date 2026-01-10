@@ -36,15 +36,12 @@ public class Explore extends State {
             }
         }
 
-        PathFinding.addScoresWithoutNormalization(
-                scores,
-                10
-        );
+        PathFinding.addScoresWithoutNormalization(scores, 1);
         Direction bestDir = PathFinding.bestDir();
 
         // Turn and move to this direction
         rc.turn(bestDir);
-        if(PathFinding.move(bestDir).notOk()){
+        if(PathFinding.moveDir(bestDir).notOk()){
             print("Can't move to best direction.");
         }
 

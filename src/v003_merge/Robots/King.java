@@ -11,7 +11,6 @@ public class King extends Robot {
     @Override
     public void init(){
         this.init = new Init();
-        this.collectCheese = new CollectCheese();
         this.explore = new Explore();
         this.endTurn = new EndTurn();
         this.spawn = new Spawn();
@@ -20,8 +19,7 @@ public class King extends Robot {
     @Override
     public void updateState(Result resultBefore){
         currentState = switch (currentState.name) {
-            case "Init" -> collectCheese;
-            case "CollectCheese" -> explore;
+            case "Init" -> explore;
             case "Explore" -> spawn;
             case "Spawn" -> endTurn;
             case "EndTurn" -> init;

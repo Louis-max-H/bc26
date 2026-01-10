@@ -4,7 +4,7 @@ import battlecode.common.GameActionException;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
 import v003_merge.Robots.King;
-import v01_template.Utils.PathFinding;
+import v003_merge.Utils.PathFinding;
 
 import static v003_merge.States.Code.*;
 
@@ -47,7 +47,7 @@ public class CheeseToKing extends State {
         }
 
         print("Moving to king at " + nearestKing);
-        PathFinding.moveTo(nearestKing);
+        PathFinding.smartMoveTo(nearestKing);
 
         // Try to transfer
         if(rc.canTransferCheese(nearestKing, rc.getAllCheese())){

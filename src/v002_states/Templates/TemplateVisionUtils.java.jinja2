@@ -13,6 +13,7 @@ import battlecode.common.*;
 
 public class {{ className }} {
     // encodeXYString(gap : 8 ) = {{ encodeXYString(8) }}
+    public static char scores[] = {{genMemoryCharArray(scoreNotAlreadyViewed, 0, 8)}}; {# defaultValue, gapValue, gap size #}
     public static char SCORE_NOT_ALREADY_VIEWED = {{ scoreNotAlreadyViewed }};
 
     public static void addScore(MapLocation loc, char score){
@@ -20,7 +21,7 @@ public class {{ className }} {
     }
 
     public static char getScore(MapLocation loc){
-        return scores[{{ encodeXYLoc(8) }}] = score;
+        return scores[{{ encodeXYLoc(8) }}];
     }
 
     public static void initScore(int width, int height){
@@ -50,9 +51,6 @@ public class {{ className }} {
                 break;
         }
     }
-
-    public static char scores[] = {{genMemoryCharArray(scoreNotAlreadyViewed, 0, 8)}}; {# defaultValue, gapValue, gap size #}
-
 
     public static MapLocation[] getAllLocationsFrom(MapLocation from, Direction dir, UnitType unit){
         int x = from.x;
