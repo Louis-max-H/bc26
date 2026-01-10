@@ -1,4 +1,4 @@
-package v01_template.States;
+package v001_template.States;
 
 public enum Code {
     CANT(),        // Action can't be played

@@ -1,16 +1,18 @@
-package v01_template.Robots;
+package v001_template.Robots;
 
-import v01_template.RobotPlayer;
-import v01_template.States.*;
+import v001_template.RobotPlayer;
+import v001_template.States.*;
 
-public class Baby extends Robot {
+public class King extends Robot {
     State explore;
     State helloWorld;
 
     @Override
     public void init(){
+        this.init = new Init();
         this.explore = new Explore();
         this.helloWorld = new HelloWorld();
+        this.endTurn = new EndTurn();
     }
 
     @Override

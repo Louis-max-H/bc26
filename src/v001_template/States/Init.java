@@ -1,10 +1,10 @@
-package v01_template.States;
+package v001_template.States;
 
 import battlecode.common.*;
-import v01_template.Robots.Robot;
-import v01_template.Utils.PathFinding;
+import v001_template.Robots.Robot;
+import v001_template.Utils.PathFinding;
 
-import static v01_template.States.Code.*;
+import static v001_template.States.Code.*;
 
 public class Init extends State {
     public Init(){

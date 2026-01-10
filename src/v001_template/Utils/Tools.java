@@ -1,16 +1,16 @@
-package v01_template.Utils;
+package v001_template.Utils;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
-import v01_template.RobotPlayer;
-import v01_template.States.Result;
+import v001_template.RobotPlayer;
+import v001_template.States.Result;
 
 import java.util.Map;
 
 import static java.lang.Math.max;
-import static v01_template.States.Code.*;
+import static v001_template.States.Code.*;
 
 public class Tools {
     static int maxInt9(int[] array){

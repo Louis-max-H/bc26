@@ -1,7 +1,7 @@
-package v01_template.Robots;
+package v001_template.Robots;
 
 import battlecode.common.*;
-import v01_template.States.*;
+import v001_template.States.*;
 
 import java.util.Random;
 

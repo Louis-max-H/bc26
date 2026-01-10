@@ -1,6 +1,6 @@
-package v01_template.States;
+package v001_template.States;
 
-import static v01_template.States.Code.OK;
+import static v001_template.States.Code.OK;
 
 public class Result {
     public Code code;

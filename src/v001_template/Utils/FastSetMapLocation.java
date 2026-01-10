@@ -1,4 +1,4 @@
-package v01_template.Utils;
+package v001_template.Utils;
 
 
 import battlecode.common.MapLocation;

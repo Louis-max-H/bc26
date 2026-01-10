@@ -1,10 +1,10 @@
-package v01_template.States;
+package v001_template.States;
 
 import battlecode.common.*;
-import v01_template.Utils.PathFinding;
-import v01_template.Utils.Tools;
+import v001_template.Utils.PathFinding;
+import v001_template.Utils.Tools;
 
-import static v01_template.States.Code.*;
+import static v001_template.States.Code.*;
 
 public class Explore extends State {
     /**

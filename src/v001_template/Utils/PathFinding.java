@@ -1,14 +1,14 @@
-package v01_template.Utils;
+package v001_template.Utils;
 
 import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
-import v01_template.Robots.Robot;
-import v01_template.States.Result;
+import v001_template.Robots.Robot;
+import v001_template.States.Result;
 
-import static v01_template.States.Code.CANT;
-import static v01_template.States.Code.OK;
+import static v001_template.States.Code.CANT;
+import static v001_template.States.Code.OK;
 
 public class PathFinding {
     static int scores[]; // Contain score for each direction

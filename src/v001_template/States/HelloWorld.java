@@ -1,6 +1,6 @@
-package v01_template.States;
+package v001_template.States;
 
-import static v01_template.States.Code.*;
+import static v001_template.States.Code.*;
 
 public class HelloWorld extends State {
     public HelloWorld(){

@@ -1,8 +1,8 @@
-package v01_template;
+package v001_template;
 
 import battlecode.common.*;
-import v01_template.Robots.*;
-import v01_template.States.*;
+import v001_template.Robots.*;
+import v001_template.States.*;
 
 public class RobotPlayer {
     public static void run(RobotController rc) throws GameActionException {

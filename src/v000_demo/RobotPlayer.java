@@ -1,4 +1,4 @@
-package v00_demo;
+package v000_demo;
 
 import battlecode.common.*;
 
