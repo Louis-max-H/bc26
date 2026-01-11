@@ -2,30 +2,79 @@ package v02_myVersion.Robots;
 
 import v02_myVersion.RobotPlayer;
 import v02_myVersion.States.*;
+import battlecode.common.*;
 
 public class King extends Robot {
+    State avoidCat;
+    State spawn;
     State explore;
-    State helloWorld;
 
     @Override
     public void init(){
-        this.init = new Init();
+        // Note: init, endTurn are already set in Robot.run()
+        this.avoidCat = new AvoidCat();
+        this.spawn = new Spawn();
         this.explore = new Explore();
-        this.helloWorld = new HelloWorld();
-        this.endTurn = new EndTurn();
     }
 
     @Override
     public void updateState(Result resultBefore){
-        currentState = switch (currentState.name) {
-            case "Init" -> explore;
-            case "Explore" -> helloWorld;
-            case "HelloWorld" -> endTurn;
-            case "EndTurn" -> init;
-            default -> {
-                Robot.err(currentState.name + " don't match any states. Fallback to init");
-                yield init;
+        // Priority-based state selection for rat kings
+        // 1. Avoid cat if too close (safety)
+        // 2. Spawn rats if we have enough cheese
+        // 3. Default to exploring
+        
+        try {
+            MapLocation myLoc = rc.getLocation();
+            MapLocation catLoc = null;
+            int minCatDist = Integer.MAX_VALUE;
+            
+            // Check for cats in vision (rat kings have 360 vision)
+            RobotInfo[] nearby = rc.senseNearbyRobots();
+            for (RobotInfo robot : nearby) {
+                if (robot.getType() == UnitType.CAT) {
+                    MapLocation loc = robot.getLocation();
+                    int dist = myLoc.distanceSquaredTo(loc);
+                    if (dist < minCatDist) {
+                        minCatDist = dist;
+                        catLoc = loc;
+                    }
+                }
             }
-        };
+            
+            // Check shared array for cat
+            if (catLoc == null) {
+                try {
+                    catLoc = v02_myVersion.Utils.Communication.readCatLocation(rc);
+                    if (catLoc != null) {
+                        minCatDist = myLoc.distanceSquaredTo(catLoc);
+                    }
+                } catch (Exception e) {
+                    // Ignore
+                }
+            }
+            
+            // Priority 1: Avoid cat if too close
+            if (catLoc != null && minCatDist < 25) { // 5^2, outside cat vision
+                currentState = avoidCat;
+                return;
+            }
+            
+            // Priority 2: Spawn rats if we have enough cheese and action is ready
+            // Only spawn if we have reasonable amount of cheese (at least 100 to keep some buffer)
+            if (rc.isActionReady() && rc.getAllCheese() >= 100) {
+                int spawnCost = rc.getCurrentRatCost();
+                if (rc.getAllCheese() >= spawnCost) {
+                    currentState = spawn;
+                    return;
+                }
+            }
+            
+            // Priority 3: Default to exploring
+            currentState = explore;
+        } catch (Exception e) {
+            // If anything goes wrong, default to explore
+            currentState = explore;
+        }
     }
 }

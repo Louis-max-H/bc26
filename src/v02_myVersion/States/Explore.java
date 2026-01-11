@@ -3,6 +3,7 @@ package v02_myVersion.States;
 import battlecode.common.*;
 import v02_myVersion.Utils.PathFinding;
 import v02_myVersion.Utils.Tools;
+import v02_myVersion.Utils.Communication;
 
 import static v02_myVersion.States.Code.*;
 
@@ -18,6 +19,24 @@ public class Explore extends State {
 
     @Override
     public Result run() throws GameActionException {
+        // Report discoveries while exploring
+        MapInfo[] nearbyMap = rc.senseNearbyMapInfos();
+        for (MapInfo info : nearbyMap) {
+            // Report cheese mines
+            if (info.hasCheeseMine()) {
+                Communication.sendSqueak(rc, Communication.TYPE_MINE, info.getMapLocation());
+            }
+        }
+        
+        // Report enemy king if seen
+        RobotInfo[] nearby = rc.senseNearbyRobots();
+        for (RobotInfo robot : nearby) {
+            if (robot.getTeam() == rc.getTeam().opponent() && robot.getType() == UnitType.RAT_KING) {
+                Communication.sendSqueak(rc, Communication.TYPE_ENEMY_KING, robot.getLocation());
+                break; // Only squeak once per turn
+            }
+        }
+        
         // Check if we can move and turn
         if(rc.getMovementCooldownTurns() != 0){
             return new Result(CANT, "Can't move");

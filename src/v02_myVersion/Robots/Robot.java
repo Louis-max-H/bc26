@@ -43,23 +43,30 @@ public class Robot {
     /////////////////////////////////////// Run ///////////////////////////////////////
 
     public void run(RobotController rc) throws GameActionException {
-        // Single try/catch at root level - avoid exceptions (500 bytecode penalty)
+        Robot.rc = rc;
+
+        // Initialize communication system (only once)
         try {
-            Robot.rc = rc;
-
-            // Initialize communication system
             Communication.init(rc);
+        } catch (Exception e) {
+            err("Init exception: " + e.getMessage());
+        }
 
-            // Init states
+        // Init states (only once)
+        try {
             header("Starting at round " + Clock.getBytecodeNum() + " bytecode " + Clock.getBytecodeNum());
             init = new Init();
             endTurn = new EndTurn();
             currentState = init;
             init();
             header("Done init at bytecode " + Clock.getBytecodeNum());
+        } catch (Exception e) {
+            err("State init exception: " + e.getMessage());
+        }
 
-            // Playing
-            while (true) {
+        // Main game loop - must never return or robot freezes
+        while (true) {
+            try {
                 // Update shared array state at start of turn
                 Communication.updateSharedArrayState(rc);
                 
@@ -82,22 +89,36 @@ public class Robot {
                         print("Lock: End turn and resume to state.");
                         endTurn.run();
                         init.run();
+                        // Don't update state, stay in current state
                         break;
 
                     case END_OF_TURN:
                         print("Skipping to end of turn");
                         currentState = endTurn;
+                        // EndTurn will be called next iteration
                         break;
 
-                    default: // Ok, Err, Warn
+                    default: // Ok, Err, Warn, CANT
                         updateState(result);
                         break;
                 }
+            } catch (GameActionException e) {
+                // Single catch at root - avoid 500 bytecode penalty from unhandled exceptions
+                err("GameActionException: " + e.getMessage());
+                // Continue loop after yielding
+            } catch (Exception e) {
+                // Catch any other exceptions to prevent robots from freezing
+                err("Exception: " + e.getMessage());
+                // Continue loop after yielding
+            } catch (Throwable t) {
+                // Catch even errors to be extra safe
+                err("Throwable: " + t.getMessage());
+                // Continue loop after yielding
+            } finally {
+                // Always yield at end of turn to prevent freezing
+                // This ensures the robot never returns from run() method
+                Clock.yield();
             }
-        } catch (GameActionException e) {
-            // Single catch at root - avoid 500 bytecode penalty from unhandled exceptions
-            err("GameActionException: " + e.getMessage());
-            Clock.yield();
         }
     }
 

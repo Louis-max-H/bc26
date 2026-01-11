@@ -57,8 +57,11 @@ public class AvoidCat extends State {
         
         // If we found a cat, avoid it
         if (catLoc != null) {
+            // For rat kings, use larger safety distance since they move slowly
+            int safetyDist = rc.getType().isRatKingType() ? 50 : SAFE_DISTANCE_SQUARED; // 7^2 for kings
+            
             // Check if we're too close to cat
-            if (minCatDist < SAFE_DISTANCE_SQUARED) {
+            if (minCatDist < safetyDist) {
                 // Calculate direction away from cat
                 Direction awayFromCat = myLoc.directionTo(catLoc).opposite();
                 
@@ -82,6 +85,20 @@ public class AvoidCat extends State {
                         rc.move(right);
                         return new Result(OK, "Moved right away from cat");
                     }
+                    
+                    // For rat kings, try more directions since they're bigger
+                    if (rc.getType().isRatKingType()) {
+                        Direction leftLeft = left.rotateLeft();
+                        Direction rightRight = right.rotateRight();
+                        if (rc.canMove(leftLeft)) {
+                            rc.move(leftLeft);
+                            return new Result(OK, "Moved left-left away from cat");
+                        }
+                        if (rc.canMove(rightRight)) {
+                            rc.move(rightRight);
+                            return new Result(OK, "Moved right-right away from cat");
+                        }
+                    }
                 }
                 
                 // If can't move, at least turn away
@@ -90,6 +107,7 @@ public class AvoidCat extends State {
                     return new Result(OK, "Turned away from cat");
                 }
                 
+                // If we can't do anything, return CANT but don't loop - let other states try
                 return new Result(CANT, "Cat nearby but can't move/turn");
             }
             
