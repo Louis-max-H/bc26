@@ -33,8 +33,8 @@ public class Communication extends Robot {
     public static char COOLDOWN_SEND_AGAIN_SQUEAK = 2;
     public static char COOLDOWN_SEND_AGAIN_ARRAY = 4;
 
-    // Messages types (short)                         0b1101111122222222; // 16 bits = 2 per squeak, 2 array size
-    public static final int MASK_14BITS =     0b0011111111111111; // Bits 12-15 : 3 bits
+    // Messages types (short)                         0b0101111122222222; // 16 bits = 2 per squeak, 2 array size
+    public static final int MASK_14BITS         =     0b0011111111111111; // Bits 12-15 : 3 bits
     public static final int MASK_TYPE           =     0b0101000000000000; // Bits 12-15 : 3 bits
     public static final int TYPE_MINE           =     0b0001000000000000;
     public static final int TYPE_ENEMY_RAT      =     0b0100000000000000;
@@ -42,10 +42,11 @@ public class Communication extends Robot {
     //                                                    ^ yyyyyyxxxxxx; // Bits 0-11 : 12 bits = log2(64*64)
     //                                                    ! This bit should be 0 to not overlap with long messages
 
+    //                                            30v   24v    16v      8v      0v
     // Messages types (long)                      0b000000111111112222222233333333; // 30 bits = 1 per squeak, 3 array size
-    public static final int IS_LONG_MESSAGE     = 0b100000000000000000000000000000; // Need more bytes to encode entity ID
-    public static final int MASK_LONG_TYPE      = 0b111100000000000000000000000000; // Need more bytes to encode entity ID
-    public static final int TYPE_CAT            = 0b100100000000000000000000000000; // Need more bytes to encode entity ID
+    public static final int IS_LONG_MESSAGE     = 0b100000000000000000000000000000;
+    public static final int MASK_LONG_TYPE      = 0b111100000000000000000000000000;
+    public static final int TYPE_CAT            = 0b100100000000000000000000000000;
     public static final int TYPE_KING           = 0b101000000000000000000000000000;
     public static final int TYPE_ENEMY_KING     = 0b101100000000000000000000000000;
     public static final int MASK_POSITION_SHORT = 0b000000000000000000111111111111;
@@ -68,6 +69,7 @@ public class Communication extends Robot {
                 break;
 
             case TYPE_KING:
+                print("Adding king !");
                 kings.add(msg & MASK_POSITION, (msg & MASK_UNIT_ID) >> 12);
                 break;
 
@@ -111,7 +113,8 @@ public class Communication extends Robot {
         char sendCooldown = (char) (round + COOLDOWN_SEND_AGAIN_ARRAY);
 
         for(;;){
-            int message = sharedArray[lastDecodedArray] << 10 | sharedArray[lastDecodedArray + 1];
+            // Assuming it's long
+            int message = sharedArray[lastDecodedArray] << 20 | sharedArray[lastDecodedArray + 1] << 10;
 
             // If same content, no need to read more
             if(message == lastDecodedMessages[lastDecodedArray]){break;}
@@ -119,12 +122,14 @@ public class Communication extends Robot {
 
             // Decode message
             if((message & IS_LONG_MESSAGE) != 0){
-                // If long message, need to read 3 cells
-                message = (message << 10) | sharedArray[lastDecodedArray + 2];
+                // If long message, need to read last cell
+                message |= sharedArray[lastDecodedArray + 2];
                 lastDecodedArray += 3;
                 decodeLongMessage(message);
 
             }else{
+                // If short message, we only keep 2 first cells
+                message >>= 8;
                 lastDecodedArray += 2;
                 decodeShortMessage(message);
             }
@@ -192,18 +197,23 @@ public class Communication extends Robot {
     }
 
     public static void addMessageMine(MapLocation loc) {
+        debug("addMessageMine: " + (TYPE_MINE + loc.x + (loc.y << 6)));
         addMessage((char) (TYPE_MINE + loc.x + (loc.y << 6)), PRIORITY_HIGH);
     }
     public static void addMessageEnemyRat(MapLocation loc) {
+        debug("addMessageEnemyRat: " + (TYPE_ENEMY_RAT + loc.x + (loc.y << 6)));
         addMessage((char) (TYPE_ENEMY_RAT + loc.x + (loc.y << 6)), PRIORITY_NORMAL);
     }
     public static void addMessageEnemyKing(MapLocation loc, int id) {
+        debug("addMessageEnemyKing: " + (TYPE_ENEMY_KING + ((id % 4096) << 12) + loc.x + (loc.y << 6)));
         addMessage(TYPE_ENEMY_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
     }
     public static void addMessageCat(MapLocation loc, int id) {
+        debug("addMessageCat: " + (TYPE_CAT + ((id % 4096) << 12) + loc.x + (loc.y << 6)));
         addMessage(TYPE_CAT | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
     }
     public static void addMessageKing(MapLocation loc, int id) {
+        debug("addMessageKing: " + (TYPE_KING + ((id % 4096) << 12) + loc.x + (loc.y << 6)));
         addMessage(TYPE_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
     }
 

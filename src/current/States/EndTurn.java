@@ -14,14 +14,26 @@ public class EndTurn extends State {
 
     @Override
     public Result run() throws GameActionException {
+        System.out.println("Printing kings");
+        print("Nearest kings :");
+        for(char i=0; i< kings.size; i++){
+            print("\t King at " + kings.locs[i]);
+        }
+        print("");
+
 
         // Communication
         SenseForComs.senseForComs();  // Generate messages to send
         Communication.sendMessages(); // Send messages (squeak or shared array)
 
-        /**
-         * Debug scores
-         * */
+
+        // End turn
+        if(lastInitRound != rc.getRoundNum()){
+            // Clock.yield() - We are one round behind ! Not skipping it.
+            return new Result(WARN, "Turn start at round " + lastInitRound + " end at " + rc.getRoundNum());
+        }
+
+        // Debug scores
         if(!competitiveMode && rc.getRoundNum() <= 100) {
             int startX = rc.getLocation().x - 6;
             int startY = rc.getLocation().y - 6;
@@ -30,6 +42,10 @@ public class EndTurn extends State {
             for (int x = startX; x < endX; x++) {
                 for (int y = startY; y < endY; y++) {
                     MapLocation loc = new MapLocation(x, y);
+                    if(Clock.getBytecodesLeft() < 2000){
+                        Clock.yield();
+                        return new Result(WARN, "Stop debug scores, not enough bytecode");
+                    }
                     if (rc.onTheMap(loc)) {
                         int score = VisionUtils.scores[x + 68 * y + 552];
                         if(score == VisionUtils.SCORE_NOT_ALREADY_VIEWED){
@@ -41,17 +57,6 @@ public class EndTurn extends State {
                 }
             }
         }
-
-        if(lastInitRound != rc.getRoundNum()){
-            // Clock.yield() - We are one round behind ! Not skipping it.
-            return new Result(WARN, "Turn start at round " + lastInitRound + " end at " + rc.getRoundNum());
-        }
-
-        debug("Nearest kings :");
-        for(char i=0; i< kings.size; i++){
-            debug("\t King at " + kings.locs[i]);
-        }
-        debug("");
 
         Clock.yield();
         return new Result(OK, "Ending turn gracefully.");

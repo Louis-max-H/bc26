@@ -91,7 +91,7 @@ public class Robot {
         }
 
         // Init states
-        header("Starting at round " + Clock.getBytecodeNum() + " bytecode " + Clock.getBytecodeNum());
+        header("Starting at round " + Clock.getBytecodeNum());
         init = new Init();
         endTurn = new EndTurn();
         currentState = init;
@@ -102,7 +102,7 @@ public class Robot {
         while (true) {
 
             // Playing state
-            header("\t" + currentState.name + "\t" + (int)(Clock.getBytecodeNum() * 10000 / 17500));
+            header("\t" + currentState.name + "\t[" + Clock.getBytecodeNum() + " bytecode]");
             Result result = currentState.run();
             if(!result.msg.isEmpty()) {
                 print("<= " + result.code.name() + " " + result.msg);
