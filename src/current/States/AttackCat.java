@@ -1,12 +1,8 @@
 package current.States;
 
 import battlecode.common.*;
-import current.Robots.Robot;
-import current.Utils.Communication;
-import current.Utils.PathFinding;
 
 import static current.States.Code.*;
-import static current.Utils.Communication.*;
 
 /**
  * State to attack cats when safe

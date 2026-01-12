@@ -1,7 +1,9 @@
 package current.States;
 
 import battlecode.common.*;
+import current.Communication.SenseForComs;
 import current.Utils.VisionUtils;
+import current.Communication.Communication;
 
 import static current.States.Code.*;
 
@@ -12,6 +14,10 @@ public class EndTurn extends State {
 
     @Override
     public Result run() throws GameActionException {
+
+        // Communication
+        SenseForComs.senseForComs();  // Generate messages to send
+        Communication.sendMessages(); // Send messages (squeak or shared array)
 
         /**
          * Debug scores

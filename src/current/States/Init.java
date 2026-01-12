@@ -1,13 +1,14 @@
 package current.States;
 
 import battlecode.common.*;
+import current.Communication.SenseForComs;
 import current.Robots.Robot;
 import current.Utils.PathFinding;
 import current.Utils.VisionUtils;
-import current.Utils.Communication;
+import current.Communication.Communication;
 
 import static current.States.Code.*;
-import static current.Utils.Communication.TYPE_CAT;
+import static current.Communication.Communication.TYPE_CAT;
 
 public class Init extends State {
     public Init() throws GameActionException {
@@ -18,7 +19,6 @@ public class Init extends State {
 
         // Init utils
         VisionUtils.init(rc.getMapWidth(), rc.getMapHeight());
-        Communication.init(rc);
     }
 
     @Override
@@ -30,7 +30,6 @@ public class Init extends State {
         lastInitRound = rc.getRoundNum();
         isKing = rc.getType().isRatKingType();
         PathFinding.resetScores();
-        hasSqueakedThisTurn = false;
         myLoc = rc.getLocation();
 
 
@@ -40,7 +39,7 @@ public class Init extends State {
         else                   { gamePhase = PHASE_FINAL;}
 
         print("Update communications");
-        Communication.updateSharedArrayState();
+        Communication.readMessages(); // Read messsages
 
         print("Update vision score state");
         /**
@@ -81,13 +80,12 @@ public class Init extends State {
             }
         }
 
-
-        debug("Update king location");
+        debug("Update ally position (nearest king)");
         int minDist = Integer.MAX_VALUE;
         if(isKing){
             Robot.nearestKing = rc.getLocation();
         }else{
-            for(RobotInfo info : rc.senseNearbyRobots(99, rc.getTeam())){
+            for(RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam())){
                 if(
                     rc.getType().isRatKingType()
                 &&  myLoc.distanceSquaredTo(info.location) < minDist){
@@ -97,22 +95,56 @@ public class Init extends State {
             }
         }
 
-        debug("Update nearest cat");
-        minDist = Integer.MAX_VALUE;
-        for (RobotInfo robot : rc.senseNearbyRobots()) {
-            if (
-                robot.getType() == UnitType.CAT
-            &&  myLoc.distanceSquaredTo(robot.getLocation()) < minDist
-            ) {
-                nearestCat = robot.getLocation();
-                minDist = rc.getLocation().distanceSquaredTo(robot.getLocation());
+        enemiesRats.clear();
+        debug("Update enemy position (cat, king, rats)");
+        for (RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam().opponent())) {
+            switch (info.type){
+                case CAT:
+                    cats.add(info.location, info.getID());
+                    if(nearestCat == null || nearestCat.distanceSquaredTo(info.location) > nearestCat.distanceSquaredTo(myLoc)){
+                        nearestCat = info.location;
+                    }
+                    break;
+
+                case RAT_KING:
+                    enemiesKings.add(info.location, info.getID());
+                    if(nearestKing == null || nearestKing.distanceSquaredTo(info.location) > nearestKing.distanceSquaredTo(myLoc)){
+                        nearestKing = info.location;
+                    }
+                    break;
+
+                case BABY_RAT:
+                    // TODO; Maybe use id for enemy rats rather than deleting the whole array each time ?
+                    enemiesRats.add(info.location);
+                    break;
+
+                default:
+                    err("Updating unit type " + info.type + " is not supported (?!)");
             }
         }
 
-        // TODO: LMX
-        // Report cat location via squeak
-        if (nearestCat != null && rc.getType() == UnitType.BABY_RAT) {
-            Communication.sendSqueak(TYPE_CAT, nearestCat);
+        debug("Update mapinfo (mines, cheese, dirt, ...)");
+        for(MapInfo info : rc.senseNearbyMapInfos()){
+            // Dirt
+            if(info.isDirt() && (nearestDirt == null || nearestDirt.distanceSquaredTo(info.getMapLocation()) > nearestDirt.distanceSquaredTo(myLoc))){
+                nearestDirt = info.getMapLocation();
+            }
+
+            // Cheese
+            if(info.getCheeseAmount() > 0 && (nearestCheese == null || nearestCheese.distanceSquaredTo(info.getMapLocation()) > nearestCheese.distanceSquaredTo(myLoc))){
+                nearestCheese = info.getMapLocation();
+            }
+
+            // Cheese mine
+            if(info.hasCheeseMine()){
+                cheeseMines.add(info.getMapLocation());
+
+                if(nearestMine == null || nearestMine.distanceSquaredTo(info.getMapLocation()) > nearestMine.distanceSquaredTo(myLoc)){
+                    nearestMine = info.getMapLocation();
+                }
+            }
+
+            // TODO: Water ??
         }
 
 

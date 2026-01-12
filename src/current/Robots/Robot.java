@@ -2,6 +2,8 @@ package current.Robots;
 
 import battlecode.common.*;
 import current.States.*;
+import current.Utils.MapLocations;
+import current.Utils.MapLocationsWithId;
 
 import java.util.Random;
 
@@ -16,14 +18,33 @@ public class Robot {
     public static int lastInitRound = 0;
     public static int spawnRound = 0;
     public static boolean isKing;
+    public static MapLocation myLoc;
     public static int round;
 
-    public static MapLocation nearestKing;
-    public static MapLocation nearestCat;
-    public static MapLocation myLoc;
-
-
     public static boolean competitiveMode = false;
+
+    // Nearest locations
+    public static MapLocation nearestCat;
+    public static MapLocation nearestKing;
+    public static MapLocation nearestEnemyRat;
+    public static MapLocation nearestEnemyKing;
+    public static MapLocation nearestMine;
+    public static MapLocation nearestDirt;
+    public static MapLocation nearestWater;
+    public static MapLocation nearestCheese;
+
+    // Memory
+    public static MapLocations enemiesRats = new MapLocations((char) 100);
+    public static MapLocations cheeseMines = new MapLocations((char) 150);
+    public static MapLocationsWithId cats = new MapLocationsWithId((char) 100);
+    public static MapLocationsWithId kings = new MapLocationsWithId((char) 100);
+    public static MapLocationsWithId enemiesKings = new MapLocationsWithId((char) 100);
+
+    // Message priority
+    public static int PRIORITY_CRIT   = 3; // King being attacked, rush order
+    public static int PRIORITY_HIGH   = 2; // Enemy in view, cat position
+    public static int PRIORITY_NORMAL = 1; // King position, cheese mine
+
 
     // Phases
     public static int gamePhase;
@@ -44,10 +65,6 @@ public class Robot {
             Direction.NORTHWEST,
     };
     public static final Random rng = new Random(6147);
-
-    // Communication
-    public static boolean hasSqueakedThisTurn;
-    public static int lastSqueakRound = -1;
 
     // State Machine
     public State init;
