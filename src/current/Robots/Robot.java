@@ -102,7 +102,7 @@ public class Robot {
         while (true) {
 
             // Playing state
-            header("\t" + currentState.name + "\t[" + Clock.getBytecodeNum() + " bytecode]");
+            header("\t" + currentState.name + "\t" + Clock.getBytecodeNum());
             Result result = currentState.run();
             if(!result.msg.isEmpty()) {
                 print("<= " + result.code.name() + " " + result.msg);
