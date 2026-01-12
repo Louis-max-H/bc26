@@ -15,6 +15,6 @@ public class IntLIFO {
     }
 
     public void reset(){
-        int size = 0;
+        size = 0;
     }
 }

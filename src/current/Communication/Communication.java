@@ -60,6 +60,7 @@ public class Communication extends Robot {
      * Update memory field of the robot with received messages
      */
     public static void decodeLongMessage(int msg) {
+        print("Decoding long message:" + msg);
         switch (msg & MASK_LONG_TYPE) {
 
             case TYPE_CAT:
@@ -216,7 +217,7 @@ public class Communication extends Robot {
             if(msg == 0){return 0;}
 
             // Not seen recently
-            if(lastTimeSeenMessage[msg & MASK_14BITS] > round){
+            if(lastTimeSeenMessage[msg & MASK_14BITS] <= round){
                 lastTimeSeenMessage[msg & MASK_14BITS] = (char) (round + cooldown);
                 return msg;
             }else{
@@ -263,6 +264,8 @@ public class Communication extends Robot {
     }
 
     public static void writeToArray() throws GameActionException {
+        int nWritten = 0;
+        int startBytecode = Clock.getBytecodeNum();
         for(;;){
             if(Clock.getBytecodesLeft() < 1000){
                 System.out.println("Stop writing to shared array because of low bytecode count");
@@ -270,7 +273,8 @@ public class Communication extends Robot {
             }
 
             int message = getMessage(COOLDOWN_SEND_AGAIN_ARRAY);
-            if(message == 0){return;}
+            if(message == 0){break;}
+            debug("writeToArray: Sending message " + message);
             if((message & IS_LONG_MESSAGE) != 0){
                 // First part, top 10 bits
                 rc.writeSharedArray(lastDecodedArray, message >> 20);
@@ -293,12 +297,15 @@ public class Communication extends Robot {
                 rc.writeSharedArray(lastDecodedArray, message & 0b111111111);
                 lastDecodedArray++;
             }
+            nWritten++;
 
             // Wrap around because a circular array
             if(lastDecodedArray >= 61){
                 lastDecodedArray = 2;
             }
         }
+
+        print("Shared Array : " + nWritten + " messages in " + (Clock.getBytecodeNum() - startBytecode) + " bytecode(s)");
     }
 
     // A damn big array of 2**16 elements.

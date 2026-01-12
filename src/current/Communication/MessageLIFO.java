@@ -13,14 +13,14 @@ public class MessageLIFO {
             case 1: buffer1.add(msg); return;
             case 2: buffer2.add(msg); return;
             default:
-                System.out.println("ERR: Message priority should be in [0, 3] 0 is LOW, 4 is CRIT");
+                System.out.println("ERR: Message priority should be in [0, 3] 0 is LOW, 3 is CRIT");
         }
     }
 
     public static int pop(){
-        if(buffer2.size != 0){return buffer2.pop();}
-        if(buffer1.size != 0){return buffer1.pop();}
-        if(buffer0.size != 0){return buffer0.pop();}
+        if(buffer2.size > 0){return buffer2.pop();}
+        if(buffer1.size > 0){return buffer1.pop();}
+        if(buffer0.size > 0){return buffer0.pop();}
         return 0;
     }
 }

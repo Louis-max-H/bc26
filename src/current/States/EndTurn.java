@@ -47,6 +47,12 @@ public class EndTurn extends State {
             return new Result(WARN, "Turn start at round " + lastInitRound + " end at " + rc.getRoundNum());
         }
 
+        debug("Nearest kings :");
+        for(char i=0; i< kings.size; i++){
+            debug("\t King at " + kings.locs[i]);
+        }
+        debug("");
+
         Clock.yield();
         return new Result(OK, "Ending turn gracefully.");
     };

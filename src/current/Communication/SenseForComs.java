@@ -12,7 +12,7 @@ public class SenseForComs extends Robot {
         // Could have been done in Communication.java but split apart to avoid big class
 
         // Give position of our king
-        if(isKing && round % 4 == 0){
+        if(isKing){
             Communication.addMessageKing(rc.getLocation(), rc.getID());
         }
 
