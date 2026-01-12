@@ -31,7 +31,7 @@ public class Communication extends Robot {
 
     // Don't send message if we have recently seen a similar message
     public static char COOLDOWN_SEND_AGAIN_SQUEAK = 2;
-    public static char COOLDOWN_SEND_AGAIN_ARRAY = 10;
+    public static char COOLDOWN_SEND_AGAIN_ARRAY = 4;
 
     // Messages types (short)                         0b1101111122222222; // 16 bits = 2 per squeak, 2 array size
     public static final int MASK_14BITS =     0b0011111111111111; // Bits 12-15 : 3 bits
