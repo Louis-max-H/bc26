@@ -3,7 +3,7 @@
 // !!!! Dont edit it manually, check in template folder !!!!
 // #########################################################
 
-package v004_cat.Utils;
+package current.Utils;
 
 
 import battlecode.common.*;

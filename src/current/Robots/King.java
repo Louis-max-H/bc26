@@ -1,8 +1,8 @@
-package v004_cat.Robots;
+package current.Robots;
 
 import battlecode.common.GameActionException;
-import v004_cat.RobotPlayer;
-import v004_cat.States.*;
+import current.RobotPlayer;
+import current.States.*;
 
 public class King extends Robot {
     State explore;

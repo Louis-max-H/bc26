@@ -1,0 +1,125 @@
+package current.Utils;
+
+{% set scoreNotAlreadyViewed = 700 %}
+
+import battlecode.common.*;
+
+//  Destination: Utils/VisionUtils.java
+
+// this file contain :
+// public static MapLocation[] getAllLocationsFrom(MapLocation from, Direction dir, UnitType unit)
+// public static void shiftCells(MapLocation[] cells, Direction dir)
+// public static void getScoreInView(MapLocation[] scores, MapLocation from, Direction dir, UnitType unit)
+
+public class {{ className }} {
+    // encodeXYString(gap : 8 ) = {{ encodeXYString(8) }}
+    public static char SCORE_NOT_ALREADY_VIEWED = {{ scoreNotAlreadyViewed }};
+    public static char scores[] = {{genMemoryCharArray(scoreNotAlreadyViewed, 0, 8)}}; {# defaultValue, gapValue, gap size #}
+
+    public static void addScore(MapLocation loc, char score){
+        scores[{{ encodeXYLoc(8) }}] = score;
+    }
+
+    public static char getScore(MapLocation loc){
+        return scores[{{ encodeXYLoc(8) }}];
+    }
+
+    public static void initScore(int width, int height){
+        // Width
+        switch(width){
+            {% for x in range(30, 60) %}
+            case {{x}}:
+                if({{x}} == width + 8){break;}
+                {% for y in range(0, 60 ) %} scores[{{ encodeXY((x, y), 8) }}] = 0; {% endfor %}
+            {% endfor %}
+                break;
+            default:
+                System.out.println("ERR: Width is out of bounds");
+                break;
+        }
+
+        // height
+        switch(height){
+            {% for y in range(30, 61) %}
+            case {{y}}:
+                if({{y}} == height + 8){break;}
+                {% for x in range(0, 60 ) %}scores[{{ encodeXY((x, y), 8) }}] = 0; {% endfor %}
+            {% endfor %}
+                break;
+            default:
+                System.out.println("ERR: Height is out of bounds");
+                break;
+        }
+    }
+
+    public static MapLocation[] getAllLocationsVisibleFrom(MapLocation from, Direction dir, UnitType unit){
+        int x = from.x;
+        int y = from.y;
+        return switch(unit){
+            {% for unit in ratsUnits %}
+
+            case {{ unit }} -> switch(dir){
+                {% for direction in directionsWhitoutCenter %}
+                case {{ direction }} -> {{ genVisionCell(unit, direction, "CENTER") }};
+                {% endfor %}
+
+                case CENTER -> {
+                    System.out.println("ERR: can't getAllLocationsFrom for CENTER");
+                    yield new MapLocation[0];
+               }  
+            };
+            {% endfor %}
+
+            case CAT -> {
+                System.out.println("ERR: can't getAllLocationsFrom for CAT");
+                yield new MapLocation[0];
+            }
+        };
+    };
+
+    public static void shiftCells(MapLocation[] cells, Direction dir){
+        switch(cells.length){
+            {# length is one more than last index#}
+            {% for x in reverseRange(100) %}
+            case {{ x + 1 }}: cells[{{x}}] = cells[{{x}}].add(dir);
+            {% endfor %}
+                break;
+            default:
+                System.out.println("WARN: To many cells to shift, do it with for loop.");
+                for(int i = 0; i < cells.length; i++){
+                    cells[i] = cells[i].add(dir);
+                }
+                break;
+        }
+    }
+
+    public static int getScoreInView(MapLocation from, Direction direction, UnitType unit){
+        char[] scores = VisionUtils.scores;
+        int x = from.x;
+        int y = from.y;
+        int xy = {{ encodeXYString(8)}};
+
+        return switch(unit){
+            {%- for unit in ratsUnits %}
+            case {{ unit }} -> switch(direction){
+
+                {% for directionIter in directionsWhitoutCenter %}
+                case {{ directionIter }} -> (int)({{ genScoreInView(unit, directionIter, "CENTER", gap=8) }});
+                {% endfor %}
+
+                case CENTER -> {
+                    System.out.println("ERR: Can't turn to center");
+                    yield 0;
+                }
+            };
+            {% endfor %}{# rat type #}
+
+            case CAT -> {
+                System.out.println("ERR: Cat can't get score in view");
+                yield 0;
+            }
+        };
+    }
+
+
+}

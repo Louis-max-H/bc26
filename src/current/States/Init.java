@@ -1,13 +1,13 @@
-package v004_cat.States;
+package current.States;
 
 import battlecode.common.*;
-import v004_cat.Robots.Robot;
-import v004_cat.Utils.PathFinding;
-import v004_cat.Utils.VisionUtils;
-import v004_cat.Utils.Communication;
+import current.Robots.Robot;
+import current.Utils.PathFinding;
+import current.Utils.VisionUtils;
+import current.Utils.Communication;
 
-import static v004_cat.States.Code.*;
-import static v004_cat.Utils.Communication.TYPE_CAT;
+import static current.States.Code.*;
+import static current.Utils.Communication.TYPE_CAT;
 
 public class Init extends State {
     public Init() throws GameActionException {

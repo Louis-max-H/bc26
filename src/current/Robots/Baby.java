@@ -1,7 +1,7 @@
-package v004_cat.Robots;
+package current.Robots;
 
 import battlecode.common.GameActionException;
-import v004_cat.States.*;
+import current.States.*;
 
 public class Baby extends Robot {
     State cheeseToKing;
