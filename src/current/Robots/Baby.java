@@ -40,9 +40,14 @@ public class Baby extends Robot {
                     yield attackEnemy;
                 }
             }
+
+            // Only if low on cheese
             case "AttackEnemy" -> attackCat;
-            case "attackEnemy" -> placeTrap;
-            case "CheeseToKing" -> collectCheese;
+            case "AttackCat" -> cheeseToKing;
+
+            // Go back to normal mode
+            case "CheeseToKing" -> placeTrap;
+            case "PlaceTrap" -> collectCheese;
             case "CollectCheese" -> {
                 // If not in rush phase and have nothing urgent, can mine dirt
                 if(gamePhase > PHASE_START){
@@ -54,7 +59,6 @@ public class Baby extends Robot {
             case "MineDirt" -> placeDirt;
             case "PlaceDirt" -> explore;
             case "Explore" -> endTurn;
-            case "AttackCat" -> endTurn;
             case "EndTurn" -> init;
             default -> {
                 Robot.err(currentState.name + " don't match any states. Fallback to endTurn");

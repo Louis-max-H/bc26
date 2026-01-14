@@ -9,17 +9,18 @@ AvoidCat --> CheeseToKing : rawCheese > 20
 AvoidCat --> AttackEnemy : rawCheese <= 20
 
 AttackEnemy --> AttackCat
-attackEnemy --> PlaceTrap
+AttackCat --> CheeseToKing
 
-CheeseToKing --> CollectCheese
+CheeseToKing --> PlaceTrap
+PlaceTrap --> CollectCheese
 
 CollectCheese --> MineDirt : gamePhase > PHASE_START
 CollectCheese --> PlaceDirt : gamePhase <= PHASE_START
 
 MineDirt --> PlaceDirt
 PlaceDirt --> Explore
+
 Explore --> EndTurn
 EndTurn --> Init
-AttackCat --> EndTurn
 
 @enduml
