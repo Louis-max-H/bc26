@@ -54,10 +54,11 @@ public class Baby extends Robot {
             case "MineDirt" -> placeDirt;
             case "PlaceDirt" -> explore;
             case "Explore" -> endTurn;
+            case "AttackCat" -> endTurn;
             case "EndTurn" -> init;
             default -> {
-                Robot.err(currentState.name + " don't match any states. Fallback to init");
-                yield init;
+                Robot.err(currentState.name + " don't match any states. Fallback to endTurn");
+                yield endTurn;
             }
         };
     }

@@ -20,5 +20,6 @@ MineDirt --> PlaceDirt
 PlaceDirt --> Explore
 Explore --> EndTurn
 EndTurn --> Init
+AttackCat --> EndTurn
 
 @enduml
