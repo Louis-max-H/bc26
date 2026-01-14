@@ -25,6 +25,7 @@ public class Robot {
 
     // Nearest locations
     public static MapLocation nearestCat;
+    public static MapLocation nearestRat;
     public static MapLocation nearestKing;
     public static MapLocation nearestEnemyRat;
     public static MapLocation nearestEnemyKing;
@@ -33,7 +34,13 @@ public class Robot {
     public static MapLocation nearestWater;
     public static MapLocation nearestCheese;
 
+    // Nearest ID, ID are mod 4096
+    public static int nearestCatID;
+    public static int nearestKingID;
+    public static int nearestEnemyKingID;
+
     // Memory
+    public static MapLocations rats = new MapLocations((char) 100);
     public static MapLocations enemiesRats = new MapLocations((char) 100);
     public static MapLocations cheeseMines = new MapLocations((char) 150);
     public static MapLocationsWithId cats = new MapLocationsWithId((char) 100);
@@ -100,7 +107,6 @@ public class Robot {
 
         // Playing
         while (true) {
-
             // Playing state
             header("\t" + currentState.name + "\t" + Clock.getBytecodeNum());
             Result result = currentState.run();
@@ -126,13 +132,15 @@ public class Robot {
                     updateState(result);
                     break;
             }
+            
+            Clock.yield();
         }
     }
 
 
     /////////////////////////////////////// Debug ///////////////////////////////////////
     public static void _debug(String msg){
-        if(rc.getRoundNum() < 100 && rc.getTeam() == Team.A) {
+        if(round < 100 && rc.getTeam() == Team.A) {
             System.out.println(msg);
         }
     }

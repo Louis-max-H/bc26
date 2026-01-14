@@ -151,13 +151,13 @@ public class Communication extends Robot {
         int nDecoded = 0;
         int startBytecode = Clock.getBytecodeNum();
         int MAX_SQUEAKS = 10;
-        int min_round = rc.getRoundNum() - 5;
+        int min_round = round - 5;
         char sendCooldown = (char) (round + COOLDOWN_SEND_AGAIN_SQUEAK);
 
         readMessagesLabel:
         // Round be decreasing number
-        for(int round = rc.getRoundNum(); round >= min_round; round--){
-            for(Message msg:  rc.readSqueaks(round)) {
+        for(int r = round; r >= min_round; r--){
+            for(Message msg:  rc.readSqueaks(r)) {
                 int raw = msg.getBytes();
                 if((raw & IS_LONG_MESSAGE) != 0){
                     decodeLongMessage(raw);
