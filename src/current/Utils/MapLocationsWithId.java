@@ -12,6 +12,7 @@ public class MapLocationsWithId {
 
     public int maxlen;
     public MapLocation[] locs;
+    public int[] ids;
     public char size;
     public char[] hashmap; // = "\uFFFF ..... * 4096"; Defined at end of class
     // Give for an hash, his index in the locs
@@ -19,11 +20,14 @@ public class MapLocationsWithId {
     public MapLocationsWithId(char len) {
         maxlen = len;
         locs = new MapLocation[maxlen];
+        ids = new int[maxlen];
         clear();
     }
 
     // return boolean false if set is full or already contained location
     public boolean add(MapLocation loc, int id) {
+        id = id % 4096;
+
         // Max size
         if (size == maxlen){return false;}
 
@@ -34,12 +38,15 @@ public class MapLocationsWithId {
             // Add new location
             hashmap[id] = size;
             locs[size] = loc;
+            ids[size] = id;
             size++;
         }
         return true;
     }
 
     public boolean add(int xy, int id) {
+        id = id % 4096;
+
         // Max size
         if (size == maxlen){return false;}
 
@@ -50,6 +57,7 @@ public class MapLocationsWithId {
             // Add new location
             hashmap[id] = size;
             locs[size] = new MapLocation(xy & 0b111111, xy >> 6);
+            ids[size] = id;
             size++;
         }
         return true;
@@ -57,6 +65,8 @@ public class MapLocationsWithId {
 
     // Check if an element not in set before removing it
     public void remove(int id) {
+        id = id % 4096;
+
         // Not in set
         if(hashmap[id] == 0){return;}
 
@@ -64,6 +74,7 @@ public class MapLocationsWithId {
         size--;
         char indexRemoved = hashmap[id];
         locs[indexRemoved] = locs[size];
+        ids[indexRemoved] = ids[size];
         hashmap[id] = '\uFFFF';
 
         // Update index of the replacing element
@@ -73,7 +84,7 @@ public class MapLocationsWithId {
     }
 
     public boolean contains(int id) {
-        return hashmap[id] != '\uFFFF';
+        return hashmap[id % 4096] != '\uFFFF';
     }
 
     public void clear() {
