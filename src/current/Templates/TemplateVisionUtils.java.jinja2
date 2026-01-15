@@ -3,6 +3,7 @@ package current.Utils;
 {% set scoreNotAlreadyViewed = 700 %}
 
 import battlecode.common.*;
+import current.Robots.Robot;
 
 //  Destination: Utils/VisionUtils.java
 
@@ -121,5 +122,21 @@ public class {{ className }} {
         };
     }
 
+    public static void updatePathfindingCost(MapLocation from, Direction direction, UnitType unit){
+        char[] scores = BugNav.mapCosts;
+        char dirt = (char)BugNav.SCORE_CELL_IF_DIG;
+        char passable = (char)BugNav.SCORE_CELL_PASSABLE;
+        char wall = (char)BugNav.SCORE_CELL_WALL;
+        RobotController rc = Robot.rc;
 
+        for(MapInfo infos: rc.senseNearbyMapInfos()){
+            if (infos.isPassable()) {
+                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = passable;
+            } else if (infos.isDirt()) {
+                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = dirt;
+            } else {
+                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = wall;
+            }
+        }
+    }
 }

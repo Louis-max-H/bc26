@@ -1,1 +1,1049 @@
-Starting a Gradle Daemon (subsequent builds will be faster)
+> Task :compileJava
+> Task :compileScala NO-SOURCE
+> Task :processResources NO-SOURCE
+> Task :classes
+> Task :jar
+> Task :assemble
+> Task :compileTestJava UP-TO-DATE
+> Task :compileTestScala NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test
+> Task :check
+> Task :unpackClient UP-TO-DATE
+> Task :checkNewVersion
+> Task :build
+
+> Task :run
+[server] -------------------- Match Starting --------------------
+[server] current vs. current on DefaultMedium
+[A: #3@1] Dir of : 0
+[A: #3@1] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[A: #3@1]    This bot is running with competitiveMode set to false    
+[A: #3@1]             Edit the flag before submitting it !            
+[A: #3@1] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[A: #3@1] Starting at round 1255
+[A: #3@1] Done init at bytecode 9278
+[A: #3@1] 	Init	9290
+[A: #3@1] 	Update classic variables
+[A: #3@1] 	Update communications 	9389
+[A: #3@1] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@1] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@1] 	Update pathFinding 	11066
+[A: #3@1] 	Update vision score state 	13309
+[A: #3@1] 	Init with sensing 	15895
+[A: #3@1] 		Sensing: ally
+[A: #3@1] 		Sensing: Update enemy position (king, rats)
+[A: #3@1] 		Sensing: Neutral (cat)
+[A: #3@1] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@1] 	Update nearest units 	18089
+[A: #3@1] 		Nearest: king
+[A: #3@1] 		Nearest: enemy king
+[A: #3@1] 		Nearest: cat
+[A: #3@1] 	Done intit! 	18201
+[B: #4@1] Dir of : 0
+[B: #4@1] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[B: #4@1]    This bot is running with competitiveMode set to false    
+[B: #4@1]             Edit the flag before submitting it !            
+[B: #4@1] !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+[A: #3@2] 	Explore	1
+[A: #3@2] 		Exploring:
+[A: #3@2] 		 ⬆️ 7699
+[A: #3@2] 		 ↗️ 10215
+[A: #3@2] 		 ➡️ 11970
+[A: #3@2] 		 ↘️ 15186
+[A: #3@2] 		 ⬇️ 12695
+[A: #3@2] 		 ↙️ 15236
+[A: #3@2] 		 ⬅️ 11995
+[A: #3@2] 		 ↖️ 10215
+[A: #3@2] 		 ⏹️ 0
+[A: #3@2] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@2] 	
+[A: #3@3] 	Spawn	1
+[A: #3@3] 	<= OK Building rat to [31, 37] (furthest, toward center)
+[A: #3@3] 	
+[A: #3@4] 	EndTurn	1
+[A: #3@4] Printing kings
+[A: #3@4] 	Nearest kings :
+[A: #3@4] 	
+[A: #3@4] 		addMessageKing: 671103455
+[A: #3@4] 		writeToArray: Sending message 671103455
+[A: #3@4] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@4] Printing kings
+[A: #10865@4] Dir of : 0
+[A: #10865@4] Starting at round 1245
+[A: #10865@4] Done init at bytecode 5364
+[A: #10865@4] 	Init	5376
+[A: #10865@4] 	Update classic variables
+[A: #10865@4] 	Update communications 	5475
+[A: #10865@4] 	Decoding long message:671103455
+[A: #10865@4] 	Adding king !
+[A: #10865@4] 	Shared Array : 1 messages in 169 bytecode(s)
+[A: #10865@4] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #10865@4] 	Update pathFinding 	7295
+[A: #10865@4] 	Update vision score state 	8030
+[A: #10865@4] 	Init with sensing 	8934
+[A: #10865@4] 		Sensing: ally
+[A: #10865@4] 		Sensing: Update enemy position (king, rats)
+[A: #10865@4] 		Sensing: Neutral (cat)
+[A: #10865@4] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #10865@4] 	Update nearest units 	9910
+[A: #10865@4] 		Nearest: king
+[A: #10865@4] 		Nearest: enemy king
+[A: #10865@4] 		Nearest: cat
+[A: #10865@4] 	Done intit! 	10077
+[B: #13684@4] Dir of : 0
+[A: #3@5] 	<= OK Ending turn gracefully.
+[A: #3@5] 	
+[A: #10865@5] 	AvoidCat	1
+[A: #10865@5] 	<= OK No cat to avoid
+[A: #10865@5] 	
+[A: #3@6] 	Init	1
+[A: #3@6] 	Update classic variables
+[A: #3@6] 	Update communications 	64
+[A: #3@6] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@6] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@6] 	Update pathFinding 	1598
+[A: #3@6] 	Update vision score state 	3847
+[A: #3@6] 	Init with sensing 	7410
+[A: #3@6] 		Sensing: ally
+[A: #3@6] 		Sensing: Update enemy position (king, rats)
+[A: #3@6] 		Sensing: Neutral (cat)
+[A: #3@6] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@6] 	Update nearest units 	9662
+[A: #3@6] 		Nearest: king
+[A: #3@6] 		Nearest: enemy king
+[A: #3@6] 		Nearest: cat
+[A: #3@6] 	Done intit! 	9774
+[A: #10865@6] 	AttackEnemy	1
+[A: #10865@6] 	<= OK No enemy
+[A: #10865@6] 	
+[A: #3@7] 	Explore	1
+[A: #3@7] 		Exploring:
+[A: #3@7] 		 ⬆️ 6857
+[A: #3@7] 		 ↗️ 5183
+[A: #3@7] 		 ➡️ 7486
+[A: #3@7] 		 ↘️ 0
+[A: #3@7] 		 ⬇️ 0
+[A: #3@7] 		 ↙️ 0
+[A: #3@7] 		 ⬅️ 10472
+[A: #3@7] 		 ↖️ 11189
+[A: #3@7] 		 ⏹️ 0
+[A: #3@7] 	<= OK Turning and moving to NORTHWEST
+[A: #3@7] 	
+[A: #10865@7] 	AttackCat	1
+[A: #10865@7] 	<= OK No cat
+[A: #10865@7] 	
+[A: #3@8] 	Spawn	1
+[A: #3@8] 	<= OK Building rat to [30, 38] (furthest, toward center)
+[A: #3@8] 	
+[A: #10865@8] 	CheeseToKing	1
+[A: #3@9] 	EndTurn	1
+[A: #3@9] Printing kings
+[A: #3@9] 	Nearest kings :
+[A: #3@9] 	
+[A: #3@9] 		addMessageKing: 671103518
+[A: #3@9] 		writeToArray: Sending message 671103518
+[A: #3@9] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@9] Printing kings
+[A: #10865@9] 	PlaceTrap	1
+[A: #10865@9] 	<= OK No trap placement needed
+[A: #10865@9] 	
+[A: #13184@9] Dir of : 0
+[A: #13184@9] Starting at round 1245
+[A: #13184@9] Done init at bytecode 5364
+[A: #13184@9] 	Init	5376
+[A: #13184@9] 	Update classic variables
+[A: #13184@9] 	Update communications 	5475
+[A: #13184@9] 	Decoding long message:671103455
+[A: #13184@9] 	Adding king !
+[A: #13184@9] 	Decoding long message:671103006
+[A: #13184@9] 	Adding king !
+[A: #13184@9] 	Shared Array : 2 messages in 293 bytecode(s)
+[A: #13184@9] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #13184@9] 	Update pathFinding 	7419
+[A: #13184@9] 	Update vision score state 	8154
+[A: #13184@9] 	Init with sensing 	9072
+[A: #13184@9] 		Sensing: ally
+[A: #13184@9] 		Sensing: Update enemy position (king, rats)
+[A: #13184@9] 		Sensing: Neutral (cat)
+[A: #13184@9] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #13184@9] 	Update nearest units 	10098
+[A: #13184@9] 		Nearest: king
+[B: #13022@9] Dir of : 0
+[A: #3@10] 	<= OK Ending turn gracefully.
+[A: #3@10] 	
+[A: #10865@10] 	CollectCheese	1
+[A: #10865@10] 	<= OK No cheese to collect
+[A: #10865@10] 	
+[A: #3@11] 	Init	1
+[A: #3@11] 	Update classic variables
+[A: #3@11] 	Update communications 	64
+[A: #3@11] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@11] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@11] 	Update pathFinding 	1598
+[A: #3@11] 	Update vision score state 	3821
+[A: #3@11] 	Init with sensing 	8261
+[A: #3@11] 		Sensing: ally
+[A: #3@11] 		Sensing: Update enemy position (king, rats)
+[A: #3@11] 		Sensing: Neutral (cat)
+[A: #3@11] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@11] 	Update nearest units 	10529
+[A: #3@11] 		Nearest: king
+[A: #3@11] 		Nearest: enemy king
+[A: #3@11] 		Nearest: cat
+[A: #3@11] 	Done intit! 	10641
+[A: #10865@11] 	PlaceDirt	1
+[A: #10865@11] 	<= OK Can't place dirt (need action, 10 cheese, and dirt)
+[A: #10865@11] 	
+[A: #3@12] 	Explore	1
+[A: #3@12] 		Exploring:
+[A: #3@12] 		 ⬆️ 4453
+[A: #3@12] 		 ↗️ 3479
+[A: #3@12] 		 ➡️ 3550
+[A: #3@12] 		 ↘️ 0
+[A: #3@12] 		 ⬇️ 0
+[A: #3@12] 		 ↙️ 0
+[A: #3@12] 		 ⬅️ 9023
+[A: #3@12] 		 ↖️ 8227
+[A: #3@12] 		 ⏹️ 0
+[A: #3@12] 	<= OK Turning and moving to WEST
+[A: #3@12] 	
+[A: #10865@12] 	Explore	1
+[A: #10865@12] 		Exploring:
+[A: #10865@12] 		 ⬆️ 14700
+[A: #10865@12] 		 ↗️ 15400
+[A: #10865@12] 		 ➡️ 14700
+[A: #10865@12] 		 ↘️ 15400
+[A: #10865@12] 		 ⬇️ 9064
+[A: #10865@12] 		 ↙️ 7273
+[A: #10865@12] 		 ⬅️ 9064
+[A: #10865@12] 		 ↖️ 0
+[A: #10865@12] 		 ⏹️ 0
+[A: #10865@12] 	<= OK Turning and moving to NORTHEAST
+[A: #10865@12] 	
+[A: #3@13] 	Spawn	1
+[A: #3@13] 	<= OK Building rat to [29, 38] (furthest, toward center)
+[A: #3@13] 	
+[A: #10865@13] 	EndTurn	1
+[A: #10865@13] Printing kings
+[A: #10865@13] 	Nearest kings :
+[A: #10865@13] 		 King at [31, 39]
+[A: #10865@13] 	
+[B: #13684@13] Printing kings
+[A: #3@14] 	EndTurn	1
+[A: #3@14] Printing kings
+[A: #3@14] 	Nearest kings :
+[A: #3@14] 	
+[A: #3@14] 		addMessageKing: 671103517
+[A: #3@14] 		writeToArray: Sending message 671103517
+[A: #3@14] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@14] Printing kings
+[A: #10865@14] 	<= OK Ending turn gracefully.
+[A: #10865@14] 	
+[A: #11550@14] Dir of : 0
+[A: #11550@14] Starting at round 1245
+[A: #11550@14] Done init at bytecode 5364
+[A: #11550@14] 	Init	5376
+[A: #11550@14] 	Update classic variables
+[A: #11550@14] 	Update communications 	5475
+[A: #11550@14] 	Decoding long message:671103455
+[A: #11550@14] 	Adding king !
+[A: #11550@14] 	Decoding long message:671103006
+[A: #11550@14] 	Adding king !
+[A: #11550@14] 	Decoding long message:671103005
+[A: #11550@14] 	Adding king !
+[A: #11550@14] 	Shared Array : 3 messages in 417 bytecode(s)
+[A: #11550@14] 	Squeaks      : 1 messages in 210 bytecode(s)
+[A: #11550@14] 	Update pathFinding 	7580
+[A: #11550@14] 	Update vision score state 	8289
+[A: #11550@14] 	Init with sensing 	9178
+[A: #11550@14] 		Sensing: ally
+[A: #11550@14] 		Sensing: Update enemy position (king, rats)
+[A: #11550@14] 		Sensing: Neutral (cat)
+[A: #11550@14] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #11550@14] 	Update nearest units 	10183
+[A: #11550@14] 		Nearest: king
+[B: #12576@14] Dir of : 0
+[A: #3@15] 	<= OK Ending turn gracefully.
+[A: #3@15] 	
+[A: #10865@15] 	Init	1
+[A: #10865@15] 	Update classic variables
+[A: #10865@15] 	Update communications 	64
+[A: #10865@15] 	Decoding long message:671103006
+[A: #10865@15] 	Adding king !
+[A: #10865@15] 	Decoding long message:671103005
+[A: #10865@15] 	Adding king !
+[A: #10865@15] 	Shared Array : 2 messages in 274 bytecode(s)
+[A: #10865@15] 	Squeaks      : 1 messages in 210 bytecode(s)
+[A: #10865@15] 	Update pathFinding 	1883
+[A: #10865@15] 	Update vision score state 	2598
+[A: #10865@15] 	Init with sensing 	3502
+[A: #10865@15] 		Sensing: ally
+[A: #10865@15] 		Sensing: Update enemy position (king, rats)
+[A: #10865@15] 		Sensing: Neutral (cat)
+[A: #10865@15] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #10865@15] 	Update nearest units 	4478
+[A: #10865@15] 		Nearest: king
+[A: #3@16] 	Init	1
+[A: #3@16] 	Update classic variables
+[A: #3@16] 	Update communications 	64
+[A: #3@16] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@16] 	Squeaks      : 5 messages in 358 bytecode(s)
+[A: #3@16] 	Update pathFinding 	1783
+[A: #3@16] 	Update vision score state 	4006
+[A: #3@16] 	Init with sensing 	9290
+[A: #3@16] 		Sensing: ally
+[A: #3@16] 		Sensing: Update enemy position (king, rats)
+[A: #3@16] 		Sensing: Neutral (cat)
+[A: #3@16] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@16] 	Update nearest units 	11595
+[A: #3@16] 		Nearest: king
+[A: #3@16] 		Nearest: enemy king
+[A: #3@16] 		Nearest: cat
+[A: #3@16] 	Done intit! 	11707
+[A: #3@17] 	Explore	1
+[A: #3@17] 		Exploring:
+[A: #3@17] 		 ⬆️ 3571
+[A: #3@17] 		 ↗️ 2243
+[A: #3@17] 		 ➡️ 2454
+[A: #3@17] 		 ↘️ 0
+[A: #3@17] 		 ⬇️ 0
+[A: #3@17] 		 ↙️ 0
+[A: #3@17] 		 ⬅️ 8240
+[A: #3@17] 		 ↖️ 7630
+[A: #3@17] 		 ⏹️ 0
+[A: #3@17] 	<= OK Turning and moving to WEST
+[A: #3@17] 	
+[A: #3@18] 	Spawn	1
+[A: #3@18] 	<= OK Building rat to [28, 38] (furthest, toward center)
+[A: #3@18] 	
+[A: #3@19] 	EndTurn	1
+[A: #3@19] Printing kings
+[A: #3@19] 	Nearest kings :
+[A: #3@19] 	
+[A: #3@19] 		addMessageKing: 671103516
+[A: #3@19] 		writeToArray: Sending message 671103516
+[A: #3@19] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@19] Printing kings
+[A: #12593@19] Dir of : 0
+[A: #12593@19] Starting at round 1245
+[A: #12593@19] Done init at bytecode 5364
+[A: #12593@19] 	Init	5376
+[A: #12593@19] 	Update classic variables
+[A: #12593@19] 	Update communications 	5475
+[A: #12593@19] 	Decoding long message:671103455
+[A: #12593@19] 	Adding king !
+[A: #12593@19] 	Decoding long message:671103006
+[A: #12593@19] 	Adding king !
+[A: #12593@19] 	Decoding long message:671103005
+[A: #12593@19] 	Adding king !
+[A: #12593@19] 	Decoding long message:671103004
+[A: #12593@19] 	Adding king !
+[A: #12593@19] 	Shared Array : 4 messages in 541 bytecode(s)
+[A: #12593@19] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #12593@19] 	Update pathFinding 	7667
+[A: #12593@19] 	Update vision score state 	8376
+[A: #12593@19] 	Init with sensing 	9265
+[A: #12593@19] 		Sensing: ally
+[A: #12593@19] 		Sensing: Update enemy position (king, rats)
+[A: #12593@19] 		Sensing: Neutral (cat)
+[A: #12593@19] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #12593@19] 	Update nearest units 	10270
+[A: #12593@19] 		Nearest: king
+[B: #12831@19] Dir of : 0
+[A: #3@20] 	<= OK Ending turn gracefully.
+[A: #3@20] 	
+[A: #3@21] 	Init	1
+[A: #3@21] 	Update classic variables
+[A: #3@21] 	Update communications 	64
+[A: #3@21] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@21] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@21] 	Update pathFinding 	1598
+[A: #3@21] 	Update vision score state 	3821
+[A: #3@21] 	Init with sensing 	9985
+[A: #3@21] 		Sensing: ally
+[A: #3@21] 		Sensing: Update enemy position (king, rats)
+[A: #3@21] 		Sensing: Neutral (cat)
+[A: #3@21] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@21] 	Update nearest units 	12327
+[A: #3@21] 		Nearest: king
+[A: #3@21] 		Nearest: enemy king
+[A: #3@21] 		Nearest: cat
+[A: #3@21] 	Done intit! 	12439
+[A: #3@22] 	Explore	1
+[A: #3@22] 		Exploring:
+[A: #3@22] 		 ⬆️ 3570
+[A: #3@22] 		 ↗️ 2241
+[A: #3@22] 		 ➡️ 2450
+[A: #3@22] 		 ↘️ 0
+[A: #3@22] 		 ⬇️ 0
+[A: #3@22] 		 ↙️ 0
+[A: #3@22] 		 ⬅️ 8270
+[A: #3@22] 		 ↖️ 7560
+[A: #3@22] 		 ⏹️ 0
+[A: #3@22] 	<= OK Turning and moving to WEST
+[A: #3@22] 	
+[A: #3@23] 	Spawn	1
+[A: #3@23] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@23] 	
+[A: #3@24] 	EndTurn	1
+[A: #3@24] Printing kings
+[A: #3@24] 	Nearest kings :
+[A: #3@24] 	
+[A: #3@24] 		addMessageKing: 671103515
+[A: #3@24] 		writeToArray: Sending message 671103515
+[A: #3@24] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@24] Printing kings
+[A: #3@25] 	<= OK Ending turn gracefully.
+[A: #3@25] 	
+[A: #3@26] 	Init	1
+[A: #3@26] 	Update classic variables
+[A: #3@26] 	Update communications 	64
+[A: #3@26] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@26] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@26] 	Update pathFinding 	1598
+[A: #3@26] 	Update vision score state 	3821
+[A: #3@26] 	Init with sensing 	9067
+[A: #3@26] 		Sensing: ally
+[A: #3@26] 		Sensing: Update enemy position (king, rats)
+[A: #3@26] 		Sensing: Neutral (cat)
+[A: #3@26] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@26] 	Update nearest units 	11372
+[A: #3@26] 		Nearest: king
+[A: #3@26] 		Nearest: enemy king
+[A: #3@26] 		Nearest: cat
+[A: #3@26] 	Done intit! 	11484
+[A: #3@27] 	Explore	1
+[A: #3@27] 		Exploring:
+[A: #3@27] 		 ⬆️ 3780
+[A: #3@27] 		 ↗️ 2380
+[A: #3@27] 		 ➡️ 2590
+[A: #3@27] 		 ↘️ 0
+[A: #3@27] 		 ⬇️ 0
+[A: #3@27] 		 ↙️ 9855
+[A: #3@27] 		 ⬅️ 8470
+[A: #3@27] 		 ↖️ 7630
+[A: #3@27] 		 ⏹️ 0
+[A: #3@27] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@27] 	
+[A: #3@28] 	Spawn	1
+[A: #3@28] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@28] 	
+[A: #3@29] 	EndTurn	1
+[A: #3@29] Printing kings
+[A: #3@29] 	Nearest kings :
+[A: #3@29] 	
+[A: #3@29] 		addMessageKing: 671103450
+[A: #3@29] 		writeToArray: Sending message 671103450
+[A: #3@29] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@29] Printing kings
+[A: #3@30] 	<= OK Ending turn gracefully.
+[A: #3@30] 	
+[A: #3@31] 	Init	1
+[A: #3@31] 	Update classic variables
+[A: #3@31] 	Update communications 	64
+[A: #3@31] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@31] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@31] 	Update pathFinding 	1598
+[A: #3@31] 	Update vision score state 	3853
+[A: #3@31] 	Init with sensing 	9122
+[A: #3@31] 		Sensing: ally
+[A: #3@31] 		Sensing: Update enemy position (king, rats)
+[A: #3@31] 		Sensing: Neutral (cat)
+[A: #3@31] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@31] 	Update nearest units 	11448
+[A: #3@31] 		Nearest: king
+[A: #3@31] 		Nearest: enemy king
+[A: #3@31] 		Nearest: cat
+[A: #3@31] 	Done intit! 	11560
+[A: #3@32] 	Explore	1
+[A: #3@32] 		Exploring:
+[A: #3@32] 		 ⬆️ 4690
+[A: #3@32] 		 ↗️ 2870
+[A: #3@32] 		 ➡️ 0
+[A: #3@32] 		 ↘️ 0
+[A: #3@32] 		 ⬇️ 7320
+[A: #3@32] 		 ↙️ 12025
+[A: #3@32] 		 ⬅️ 9380
+[A: #3@32] 		 ↖️ 9380
+[A: #3@32] 		 ⏹️ 0
+[A: #3@32] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@32] 	
+[A: #3@33] 	Spawn	1
+[A: #3@33] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@33] 	
+[A: #3@34] 	EndTurn	1
+[A: #3@34] Printing kings
+[A: #3@34] 	Nearest kings :
+[A: #3@34] 	
+[A: #3@34] 		addMessageKing: 671103385
+[A: #3@34] 		writeToArray: Sending message 671103385
+[A: #3@34] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@34] Printing kings
+[A: #3@35] 	<= OK Ending turn gracefully.
+[A: #3@35] 	
+[A: #3@36] 	Init	1
+[A: #3@36] 	Update classic variables
+[A: #3@36] 	Update communications 	64
+[A: #3@36] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@36] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@36] 	Update pathFinding 	1598
+[A: #3@36] 	Update vision score state 	3859
+[A: #3@36] 	Init with sensing 	9128
+[A: #3@36] 		Sensing: ally
+[A: #3@36] 		Sensing: Update enemy position (king, rats)
+[A: #3@36] 		Sensing: Neutral (cat)
+[A: #3@36] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@36] 	Update nearest units 	11454
+[A: #3@36] 		Nearest: king
+[A: #3@36] 		Nearest: enemy king
+[A: #3@36] 		Nearest: cat
+[A: #3@36] 	Done intit! 	11566
+[A: #3@37] 	Explore	1
+[A: #3@37] 		Exploring:
+[A: #3@37] 		 ⬆️ 4970
+[A: #3@37] 		 ↗️ 2800
+[A: #3@37] 		 ➡️ 3460
+[A: #3@37] 		 ↘️ 6905
+[A: #3@37] 		 ⬇️ 9110
+[A: #3@37] 		 ↙️ 13115
+[A: #3@37] 		 ⬅️ 9800
+[A: #3@37] 		 ↖️ 9730
+[A: #3@37] 		 ⏹️ 0
+[A: #3@37] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@37] 	
+[A: #3@38] 	Spawn	1
+[A: #3@38] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@38] 	
+[A: #3@39] 	EndTurn	1
+[A: #3@39] Printing kings
+[A: #3@39] 	Nearest kings :
+[A: #3@39] 	
+[A: #3@39] 		addMessageKing: 671103320
+[A: #3@39] 		writeToArray: Sending message 671103320
+[A: #3@39] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@39] Printing kings
+[A: #3@40] 	<= OK Ending turn gracefully.
+[A: #3@40] 	
+[A: #3@41] 	Init	1
+[A: #3@41] 	Update classic variables
+[A: #3@41] 	Update communications 	64
+[A: #3@41] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@41] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@41] 	Update pathFinding 	1598
+[A: #3@41] 	Update vision score state 	3871
+[A: #3@41] 	Init with sensing 	7360
+[A: #3@41] 		Sensing: ally
+[A: #3@41] 		Sensing: Update enemy position (king, rats)
+[A: #3@41] 		Sensing: Neutral (cat)
+[A: #3@41] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@41] 	Update nearest units 	9612
+[A: #3@41] 		Nearest: king
+[A: #3@41] 		Nearest: enemy king
+[A: #3@41] 		Nearest: cat
+[A: #3@41] 	Done intit! 	9724
+[A: #3@42] 	Explore	1
+[A: #3@42] 		Exploring:
+[A: #3@42] 		 ⬆️ 5901
+[A: #3@42] 		 ↗️ 3665
+[A: #3@42] 		 ➡️ 5161
+[A: #3@42] 		 ↘️ 9140
+[A: #3@42] 		 ⬇️ 10570
+[A: #3@42] 		 ↙️ 13768
+[A: #3@42] 		 ⬅️ 10520
+[A: #3@42] 		 ↖️ 0
+[A: #3@42] 		 ⏹️ 0
+[A: #3@42] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@42] 	
+[A: #3@43] 	Spawn	1
+[A: #3@43] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@43] 	
+[A: #3@44] 	EndTurn	1
+[A: #3@44] Printing kings
+[A: #3@44] 	Nearest kings :
+[A: #3@44] 	
+[A: #3@44] 		addMessageKing: 671103255
+[A: #3@44] 		writeToArray: Sending message 671103255
+[A: #3@44] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@44] Printing kings
+[A: #3@45] 	<= OK Ending turn gracefully.
+[A: #3@45] 	
+[A: #3@46] 	Init	1
+[A: #3@46] 	Update classic variables
+[A: #3@46] 	Update communications 	64
+[A: #3@46] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@46] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@46] 	Update pathFinding 	1598
+[A: #3@46] 	Update vision score state 	3883
+[A: #3@46] 	Init with sensing 	6498
+[A: #3@46] 		Sensing: ally
+[A: #3@46] 		Sensing: Update enemy position (king, rats)
+[A: #3@46] 		Sensing: Neutral (cat)
+[A: #3@46] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@46] 	Update nearest units 	8713
+[A: #3@46] 		Nearest: king
+[A: #3@46] 		Nearest: enemy king
+[A: #3@46] 		Nearest: cat
+[A: #3@46] 	Done intit! 	8825
+[A: #3@47] 	Explore	1
+[A: #3@47] 		Exploring:
+[A: #3@47] 		 ⬆️ 7414
+[A: #3@47] 		 ↗️ 5451
+[A: #3@47] 		 ➡️ 7414
+[A: #3@47] 		 ↘️ 11856
+[A: #3@47] 		 ⬇️ 11949
+[A: #3@47] 		 ↙️ 15079
+[A: #3@47] 		 ⬅️ 11899
+[A: #3@47] 		 ↖️ 0
+[A: #3@47] 		 ⏹️ 0
+[A: #3@47] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@47] 	
+[A: #3@48] 	Spawn	1
+[A: #3@48] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@48] 	
+[A: #3@49] 	EndTurn	1
+[A: #3@49] Printing kings
+[A: #3@49] 	Nearest kings :
+[A: #3@49] 	
+[A: #3@49] 		addMessageKing: 671103190
+[A: #3@49] 		writeToArray: Sending message 671103190
+[A: #3@49] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@49] Printing kings
+[A: #3@50] 	<= OK Ending turn gracefully.
+[A: #3@50] 	
+[A: #3@51] 	Init	1
+[A: #3@51] 	Update classic variables
+[A: #3@51] 	Update communications 	64
+[A: #3@51] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@51] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@51] 	Update pathFinding 	1598
+[A: #3@51] 	Update vision score state 	3886
+[A: #3@51] 	Init with sensing 	6501
+[A: #3@51] 		Sensing: ally
+[A: #3@51] 		Sensing: Update enemy position (king, rats)
+[A: #3@51] 		Sensing: Neutral (cat)
+[A: #3@51] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@51] 	Update nearest units 	8716
+[A: #3@51] 		Nearest: king
+[A: #3@51] 		Nearest: enemy king
+[A: #3@51] 		Nearest: cat
+[A: #3@51] 	Done intit! 	8828
+[A: #3@52] 	Explore	1
+[A: #3@52] 		Exploring:
+[A: #3@52] 		 ⬆️ 7482
+[A: #3@52] 		 ↗️ 5589
+[A: #3@52] 		 ➡️ 7482
+[A: #3@52] 		 ↘️ 11924
+[A: #3@52] 		 ⬇️ 11949
+[A: #3@52] 		 ↙️ 15079
+[A: #3@52] 		 ⬅️ 0
+[A: #3@52] 		 ↖️ 0
+[A: #3@52] 		 ⏹️ 0
+[A: #3@52] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@52] 	
+[A: #3@53] 	Spawn	1
+[A: #3@53] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@53] 	
+[A: #3@54] 	EndTurn	1
+[A: #3@54] Printing kings
+[A: #3@54] 	Nearest kings :
+[A: #3@54] 	
+[A: #3@54] 		addMessageKing: 671103125
+[A: #3@54] 		writeToArray: Sending message 671103125
+[A: #3@54] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@54] Printing kings
+[A: #3@55] 	<= OK Ending turn gracefully.
+[A: #3@55] 	
+[A: #3@56] 	Init	1
+[A: #3@56] 	Update classic variables
+[A: #3@56] 	Update communications 	64
+[A: #3@56] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@56] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@56] 	Update pathFinding 	1598
+[A: #3@56] 	Update vision score state 	3877
+[A: #3@56] 	Init with sensing 	6492
+[A: #3@56] 		Sensing: ally
+[A: #3@56] 		Sensing: Update enemy position (king, rats)
+[A: #3@56] 		Sensing: Neutral (cat)
+[A: #3@56] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@56] 	Update nearest units 	8712
+[A: #3@56] 		Nearest: king
+[A: #3@56] 		Nearest: enemy king
+[A: #3@56] 		Nearest: cat
+[A: #3@56] 	Done intit! 	8824
+[A: #3@57] 	Explore	1
+[A: #3@57] 		Exploring:
+[A: #3@57] 		 ⬆️ 0
+[A: #3@57] 		 ↗️ 5589
+[A: #3@57] 		 ➡️ 7482
+[A: #3@57] 		 ↘️ 11924
+[A: #3@57] 		 ⬇️ 11949
+[A: #3@57] 		 ↙️ 15079
+[A: #3@57] 		 ⬅️ 11899
+[A: #3@57] 		 ↖️ 0
+[A: #3@57] 		 ⏹️ 0
+[A: #3@57] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@57] 	
+[A: #3@58] 	Spawn	1
+[A: #3@58] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@58] 	
+[A: #3@59] 	EndTurn	1
+[A: #3@59] Printing kings
+[A: #3@59] 	Nearest kings :
+[A: #3@59] 	
+[A: #3@59] 		addMessageKing: 671103060
+[A: #3@59] 		writeToArray: Sending message 671103060
+[A: #3@59] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@59] Printing kings
+[A: #3@60] 	<= OK Ending turn gracefully.
+[A: #3@60] 	
+[A: #3@61] 	Init	1
+[A: #3@61] 	Update classic variables
+[A: #3@61] 	Update communications 	64
+[A: #3@61] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@61] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@61] 	Update pathFinding 	1598
+[A: #3@61] 	Update vision score state 	3868
+[A: #3@61] 	Init with sensing 	6483
+[A: #3@61] 		Sensing: ally
+[A: #3@61] 		Sensing: Update enemy position (king, rats)
+[A: #3@61] 		Sensing: Neutral (cat)
+[A: #3@61] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@61] 	Update nearest units 	8722
+[A: #3@61] 		Nearest: king
+[A: #3@61] 		Nearest: enemy king
+[A: #3@61] 		Nearest: cat
+[A: #3@61] 	Done intit! 	8834
+[A: #3@62] 	Explore	1
+[A: #3@62] 		Exploring:
+[A: #3@62] 		 ⬆️ 7482
+[A: #3@62] 		 ↗️ 5589
+[A: #3@62] 		 ➡️ 7482
+[A: #3@62] 		 ↘️ 11924
+[A: #3@62] 		 ⬇️ 11949
+[A: #3@62] 		 ↙️ 15079
+[A: #3@62] 		 ⬅️ 11899
+[A: #3@62] 		 ↖️ 11899
+[A: #3@62] 		 ⏹️ 0
+[A: #3@62] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@62] 	
+[A: #3@63] 	Spawn	1
+[A: #3@63] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@63] 	
+[A: #3@64] 	EndTurn	1
+[A: #3@64] Printing kings
+[A: #3@64] 	Nearest kings :
+[A: #3@64] 	
+[A: #3@64] 		addMessageKing: 671102995
+[A: #3@64] 		writeToArray: Sending message 671102995
+[A: #3@64] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@64] Printing kings
+[A: #3@65] 	<= OK Ending turn gracefully.
+[A: #3@65] 	
+[A: #3@66] 	Init	1
+[A: #3@66] 	Update classic variables
+[A: #3@66] 	Update communications 	64
+[A: #3@66] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@66] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@66] 	Update pathFinding 	1598
+[A: #3@66] 	Update vision score state 	3865
+[A: #3@66] 	Init with sensing 	6480
+[A: #3@66] 		Sensing: ally
+[A: #3@66] 		Sensing: Update enemy position (king, rats)
+[A: #3@66] 		Sensing: Neutral (cat)
+[A: #3@66] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@66] 	Update nearest units 	8731
+[A: #3@66] 		Nearest: king
+[A: #3@66] 		Nearest: enemy king
+[A: #3@66] 		Nearest: cat
+[A: #3@66] 	Done intit! 	8843
+[A: #3@67] 	Explore	1
+[A: #3@67] 		Exploring:
+[A: #3@67] 		 ⬆️ 7482
+[A: #3@67] 		 ↗️ 5589
+[A: #3@67] 		 ➡️ 7482
+[A: #3@67] 		 ↘️ 11924
+[A: #3@67] 		 ⬇️ 11949
+[A: #3@67] 		 ↙️ 15079
+[A: #3@67] 		 ⬅️ 11899
+[A: #3@67] 		 ↖️ 11899
+[A: #3@67] 		 ⏹️ 0
+[A: #3@67] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@67] 	
+[A: #3@68] 	Spawn	1
+[A: #3@68] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@68] 	
+[A: #3@69] 	EndTurn	1
+[A: #3@69] Printing kings
+[A: #3@69] 	Nearest kings :
+[A: #3@69] 	
+[A: #3@69] 		addMessageKing: 671102930
+[A: #3@69] 		writeToArray: Sending message 671102930
+[A: #3@69] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@69] Printing kings
+[A: #3@70] 	<= OK Ending turn gracefully.
+[A: #3@70] 	
+[A: #3@71] 	Init	1
+[A: #3@71] 	Update classic variables
+[A: #3@71] 	Update communications 	64
+[A: #3@71] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@71] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@71] 	Update pathFinding 	1598
+[A: #3@71] 	Update vision score state 	3865
+[A: #3@71] 	Init with sensing 	6480
+[A: #3@71] 		Sensing: ally
+[A: #3@71] 		Sensing: Update enemy position (king, rats)
+[A: #3@71] 		Sensing: Neutral (cat)
+[A: #3@71] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@71] 	Update nearest units 	8731
+[A: #3@71] 		Nearest: king
+[A: #3@71] 		Nearest: enemy king
+[A: #3@71] 		Nearest: cat
+[A: #3@71] 	Done intit! 	8843
+[A: #3@72] 	Explore	1
+[A: #3@72] 		Exploring:
+[A: #3@72] 		 ⬆️ 7412
+[A: #3@72] 		 ↗️ 5523
+[A: #3@72] 		 ➡️ 7437
+[A: #3@72] 		 ↘️ 11883
+[A: #3@72] 		 ⬇️ 11854
+[A: #3@72] 		 ↙️ 14988
+[A: #3@72] 		 ⬅️ 11829
+[A: #3@72] 		 ↖️ 11833
+[A: #3@72] 		 ⏹️ 0
+[A: #3@72] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@72] 	
+[A: #3@73] 	Spawn	1
+[A: #3@73] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@73] 	
+[A: #3@74] 	EndTurn	1
+[A: #3@74] Printing kings
+[A: #3@74] 	Nearest kings :
+[A: #3@74] 	
+[A: #3@74] 		addMessageKing: 671102865
+[A: #3@74] 		writeToArray: Sending message 671102865
+[A: #3@74] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@74] Printing kings
+[A: #3@75] 	<= OK Ending turn gracefully.
+[A: #3@75] 	
+[A: #3@76] 	Init	1
+[A: #3@76] 	Update classic variables
+[A: #3@76] 	Update communications 	64
+[A: #3@76] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@76] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@76] 	Update pathFinding 	1598
+[A: #3@76] 	Update vision score state 	3872
+[A: #3@76] 	Init with sensing 	6487
+[A: #3@76] 		Sensing: ally
+[A: #3@76] 		Sensing: Update enemy position (king, rats)
+[A: #3@76] 		Sensing: Neutral (cat)
+[A: #3@76] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@76] 	Update nearest units 	8731
+[A: #3@76] 		Nearest: king
+[A: #3@76] 		Nearest: enemy king
+[A: #3@76] 		Nearest: cat
+[A: #3@76] 	Done intit! 	8843
+[A: #3@77] 	Explore	1
+[A: #3@77] 		Exploring:
+[A: #3@77] 		 ⬆️ 7405
+[A: #3@77] 		 ↗️ 5508
+[A: #3@77] 		 ➡️ 7430
+[A: #3@77] 		 ↘️ 11879
+[A: #3@77] 		 ⬇️ 11853
+[A: #3@77] 		 ↙️ 14988
+[A: #3@77] 		 ⬅️ 0
+[A: #3@77] 		 ↖️ 0
+[A: #3@77] 		 ⏹️ 0
+[A: #3@77] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@77] 	
+[A: #3@78] 	Spawn	1
+[A: #3@78] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@78] 	
+[A: #3@79] 	EndTurn	1
+[A: #3@79] Printing kings
+[A: #3@79] 	Nearest kings :
+[A: #3@79] 	
+[A: #3@79] 		addMessageKing: 671102800
+[A: #3@79] 		writeToArray: Sending message 671102800
+[A: #3@79] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@79] Printing kings
+[A: #3@80] 	<= OK Ending turn gracefully.
+[A: #3@80] 	
+[A: #3@81] 	Init	1
+[A: #3@81] 	Update classic variables
+[A: #3@81] 	Update communications 	64
+[A: #3@81] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@81] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@81] 	Update pathFinding 	1598
+[A: #3@81] 	Update vision score state 	3886
+[A: #3@81] 	Init with sensing 	6501
+[A: #3@81] 		Sensing: ally
+[A: #3@81] 		Sensing: Update enemy position (king, rats)
+[A: #3@81] 		Sensing: Neutral (cat)
+[A: #3@81] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@81] 	Update nearest units 	8776
+[A: #3@81] 		Nearest: king
+[A: #3@81] 		Nearest: enemy king
+[A: #3@81] 		Nearest: cat
+[A: #3@81] 	Done intit! 	8888
+[A: #3@82] 	Explore	1
+[A: #3@82] 		Exploring:
+[A: #3@82] 		 ⬆️ 0
+[A: #3@82] 		 ↗️ 5508
+[A: #3@82] 		 ➡️ 7429
+[A: #3@82] 		 ↘️ 11878
+[A: #3@82] 		 ⬇️ 11853
+[A: #3@82] 		 ↙️ 14988
+[A: #3@82] 		 ⬅️ 0
+[A: #3@82] 		 ↖️ 0
+[A: #3@82] 		 ⏹️ 0
+[A: #3@82] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@82] 	
+[A: #3@83] 	Spawn	1
+[A: #3@83] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@83] 	
+[A: #3@84] 	EndTurn	1
+[A: #3@84] Printing kings
+[A: #3@84] 	Nearest kings :
+[A: #3@84] 	
+[A: #3@84] 		addMessageKing: 671102735
+[A: #3@84] 		writeToArray: Sending message 671102735
+[A: #3@84] 	Shared Array : 1 messages in 269 bytecode(s)
+[B: #4@84] Printing kings
+[A: #3@85] 	<= OK Ending turn gracefully.
+[A: #3@85] 	
+[A: #3@86] 	Init	1
+[A: #3@86] 	Update classic variables
+[A: #3@86] 	Update communications 	64
+[A: #3@86] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@86] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@86] 	Update pathFinding 	1598
+[A: #3@86] 	Update vision score state 	3897
+[A: #3@86] 	Init with sensing 	6512
+[A: #3@86] 		Sensing: ally
+[A: #3@86] 		Sensing: Update enemy position (king, rats)
+[A: #3@86] 		Sensing: Neutral (cat)
+[A: #3@86] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@86] 	Update nearest units 	8829
+[A: #3@86] 		Nearest: king
+[A: #3@86] 		Nearest: enemy king
+[A: #3@86] 		Nearest: cat
+[A: #3@86] 	Done intit! 	8941
+[A: #3@87] 	Explore	1
+[A: #3@87] 		Exploring:
+[A: #3@87] 		 ⬆️ 0
+[A: #3@87] 		 ↗️ 5508
+[A: #3@87] 		 ➡️ 7429
+[A: #3@87] 		 ↘️ 11878
+[A: #3@87] 		 ⬇️ 11853
+[A: #3@87] 		 ↙️ 14988
+[A: #3@87] 		 ⬅️ 11828
+[A: #3@87] 		 ↖️ 0
+[A: #3@87] 		 ⏹️ 0
+[A: #3@87] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@87] 	
+[A: #3@88] 	Spawn	1
+[A: #3@88] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@88] 	
+[A: #3@89] 	EndTurn	1
+[A: #3@89] Printing kings
+[A: #3@89] 	Nearest kings :
+[A: #3@89] 	
+[A: #3@89] 		addMessageKing: 671102670
+[A: #3@89] 		writeToArray: Sending message 671102670
+[A: #3@89] 	Shared Array : 1 messages in 269 bytecode(s)
+[A: #3@90] 	<= OK Ending turn gracefully.
+[A: #3@90] 	
+[A: #3@91] 	Init	1
+[A: #3@91] 	Update classic variables
+[A: #3@91] 	Update communications 	64
+[A: #3@91] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@91] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@91] 	Update pathFinding 	1598
+[A: #3@91] 	Update vision score state 	3899
+[A: #3@91] 	Init with sensing 	6514
+[A: #3@91] 		Sensing: ally
+[A: #3@91] 		Sensing: Update enemy position (king, rats)
+[A: #3@91] 		Sensing: Neutral (cat)
+[A: #3@91] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@91] 	Update nearest units 	8843
+[A: #3@91] 		Nearest: king
+[A: #3@91] 		Nearest: enemy king
+[A: #3@91] 		Nearest: cat
+[A: #3@91] 	Done intit! 	8955
+[A: #3@92] 	Explore	1
+[A: #3@92] 		Exploring:
+[A: #3@92] 		 ⬆️ 7404
+[A: #3@92] 		 ↗️ 5508
+[A: #3@92] 		 ➡️ 7429
+[A: #3@92] 		 ↘️ 0
+[A: #3@92] 		 ⬇️ 11853
+[A: #3@92] 		 ↙️ 14988
+[A: #3@92] 		 ⬅️ 11828
+[A: #3@92] 		 ↖️ 11828
+[A: #3@92] 		 ⏹️ 0
+[A: #3@92] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@92] 	
+[A: #3@93] 	Spawn	1
+[A: #3@93] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@93] 	
+[A: #3@94] 	EndTurn	1
+[A: #3@94] Printing kings
+[A: #3@94] 	Nearest kings :
+[A: #3@94] 	
+[A: #3@94] 		addMessageKing: 671102605
+[A: #3@94] 		writeToArray: Sending message 671102605
+[A: #3@94] 	Shared Array : 1 messages in 269 bytecode(s)
+[A: #3@95] 	<= OK Ending turn gracefully.
+[A: #3@95] 	
+[A: #3@96] 	Init	1
+[A: #3@96] 	Update classic variables
+[A: #3@96] 	Update communications 	64
+[A: #3@96] 	Shared Array : 0 messages in 26 bytecode(s)
+[A: #3@96] 	Squeaks      : 0 messages in 173 bytecode(s)
+[A: #3@96] 	Update pathFinding 	1598
+[A: #3@96] 	Update vision score state 	3880
+[A: #3@96] 	Init with sensing 	6495
+[A: #3@96] 		Sensing: ally
+[A: #3@96] 		Sensing: Update enemy position (king, rats)
+[A: #3@96] 		Sensing: Neutral (cat)
+[A: #3@96] 		Sensing: mapinfo (mines, cheese, dirt, ...)
+[A: #3@96] 	Update nearest units 	8887
+[A: #3@96] 		Nearest: king
+[A: #3@96] 		Nearest: enemy king
+[A: #3@96] 		Nearest: cat
+[A: #3@96] 	Done intit! 	8999
+[A: #3@97] 	Explore	1
+[A: #3@97] 		Exploring:
+[A: #3@97] 		 ⬆️ 7404
+[A: #3@97] 		 ↗️ 5508
+[A: #3@97] 		 ➡️ 7429
+[A: #3@97] 		 ↘️ 11878
+[A: #3@97] 		 ⬇️ 11853
+[A: #3@97] 		 ↙️ 14988
+[A: #3@97] 		 ⬅️ 11828
+[A: #3@97] 		 ↖️ 11828
+[A: #3@97] 		 ⏹️ 0
+[A: #3@97] 	<= OK Turning and moving to SOUTHWEST
+[A: #3@97] 	
+[A: #3@98] 	Spawn	1
+[A: #3@98] 	<= OK Cost too high: 20 (max: 15)
+[A: #3@98] 	
+[A: #3@99] 	EndTurn	1
+[A: #3@99] Printing kings
+[A: #3@99] 	Nearest kings :
+[A: #3@99] 	
+[A: #3@99] 		addMessageKing: 671102540
+[A: #3@99] 		writeToArray: Sending message 671102540
+[A: #3@99] 	Shared Array : 1 messages in 271 bytecode(s)
+[A: #3@100] 	<= OK Ending turn gracefully.
+[A: #3@100] 	
+[A: #3@101] 	Init	1
+[A: #3@101] 	Update classic variables
+[server]                    current (A) wins (round 260)
+[server] Reason: The winning team destroyed all of the enemy team's rat kings.
+[server] -------------------- Match Finished --------------------
+
+BUILD SUCCESSFUL in 8s
+7 actionable tasks: 5 executed, 2 up-to-date

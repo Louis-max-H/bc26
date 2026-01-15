@@ -147,6 +147,7 @@ public class Robot {
     }
     public static void header(String msg)    {_debug(msg);}      // Important informations (state name, round, energy used)
     public static void print (String msg)    {_debug("\t" + msg);}     // Print inside state (target, action, etc.)
+    public static void printBytecode(String msg)    {_debug("\t" + msg + " \t" + Clock.getBytecodeNum());}     // Print inside state (target, action, etc.)
     public static void debug (String msg)    {_debug("\t\t" + msg);}   // Debug stuff
     public static void ddebug(String msg)    {_debug("\t\t\t" + msg);} // Debug stuff
 

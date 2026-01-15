@@ -34,7 +34,7 @@ public class Init extends State {
         Robot.isKing = rc.getType().isRatKingType();
 
         // Init utils
-        VisionUtils.init(rc.getMapWidth(), rc.getMapHeight());
+        VisionUtils.initScore(rc.getMapWidth(), rc.getMapHeight());
     }
 
     @Override
@@ -54,10 +54,13 @@ public class Init extends State {
         else if (round < 1500) { gamePhase = PHASE_MIDLE;}
         else                   { gamePhase = PHASE_FINAL;}
 
-        print("Update communications");
+        printBytecode("Update communications");
         Communication.readMessages(); // Read messsages
 
-        print("Update vision score state");
+        printBytecode("Update pathFinding");
+        VisionUtils.updatePathfindingCost(rc.getLocation(), rc.getDirection(), rc.getType());
+
+        printBytecode("Update vision score state");
         /**
          * We want to give a score of interest to each cell. Default is 700
          * When the unit can see a cell, we give it a score according to the actual turn : score(t).
@@ -101,7 +104,7 @@ public class Init extends State {
         enemiesRats.clear();
         rats.clear();
 
-        print("Init with sensing");
+        printBytecode("Init with sensing");
         debug("Sensing: ally");
         for(RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam())){
             if(info.type == UnitType.RAT_KING) {
@@ -149,7 +152,7 @@ public class Init extends State {
 
         int i;
         int bestDistance;
-        print("Update nearest kings");
+        printBytecode("Update nearest units");
 
         debug("Nearest: king");
         // Update nearest king if can see it but not here
@@ -227,6 +230,7 @@ public class Init extends State {
             i++;
         }
 
+        printBytecode("Done intit!");
         return new Result(OK, "");
     }
 }

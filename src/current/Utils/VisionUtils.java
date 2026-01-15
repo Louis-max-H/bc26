@@ -7,6 +7,7 @@ package current.Utils;
 
 
 import battlecode.common.*;
+import current.Robots.Robot;
 
 //  Destination: Utils/VisionUtils.java
 
@@ -27,7 +28,7 @@ public class VisionUtils {
         return scores[loc.x + loc.y*68 + 552];
     }
 
-    public static void init(int width, int height){
+    public static void initScore(int width, int height){
         // Width
         switch(width){
                         case 30:
@@ -369,5 +370,21 @@ public class VisionUtils {
         };
     }
 
+    public static void updatePathfindingCost(MapLocation from, Direction direction, UnitType unit){
+        char[] scores = BugNav.mapCosts;
+        char dirt = (char)BugNav.SCORE_CELL_IF_DIG;
+        char passable = (char)BugNav.SCORE_CELL_PASSABLE;
+        char wall = (char)BugNav.SCORE_CELL_WALL;
+        RobotController rc = Robot.rc;
 
+        for(MapInfo infos: rc.senseNearbyMapInfos()){
+            if (infos.isPassable()) {
+                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = passable;
+            } else if (infos.isDirt()) {
+                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = dirt;
+            } else {
+                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = wall;
+            }
+        }
+    }
 }

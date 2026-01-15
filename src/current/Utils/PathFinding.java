@@ -7,8 +7,7 @@ import battlecode.common.RobotController;
 import current.Robots.Robot;
 import current.States.Result;
 
-import static current.States.Code.CANT;
-import static current.States.Code.OK;
+import static current.States.Code.*;
 
 public class PathFinding {
     static int scores[]; // Contain score for each direction
@@ -232,16 +231,21 @@ public class PathFinding {
     }
 
     public static Result moveDir(Direction dir) throws GameActionException {
+        RobotController rc = Robot.rc;
         if(dir == Direction.CENTER){
-            Robot.err("Pathfinding impossible to move to center.");
+            return new Result(ERR, "Can't move to center");
         }
 
-        RobotController rc = Robot.rc;
+        if(rc.canRemoveDirt(rc.getLocation().add(dir))){
+            rc.removeDirt(rc.getLocation().add(dir));
+        }
+
         if(rc.canMove(dir)){
             Robot.lastLocation = Robot.myLoc;
             Robot.lastDirection = dir;
 
             rc.move(dir);
+            Robot.myLoc = Robot.myLoc.add(dir);
             return new Result(OK, "Moved to " + dir.toString());
         } else {
             return new Result(CANT, "Can't move to " + dir.toString());
