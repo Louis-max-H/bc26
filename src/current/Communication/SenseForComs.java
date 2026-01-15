@@ -13,7 +13,7 @@ public class SenseForComs extends Robot {
 
         // Give position of our king
         if(isKing){
-            Communication.addMessageKing(rc.getLocation(), rc.getID());
+            Communication.addMessageKing(myLoc, rc.getID());
         }
 
         // Give position of cats

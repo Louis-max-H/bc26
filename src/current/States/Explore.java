@@ -29,12 +29,20 @@ public class Explore extends State {
 
         // For each nearby cells, add their heuristic to the direction that lead to this cell
         int[] scores = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-        MapLocation myLoc = rc.getLocation();
         for(Direction dir : Direction.values()){
             if(dir != Direction.CENTER){
                 scores[dir.ordinal()] = VisionUtils.getScoreInView(myLoc.add(dir), dir, rc.getType());
             }
         }
+
+        // Add bias toward map center for exploration
+        MapLocation mapCenter = new MapLocation(rc.getMapWidth() / 2, rc.getMapHeight() / 2);
+        Direction dirToCenter = myLoc.directionTo(mapCenter);
+        int centerBias = 50; // Small bias to encourage exploration toward center
+        scores[dirToCenter.ordinal()] += centerBias;
+        // Also bias adjacent directions to center
+        scores[dirToCenter.rotateLeft().ordinal()] += centerBias / 2;
+        scores[dirToCenter.rotateRight().ordinal()] += centerBias / 2;
 
         PathFinding.addScoresWithoutNormalization(scores, 1);
         Direction bestDir = PathFinding.bestDir();

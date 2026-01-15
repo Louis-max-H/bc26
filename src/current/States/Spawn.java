@@ -16,57 +16,86 @@ public class Spawn extends State {
     @Override
     public Result run() throws GameActionException {
         // Spawn rats if it can and with basics conditions
-        // TODOS: We can use the vector King -> Spawn location to indicate a direction for exploration of the spawned rat
-        // TODOS: We may spawn rats the further we can to help them explore ?
+        // Conservative approach: always keep cheese buffer for 200 rounds
+        // Rat kings consume 2 cheese per round, so minimum buffer = 200 * 2 = 400 cheese
+        // Plus some extra for safety and potential spawn costs
 
         int cheeseStock = rc.getAllCheese();
 
-        if(!rc.getType().isRatKingType()){
+        if(!isKing){
             return new Result(ERR, "Unit should be king to spawn rats.");
         }
 
-        // Loading parameters
-        if (gamePhase <= PHASE_START) {
-            // HYPER-AGGRESSIVE: spawn as fast as possible in first 100 rounds
-            reserveNeeded = 100;  // minimal reserve
-            costCap = 50;         // allow many rats
-        } else if (gamePhase <= PHASE_MIDLE) {
-            // Still aggressive but slightly more careful
-            reserveNeeded = 400;
-            costCap = 40;
-        } else {
-            // Late game: conservative
-            reserveNeeded = 1400;
-            costCap = 40;
+        // Calculate minimum cheese needed for 200 rounds
+        // Rat king consumes 2 cheese per round, so 200 rounds = 400 cheese minimum
+        // Add buffer for potential spawn costs (current cost can be up to ~50+)
+        int minCheeseFor200Rounds = 400 + 100; // 400 for consumption + 100 buffer = 500 minimum
+        
+        // More conservative: calculate based on current spawn cost too
+        int currentSpawnCost = rc.getCurrentRatCost();
+        int conservativeBuffer = minCheeseFor200Rounds + currentSpawnCost; // Always have enough for one spawn + 200 rounds
+
+        // Check if we have enough cheese for 200 rounds
+        if(cheeseStock < conservativeBuffer){
+            return new Result(OK, "Conserving cheese for 200 rounds. Have: " + cheeseStock + ", Need: " + conservativeBuffer);
         }
 
-        if(cheeseStock < 100){
-            return new Result(OK, "Low on cheese, going to eco " + rc.getRawCheese());
+        // Only spawn if we can afford it AND still have buffer
+        int cheeseAfterSpawn = cheeseStock - currentSpawnCost;
+        if(cheeseAfterSpawn < minCheeseFor200Rounds){
+            return new Result(OK, "Can't spawn - would drop below 200-round buffer. After spawn: " + cheeseAfterSpawn + ", Need: " + minCheeseFor200Rounds);
         }
 
-        if(rc.getCurrentRatCost() > cheeseStock){
-            return new Result(OK, "Not enough cheese " + rc.getRawCheese() + ", " + rc.getCurrentRatCost() + "needed");
+        // Additional cost cap check - don't spawn if cost is too high
+        // 10 base cost of rat, but costs increase with more rats
+        // Be more conservative with cost cap
+        int maxAcceptableCost = 15; // Lower cap to be more conservative
+        if(currentSpawnCost > maxAcceptableCost){
+            return new Result(OK, "Cost too high: " + currentSpawnCost + " (max: " + maxAcceptableCost + ")");
         }
 
-        // !!!!!!!!!!!!! Only for debug purpose
-        if(false && summonCount > 4 && !competitiveMode){
-            return new Result(WARN, "Debug only!!, summon limited to 1");
-        }
-
-        // 10 base cost of rat
-        // 10 cheese by 4 rats leaving => 2.5
-        if(rc.getCurrentRatCost() > 10 + (2.5 * 2)){
-            return new Result(OK, "Cost too hight " + rc.getCurrentRatCost());
-        }
-
-        for(MapLocation loc: rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), 9)){
+        // Try to spawn further away first (save one move), prefer toward center
+        MapLocation mapCenter = new MapLocation(rc.getMapWidth() / 2, rc.getMapHeight() / 2);
+        MapLocation bestSpawnLoc = null;
+        int bestDist = -1;
+        int bestDistToCenter = Integer.MAX_VALUE;
+        
+        // First pass: find furthest spawn locations
+        for(MapLocation loc: rc.getAllLocationsWithinRadiusSquared(myLoc, 4)){
             if(rc.canBuildRat(loc)){
-                rc.buildRat(loc);
-                summonCount++;
-                return new Result(OK, "Builind rat to " + loc);
+                int distFromKing = myLoc.distanceSquaredTo(loc);
+                int distToCenter = loc.distanceSquaredTo(mapCenter);
+                if(distFromKing > bestDist || (distFromKing == bestDist && distToCenter < bestDistToCenter)){
+                    bestDist = distFromKing;
+                    bestDistToCenter = distToCenter;
+                    bestSpawnLoc = loc;
+                }
             }
         }
+        
+        if(bestSpawnLoc != null){
+            rc.buildRat(bestSpawnLoc);
+            summonCount++;
+            return new Result(OK, "Building rat to " + bestSpawnLoc + " (furthest, toward center)");
+        }
+        
+        // If no location at distance 2, try distance 1, still prefer toward center
+        for(MapLocation loc: rc.getAllLocationsWithinRadiusSquared(myLoc, 1)){
+            if(rc.canBuildRat(loc)){
+                int distToCenter = loc.distanceSquaredTo(mapCenter);
+                if(distToCenter < bestDistToCenter){
+                    bestDistToCenter = distToCenter;
+                    bestSpawnLoc = loc;
+                }
+            }
+        }
+        
+        if(bestSpawnLoc != null){
+            rc.buildRat(bestSpawnLoc);
+            summonCount++;
+            return new Result(OK, "Building rat to " + bestSpawnLoc);
+        }
 
-        return new Result(WARN, "No location to spawn rats in radius 9");
+        return new Result(WARN, "No location to spawn rats in radius 4 or 1");
     };
 }

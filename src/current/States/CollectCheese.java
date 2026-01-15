@@ -1,8 +1,7 @@
 package current.States;
 
-import battlecode.common.GameActionException;
-import battlecode.common.MapInfo;
-import battlecode.common.MapLocation;
+import battlecode.common.*;
+import current.Robots.Robot;
 import current.Utils.PathFinding;
 
 import static current.States.Code.*;
@@ -11,55 +10,86 @@ public class CollectCheese extends State {
     public CollectCheese(){this.name = "CollectCheese";}
 
     public MapLocation cheeseLoc;
+    public MapLocation targetMine; // Target cheese mine to stay near
+    private static final int MINE_STAY_RADIUS_SQUARED = 9; // Stay within 3 tiles of mine
 
     @Override
     public Result run() throws GameActionException {
-        // Check existing cheeseLoc
-        if(cheeseLoc != null && rc.canSenseLocation(cheeseLoc) && rc.senseMapInfo(cheeseLoc).getCheeseAmount() > 0){
-            print("Cheese at " + cheeseLoc + " have disappear :'(");
-            cheeseLoc = null;
+        // Priority 1: If we have cheese, transfer to king
+        if(rc.getRawCheese() > 0){
+            return new Result(OK, "Have cheese, should transfer");
         }
 
-        // Check for new cheese
-        if(cheeseLoc == null){
-            for(MapInfo infos: rc.senseNearbyMapInfos()){
-
-                // We can access cheese
-                if(infos.isWall() || infos.getCheeseAmount() == 0){
-                    continue;
+        // Priority 2: Find nearest cheese mine if we don't have a target
+        if(targetMine == null && Robot.cheeseMines.size > 0){
+            int minDist = Integer.MAX_VALUE;
+            for(char i = 0; i < Robot.cheeseMines.size; i++){
+                MapLocation mine = Robot.cheeseMines.locs[i];
+                int dist = myLoc.distanceSquaredTo(mine);
+                if(dist < minDist){
+                    minDist = dist;
+                    targetMine = mine;
                 }
-
-                // Check if it's the nearest cheese
-                if(cheeseLoc != null && rc.getLocation().distanceSquaredTo(cheeseLoc) < rc.getLocation().distanceSquaredTo(infos.getMapLocation())){
-                    continue;
-                }
-
-                cheeseLoc = infos.getMapLocation();
             }
         }
 
-        // Did we have a target ?
+        // If we have a target mine, stay nearby
+        if(targetMine != null){
+            int distToMine = myLoc.distanceSquaredTo(targetMine);
+            
+            // If too far from mine, move closer
+            if(distToMine > MINE_STAY_RADIUS_SQUARED){
+                PathFinding.resetScores();
+                Direction dirToMine = myLoc.directionTo(targetMine);
+                PathFinding.modificatorOrientation(dirToMine);
+                // Penalize directions that move away from mine using negative scores
+                int[] penaltyScores = new int[9];
+                for(Direction dir : Direction.values()){
+                    if(dir != Direction.CENTER){
+                        MapLocation nextLoc = myLoc.add(dir);
+                        int nextDist = nextLoc.distanceSquaredTo(targetMine);
+                        if(nextDist > distToMine + 2){ // Moving away
+                            penaltyScores[dir.ordinal()] = -9999;
+                        }
+                    }
+                }
+                PathFinding.addScoresWithoutNormalization(penaltyScores, 1);
+                return PathFinding.moveBest();
+            }
+        }
+
+        // Check for nearby cheese to collect
         if(cheeseLoc == null){
-            return new Result(OK, "");
+            for(MapInfo infos: rc.senseNearbyMapInfos()){
+                if(infos.isWall() || infos.getCheeseAmount() == 0){
+                    continue;
+                }
+                if(cheeseLoc == null || myLoc.distanceSquaredTo(cheeseLoc) > myLoc.distanceSquaredTo(infos.getMapLocation())){
+                    cheeseLoc = infos.getMapLocation();
+                }
+            }
         }
 
-        // Can I collect ?
-        if(rc.canPickUpCheese(cheeseLoc)){
-            rc.pickUpCheese(cheeseLoc);
-            cheeseLoc = null;
-            return new Result(OK, "Cheese picked up, miam");
+        // Collect cheese if available
+        if(cheeseLoc != null){
+            if(rc.canPickUpCheese(cheeseLoc)){
+                rc.pickUpCheese(cheeseLoc);
+                cheeseLoc = null;
+                return new Result(OK, "Cheese picked up");
+            }
+            PathFinding.smartMoveTo(cheeseLoc);
+            if(rc.canPickUpCheese(cheeseLoc)){
+                rc.pickUpCheese(cheeseLoc);
+                cheeseLoc = null;
+                return new Result(OK, "Cheese picked up after moving");
+            }
         }
 
-        print("Moving to cheese " +  cheeseLoc);
-        PathFinding.smartMoveTo(cheeseLoc);
-
-        // Can I collect?
-        if(rc.canPickUpCheese(cheeseLoc)){
-            rc.pickUpCheese(cheeseLoc);
-            cheeseLoc = null;
-            return new Result(OK, "Cheese picked up, miam");
+        // If no cheese nearby and we're at mine, explore around mine
+        if(targetMine != null && myLoc.distanceSquaredTo(targetMine) <= MINE_STAY_RADIUS_SQUARED){
+            return new Result(OK, "Staying near mine, waiting for cheese");
         }
 
-        return new Result(OK, "Can't pickup");
+        return new Result(OK, "No cheese to collect");
     };
 }

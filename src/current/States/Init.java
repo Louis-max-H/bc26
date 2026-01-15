@@ -7,10 +7,26 @@ import current.Utils.PathFinding;
 import current.Utils.VisionUtils;
 import current.Communication.Communication;
 
+import static current.Communication.Communication.TYPE_KING;
+import static current.Robots.Robot.rats;
 import static current.States.Code.*;
 import static current.Communication.Communication.TYPE_CAT;
 
 public class Init extends State {
+    public boolean isInformationCorrect(MapLocation loc, int shortId) throws GameActionException {
+        // If null loc
+        if (loc == null){
+            return false;
+        }
+
+        // If we can sense, trust the information
+        if (!rc.canSenseRobotAtLocation(loc)){
+            return true;
+        }
+
+        return rc.senseRobotAtLocation(loc).getID() % 4096 == shortId;
+    }
+
     public Init() throws GameActionException {
         this.name = "Init";
         Robot.spawnLoc = rc.getLocation();
@@ -27,7 +43,7 @@ public class Init extends State {
 
         print("Update classic variables");
         round = rc.getRoundNum();
-        lastInitRound = rc.getRoundNum();
+        lastInitRound = round;
         isKing = rc.getType().isRatKingType();
         PathFinding.resetScores();
         myLoc = rc.getLocation();
@@ -52,10 +68,10 @@ public class Init extends State {
          * We use score(t) = (2000 - t) / 7
          * score(0) ~ 285 << 700 and score(2000) = 0
          * */
-        char scoreTurn = (char)((2000 - rc.getRoundNum()) / 28);
+        char scoreTurn = (char)((2000 - round) / 28);
 
         // Reset score if we can view the cell
-        for(MapLocation loc  : rc.getAllLocationsWithinRadiusSquared(rc.getLocation(), 99)){
+        for(MapLocation loc  : rc.getAllLocationsWithinRadiusSquared(myLoc, 99)){
             if(rc.canSenseLocation(loc)) {
                 // x + y*(60+gap) + gap + gap*(60+gap)
                 VisionUtils.scores[loc.x + 68 * loc.y + 552] = scoreTurn;
@@ -80,50 +96,38 @@ public class Init extends State {
             }
         }
 
-        debug("Update ally position (nearest king)");
-        int minDist = Integer.MAX_VALUE;
-        if(isKing){
-            Robot.nearestKing = rc.getLocation();
-        }else{
-            for(RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam())){
-                if(
-                    rc.getType().isRatKingType()
-                &&  myLoc.distanceSquaredTo(info.location) < minDist){
-                    nearestKing = info.location;
-                    minDist = rc.getLocation().distanceSquaredTo(info.location);
-                }
-            }
-        }
 
+        // Clear data
         enemiesRats.clear();
-        debug("Update enemy position (cat, king, rats)");
-        for (RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam().opponent())) {
-            switch (info.type){
-                case CAT:
-                    cats.add(info.location, info.getID());
-                    if(nearestCat == null || nearestCat.distanceSquaredTo(info.location) > nearestCat.distanceSquaredTo(myLoc)){
-                        nearestCat = info.location;
-                    }
-                    break;
+        rats.clear();
 
-                case RAT_KING:
-                    enemiesKings.add(info.location, info.getID());
-                    if(nearestKing == null || nearestKing.distanceSquaredTo(info.location) > nearestKing.distanceSquaredTo(myLoc)){
-                        nearestKing = info.location;
-                    }
-                    break;
-
-                case BABY_RAT:
-                    // TODO; Maybe use id for enemy rats rather than deleting the whole array each time ?
-                    enemiesRats.add(info.location);
-                    break;
-
-                default:
-                    err("Updating unit type " + info.type + " is not supported (?!)");
+        print("Init with sensing");
+        debug("Sensing: ally");
+        for(RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam())){
+            if(info.type == UnitType.RAT_KING) {
+                kings.add(info.location, info.getID());
+            } else {
+                rats.add(info.location);
             }
         }
 
-        debug("Update mapinfo (mines, cheese, dirt, ...)");
+        // Sensing enemy
+        debug("Sensing: Update enemy position (king, rats)");
+        for (RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam().opponent())) {
+            if(info.type == UnitType.RAT_KING) {
+                enemiesKings.add(info.location, info.getID());
+            }else {
+                enemiesRats.add(info.location);
+            }
+        }
+
+        // Sensing Neutral (cat
+        debug("Sensing: Neutral (cat)");
+        for (RobotInfo info : rc.senseNearbyRobots(-1, Team.NEUTRAL)) {
+            cats.add(info.location, info.getID());
+        }
+
+        debug("Sensing: mapinfo (mines, cheese, dirt, ...)");
         for(MapInfo info : rc.senseNearbyMapInfos()){
             // Dirt
             if(info.isDirt() && (nearestDirt == null || nearestDirt.distanceSquaredTo(info.getMapLocation()) > nearestDirt.distanceSquaredTo(myLoc))){
@@ -138,15 +142,96 @@ public class Init extends State {
             // Cheese mine
             if(info.hasCheeseMine()){
                 cheeseMines.add(info.getMapLocation());
-
-                if(nearestMine == null || nearestMine.distanceSquaredTo(info.getMapLocation()) > nearestMine.distanceSquaredTo(myLoc)){
-                    nearestMine = info.getMapLocation();
-                }
             }
 
             // TODO: Water ??
         }
 
+        int i;
+        int bestDistance;
+        print("Update nearest kings");
+
+        debug("Nearest: king");
+        // Update nearest king if can see it but not here
+        if(!isInformationCorrect(nearestKing, nearestKingID)){
+            nearestKing = null;
+            nearestKingID = -1;
+        }
+
+        // Update nearest only if not already one
+        if(nearestKing == null){
+            i = 0;
+            bestDistance = 99999;
+            while (i < kings.size) {
+                if(!isInformationCorrect(kings.locs[i], kings.ids[i])){
+                    kings.remove(kings.ids[i]);
+                    continue;
+                }
+
+                if(myLoc.distanceSquaredTo(kings.locs[i]) < bestDistance){
+                    nearestKing = kings.locs[i];
+                    nearestKingID = kings.ids[i];
+                    bestDistance = myLoc.distanceSquaredTo(kings.locs[i]);
+                }
+
+                i++;
+            }
+        }
+
+
+        debug("Nearest: enemy king");
+        // Update nearest enemy king if can see it but not here
+        if(!isInformationCorrect(nearestEnemyKing, nearestEnemyKingID)){
+            nearestEnemyKing = null;
+            nearestEnemyKingID = -1;
+        }
+
+        // Update nearest only if not already one
+        if(nearestEnemyKing == null){
+            i = 0;
+            bestDistance = 99999;
+            while (i < enemiesKings.size) {
+                if(!isInformationCorrect(enemiesKings.locs[i], enemiesKings.ids[i])){
+                    enemiesKings.remove(enemiesKings.ids[i]);
+                    continue;
+                }
+
+                if(myLoc.distanceSquaredTo(enemiesKings.locs[i]) < bestDistance){
+                    nearestEnemyKing = enemiesKings.locs[i];
+                    nearestEnemyKingID = enemiesKings.ids[i];
+                    bestDistance = myLoc.distanceSquaredTo(enemiesKings.locs[i]);
+                }
+
+                i++;
+            }
+        }
+
+        debug("Nearest: cat");
+        // Update nearest enemy king if can see it but not here
+        if(!isInformationCorrect(nearestCat, nearestCatID)){
+            nearestCat = null;
+            nearestCatID = -1;
+        }
+
+        // Update nearest only if not already one
+        if(nearestCat == null){
+            i = 0;
+            bestDistance = 99999;
+            while (i < cats.size) {
+                if(!isInformationCorrect(cats.locs[i], cats.ids[i])){
+                    cats.remove(cats.ids[i]);
+                    continue;
+                }
+
+                if(myLoc.distanceSquaredTo(cats.locs[i]) < bestDistance){
+                    nearestCat = cats.locs[i];
+                    nearestCatID = cats.ids[i];
+                    bestDistance = myLoc.distanceSquaredTo(cats.locs[i]);
+                }
+
+                i++;
+            }
+        }
 
         return new Result(OK, "");
     }

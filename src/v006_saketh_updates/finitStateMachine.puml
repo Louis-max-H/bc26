@@ -1,0 +1,32 @@
+@startuml
+title Finite State Machine - updateState()
+
+[*] --> Init
+
+Init --> Explore
+
+Explore --> AvoidCat : cat nearby (< 25)
+Explore --> AttackEnemy : enemy nearby (<= 2)
+Explore --> PlaceTrap : actionReady\n& trap conditions met
+Explore --> CheeseToKing : rawCheese > 0
+Explore --> Explore : otherwise
+
+AvoidCat --> AttackCat : cat very close (<= 2)
+AvoidCat --> Explore : otherwise
+
+AttackCat --> Explore
+AttackEnemy --> Explore
+PlaceTrap --> Explore
+
+CheeseToKing --> CollectCheese
+
+CollectCheese --> MineDirt : phase > START\n& dirt nearby\n& actionReady\n& cheese >= 10
+CollectCheese --> PlaceDirt : phase > START\n& water nearby\n& actionReady\n& cheese >= 10\n& dirt > 0
+CollectCheese --> EndTurn : otherwise
+
+MineDirt --> Explore
+PlaceDirt --> Explore
+
+EndTurn --> Init
+
+@enduml

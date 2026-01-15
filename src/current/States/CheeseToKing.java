@@ -28,7 +28,7 @@ public class CheeseToKing extends State {
 
         // Check if we can sense king
         if(rc.canSenseLocation(nearestKing)){
-            if(rc.canSenseRobotAtLocation(nearestKing)){
+            if(!rc.canSenseRobotAtLocation(nearestKing)){
                 nearestKing = null;
                 return new Result(OK, "No unit at nearestKing");
             }
