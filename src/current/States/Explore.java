@@ -48,7 +48,9 @@ public class Explore extends State {
         Direction bestDir = PathFinding.bestDir();
 
         // Turn and move to this direction
-        rc.turn(bestDir);
+        if(bestDir != Direction.CENTER){
+            rc.turn(bestDir);
+        }
         if(PathFinding.moveDir(bestDir).notOk()){
             print("Can't move to best direction.");
         }

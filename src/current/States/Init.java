@@ -158,24 +158,22 @@ public class Init extends State {
             nearestKingID = -1;
         }
 
-        // Update nearest only if not already one
-        if(nearestKing == null){
-            i = 0;
-            bestDistance = 99999;
-            while (i < kings.size) {
-                if(!isInformationCorrect(kings.locs[i], kings.ids[i])){
-                    kings.remove(kings.ids[i]);
-                    continue;
-                }
-
-                if(myLoc.distanceSquaredTo(kings.locs[i]) < bestDistance){
-                    nearestKing = kings.locs[i];
-                    nearestKingID = kings.ids[i];
-                    bestDistance = myLoc.distanceSquaredTo(kings.locs[i]);
-                }
-
-                i++;
+        // Update nearest
+        i = 0;
+        bestDistance = 99999;
+        while (i < kings.size) {
+            if(!isInformationCorrect(kings.locs[i], kings.ids[i])){
+                kings.remove(kings.ids[i]);
+                continue;
             }
+
+            if(myLoc.distanceSquaredTo(kings.locs[i]) < bestDistance){
+                nearestKing = kings.locs[i];
+                nearestKingID = kings.ids[i];
+                bestDistance = myLoc.distanceSquaredTo(kings.locs[i]);
+            }
+
+            i++;
         }
 
 
@@ -186,24 +184,22 @@ public class Init extends State {
             nearestEnemyKingID = -1;
         }
 
-        // Update nearest only if not already one
-        if(nearestEnemyKing == null){
-            i = 0;
-            bestDistance = 99999;
-            while (i < enemiesKings.size) {
-                if(!isInformationCorrect(enemiesKings.locs[i], enemiesKings.ids[i])){
-                    enemiesKings.remove(enemiesKings.ids[i]);
-                    continue;
-                }
-
-                if(myLoc.distanceSquaredTo(enemiesKings.locs[i]) < bestDistance){
-                    nearestEnemyKing = enemiesKings.locs[i];
-                    nearestEnemyKingID = enemiesKings.ids[i];
-                    bestDistance = myLoc.distanceSquaredTo(enemiesKings.locs[i]);
-                }
-
-                i++;
+        // Update nearest
+        i = 0;
+        bestDistance = 99999;   
+        while (i < enemiesKings.size) {
+            if(!isInformationCorrect(enemiesKings.locs[i], enemiesKings.ids[i])){
+                enemiesKings.remove(enemiesKings.ids[i]);
+                continue;
             }
+
+            if(myLoc.distanceSquaredTo(enemiesKings.locs[i]) < bestDistance){
+                nearestEnemyKing = enemiesKings.locs[i];
+                nearestEnemyKingID = enemiesKings.ids[i];
+                bestDistance = myLoc.distanceSquaredTo(enemiesKings.locs[i]);
+            }
+
+            i++;
         }
 
         debug("Nearest: cat");
@@ -213,24 +209,22 @@ public class Init extends State {
             nearestCatID = -1;
         }
 
-        // Update nearest only if not already one
-        if(nearestCat == null){
-            i = 0;
-            bestDistance = 99999;
-            while (i < cats.size) {
-                if(!isInformationCorrect(cats.locs[i], cats.ids[i])){
-                    cats.remove(cats.ids[i]);
-                    continue;
-                }
-
-                if(myLoc.distanceSquaredTo(cats.locs[i]) < bestDistance){
-                    nearestCat = cats.locs[i];
-                    nearestCatID = cats.ids[i];
-                    bestDistance = myLoc.distanceSquaredTo(cats.locs[i]);
-                }
-
-                i++;
+        // Update nearest
+        i = 0;
+        bestDistance = 99999;
+        while (i < cats.size) {
+            if(!isInformationCorrect(cats.locs[i], cats.ids[i])){
+                cats.remove(cats.ids[i]);
+                continue;
             }
+
+            if(myLoc.distanceSquaredTo(cats.locs[i]) < bestDistance){
+                nearestCat = cats.locs[i];
+                nearestCatID = cats.ids[i];
+                bestDistance = myLoc.distanceSquaredTo(cats.locs[i]);
+            }
+
+            i++;
         }
 
         return new Result(OK, "");

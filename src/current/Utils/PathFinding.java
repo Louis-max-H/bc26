@@ -232,6 +232,10 @@ public class PathFinding {
     }
 
     public static Result moveDir(Direction dir) throws GameActionException {
+        if(dir == Direction.CENTER){
+            Robot.err("Pathfinding impossible to move to center.");
+        }
+
         RobotController rc = Robot.rc;
         if(rc.canMove(dir)){
             Robot.lastLocation = Robot.myLoc;
