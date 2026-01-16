@@ -3,7 +3,7 @@
 // !!!! Dont edit it manually, check in template folder !!!!
 // #########################################################
 
-//  Destination: Utils/BugNav.java
+//  Destination: Utils/BugNavLmx.java
 
 
 package current.Utils;
@@ -17,7 +17,7 @@ import current.Robots.Robot;
 
 
 // encode(x, y) = (x+1) + (y + 1)(1 + 60 + 1) = x + 60*y
-public class BugNav {
+public class BugNavLmx {
     public static int width = 60;
     public static int height = 60;
 
@@ -26,8 +26,8 @@ public class BugNav {
     public static int SCORE_CELL_WALL = 32000; // Should not exceed 8 bits int (If added to anything else, to not overflow)
 
     public static void init(int width, int height){
-        BugNav.width = width;
-        BugNav.height = height;
+        BugNavLmx.width = width;
+        BugNavLmx.height = height;
     }
 
     public static boolean onTheMap(MapLocation loc){
@@ -40,29 +40,52 @@ public class BugNav {
     public static String mode = "DEFAULT";
     public static char[] mapCosts = generateEmptyMapCosts();
 
-    public static void pathTo(
+    public static Direction pathTo(
         MapLocation startLoc, MapLocation endLoc,
         char[] mapCosts, int MAX_SCORE, int cost_max_per_cell, int maxBytecodeUsed
-    ){
+    ) throws GameActionException {
         if(cost_max_per_cell > 32000){
             throw new java.lang.Error("ERR Pathfinding: cost_max_per_cell is greater than SCORE_CELL_WALL {{SCORE_CELL_WALL}}");
         }
         mode = "DEFAULT";
-        generatePathTo(startLoc, endLoc, mapCosts, getMap3600(), MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
+        int resultCode = generatePathTo(startLoc, endLoc, mapCosts, getMap3600(), MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
+
+        if(resultCode < 0){
+            System.out.println("Pathfinding: Warning return code : " + resultCode);
+        }
+
+        return switch(mapResult[startLoc.x + startLoc.y*60]){
+                        case 0 -> Direction.NORTH;
+                        case 1 -> Direction.NORTHEAST;
+                        case 2 -> Direction.EAST;
+                        case 3 -> Direction.SOUTHEAST;
+                        case 4 -> Direction.SOUTH;
+                        case 5 -> Direction.SOUTHWEST;
+                        case 6 -> Direction.WEST;
+                        case 7 -> Direction.NORTHWEST;
+                        default -> {
+                System.out.println("Unknow direction return from Pathfinding : " + (int)mapResult[startLoc.x + startLoc.y*60]);
+                yield Direction.CENTER;
+            }
+        };
     }
 
-    public static void generatePathTo(
+    // Int code (To continue): 
+    // 1 : OK
+    // -1: Not enought bytecode
+    // -2: 
+    public static int generatePathTo(
         MapLocation startLoc, MapLocation endLoc, 
         char[] mapCosts, char[] mapResult,
         int MAX_SCORE, boolean withReturn, 
-        int cost_max_per_cell, int maxBytecodeUsed){
+        int cost_max_per_cell, int maxBytecodeUsed) throws GameActionException {
 
         RobotController rc = Robot.rc;
-        
         if(mapCosts == null){
-            mapCosts = BugNav.mapCosts;
+            mapCosts = BugNavLmx.mapCosts;
         }
         int xy = startLoc.x + 60*startLoc.y;
+        int xyEnd = endLoc.x + 60*endLoc.y;
         int xyTmp;
         int xyLeft = -1;
         int xyRight = -1;
@@ -91,7 +114,7 @@ public class BugNav {
         
         MapLocation loc = new MapLocation(startLoc.x, startLoc.y);
         MapLocation locEnd = new MapLocation(endLoc.x, endLoc.y);
-                mapResult[xy] = 8;
+        mapResult[xy] = 8;
 
 
         mainLoop: // We exit the loop when direction to target is Direction.CENTER
@@ -102,179 +125,165 @@ public class BugNav {
             modeDefault:
             for (;;) {
                 iterationsNormal++;
-                
+                if(withReturn){
+                    rc.setIndicatorDot(loc, 0, 10, 10); // Blue
+                }else{
+                    rc.setIndicatorDot(loc, 206, 174, 243); // Violet
+                }
                 if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
-                                        break mainLoop;
+                    break mainLoop;
                 }
 
                 switch (loc.directionTo(locEnd)) {
                     case NORTH:
                         // Todos: Update mapCosts with sensing
                         if(!onTheMap(loc.add(Direction.NORTH))){
-                            
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
                         xyTmp = xy + 60;
                         if(mapCosts[xyTmp] >= cost_max_per_cell){
-                            
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
 
-                                                xy = xyTmp;
+                        xy = xyTmp;
                         mapResult[xyTmp] = 4;
                         loc = loc.add(Direction.NORTH);
                         break;
                     case NORTHEAST:
                         // Todos: Update mapCosts with sensing
                         if(!onTheMap(loc.add(Direction.NORTHEAST))){
-                            
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
                         xyTmp = xy + 61;
                         if(mapCosts[xyTmp] >= cost_max_per_cell){
-                            
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
 
-                                                xy = xyTmp;
+                        xy = xyTmp;
                         mapResult[xyTmp] = 5;
                         loc = loc.add(Direction.NORTHEAST);
                         break;
                     case EAST:
                         // Todos: Update mapCosts with sensing
                         if(!onTheMap(loc.add(Direction.EAST))){
-                            
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
                         xyTmp = xy + 1;
                         if(mapCosts[xyTmp] >= cost_max_per_cell){
-                            
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
 
-                                                xy = xyTmp;
+                        xy = xyTmp;
                         mapResult[xyTmp] = 6;
                         loc = loc.add(Direction.EAST);
                         break;
                     case SOUTHEAST:
                         // Todos: Update mapCosts with sensing
                         if(!onTheMap(loc.add(Direction.SOUTHEAST))){
-                            
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
                         xyTmp = xy - 59;
                         if(mapCosts[xyTmp] >= cost_max_per_cell){
-                            
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
 
-                                                xy = xyTmp;
+                        xy = xyTmp;
                         mapResult[xyTmp] = 7;
                         loc = loc.add(Direction.SOUTHEAST);
                         break;
                     case SOUTH:
                         // Todos: Update mapCosts with sensing
                         if(!onTheMap(loc.add(Direction.SOUTH))){
-                            
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
                         xyTmp = xy - 60;
                         if(mapCosts[xyTmp] >= cost_max_per_cell){
-                            
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
 
-                                                xy = xyTmp;
+                        xy = xyTmp;
                         mapResult[xyTmp] = 0;
                         loc = loc.add(Direction.SOUTH);
                         break;
                     case SOUTHWEST:
                         // Todos: Update mapCosts with sensing
                         if(!onTheMap(loc.add(Direction.SOUTHWEST))){
-                            
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
                         xyTmp = xy - 61;
                         if(mapCosts[xyTmp] >= cost_max_per_cell){
-                            
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
 
-                                                xy = xyTmp;
+                        xy = xyTmp;
                         mapResult[xyTmp] = 1;
                         loc = loc.add(Direction.SOUTHWEST);
                         break;
                     case WEST:
                         // Todos: Update mapCosts with sensing
                         if(!onTheMap(loc.add(Direction.WEST))){
-                            
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
                         xyTmp = xy - 1;
                         if(mapCosts[xyTmp] >= cost_max_per_cell){
-                            
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
 
-                                                xy = xyTmp;
+                        xy = xyTmp;
                         mapResult[xyTmp] = 2;
                         loc = loc.add(Direction.WEST);
                         break;
                     case NORTHWEST:
                         // Todos: Update mapCosts with sensing
                         if(!onTheMap(loc.add(Direction.NORTHWEST))){
-                            
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
                         xyTmp = xy + 59;
                         if(mapCosts[xyTmp] >= cost_max_per_cell){
-                            
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
 
-                                                xy = xyTmp;
+                        xy = xyTmp;
                         mapResult[xyTmp] = 3;
                         loc = loc.add(Direction.NORTHWEST);
                         break;
                     
                     case CENTER:
-                        
                         break mainLoop;
                 }
         
                 score += mapCosts[xy];
 
                 if(score >= MAX_SCORE){
-                                        break mainLoop;
+                    break mainLoop;
                 }
             }
 
             /// ///////////////////// Init split mode /////////////////////
-            
             xyRight = xy;
             xyLeft = xy;
             smoothLeft = 2;
@@ -298,7 +307,6 @@ public class BugNav {
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.EAST);
                         xyLeft = xy + 1;
@@ -306,7 +314,6 @@ public class BugNav {
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHEAST);
                         xyLeft = xy - 59;
@@ -314,7 +321,6 @@ public class BugNav {
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTH);
                         xyLeft = xy - 60;
@@ -322,7 +328,6 @@ public class BugNav {
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHWEST);
                         xyLeft = xy - 61;
@@ -330,7 +335,6 @@ public class BugNav {
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.WEST);
                         xyLeft = xy - 1;
@@ -338,7 +342,6 @@ public class BugNav {
                         ctrLeft = 6;
                         break initSideLeft;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
@@ -349,7 +352,6 @@ public class BugNav {
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
                         locRight = loc.add(Direction.WEST);
                         xyRight = xy - 1;
@@ -357,7 +359,6 @@ public class BugNav {
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHWEST);
                         xyRight = xy - 61;
@@ -365,7 +366,6 @@ public class BugNav {
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTH);
                         xyRight = xy - 60;
@@ -373,7 +373,6 @@ public class BugNav {
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHEAST);
                         xyRight = xy - 59;
@@ -381,7 +380,6 @@ public class BugNav {
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
                         locRight = loc.add(Direction.EAST);
                         xyRight = xy + 1;
@@ -389,7 +387,6 @@ public class BugNav {
                         ctrRight = 6;
                         break initSideRight;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                                         break;
@@ -403,7 +400,6 @@ public class BugNav {
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHEAST);
                         xyLeft = xy - 59;
@@ -411,7 +407,6 @@ public class BugNav {
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTH);
                         xyLeft = xy - 60;
@@ -419,7 +414,6 @@ public class BugNav {
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHWEST);
                         xyLeft = xy - 61;
@@ -427,7 +421,6 @@ public class BugNav {
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.WEST);
                         xyLeft = xy - 1;
@@ -435,7 +428,6 @@ public class BugNav {
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHWEST);
                         xyLeft = xy + 59;
@@ -443,7 +435,6 @@ public class BugNav {
                         ctrLeft = 6;
                         break initSideLeft;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
@@ -454,7 +445,6 @@ public class BugNav {
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHWEST);
                         xyRight = xy + 59;
@@ -462,7 +452,6 @@ public class BugNav {
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
                         locRight = loc.add(Direction.WEST);
                         xyRight = xy - 1;
@@ -470,7 +459,6 @@ public class BugNav {
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHWEST);
                         xyRight = xy - 61;
@@ -478,7 +466,6 @@ public class BugNav {
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTH);
                         xyRight = xy - 60;
@@ -486,7 +473,6 @@ public class BugNav {
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHEAST);
                         xyRight = xy - 59;
@@ -494,7 +480,6 @@ public class BugNav {
                         ctrRight = 6;
                         break initSideRight;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                                         break;
@@ -508,7 +493,6 @@ public class BugNav {
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTH);
                         xyLeft = xy - 60;
@@ -516,7 +500,6 @@ public class BugNav {
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHWEST);
                         xyLeft = xy - 61;
@@ -524,7 +507,6 @@ public class BugNav {
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.WEST);
                         xyLeft = xy - 1;
@@ -532,7 +514,6 @@ public class BugNav {
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHWEST);
                         xyLeft = xy + 59;
@@ -540,7 +521,6 @@ public class BugNav {
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTH);
                         xyLeft = xy + 60;
@@ -548,7 +528,6 @@ public class BugNav {
                         ctrLeft = 6;
                         break initSideLeft;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
@@ -559,7 +538,6 @@ public class BugNav {
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTH);
                         xyRight = xy + 60;
@@ -567,7 +545,6 @@ public class BugNav {
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHWEST);
                         xyRight = xy + 59;
@@ -575,7 +552,6 @@ public class BugNav {
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
                         locRight = loc.add(Direction.WEST);
                         xyRight = xy - 1;
@@ -583,7 +559,6 @@ public class BugNav {
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHWEST);
                         xyRight = xy - 61;
@@ -591,7 +566,6 @@ public class BugNav {
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTH);
                         xyRight = xy - 60;
@@ -599,7 +573,6 @@ public class BugNav {
                         ctrRight = 6;
                         break initSideRight;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                                         break;
@@ -613,7 +586,6 @@ public class BugNav {
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHWEST);
                         xyLeft = xy - 61;
@@ -621,7 +593,6 @@ public class BugNav {
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.WEST);
                         xyLeft = xy - 1;
@@ -629,7 +600,6 @@ public class BugNav {
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHWEST);
                         xyLeft = xy + 59;
@@ -637,7 +607,6 @@ public class BugNav {
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTH);
                         xyLeft = xy + 60;
@@ -645,7 +614,6 @@ public class BugNav {
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHEAST);
                         xyLeft = xy + 61;
@@ -653,7 +621,6 @@ public class BugNav {
                         ctrLeft = 6;
                         break initSideLeft;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
@@ -664,7 +631,6 @@ public class BugNav {
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHEAST);
                         xyRight = xy + 61;
@@ -672,7 +638,6 @@ public class BugNav {
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTH);
                         xyRight = xy + 60;
@@ -680,7 +645,6 @@ public class BugNav {
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHWEST);
                         xyRight = xy + 59;
@@ -688,7 +652,6 @@ public class BugNav {
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
                         locRight = loc.add(Direction.WEST);
                         xyRight = xy - 1;
@@ -696,7 +659,6 @@ public class BugNav {
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHWEST);
                         xyRight = xy - 61;
@@ -704,7 +666,6 @@ public class BugNav {
                         ctrRight = 6;
                         break initSideRight;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                                         break;
@@ -718,7 +679,6 @@ public class BugNav {
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.WEST);
                         xyLeft = xy - 1;
@@ -726,7 +686,6 @@ public class BugNav {
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHWEST);
                         xyLeft = xy + 59;
@@ -734,7 +693,6 @@ public class BugNav {
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTH);
                         xyLeft = xy + 60;
@@ -742,7 +700,6 @@ public class BugNav {
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHEAST);
                         xyLeft = xy + 61;
@@ -750,7 +707,6 @@ public class BugNav {
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.EAST);
                         xyLeft = xy + 1;
@@ -758,7 +714,6 @@ public class BugNav {
                         ctrLeft = 6;
                         break initSideLeft;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
@@ -769,7 +724,6 @@ public class BugNav {
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
                         locRight = loc.add(Direction.EAST);
                         xyRight = xy + 1;
@@ -777,7 +731,6 @@ public class BugNav {
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHEAST);
                         xyRight = xy + 61;
@@ -785,7 +738,6 @@ public class BugNav {
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTH);
                         xyRight = xy + 60;
@@ -793,7 +745,6 @@ public class BugNav {
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHWEST);
                         xyRight = xy + 59;
@@ -801,7 +752,6 @@ public class BugNav {
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
                         locRight = loc.add(Direction.WEST);
                         xyRight = xy - 1;
@@ -809,7 +759,6 @@ public class BugNav {
                         ctrRight = 6;
                         break initSideRight;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                                         break;
@@ -823,7 +772,6 @@ public class BugNav {
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHWEST);
                         xyLeft = xy + 59;
@@ -831,7 +779,6 @@ public class BugNav {
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTH);
                         xyLeft = xy + 60;
@@ -839,7 +786,6 @@ public class BugNav {
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHEAST);
                         xyLeft = xy + 61;
@@ -847,7 +793,6 @@ public class BugNav {
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.EAST);
                         xyLeft = xy + 1;
@@ -855,7 +800,6 @@ public class BugNav {
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHEAST);
                         xyLeft = xy - 59;
@@ -863,7 +807,6 @@ public class BugNav {
                         ctrLeft = 6;
                         break initSideLeft;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
@@ -874,7 +817,6 @@ public class BugNav {
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHEAST);
                         xyRight = xy - 59;
@@ -882,7 +824,6 @@ public class BugNav {
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
                         locRight = loc.add(Direction.EAST);
                         xyRight = xy + 1;
@@ -890,7 +831,6 @@ public class BugNav {
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHEAST);
                         xyRight = xy + 61;
@@ -898,7 +838,6 @@ public class BugNav {
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTH);
                         xyRight = xy + 60;
@@ -906,7 +845,6 @@ public class BugNav {
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHWEST);
                         xyRight = xy + 59;
@@ -914,7 +852,6 @@ public class BugNav {
                         ctrRight = 6;
                         break initSideRight;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                                         break;
@@ -928,7 +865,6 @@ public class BugNav {
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTH);
                         xyLeft = xy + 60;
@@ -936,7 +872,6 @@ public class BugNav {
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHEAST);
                         xyLeft = xy + 61;
@@ -944,7 +879,6 @@ public class BugNav {
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.EAST);
                         xyLeft = xy + 1;
@@ -952,7 +886,6 @@ public class BugNav {
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHEAST);
                         xyLeft = xy - 59;
@@ -960,7 +893,6 @@ public class BugNav {
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTH);
                         xyLeft = xy - 60;
@@ -968,7 +900,6 @@ public class BugNav {
                         ctrLeft = 6;
                         break initSideLeft;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
@@ -979,7 +910,6 @@ public class BugNav {
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTH);
                         xyRight = xy - 60;
@@ -987,7 +917,6 @@ public class BugNav {
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHEAST);
                         xyRight = xy - 59;
@@ -995,7 +924,6 @@ public class BugNav {
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
                         locRight = loc.add(Direction.EAST);
                         xyRight = xy + 1;
@@ -1003,7 +931,6 @@ public class BugNav {
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHEAST);
                         xyRight = xy + 61;
@@ -1011,7 +938,6 @@ public class BugNav {
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTH);
                         xyRight = xy + 60;
@@ -1019,7 +945,6 @@ public class BugNav {
                         ctrRight = 6;
                         break initSideRight;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                                         break;
@@ -1033,7 +958,6 @@ public class BugNav {
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHEAST);
                         xyLeft = xy + 61;
@@ -1041,7 +965,6 @@ public class BugNav {
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.EAST);
                         xyLeft = xy + 1;
@@ -1049,7 +972,6 @@ public class BugNav {
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHEAST);
                         xyLeft = xy - 59;
@@ -1057,7 +979,6 @@ public class BugNav {
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTH);
                         xyLeft = xy - 60;
@@ -1065,7 +986,6 @@ public class BugNav {
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHWEST);
                         xyLeft = xy - 61;
@@ -1073,7 +993,6 @@ public class BugNav {
                         ctrLeft = 6;
                         break initSideLeft;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
@@ -1084,7 +1003,6 @@ public class BugNav {
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHWEST);
                         xyRight = xy - 61;
@@ -1092,7 +1010,6 @@ public class BugNav {
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTH);
                         xyRight = xy - 60;
@@ -1100,7 +1017,6 @@ public class BugNav {
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHEAST);
                         xyRight = xy - 59;
@@ -1108,7 +1024,6 @@ public class BugNav {
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
                         locRight = loc.add(Direction.EAST);
                         xyRight = xy + 1;
@@ -1116,7 +1031,6 @@ public class BugNav {
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHEAST);
                         xyRight = xy + 61;
@@ -1124,7 +1038,6 @@ public class BugNav {
                         ctrRight = 6;
                         break initSideRight;
                     }
-                    
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                                         break;
@@ -1145,19 +1058,17 @@ public class BugNav {
             for (;;) {
                 iterationsSplit++;
                 if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
-                                        break mainLoop;
+                    break mainLoop;
                 }
 
                 if(scoreLeft < scoreRight){
                     if(scoreLeft >= MAX_SCORE){
-                        
                         break mainLoop;
                     }
 
-                                        
-                    
-                    modeSplitGoLeft: {
+                                        modeSplitGoLeft: {
                     /// If we can move without obstacle, we are free !
+                                                                rc.setIndicatorDot(locLeft, 255, 228, 181);
                                         if(ctrLeft <= 0){                         switch (locLeft.directionTo(locEnd)){
                             case NORTH:
                                 xyTmp = xyLeft + 60;
@@ -1166,7 +1077,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 4;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locLeft.add(Direction.NORTH);
                                     score = scoreLeft + mapCosts[xy];
                                     break modeSplit;
@@ -1179,7 +1089,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 5;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locLeft.add(Direction.NORTHEAST);
                                     score = scoreLeft + mapCosts[xy];
                                     break modeSplit;
@@ -1192,7 +1101,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 6;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locLeft.add(Direction.EAST);
                                     score = scoreLeft + mapCosts[xy];
                                     break modeSplit;
@@ -1205,7 +1113,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 7;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locLeft.add(Direction.SOUTHEAST);
                                     score = scoreLeft + mapCosts[xy];
                                     break modeSplit;
@@ -1218,7 +1125,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 0;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locLeft.add(Direction.SOUTH);
                                     score = scoreLeft + mapCosts[xy];
                                     break modeSplit;
@@ -1231,7 +1137,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 1;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locLeft.add(Direction.SOUTHWEST);
                                     score = scoreLeft + mapCosts[xy];
                                     break modeSplit;
@@ -1244,7 +1149,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 2;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locLeft.add(Direction.WEST);
                                     score = scoreLeft + mapCosts[xy];
                                     break modeSplit;
@@ -1257,7 +1161,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 3;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locLeft.add(Direction.NORTHWEST);
                                     score = scoreLeft + mapCosts[xy];
                                     break modeSplit;
@@ -1265,7 +1168,6 @@ public class BugNav {
                                 break;
                             
                             case CENTER:
-                                
                                 break mainLoop;
                         }
                     }
@@ -1275,15 +1177,12 @@ public class BugNav {
                     switch (lastDirectionLeft){
                         case NORTH:
                             if(!onTheMap(locLeft.add(Direction.WEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 2;
@@ -1293,17 +1192,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.WEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 3;
@@ -1313,17 +1208,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 4;
@@ -1333,17 +1224,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 5;
@@ -1353,17 +1240,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.EAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 6;
@@ -1373,17 +1256,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.EAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 7;
@@ -1393,17 +1272,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 0;
@@ -1413,17 +1288,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 1;
@@ -1433,19 +1304,15 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir NORTH");
                         case NORTHEAST:
                             if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 3;
@@ -1455,17 +1322,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 4;
@@ -1475,17 +1338,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 5;
@@ -1495,17 +1354,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.EAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 6;
@@ -1515,17 +1370,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.EAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 7;
@@ -1535,17 +1386,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 0;
@@ -1555,17 +1402,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 1;
@@ -1575,17 +1418,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.WEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 2;
@@ -1595,19 +1434,15 @@ public class BugNav {
                                 lastDirectionLeft = Direction.WEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir NORTHEAST");
                         case EAST:
                             if(!onTheMap(locLeft.add(Direction.NORTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 4;
@@ -1617,17 +1452,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 5;
@@ -1637,17 +1468,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.EAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 6;
@@ -1657,17 +1484,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.EAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 7;
@@ -1677,17 +1500,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 0;
@@ -1697,17 +1516,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 1;
@@ -1717,17 +1532,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.WEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 2;
@@ -1737,17 +1548,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.WEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 3;
@@ -1757,19 +1564,15 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir EAST");
                         case SOUTHEAST:
                             if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 5;
@@ -1779,17 +1582,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.EAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 6;
@@ -1799,17 +1598,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.EAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 7;
@@ -1819,17 +1614,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 0;
@@ -1839,17 +1630,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 1;
@@ -1859,17 +1646,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.WEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 2;
@@ -1879,17 +1662,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.WEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 3;
@@ -1899,17 +1678,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 4;
@@ -1919,19 +1694,15 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir SOUTHEAST");
                         case SOUTH:
                             if(!onTheMap(locLeft.add(Direction.EAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 6;
@@ -1941,17 +1712,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.EAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 7;
@@ -1961,17 +1728,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 0;
@@ -1981,17 +1744,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 1;
@@ -2001,17 +1760,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.WEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 2;
@@ -2021,17 +1776,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.WEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 3;
@@ -2041,17 +1792,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 4;
@@ -2061,17 +1808,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 5;
@@ -2081,19 +1824,15 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir SOUTH");
                         case SOUTHWEST:
                             if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 7;
@@ -2103,17 +1842,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 0;
@@ -2123,17 +1858,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 1;
@@ -2143,17 +1874,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.WEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 2;
@@ -2163,17 +1890,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.WEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 3;
@@ -2183,17 +1906,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 4;
@@ -2203,17 +1922,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 5;
@@ -2223,17 +1938,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.EAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 6;
@@ -2243,19 +1954,15 @@ public class BugNav {
                                 lastDirectionLeft = Direction.EAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir SOUTHWEST");
                         case WEST:
                             if(!onTheMap(locLeft.add(Direction.SOUTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 0;
@@ -2265,17 +1972,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 1;
@@ -2285,17 +1988,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.WEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 2;
@@ -2305,17 +2004,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.WEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 3;
@@ -2325,17 +2020,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 4;
@@ -2345,17 +2036,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 5;
@@ -2365,17 +2052,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.EAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 6;
@@ -2385,17 +2068,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.EAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 7;
@@ -2405,19 +2084,15 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir WEST");
                         case NORTHWEST:
                             if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 1;
@@ -2427,17 +2102,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.WEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 2;
@@ -2447,17 +2118,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.WEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 3;
@@ -2467,17 +2134,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHWEST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 4;
@@ -2487,17 +2150,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 5;
@@ -2507,17 +2166,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.NORTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.EAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 6;
@@ -2527,17 +2182,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.EAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 7;
@@ -2547,17 +2198,13 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTHEAST;
                                 break modeSplitGoLeft;
                             }
-                            
                             if(!onTheMap(locLeft.add(Direction.SOUTH))) {
-                                
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
                             xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 0;
@@ -2567,7 +2214,6 @@ public class BugNav {
                                 lastDirectionLeft = Direction.SOUTH;
                                 break modeSplitGoLeft;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir NORTHWEST");
                         
                         case CENTER:
@@ -2576,14 +2222,9 @@ public class BugNav {
                     } // End modeSplitGoLeft
 
                                                         }else{
-                    
-                    
-                            
-
-                                                            
-                    
-                    modeSplitGoRight: {
+                                                            modeSplitGoRight: {
                     /// If we can move without obstacle, we are free !
+                                                                rc.setIndicatorDot(locRight, 173, 216, 230);
                                         if(ctrRight <= 0){                         switch (locRight.directionTo(locEnd)){
                             case NORTH:
                                 xyTmp = xyRight + 60;
@@ -2592,7 +2233,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 4;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locRight.add(Direction.NORTH);
                                     score = scoreRight + mapCosts[xy];
                                     break modeSplit;
@@ -2605,7 +2245,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 5;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locRight.add(Direction.NORTHEAST);
                                     score = scoreRight + mapCosts[xy];
                                     break modeSplit;
@@ -2618,7 +2257,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 6;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locRight.add(Direction.EAST);
                                     score = scoreRight + mapCosts[xy];
                                     break modeSplit;
@@ -2631,7 +2269,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 7;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locRight.add(Direction.SOUTHEAST);
                                     score = scoreRight + mapCosts[xy];
                                     break modeSplit;
@@ -2644,7 +2281,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 0;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locRight.add(Direction.SOUTH);
                                     score = scoreRight + mapCosts[xy];
                                     break modeSplit;
@@ -2657,7 +2293,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 1;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locRight.add(Direction.SOUTHWEST);
                                     score = scoreRight + mapCosts[xy];
                                     break modeSplit;
@@ -2670,7 +2305,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 2;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locRight.add(Direction.WEST);
                                     score = scoreRight + mapCosts[xy];
                                     break modeSplit;
@@ -2683,7 +2317,6 @@ public class BugNav {
 
                                     mapResult[xyTmp] = 3;
                                     xyLastWallLeave = xyTmp;
-                                    
                                     loc = locRight.add(Direction.NORTHWEST);
                                     score = scoreRight + mapCosts[xy];
                                     break modeSplit;
@@ -2691,7 +2324,6 @@ public class BugNav {
                                 break;
                             
                             case CENTER:
-                                
                                 break mainLoop;
                         }
                     }
@@ -2701,15 +2333,12 @@ public class BugNav {
                     switch (lastDirectionRight){
                         case NORTH:
                             if(!onTheMap(locRight.add(Direction.EAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 6;
@@ -2719,17 +2348,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.EAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 5;
@@ -2739,17 +2364,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 4;
@@ -2759,17 +2380,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 3;
@@ -2779,17 +2396,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.WEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 2;
@@ -2799,17 +2412,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.WEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 1;
@@ -2819,17 +2428,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 0;
@@ -2839,17 +2444,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 7;
@@ -2859,19 +2460,15 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir NORTH");
                         case NORTHEAST:
                             if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 7;
@@ -2881,17 +2478,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.EAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 6;
@@ -2901,17 +2494,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.EAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 5;
@@ -2921,17 +2510,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 4;
@@ -2941,17 +2526,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 3;
@@ -2961,17 +2542,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.WEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 2;
@@ -2981,17 +2558,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.WEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 1;
@@ -3001,17 +2574,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 0;
@@ -3021,19 +2590,15 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTH;
                                 break modeSplitGoRight;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir NORTHEAST");
                         case EAST:
                             if(!onTheMap(locRight.add(Direction.SOUTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 0;
@@ -3043,17 +2608,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 7;
@@ -3063,17 +2624,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.EAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 6;
@@ -3083,17 +2640,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.EAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 5;
@@ -3103,17 +2656,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 4;
@@ -3123,17 +2672,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 3;
@@ -3143,17 +2688,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.WEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 2;
@@ -3163,17 +2704,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.WEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 1;
@@ -3183,19 +2720,15 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir EAST");
                         case SOUTHEAST:
                             if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 1;
@@ -3205,17 +2738,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 0;
@@ -3225,17 +2754,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 7;
@@ -3245,17 +2770,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.EAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 6;
@@ -3265,17 +2786,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.EAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 5;
@@ -3285,17 +2802,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 4;
@@ -3305,17 +2818,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 3;
@@ -3325,17 +2834,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.WEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 2;
@@ -3345,19 +2850,15 @@ public class BugNav {
                                 lastDirectionRight = Direction.WEST;
                                 break modeSplitGoRight;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir SOUTHEAST");
                         case SOUTH:
                             if(!onTheMap(locRight.add(Direction.WEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 2;
@@ -3367,17 +2868,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.WEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 1;
@@ -3387,17 +2884,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 0;
@@ -3407,17 +2900,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 7;
@@ -3427,17 +2916,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.EAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 6;
@@ -3447,17 +2932,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.EAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 5;
@@ -3467,17 +2948,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 4;
@@ -3487,17 +2964,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 3;
@@ -3507,19 +2980,15 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir SOUTH");
                         case SOUTHWEST:
                             if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 3;
@@ -3529,17 +2998,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.WEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 2;
@@ -3549,17 +3014,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.WEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 1;
@@ -3569,17 +3030,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 0;
@@ -3589,17 +3046,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 7;
@@ -3609,17 +3062,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.EAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 6;
@@ -3629,17 +3078,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.EAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 5;
@@ -3649,17 +3094,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 4;
@@ -3669,19 +3110,15 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTH;
                                 break modeSplitGoRight;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir SOUTHWEST");
                         case WEST:
                             if(!onTheMap(locRight.add(Direction.NORTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 4;
@@ -3691,17 +3128,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 3;
@@ -3711,17 +3144,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.WEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 2;
@@ -3731,17 +3160,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.WEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 1;
@@ -3751,17 +3176,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 0;
@@ -3771,17 +3192,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 7;
@@ -3791,17 +3208,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.EAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 6;
@@ -3811,17 +3224,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.EAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 5;
@@ -3831,19 +3240,15 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir WEST");
                         case NORTHWEST:
                             if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 5;
@@ -3853,17 +3258,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 4;
@@ -3873,17 +3274,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 3;
@@ -3893,17 +3290,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.NORTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.WEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 2;
@@ -3913,17 +3306,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.WEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 1;
@@ -3933,17 +3322,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHWEST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTH))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 0;
@@ -3953,17 +3338,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTH;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 7;
@@ -3973,17 +3354,13 @@ public class BugNav {
                                 lastDirectionRight = Direction.SOUTHEAST;
                                 break modeSplitGoRight;
                             }
-                            
                             if(!onTheMap(locRight.add(Direction.EAST))) {
-                                
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
                             xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] < cost_max_per_cell){
-                                
-
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 6;
@@ -3993,7 +3370,6 @@ public class BugNav {
                                 lastDirectionRight = Direction.EAST;
                                 break modeSplitGoRight;
                             }
-                            
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir NORTHWEST");
                         
                         case CENTER:
@@ -4001,9 +3377,7 @@ public class BugNav {
                     }
                     } // End modeSplitGoRight
 
-                                        
-
-                                                        }
+                                                                            }
 
             }// End main for loop
         } // End mainLoopLabel
@@ -4015,12 +3389,13 @@ public class BugNav {
             System.out.println("Bytecode used     : " + (startRemainingBytecode - Clock.getBytecodesLeft()));
             System.out.println("");
 
-            
-            BugNav.mapResult = mapResult;
-            return;
+            BugNavLmx.mapResult = mapResult;
+            if(xy != xyEnd){
+                return -1;
+            }
+            return 1;
         }
 
-        
         /// Now, we want to make the path in reverse to optimize it
         // We take by priority :
         // 1) xyLastWallLeave
@@ -4030,29 +3405,25 @@ public class BugNav {
         int xyReturn;
         if(xyLastWallLeave != -1){
             xyReturn = xyLastWallLeave; // 1)
-            
-        }else{
-                        if(locLeft == null){
-                                xyReturn = xyRight;
+            }else{
+            if(locLeft == null){
+                xyReturn = xyRight;
 
             }else{
                 if(locRight == null){
-                                        xyReturn = xyLeft;
+                    xyReturn = xyLeft;
 
                 }else{
                     if(locEnd.distanceSquaredTo(locLeft) < locEnd.distanceSquaredTo(locRight)){ // 2)
                         xyReturn = xyLeft;
-                        
-
-                    }else{
+                        }else{
                         xyReturn = xyRight;
-                                            }
+                        }
                 }
             }
 
             // 3)
             if(xyReturn == -1){
-                
                 xyReturn = xy;
             }
 
@@ -4070,126 +3441,117 @@ public class BugNav {
         for(;;){
             iterationsReturn++;
             if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
-                                break backtrackingLoop;
+                break backtrackingLoop;
             }
 
-
-            
+                        rc.setIndicatorDot(loc, 206, 174, 243);
             switch(loc.directionTo(startLoc)){
                 case NORTH:
                     if(0 != returnDirection && mapCosts[xyReturn + 60] < cost_max_per_cell){
-                                                loc = loc.add(Direction.NORTH);     
+                        loc = loc.add(Direction.NORTH);     
                         break backtrackingLoop;
                     }else{
-                                            }
+                        }
                     break;
                 case NORTHEAST:
                     if(1 != returnDirection && mapCosts[xyReturn + 61] < cost_max_per_cell){
-                                                loc = loc.add(Direction.NORTHEAST);     
+                        loc = loc.add(Direction.NORTHEAST);     
                         break backtrackingLoop;
                     }else{
-                                            }
+                        }
                     break;
                 case EAST:
                     if(2 != returnDirection && mapCosts[xyReturn + 1] < cost_max_per_cell){
-                                                loc = loc.add(Direction.EAST);     
+                        loc = loc.add(Direction.EAST);     
                         break backtrackingLoop;
                     }else{
-                                            }
+                        }
                     break;
                 case SOUTHEAST:
                     if(3 != returnDirection && mapCosts[xyReturn - 59] < cost_max_per_cell){
-                                                loc = loc.add(Direction.SOUTHEAST);     
+                        loc = loc.add(Direction.SOUTHEAST);     
                         break backtrackingLoop;
                     }else{
-                                            }
+                        }
                     break;
                 case SOUTH:
                     if(4 != returnDirection && mapCosts[xyReturn - 60] < cost_max_per_cell){
-                                                loc = loc.add(Direction.SOUTH);     
+                        loc = loc.add(Direction.SOUTH);     
                         break backtrackingLoop;
                     }else{
-                                            }
+                        }
                     break;
                 case SOUTHWEST:
                     if(5 != returnDirection && mapCosts[xyReturn - 61] < cost_max_per_cell){
-                                                loc = loc.add(Direction.SOUTHWEST);     
+                        loc = loc.add(Direction.SOUTHWEST);     
                         break backtrackingLoop;
                     }else{
-                                            }
+                        }
                     break;
                 case WEST:
                     if(6 != returnDirection && mapCosts[xyReturn - 1] < cost_max_per_cell){
-                                                loc = loc.add(Direction.WEST);     
+                        loc = loc.add(Direction.WEST);     
                         break backtrackingLoop;
                     }else{
-                                            }
+                        }
                     break;
                 case NORTHWEST:
                     if(7 != returnDirection && mapCosts[xyReturn + 59] < cost_max_per_cell){
-                                                loc = loc.add(Direction.NORTHWEST);     
+                        loc = loc.add(Direction.NORTHWEST);     
                         break backtrackingLoop;
                     }else{
-                                            }
+                        }
                     break;
                 
                 case CENTER:
-                                        BugNav.mapResult = mapResult;
-                    return;
+                    BugNavLmx.mapResult = mapResult;
+                    return 1;
             }
 
             switch(returnDirection){
                 case 0: // NORTH
-                    
                     xyReturn += 60;
                     loc = loc.add(Direction.NORTH);
                     returnDirection = mapResult[xyReturn];
                     mapResult[xyReturn] = 4;
                     break;
                 case 1: // NORTHEAST
-                    
                     xyReturn += 61;
                     loc = loc.add(Direction.NORTHEAST);
                     returnDirection = mapResult[xyReturn];
                     mapResult[xyReturn] = 5;
                     break;
                 case 2: // EAST
-                    
                     xyReturn += 1;
                     loc = loc.add(Direction.EAST);
                     returnDirection = mapResult[xyReturn];
                     mapResult[xyReturn] = 6;
                     break;
                 case 3: // SOUTHEAST
-                    
                     xyReturn += -59;
                     loc = loc.add(Direction.SOUTHEAST);
                     returnDirection = mapResult[xyReturn];
                     mapResult[xyReturn] = 7;
                     break;
                 case 4: // SOUTH
-                    
                     xyReturn += -60;
                     loc = loc.add(Direction.SOUTH);
                     returnDirection = mapResult[xyReturn];
                     mapResult[xyReturn] = 0;
                     break;
                 case 5: // SOUTHWEST
-                    
                     xyReturn += -61;
                     loc = loc.add(Direction.SOUTHWEST);
                     returnDirection = mapResult[xyReturn];
                     mapResult[xyReturn] = 1;
                     break;
                 case 6: // WEST
-                    
                     xyReturn += -1;
                     loc = loc.add(Direction.WEST);
                     returnDirection = mapResult[xyReturn];
                     mapResult[xyReturn] = 2;
                     break;
                 case 7: // NORTHWEST
-                    
                     xyReturn += 59;
                     loc = loc.add(Direction.NORTHWEST);
                     returnDirection = mapResult[xyReturn];
@@ -4205,7 +3567,7 @@ public class BugNav {
         System.out.println("Bytecode used     : " + (startRemainingBytecode - Clock.getBytecodesLeft()));
         System.out.println("");
 
-        generatePathTo(
+        return generatePathTo(
             loc, startLoc, 
             mapCosts, mapResult, MAX_SCORE,  false, 
             cost_max_per_cell, maxBytecodeUsed

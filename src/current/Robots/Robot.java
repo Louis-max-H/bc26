@@ -133,8 +133,6 @@ public class Robot {
                     updateState(result);
                     break;
             }
-            
-            Clock.yield();
         }
     }
 

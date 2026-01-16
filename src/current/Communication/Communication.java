@@ -61,7 +61,6 @@ public class Communication extends Robot {
      * Update memory field of the robot with received messages
      */
     public static void decodeLongMessage(int msg) {
-        print("Decoding long message:" + msg);
         switch (msg & MASK_LONG_TYPE) {
 
             case TYPE_CAT:
@@ -69,7 +68,6 @@ public class Communication extends Robot {
                 break;
 
             case TYPE_KING:
-                print("Adding king !");
                 kings.add(msg & MASK_POSITION, (msg & MASK_UNIT_ID) >> 12);
                 break;
 

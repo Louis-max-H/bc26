@@ -1,4 +1,4 @@
-//  Destination: Utils/BugNav.java
+//  Destination: Utils/BugNavLmx.java
 
 {% set SCORE_CELL_PASSABLE  =    200 %}
 {% set SCORE_CELL_IF_DIG    =    220 %}
@@ -15,7 +15,7 @@ import current.Robots.Robot;
 package Bugnav;
 import Bugnav.MapLocation;
 import Bugnav.Direction;
-{% endif %}
+{% endif -%}
 //@formatter:off
 
 {% set dirs = ["NORTH","NORTHEAST","EAST","SOUTHEAST","SOUTH","SOUTHWEST","WEST","NORTHWEST"] %}
@@ -36,7 +36,7 @@ import Bugnav.Direction;
 
 
 // encode(x, y) = (x+1) + (y + 1)(1 + 60 + 1) = x + 60*y
-public class BugNav {
+public class {{ className }} {
     public static int width = 60;
     public static int height = 60;
 
@@ -45,8 +45,8 @@ public class BugNav {
     public static int SCORE_CELL_WALL = {{ SCORE_CELL_WALL }}; // Should not exceed 8 bits int (If added to anything else, to not overflow)
 
     public static void init(int width, int height){
-        BugNav.width = width;
-        BugNav.height = height;
+        {{ className }}.width = width;
+        {{ className }}.height = height;
     }
 
     public static boolean onTheMap(MapLocation loc){
@@ -59,31 +59,50 @@ public class BugNav {
     public static String mode = "DEFAULT";
     public static char[] mapCosts = generateEmptyMapCosts();
 
-    public static void pathTo(
+    public static Direction pathTo(
         MapLocation startLoc, MapLocation endLoc,
         char[] mapCosts, int MAX_SCORE, int cost_max_per_cell, int maxBytecodeUsed
-    ){
+    ){% if BATTLECODE %} throws GameActionException {% endif -%} {
         if(cost_max_per_cell > {{SCORE_CELL_WALL}}){
             {{ impossible(MSG="cost_max_per_cell is greater than SCORE_CELL_WALL {{SCORE_CELL_WALL}}") }}
         }
         mode = "DEFAULT";
-        generatePathTo(startLoc, endLoc, mapCosts, getMap3600(), MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
+        int resultCode = generatePathTo(startLoc, endLoc, mapCosts, getMap3600(), MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
+
+        if(resultCode < 0){
+            System.out.println("Pathfinding: Warning return code : " + resultCode);
+        }
+
+        return switch(mapResult[startLoc.x + startLoc.y*60]){
+            {% for dir in dirs%}
+            case {{dirsOrds[dir]}} -> Direction.{{dir}};
+            {% endfor %}
+            default -> {
+                System.out.println("Unknow direction return from Pathfinding : " + (int)mapResult[startLoc.x + startLoc.y*60]);
+                yield Direction.CENTER;
+            }
+        };
     }
 
-    public static void generatePathTo(
+    // Int code (To continue): 
+    // 1 : OK
+    // -1: Not enought bytecode
+    // -2: 
+    public static int generatePathTo(
         MapLocation startLoc, MapLocation endLoc, 
         char[] mapCosts, char[] mapResult,
         int MAX_SCORE, boolean withReturn, 
-        int cost_max_per_cell, int maxBytecodeUsed){
+        int cost_max_per_cell, int maxBytecodeUsed){% if BATTLECODE %} throws GameActionException {% endif -%}{
 
         {% if BATTLECODE -%}
         RobotController rc = Robot.rc;
-        {% endif %}
+        {% endif -%}
 
         if(mapCosts == null){
-            mapCosts = BugNav.mapCosts;
+            mapCosts = {{ className }}.mapCosts;
         }
         int xy = startLoc.x + 60*startLoc.y;
+        int xyEnd = endLoc.x + 60*endLoc.y;
         int xyTmp;
         int xyLeft = -1;
         int xyRight = -1;
@@ -102,19 +121,19 @@ public class BugNav {
         // Bytecode and stats
         int iterationsSplit = 0;
         int iterationsNormal = 0;
-        int startRemainingBytecode = {% if BATTLECODE %} Clock.getBytecodesLeft() {% else %} 0 {% endif %};
+        int startRemainingBytecode = {% if BATTLECODE %} Clock.getBytecodesLeft() {% else %} 0 {% endif -%};
         int stopBellowBytecodeRemaining;
         if(withReturn){
-            stopBellowBytecodeRemaining = {% if BATTLECODE %} Clock.getBytecodesLeft() - maxBytecodeUsed / 2 {% else %} 0 {% endif %};
+            stopBellowBytecodeRemaining = {% if BATTLECODE %} Clock.getBytecodesLeft() - maxBytecodeUsed / 2 {% else %} 0 {% endif -%};
         }else{
-            stopBellowBytecodeRemaining = {% if BATTLECODE %} Clock.getBytecodesLeft() - maxBytecodeUsed {% else %} 0 {% endif %};
+            stopBellowBytecodeRemaining = {% if BATTLECODE %} Clock.getBytecodesLeft() - maxBytecodeUsed {% else %} 0 {% endif -%};
         }
         {% set getBytecodeRemaining = "Clock.getBytecodesLeft()" if BATTLECODE else "1" %}
 
         MapLocation loc = new MapLocation(startLoc.x, startLoc.y);
         MapLocation locEnd = new MapLocation(endLoc.x, endLoc.y);
         {% if DEBUG -%}System.out.println("MSG=start at " + xy);
-        {% endif %}
+        {% endif -%}
         mapResult[xy] = {{dirsOrdsOpposite["CENTER"]}};
 
 
@@ -129,11 +148,18 @@ public class BugNav {
                 {% if DEBUG -%}
                 System.out.println("MODE=" + mode + ", resume at POS=" + xy + " " + loc + " want to go to " + locEnd + " -> " + loc.directionTo(locEnd));
                 if(withReturn){System.out.println("SCORE=" + score);}
-                {% endif %}
+                {% endif -%}
+                {% if BATTLECODE -%}
+                if(withReturn){
+                    rc.setIndicatorDot(loc, 0, 10, 10); // Blue
+                }else{
+                    rc.setIndicatorDot(loc, 206, 174, 243); // Violet
+                }
+                {% endif -%}
 
                 if({{getBytecodeRemaining}} < stopBellowBytecodeRemaining){
                     {% if DEBUG -%}System.out.println("MSG=not enough bytecode remaining");
-                    {% endif %}
+                    {% endif -%}
                     break mainLoop;
                 }
 
@@ -143,7 +169,7 @@ public class BugNav {
                         // Todos: Update mapCosts with sensing
                         if(!onTheMap(loc.add(Direction.{{dir}}))){
                             {% if DEBUG -%}System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=IMPOSSIBLE");
-                            {% endif %}
+                            {% endif -%}
 
                             {{ impossible(MSG="Reach a border when direction to cell on map") }}
                         }
@@ -151,7 +177,7 @@ public class BugNav {
                         xyTmp = xy + {{dirsShift60xy[dir]}};
                         if(mapCosts[xyTmp] >= cost_max_per_cell){
                             {% if DEBUG -%}System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=WALL");
-                            {% endif %}
+                            {% endif -%}
 
                             xyLastWallHit = xyTmp;
                             break modeDefault;
@@ -159,7 +185,7 @@ public class BugNav {
 
 
                         {% if DEBUG -%}System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=OK");
-                        {% endif %}
+                        {% endif -%}
                         xy = xyTmp;
                         mapResult[xyTmp] = {{dirsOrdsOpposite[dir]}};
                         loc = loc.add(Direction.{{dir}});
@@ -168,7 +194,7 @@ public class BugNav {
 
                     case CENTER:
                         {% if DEBUG -%}System.out.println("MSG=CENTER");
-                        {% endif %}
+                        {% endif -%}
 
                         break mainLoop;
                 }
@@ -177,14 +203,14 @@ public class BugNav {
 
                 if(score >= MAX_SCORE){
                     {% if DEBUG -%}System.out.println("MSG=MAX_SCORE " + score + " >= " + MAX_SCORE);
-                    {% endif %}
+                    {% endif -%}
                     break mainLoop;
                 }
             }
 
             /// ///////////////////// Init split mode /////////////////////
             {% if DEBUG -%}System.out.println("MSG=init split mode");
-            {% endif %}
+            {% endif -%}
 
             xyRight = xy;
             xyLeft = xy;
@@ -218,7 +244,7 @@ public class BugNav {
                         break initSide{{side}};
                     }
                     {% if DEBUG -%}System.out.println("MODE={{ side }}, POS=" + xy + ", DIR={{dirTest}}, RESULT=WALL");
-                    {% endif %}
+                    {% endif -%}
 
                     {% endfor -%}
 
@@ -245,14 +271,14 @@ public class BugNav {
                 iterationsSplit++;
                 if({{getBytecodeRemaining}} < stopBellowBytecodeRemaining){
                     {% if DEBUG -%}System.out.println("MSG=not enough bytecode remaining");
-                    {% endif %}
+                    {% endif -%}
                     break mainLoop;
                 }
 
                 if(scoreLeft < scoreRight){
                     if(scoreLeft >= MAX_SCORE){
                         {% if DEBUG -%}System.out.println("MSG=MAX_SCORE left " + scoreLeft + " and right " + scoreRight + " are >= " + MAX_SCORE);
-                        {% endif %}
+                        {% endif -%}
 
                         break mainLoop;
                     }
@@ -261,13 +287,20 @@ public class BugNav {
                     {% if DEBUG -%}
                     System.out.println("MSG={{ side }}, MODE={{ side }}, score " + score + " resume at POS=" + xy{{side}} + " last dir " + lastDirection{{side}} + " ctr{{side}}=" + ctr{{side}});
                     if(withReturn){System.out.println("SCORE{{side}}=" + score{{side}});}
-                    {% endif %}
+                    {% endif -%}
 
                     
                     modeSplitGo{{side}}: {
                     /// If we can move without obstacle, we are free !
                     {% if DEBUG -%}System.out.println("We want to go from " + loc{{side}} + " to " + locEnd + " -> " + loc{{side}}.directionTo(locEnd));
-                    {% endif %}
+                    {% endif -%}
+                    {% if BATTLECODE %}
+                    {% if side == "Left" %}
+                        rc.setIndicatorDot(loc{{side}}, 255, 228, 181);
+                    {% else %}
+                        rc.setIndicatorDot(loc{{side}}, 173, 216, 230);
+                    {% endif -%}
+                    {% endif%}
                     if(ctr{{side}} <= 0){ {# Avoid cycling same direction #}
                         switch (loc{{side}}.directionTo(locEnd)){
                             {% for dir in dirs -%}
@@ -279,7 +312,7 @@ public class BugNav {
                                     mapResult[xyTmp] = {{dirsOrdsOpposite[dir]}};
                                     xyLastWallLeave = xyTmp;
                                     {% if DEBUG -%}System.out.println("MODE=FREE, POS=" + xy + ", DIR={{dir}}, RESULT=FREE");
-                                    {% endif %}
+                                    {% endif -%}
 
                                     loc = loc{{side}}.add(Direction.{{dir}});
                                     score = score{{side}} + mapCosts[xy];
@@ -290,7 +323,7 @@ public class BugNav {
 
                             case CENTER:
                                 {% if DEBUG -%}System.out.println("MSG=Destination reached for side {{side}}");
-                                {% endif %}
+                                {% endif -%}
 
                                 break mainLoop;
                         }
@@ -305,7 +338,7 @@ public class BugNav {
                             {% set dirTesting = rotate(dir, side, i) -%}
                             if(!onTheMap(loc{{side}}.add(Direction.{{dirTesting}}))) {
                                 {% if DEBUG -%}System.out.println("MODE={{ side }}, POS=" + xy + ", DIR={{dirTesting}}, RESULT=BORDER");
-                                {% endif %}
+                                {% endif -%}
 
                                 score{{side}} = MAX_SCORE;
                                 break modeSplitGo{{side}};
@@ -314,7 +347,7 @@ public class BugNav {
                             xyTmp = xy{{side}} + {{dirsShift60xy[dirTesting]}};
                             if(mapCosts[xyTmp] < cost_max_per_cell){
                                 {% if DEBUG -%}System.out.println("MODE={{ side }}, POS=" + xy{{side}} + ", DIR={{dirTesting}}, RESULT=OK");
-                                {% endif %}
+                                {% endif -%}
 
 
                                 xy{{side}} = xyTmp;
@@ -327,7 +360,7 @@ public class BugNav {
                                 break modeSplitGo{{side}};
                             }
                             {% if DEBUG -%}System.out.println("MODE={{ side }}, POS=" + xy{{side}} + ", DIR={{dirTesting}}, RESULT=WALL");
-                            {% endif %}
+                            {% endif -%}
 
                             {% endfor -%}
 
@@ -343,10 +376,10 @@ public class BugNav {
                     {% if side == "Left" %}
                 }else{
                     {% if DEBUG -%}System.out.println("MSG=scoreLeft >= scoreRight");
-                    {% endif %}
+                    {% endif -%}
 
                     
-                            {% endif %}
+                            {% endif -%}
 
 
                     {# Will generate the code for right here #}
@@ -364,14 +397,17 @@ public class BugNav {
             System.out.println("");
 
             {% if DEBUG -%}System.out.println("MSG=no return");
-            {% endif %}
+            {% endif -%}
 
-            BugNav.mapResult = mapResult;
-            return;
+            {{ className }}.mapResult = mapResult;
+            if(xy != xyEnd){
+                return -1;
+            }
+            return 1;
         }
 
         {% if DEBUG -%}System.out.println("Return mode");
-        {% endif %}
+        {% endif -%}
 
         /// Now, we want to make the path in reverse to optimize it
         // We take by priority :
@@ -383,33 +419,33 @@ public class BugNav {
         if(xyLastWallLeave != -1){
             xyReturn = xyLastWallLeave; // 1)
             {% if DEBUG -%}System.out.println("POS=" + xy + ", RESULT=RETURN = last wall leave");
-            {% endif %}
+            {% endif -%}
 
         }else{
             {% if DEBUG -%}System.out.println("xyLastWallLeave is " + xyLastWallLeave + " trying other values for xyReturn");
-            {% endif %}
+            {% endif -%}
             if(locLeft == null){
                 {% if DEBUG -%}System.out.println("locLeft is null, returning xyRight");
-                {% endif %}
+                {% endif -%}
                 xyReturn = xyRight;
 
             }else{
                 if(locRight == null){
                     {% if DEBUG -%}System.out.println("locRight is null, returning xyLeft");
-                    {% endif %}
+                    {% endif -%}
                     xyReturn = xyLeft;
 
                 }else{
                     if(locEnd.distanceSquaredTo(locLeft) < locEnd.distanceSquaredTo(locRight)){ // 2)
                         xyReturn = xyLeft;
                         {% if DEBUG -%}System.out.println("locLeft is closer to end, returning xyLeft");
-                        {% endif %}
+                        {% endif -%}
 
 
                     }else{
                         xyReturn = xyRight;
                         {% if DEBUG -%}System.out.println("locRight is closer to end, returning xyRight");
-                        {% endif %}
+                        {% endif -%}
                     }
                 }
             }
@@ -417,7 +453,7 @@ public class BugNav {
             // 3)
             if(xyReturn == -1){
                 {% if DEBUG -%}System.out.println("xyReturn is -1, returning xy");
-                {% endif %}
+                {% endif -%}
 
                 xyReturn = xy;
             }
@@ -437,13 +473,17 @@ public class BugNav {
             iterationsReturn++;
             if({{getBytecodeRemaining}} < stopBellowBytecodeRemaining){
                 {% if DEBUG -%}System.out.println("MSG=not enough bytecode remaining");
-                {% endif %}
+                {% endif -%}
                 break backtrackingLoop;
             }
 
+            {% if BATTLECODE %}
+            rc.setIndicatorDot(loc, 206, 174, 243);
+            {% endif -%}
+
 
             {% if DEBUG -%}System.out.println("MODE=BACK, I am at: POS=" + xyReturn + " " + loc +", returnDirection is " + returnDirection);
-            {% endif %}
+            {% endif -%}
 
             {# Check if the outward path diverges from the return path -#}
             switch(loc.directionTo(startLoc)){
@@ -451,21 +491,21 @@ public class BugNav {
                 case {{dir}}:
                     if({{dirsOrds[dir]}} != returnDirection && mapCosts[xyReturn + {{dirsShift60xy[dir]}}] < cost_max_per_cell){
                         {% if DEBUG -%}System.out.println("MODE=BACK, POS=" + xyReturn + ", DIR={{dir}}, RESULT=DIVERGE from return path");
-                        {% endif %}
+                        {% endif -%}
                         loc = loc.add(Direction.{{dir}});     
                         break backtrackingLoop;
                     }else{
                         {% if DEBUG -%}System.out.println("MODE=BACK, POS=" + xyReturn + ", DIR={{dir}}, RESULT=WALL");
-                        {% endif %}
+                        {% endif -%}
                     }
                     break;
                 {% endfor %}
 
                 case CENTER:
                     {% if DEBUG -%}System.out.println("MSG=Destination reached");
-                    {% endif %}
-                    BugNav.mapResult = mapResult;
-                    return;
+                    {% endif -%}
+                    {{ className }}.mapResult = mapResult;
+                    return 1;
             }
 
             {# Go up one move -#}
@@ -473,7 +513,7 @@ public class BugNav {
                 {% for dir in dirs -%}
                 case {{dirsOrds[dir]}}: // {{dir}}
                     {% if DEBUG -%}System.out.println("MODE=BACK, POS=" + xyReturn + " " + loc +", DIR={{dir}}");
-                    {% endif %}
+                    {% endif -%}
 
                     xyReturn += {{dirsShift60xy[dir]}};
                     loc = loc.add(Direction.{{dir}});
@@ -491,7 +531,7 @@ public class BugNav {
         System.out.println("Bytecode used     : " + (startRemainingBytecode - {{getBytecodeRemaining}}));
         System.out.println("");
 
-        generatePathTo(
+        return generatePathTo(
             loc, startLoc, 
             mapCosts, mapResult, MAX_SCORE, {#With return#} false, 
             cost_max_per_cell, maxBytecodeUsed

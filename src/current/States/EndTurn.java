@@ -14,7 +14,6 @@ public class EndTurn extends State {
 
     @Override
     public Result run() throws GameActionException {
-        System.out.println("Printing kings");
         print("Nearest kings :");
         for(char i=0; i< kings.size; i++){
             print("\t King at " + kings.locs[i]);
@@ -34,6 +33,7 @@ public class EndTurn extends State {
         }
 
         // Debug scores
+        /*
         if(!competitiveMode && round <= 100) {
             int startX = myLoc.x - 6;
             int startY = myLoc.y - 6;
@@ -57,6 +57,7 @@ public class EndTurn extends State {
                 }
             }
         }
+        */
 
         Clock.yield();
         return new Result(OK, "Ending turn gracefully.");

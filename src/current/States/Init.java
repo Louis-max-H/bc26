@@ -3,6 +3,7 @@ package current.States;
 import battlecode.common.*;
 import current.Communication.SenseForComs;
 import current.Robots.Robot;
+import current.Utils.BugNavLmx;
 import current.Utils.PathFinding;
 import current.Utils.VisionUtils;
 import current.Communication.Communication;
@@ -13,6 +14,17 @@ import static current.States.Code.*;
 import static current.Communication.Communication.TYPE_CAT;
 
 public class Init extends State {
+    public Init() throws GameActionException {
+        this.name = "Init";
+        Robot.spawnLoc = rc.getLocation();
+        Robot.spawnRound = rc.getRoundNum();
+        Robot.isKing = rc.getType().isRatKingType();
+
+        // Init utils
+        VisionUtils.initScore(rc.getMapWidth(), rc.getMapHeight());
+        BugNavLmx.init(rc.getMapWidth(), rc.getMapHeight());
+    }
+
     public boolean isInformationCorrect(MapLocation loc, int shortId) throws GameActionException {
         // If null loc
         if (loc == null){
@@ -25,16 +37,6 @@ public class Init extends State {
         }
 
         return rc.senseRobotAtLocation(loc).getID() % 4096 == shortId;
-    }
-
-    public Init() throws GameActionException {
-        this.name = "Init";
-        Robot.spawnLoc = rc.getLocation();
-        Robot.spawnRound = rc.getRoundNum();
-        Robot.isKing = rc.getType().isRatKingType();
-
-        // Init utils
-        VisionUtils.initScore(rc.getMapWidth(), rc.getMapHeight());
     }
 
     @Override
@@ -71,15 +73,10 @@ public class Init extends State {
          * We use score(t) = (2000 - t) / 7
          * score(0) ~ 285 << 700 and score(2000) = 0
          * */
-        char scoreTurn = (char)((2000 - round) / 28);
 
         // Reset score if we can view the cell
-        for(MapLocation loc  : rc.getAllLocationsWithinRadiusSquared(myLoc, 99)){
-            if(rc.canSenseLocation(loc)) {
-                // x + y*(60+gap) + gap + gap*(60+gap)
-                VisionUtils.scores[loc.x + 68 * loc.y + 552] = scoreTurn;
-            }
-        }
+        char scoreTurn = (char)((2000 - round) / 28);
+        VisionUtils.setScoreInRatVision(myLoc, rc.getDirection(), scoreTurn);
 
         // Add penalty if some rats are already looking in this direction
         char penalty;
@@ -88,15 +85,8 @@ public class Init extends State {
 
         for(RobotInfo info: rc.senseNearbyRobots(-1, rc.getTeam())){
             if(info.type == UnitType.RAT_KING){continue;}
-
-            for(MapLocation loc: VisionUtils.getAllLocationsVisibleFrom(info.getLocation(), info.getDirection(), UnitType.BABY_RAT)){
-                int cell = loc.x + 68 * loc.y + 552;
-                if(VisionUtils.scores[cell] >= penalty){
-                    VisionUtils.scores[cell] = (char)(VisionUtils.scores[cell] - penalty);
-                }else{
-                    VisionUtils.scores[cell] = 0;
-                }
-            }
+            VisionUtils.divideScoreBy2InRatVision(info.getLocation(), info.getDirection());
+            break; // Only one rat
         }
 
 

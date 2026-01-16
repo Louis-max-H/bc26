@@ -192,8 +192,8 @@ def visionCells(unit, direction):
             cells.append((x, y))
     return cells
 
-def visionCellsXY(unit, direction):
-    return [x + 60 * y for x, y in visionCells(unit, direction)]
+def visionCellsXY(unit, direction, gap):
+    return [encodeShift(cell, gap) for cell in visionCells(unit, direction)]
 
 
 ############################### Generating functions ###############################
