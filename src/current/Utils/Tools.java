@@ -1,7 +1,6 @@
 package current.Utils;
 
 import battlecode.common.*;
-import current.RobotPlayer;
 import current.States.Result;
 
 import java.util.Map;

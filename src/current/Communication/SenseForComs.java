@@ -13,31 +13,31 @@ public class SenseForComs extends Robot {
 
         // Give position of our king
         if(isKing){
-            Communication.addMessageKing(myLoc, rc.getID());
+            Communication.addMessageKing(rc.getLocation(), rc.getID());
         }
 
         // Give position of cats
         if(nearestCat != null && rc.canSenseLocation(nearestCat) && round % 2 == 0){
             RobotInfo infos = rc.senseRobotAtLocation(nearestCat);
-            Communication.addMessageCat(infos.getLocation(), infos.getID());
+            if(infos != null && infos.getType() == UnitType.CAT){
+                Communication.addMessageCat(infos.getLocation(), infos.getID());
+            }
         }
 
         // Give position of enemy king
         if(nearestEnemyKing != null && rc.canSenseLocation(nearestEnemyKing) && round % 2 == 0){
-            RobotInfo infos = rc.senseRobotAtLocation(nearestKing);
-            Communication.addMessageEnemyKing(infos.getLocation(), infos.getID());
-        }
-
-        // Give position of nearest enemy king
-        if(nearestEnemyKing != null && rc.canSenseLocation(nearestEnemyKing) && round % 2 == 0){
             RobotInfo infos = rc.senseRobotAtLocation(nearestEnemyKing);
-            Communication.addMessageEnemyKing(infos.getLocation(), infos.getID());
+            if(infos != null && infos.getType() == UnitType.RAT_KING){
+                Communication.addMessageEnemyKing(infos.getLocation(), infos.getID());
+            }
         }
 
         // Give position of enemy rat
         if(nearestEnemyRat != null && rc.canSenseLocation(nearestEnemyRat) && round % 2 == 0){
             RobotInfo infos = rc.senseRobotAtLocation(nearestEnemyRat);
-            Communication.addMessageEnemyKing(infos.getLocation(), infos.getID());
+            if(infos != null && infos.getType() == UnitType.BABY_RAT){
+                Communication.addMessageEnemyRat(infos.getLocation());
+            }
         }
 
         // Send mines infos every 10 turn

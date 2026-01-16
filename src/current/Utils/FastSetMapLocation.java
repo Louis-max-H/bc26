@@ -1,6 +1,5 @@
 package current.Utils;
 
-
 import battlecode.common.MapLocation;
 
 public class FastSetMapLocation {
