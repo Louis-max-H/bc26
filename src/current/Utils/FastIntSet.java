@@ -1,4 +1,3 @@
-
 package current.Utils;
 
 public class FastIntSet {

@@ -1,9 +1,9 @@
 package current.States;
 
 import battlecode.common.*;
+import current.Communication.Communication;
 import current.Communication.SenseForComs;
 import current.Utils.VisionUtils;
-import current.Communication.Communication;
 
 import static current.States.Code.*;
 
@@ -14,12 +14,14 @@ public class EndTurn extends State {
 
     @Override
     public Result run() throws GameActionException {
-        System.out.println("Printing kings");
-        print("Nearest kings :");
-        for(char i=0; i< kings.size; i++){
-            print("\t King at " + kings.locs[i]);
+        if(!competitiveMode && rc.getRoundNum() < 100 && rc.getTeam() == Team.A){
+            System.out.println("Printing kings");
+            print("Nearest kings :");
+            for(char i=0; i< kings.size; i++){
+                print("\t King at " + kings.locs[i]);
+            }
+            print("");
         }
-        print("");
 
 
         // Communication
@@ -28,17 +30,17 @@ public class EndTurn extends State {
 
 
         // End turn
-        if(lastInitRound != round){
+        if(lastInitRound != rc.getRoundNum()){
             // Clock.yield() - We are one round behind ! Not skipping it.
-            return new Result(WARN, "Turn start at round " + lastInitRound + " end at " + round);
+            return new Result(WARN, "Turn start at round " + lastInitRound + " end at " + rc.getRoundNum());
         }
 
         // Debug scores
-        if(!competitiveMode && round <= 100) {
-            int startX = myLoc.x - 6;
-            int startY = myLoc.y - 6;
-            int endX = myLoc.x + 7;
-            int endY = myLoc.y + 7;
+        if(!competitiveMode && rc.getRoundNum() <= 100) {
+            int startX = rc.getLocation().x - 6;
+            int startY = rc.getLocation().y - 6;
+            int endX = rc.getLocation().x + 7;
+            int endY = rc.getLocation().y + 7;
             for (int x = startX; x < endX; x++) {
                 for (int y = startY; y < endY; y++) {
                     MapLocation loc = new MapLocation(x, y);

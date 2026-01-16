@@ -1,18 +1,16 @@
 package current.States;
 
 import battlecode.common.*;
-import current.Utils.PathFinding;
 
 import static current.States.Code.*;
 
 /**
  * State to avoid cats
- * Uses PathFinding to set direction scores, allowing only left/right of away direction
+ * Checks for cats in vision and from shared array, then moves away
  */
 public class AvoidCat extends State {
-    // Safe distance from cat (want to be outside cat vision)
-    private static final int SAFE_DISTANCE_SQUARED = 25; // 5^2, outside cat vision
-    private static final int SAFE_DISTANCE_KING_SQUARED = 50; // 7^2 for kings
+    
+    private static final int CAT_DANGER_RADIUS_SQ = 36;
     
     public AvoidCat() {
         this.name = "AvoidCat";
@@ -20,34 +18,43 @@ public class AvoidCat extends State {
     
     @Override
     public Result run() throws GameActionException {
-        if (nearestCat == null) {
-            return new Result(OK, "No cat to avoid");
+        if(nearestCat == null){
+            return new Result(OK, "No cat nearby");
         }
 
-        int safetyDist = isKing ? SAFE_DISTANCE_KING_SQUARED : SAFE_DISTANCE_SQUARED;
-        int catDist = myLoc.distanceSquaredTo(nearestCat);
-        
-        if (catDist >= safetyDist) {
-            return new Result(OK, "Cat detected but safe distance");
+        MapLocation myLoc = rc.getLocation();
+        int currentDist = myLoc.distanceSquaredTo(nearestCat);
+        if(currentDist > CAT_DANGER_RADIUS_SQ){
+            return new Result(OK, "Cat far enough");
         }
-        
-        // Calculate direction away from cat
-        Direction awayFromCat = myLoc.directionTo(nearestCat).opposite();
-        Direction left = awayFromCat.rotateLeft();
-        Direction right = awayFromCat.rotateRight();
-        
-        // Set scores: only allow left/right of away direction, penalize all others
-        PathFinding.resetScores();
-        int[] escapeScores = new int[9];
-        for (Direction dir : Direction.values()) {
-            if (dir == left || dir == right) {
-                escapeScores[dir.ordinal()] = 50 * 100_000; // High score for escape directions
-            } else {
-                escapeScores[dir.ordinal()] = -50 * 100_000; // Very low score for other directions
+
+        if(rc.getMovementCooldownTurns() != 0){
+            return new Result(END_OF_TURN, "Can't move away yet");
+        }
+
+        Direction bestDir = Direction.CENTER;
+        int bestScore = Integer.MIN_VALUE;
+        for(Direction dir : Direction.values()){
+            if(dir == Direction.CENTER){
+                continue;
+            }
+            if(!rc.canMove(dir)){
+                continue;
+            }
+            MapLocation next = myLoc.add(dir);
+            int nextDist = next.distanceSquaredTo(nearestCat);
+            int score = (nextDist - currentDist) * 10;
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = dir;
             }
         }
-        PathFinding.addScoresWithoutNormalization(escapeScores, 1);
-        
-        return new Result(OK, "Add scores to avoid cat");
+
+        if(bestScore > 0 && bestDir != Direction.CENTER){
+            rc.move(bestDir);
+            return new Result(END_OF_TURN, "Avoiding cat");
+        }
+
+        return new Result(OK, "Cat nearby but no safe move");
     }
 }
