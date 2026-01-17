@@ -2,6 +2,7 @@ package current.States;
 
 import battlecode.common.*;
 import current.Communication.SenseForComs;
+import current.Utils.PathFinding;
 import current.Utils.VisionUtils;
 import current.Communication.Communication;
 
@@ -14,11 +15,11 @@ public class EndTurn extends State {
 
     @Override
     public Result run() throws GameActionException {
-        print("Nearest kings :");
-        for(char i=0; i< kings.size; i++){
-            print("\t King at " + kings.locs[i]);
+        // Force move at end of turn
+        if(rc.getMovementCooldownTurns() == 0){
+            print("Force moving at end of turn");
+            PathFinding.moveBest();
         }
-        print("");
 
         // Communication
         SenseForComs.senseForComs();  // Generate messages to send
@@ -32,6 +33,7 @@ public class EndTurn extends State {
         }
 
         // Debug scores
+        /*
         if(!competitiveMode && round <= 300 && isKing) {
             int startX = myLoc.x - 6;
             int startY = myLoc.y - 6;
@@ -55,6 +57,7 @@ public class EndTurn extends State {
                 }
             }
         }
+        */
 
         Clock.yield();
         return new Result(OK, "Ending turn gracefully.");

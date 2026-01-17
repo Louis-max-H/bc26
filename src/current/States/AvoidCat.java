@@ -26,27 +26,17 @@ public class AvoidCat extends State {
 
         int safetyDist = isKing ? SAFE_DISTANCE_KING_SQUARED : SAFE_DISTANCE_SQUARED;
         int catDist = myLoc.distanceSquaredTo(nearestCat);
-        
-        if (catDist >= safetyDist) {
-            return new Result(OK, "Cat detected but safe distance");
-        }
-        
-        // Calculate direction away from cat
-        Direction awayFromCat = myLoc.directionTo(nearestCat).opposite();
-        Direction left = awayFromCat.rotateLeft();
-        Direction right = awayFromCat.rotateRight();
-        
+
         // Set scores: only allow left/right of away direction, penalize all others
-        PathFinding.resetScores();
-        int[] escapeScores = new int[9];
+        int[] scores = new int[9];
         for (Direction dir : Direction.values()) {
-            if (dir == left || dir == right) {
-                escapeScores[dir.ordinal()] = 50 * 100_000; // High score for escape directions
-            } else {
-                escapeScores[dir.ordinal()] = -50 * 100_000; // Very low score for other directions
+            int distance = myLoc.add(dir).distanceSquaredTo(nearestCat);
+
+            if (distance < safetyDist) {
+                scores[dir.ordinal()] = - (safetyDist - distance) * 100_000; // High score when close to cat
             }
         }
-        PathFinding.addScoresWithoutNormalization(escapeScores, 1);
+        PathFinding.addScoresWithoutNormalization(scores);
         
         return new Result(OK, "Add scores to avoid cat");
     }

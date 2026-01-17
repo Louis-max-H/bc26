@@ -16,19 +16,47 @@ public class PathFinding {
 
     public static void resetScores(){
         // Default score of 1 everywhere
-        scores = new int[]{100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000};
+        scores = new int[9];
+    }
+    public static boolean digEnable = true;
+
+    public static void addCanMoveConstraint(){
+        RobotController rc = Robot.rc;
+        MapLocation myLoc = Robot.rc.getLocation();
+
+        // Check if we can dig
+        if(rc.getActionCooldownTurns() > 0 || rc.getAllCheese() < GameConstants.DIG_DIRT_CHEESE_COST){
+            digEnable = false;
+        }
+
+        // Without dig : King, no action, or not enough cheese to mine
+        if(Robot.isKing || !digEnable){
+            for(Direction dir: Direction.values()){
+                if(!rc.canMove(dir)){
+                    scores[dir.ordinal()] = 0;
+                }
+            }
+            return;
+        }
+
+        // Check if we can move or dig
+        for(Direction dir : Direction.values()){
+            // If we have a wall, can't dig
+            MapLocation loc = myLoc.add(dir);
+            if(BugNavLmx.mapCosts[loc.x + loc.y * 60] == BugNavLmx.SCORE_CELL_WALL) {
+                scores[dir.ordinal()] = 0;
+            }
+        }
     }
 
     public static Direction bestDir() {
-        // Take best score, 0 if can't move
+        // Best dir where we can move
+        addCanMoveConstraint();
+
+        // Take best score
         int bestScore = 0;
         Direction bestDir = Direction.CENTER;
         for(Direction dir: Direction.values()){
-            if(!Robot.rc.canMove(dir)){
-                scores[dir.ordinal()] = 0;
-                continue;
-            }
-
             if(bestScore < scores[dir.ordinal()]){
                 bestScore = scores[dir.ordinal()];
                 bestDir = dir;
@@ -59,7 +87,7 @@ public class PathFinding {
             Robot.rc.getLocation(), loc,
             null, // mapScore = null to use memory
             BugNavLmx.SCORE_CELL_PASSABLE * 30, // Max 30 cells
-            BugNavLmx.SCORE_CELL_IF_DIG, // Allow digging
+                (digEnable) ? BugNavLmx.SCORE_CELL_IF_DIG : BugNavLmx.SCORE_CELL_PASSABLE, // Allow digging
             max(1000, min(Clock.getBytecodesLeft() - 1000, 6000)) // Number bytecode used
         );
 
@@ -83,21 +111,25 @@ public class PathFinding {
 
     public static Result moveDir(Direction dir) throws GameActionException {
         RobotController rc = Robot.rc;
+        MapLocation locMove = rc.getLocation().add(dir);
+
+        // Can't move center
         if(dir == Direction.CENTER){
             return new Result(ERR, "Can't move to center");
         }
 
-        // If can't sense location, turn to see it
-        if(!rc.canSenseLocation(rc.getLocation().add(dir)) && rc.canTurn()){
-            // TODO: , optim by turning one of the 3 direction covering the location
-            rc.turn(dir);
+        // If dirt, turn to the direction and remove dirt
+        int xy = locMove.x + 60 * locMove.y;
+        if(VisionUtils.scores[xy] == BugNavLmx.SCORE_CELL_IF_DIG){
+            if(rc.canTurn()){
+                rc.turn(dir);
+                rc.removeDirt(locMove);
+            }else{
+                return new Result(WARN, "Need to see " + dir + " to remove dirt and move to this cell");
+            }
         }
 
-        if(rc.canRemoveDirt(rc.getLocation().add(dir))){
-            Robot.print("Removing dirt on my direction.");
-            rc.removeDirt(rc.getLocation().add(dir));
-        }
-
+        // Try move
         if(rc.canMove(dir)){
             Robot.lastLocation = Robot.myLoc;
             Robot.lastDirection = dir;
@@ -115,6 +147,7 @@ public class PathFinding {
     public static void modificatorOrientation(Direction dir){
         // Boost score toward direction. Set to 0 if not toward.
         scores[dir.rotateLeft().ordinal()] *= 4;
+        scores[dir.ordinal()] += 100_000;
         scores[dir.ordinal()] *= 8;
         scores[dir.rotateRight().ordinal()] *= 4;
 
@@ -167,7 +200,7 @@ public class PathFinding {
         scores[8] += newScores[8] * normalize;
     }
 
-    public static void addScoresWithoutNormalization(int[] newScores, int coef){
+    public static void addScoresWithoutNormalization(int[] newScores){
         scores[0] += newScores[0];
         scores[1] += newScores[1];
         scores[2] += newScores[2];

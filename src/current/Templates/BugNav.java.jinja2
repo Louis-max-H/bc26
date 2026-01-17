@@ -554,7 +554,7 @@ public class {{ className }} {
     }
 
     public static char[] generateEmptyMapCosts(){
-        return "{%for y in range(60)-%}{% for x in range(60)-%}{%if x % 2 == 0 and y % 2 == 0%}{{intToChar(SCORE_CELL_IF_DIG)}}{%else%}{{intToChar(SCORE_CELL_PASSABLE)}}{%endif%}{%endfor%}{%endfor%}".toCharArray();
+        return "{%for y in range(60)-%}{% for x in range(60)-%}{%if x % 2 == 0 and y % 2 == 0%}{{intToChar(SCORE_CELL_PASSABLE)}}{%else%}{{intToChar(SCORE_CELL_PASSABLE)}}{%endif%}{%endfor%}{%endfor%}".toCharArray();
     }
 
     public static char[] getMap3600(){

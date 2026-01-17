@@ -1,0 +1,34 @@
+package current.States;
+
+import battlecode.common.*;
+import current.Utils.PathFinding;
+
+import static current.States.Code.*;
+
+public class MoveKing extends State {
+    /**
+     * Explore use a init in Init state.
+     * We have a big array of interrest, and we move/turn to the zone with the biggest score.
+     * */
+
+    public MoveKing(){
+        this.name = "MoveKing";
+    }
+
+    @Override
+    public Result run() throws GameActionException {
+        // Check if we can move and turn
+        if(rc.getMovementCooldownTurns() != 0){
+            return new Result(CANT, "Can't move");
+        }
+
+        // Add a score to move to rats with cheese
+        int[] scores = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+        for(RobotInfo info: rc.senseNearbyRobots(-1, rc.getTeam())){
+            scores[myLoc.directionTo(info.location).ordinal()] += info.cheeseAmount;
+        }
+
+        PathFinding.addScoresWithNormalization(scores, 5);
+        return new Result(OK, "Done updating scores");
+    };
+}

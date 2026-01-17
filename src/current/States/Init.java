@@ -51,10 +51,18 @@ public class Init extends State {
         myLoc = rc.getLocation();
 
 
+        // Game phase
         if      (round <  100) { gamePhase = PHASE_START;}
         else if (round <  500) { gamePhase = PHASE_EARLY;}
         else if (round < 1500) { gamePhase = PHASE_MIDLE;}
         else                   { gamePhase = PHASE_FINAL;}
+
+        // Can dig ?
+        if(!isKing && rc.getActionCooldownTurns() > 0 && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST){
+            current.Utils.PathFinding.digEnable = true;
+        }else{
+            current.Utils.PathFinding.digEnable = false;
+        }
 
         printBytecode("Update communications");
         Communication.readMessages(); // Read messsages

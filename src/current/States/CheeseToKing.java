@@ -31,8 +31,8 @@ public class CheeseToKing extends State {
         // -> It's part of nearestKing function to check correct value
 
         // Try to transfer
-        if(rc.canTransferCheese(nearestKing, rc.getAllCheese())){
-            rc.transferCheese(nearestKing, rc.getAllCheese());
+        if(rc.canTransferCheese(nearestKing, rc.getRawCheese())){
+            rc.transferCheese(nearestKing, rc.getRawCheese());
             return new Result(OK, "Cheese transferred!");
         }
 

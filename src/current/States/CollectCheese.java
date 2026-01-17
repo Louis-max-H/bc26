@@ -53,7 +53,7 @@ public class CollectCheese extends State {
                         }
                     }
                 }
-                PathFinding.addScoresWithoutNormalization(penaltyScores, 1);
+                PathFinding.addScoresWithoutNormalization(penaltyScores);
                 return PathFinding.moveBest();
             }
         }

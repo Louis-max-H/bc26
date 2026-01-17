@@ -55,7 +55,7 @@ public class AttackCat extends State {
                         }
                     }
                 }
-                PathFinding.addScoresWithoutNormalization(escapeScores, 1);
+                PathFinding.addScoresWithoutNormalization(escapeScores);
                 return PathFinding.moveBest();
             }
             return new Result(OK, "Can't attack");
@@ -89,7 +89,7 @@ public class AttackCat extends State {
                     }
                 }
             }
-            PathFinding.addScoresWithoutNormalization(escapeScores, 1);
+            PathFinding.addScoresWithoutNormalization(escapeScores);
             PathFinding.moveBest(); // Try to move, but don't fail if can't
         }
 

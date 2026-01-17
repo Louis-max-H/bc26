@@ -44,7 +44,7 @@ public class Explore extends State {
         scores[dirToCenter.rotateLeft().ordinal()] += centerBias / 2;
         scores[dirToCenter.rotateRight().ordinal()] += centerBias / 2;
 
-        PathFinding.addScoresWithoutNormalization(scores, 1);
+        PathFinding.addScoresWithoutNormalization(scores);
         Direction bestDir = PathFinding.bestDir();
 
         // Turn and move to this direction
