@@ -3,6 +3,7 @@ package current.States;
 import battlecode.common.*;
 import current.Communication.SenseForComs;
 import current.Robots.Robot;
+import current.Utils.BugNavLmx;
 import current.Utils.PathFinding;
 import current.Utils.VisionUtils;
 import current.Communication.Communication;
@@ -13,6 +14,17 @@ import static current.States.Code.*;
 import static current.Communication.Communication.TYPE_CAT;
 
 public class Init extends State {
+    public Init() throws GameActionException {
+        this.name = "Init";
+        Robot.spawnLoc = rc.getLocation();
+        Robot.spawnRound = rc.getRoundNum();
+        Robot.isKing = rc.getType().isRatKingType();
+
+        // Init utils
+        VisionUtils.initScore(rc.getMapWidth(), rc.getMapHeight());
+        BugNavLmx.init(rc.getMapWidth(), rc.getMapHeight());
+    }
+
     public boolean isInformationCorrect(MapLocation loc, int shortId) throws GameActionException {
         // If null loc
         if (loc == null){
@@ -25,16 +37,6 @@ public class Init extends State {
         }
 
         return rc.senseRobotAtLocation(loc).getID() % 4096 == shortId;
-    }
-
-    public Init() throws GameActionException {
-        this.name = "Init";
-        Robot.spawnLoc = rc.getLocation();
-        Robot.spawnRound = rc.getRoundNum();
-        Robot.isKing = rc.getType().isRatKingType();
-
-        // Init utils
-        VisionUtils.init(rc.getMapWidth(), rc.getMapHeight());
     }
 
     @Override
@@ -54,10 +56,13 @@ public class Init extends State {
         else if (round < 1500) { gamePhase = PHASE_MIDLE;}
         else                   { gamePhase = PHASE_FINAL;}
 
-        print("Update communications");
+        printBytecode("Update communications");
         Communication.readMessages(); // Read messsages
 
-        print("Update vision score state");
+        printBytecode("Update pathFinding");
+        VisionUtils.updatePathfindingCost(rc.getLocation(), rc.getDirection(), rc.getType());
+
+        printBytecode("Update vision score state");
         /**
          * We want to give a score of interest to each cell. Default is 700
          * When the unit can see a cell, we give it a score according to the actual turn : score(t).
@@ -68,40 +73,24 @@ public class Init extends State {
          * We use score(t) = (2000 - t) / 7
          * score(0) ~ 285 << 700 and score(2000) = 0
          * */
-        char scoreTurn = (char)((2000 - round) / 28);
 
         // Reset score if we can view the cell
-        for(MapLocation loc  : rc.getAllLocationsWithinRadiusSquared(myLoc, 99)){
-            if(rc.canSenseLocation(loc)) {
-                // x + y*(60+gap) + gap + gap*(60+gap)
-                VisionUtils.scores[loc.x + 68 * loc.y + 552] = scoreTurn;
-            }
-        }
+        char scoreTurn = (char)((2000 - round) / 28);
+        VisionUtils.setScoreInRatVision(myLoc, rc.getDirection(), scoreTurn);
 
         // Add penalty if some rats are already looking in this direction
-        char penalty;
-        if(gamePhase <= PHASE_START){penalty = 300;
-        }else                       {penalty = 100;}
-
         for(RobotInfo info: rc.senseNearbyRobots(-1, rc.getTeam())){
             if(info.type == UnitType.RAT_KING){continue;}
-
-            for(MapLocation loc: VisionUtils.getAllLocationsVisibleFrom(info.getLocation(), info.getDirection(), UnitType.BABY_RAT)){
-                int cell = loc.x + 68 * loc.y + 552;
-                if(VisionUtils.scores[cell] >= penalty){
-                    VisionUtils.scores[cell] = (char)(VisionUtils.scores[cell] - penalty);
-                }else{
-                    VisionUtils.scores[cell] = 0;
-                }
-            }
+            VisionUtils.divideScoreBy2InRatVision(info.getLocation(), info.getDirection());
+            break; // Only one rat
         }
 
 
+        printBytecode("Init with sensing");
         // Clear data
         enemiesRats.clear();
         rats.clear();
 
-        print("Init with sensing");
         debug("Sensing: ally");
         for(RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam())){
             if(info.type == UnitType.RAT_KING) {
@@ -116,7 +105,7 @@ public class Init extends State {
         for (RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam().opponent())) {
             if(info.type == UnitType.RAT_KING) {
                 enemiesKings.add(info.location, info.getID());
-            }else {
+            } else {
                 enemiesRats.add(info.location);
             }
         }
@@ -143,25 +132,25 @@ public class Init extends State {
             if(info.hasCheeseMine()){
                 cheeseMines.add(info.getMapLocation());
             }
-
-            // TODO: Water ??
         }
 
         int i;
         int bestDistance;
-        print("Update nearest kings");
+        printBytecode("Update nearest units");
 
         debug("Nearest: king");
         // Update nearest king if can see it but not here
         if(!isInformationCorrect(nearestKing, nearestKingID)){
+            print("King info not correct");
             nearestKing = null;
             nearestKingID = -1;
         }
 
-        // Update nearest
+        // Update nearest king
         i = 0;
         bestDistance = 99999;
         while (i < kings.size) {
+            // TODO: lmx, move this code directly to struct to save bytecode
             if(!isInformationCorrect(kings.locs[i], kings.ids[i])){
                 kings.remove(kings.ids[i]);
                 continue;
@@ -175,7 +164,6 @@ public class Init extends State {
 
             i++;
         }
-
 
         debug("Nearest: enemy king");
         // Update nearest enemy king if can see it but not here
@@ -226,6 +214,24 @@ public class Init extends State {
 
             i++;
         }
+
+
+        if(nearestKing != null){
+            rc.setIndicatorLine(rc.getLocation(), nearestKing, 0, 10, 10);
+        }
+        if(nearestCat != null){
+            rc.setIndicatorLine(rc.getLocation(), nearestCat, 45, 105, 199);
+        }
+        if(nearestEnemyKing != null){
+            rc.setIndicatorLine(rc.getLocation(), nearestEnemyKing, 50, 0, 0);
+        }
+        if(nearestMine != null){
+            rc.setIndicatorLine(rc.getLocation(), nearestMine, 255, 228, 181);
+        }
+        if(nearestEnemyRat != null){
+            rc.setIndicatorLine(rc.getLocation(), nearestEnemyRat, 20, 0, 0);
+        }
+
 
         return new Result(OK, "");
     }

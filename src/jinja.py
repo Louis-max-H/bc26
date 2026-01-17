@@ -15,6 +15,10 @@ import numpy as np
 
 directions = ["WEST", "NORTHWEST", "SOUTHWEST", "SOUTH", "SOUTHEAST", "EAST", "NORTHEAST", "NORTH", "CENTER"]
 directionsShort = ["W", "NW", "SW", "S", "SE", "E", "NE", "N", "C"]
+dirsOrds = {"NORTH":0, "NORTHEAST":1, "EAST":2, "SOUTHEAST":3, "SOUTH":4, "SOUTHWEST":5, "WEST":6, "NORTHWEST":7, "CENTER":8}
+dirsOrdsOpposite = {"NORTH":4, "NORTHEAST":5, "EAST":6, "SOUTHEAST":7, "SOUTH":0, "SOUTHWEST":1, "WEST":2, "NORTHWEST":3, "CENTER":8}
+ordsDirsOpposite = {0:"NORTH", 1:"NORTHEAST", 2:"EAST", 3:"SOUTHEAST", 4:"SOUTH", 5:"SOUTHWEST", 6:"WEST", 7:"NORTHWEST", 8:"CENTER"}
+
 directionsLong = [
     "Direction.WEST",
     "Direction.NORTHWEST",
@@ -27,7 +31,18 @@ directionsLong = [
     "Direction.CENTER"]
 directionsWhitoutCenter = ["WEST", "NORTHWEST", "SOUTHWEST", "SOUTH", "SOUTHEAST", "EAST", "NORTHEAST", "NORTH"]
 
-anglesDirections = {
+anglesToDirections = {
+    180 : "WEST",
+    135 : "NORTHWEST",
+    225 : "SOUTHWEST",
+    270 : "SOUTH",
+    315 : "SOUTHEAST",
+    0 : "EAST",
+    45 : "NORTHEAST",
+    90 : "NORTH",
+}
+
+directionsToAngle = {
     "WEST":  180,
     "NORTHWEST": 135,
     "SOUTHWEST": 225,
@@ -55,6 +70,20 @@ dirsDelta = {
     "CENTER" : (0,0)
 }
 
+dirsShift60xy = {}
+for dir, coo in dirsDelta.items():
+    dirsShift60xy[dir] = coo[0] + 60 * coo[1]
+
+def rotate(direction, indicator, amount):
+    if indicator.upper() == "RIGHT":
+        shift = 45
+    elif indicator.upper() == "LEFT":
+        shift = -45
+    else:
+        return "INVALID_INDICATOR"
+
+    return anglesToDirections[(directionsToAngle[direction] + shift * amount) % 360]
+
 
 ############################### Utils ###############################
 
@@ -78,8 +107,8 @@ def encodeShift(cell, gap): # Same has encode, but we dont have to shift to plac
 
     # Since the value on witch we are calling the shift is an int, dont need to use overflow
     # if shift < 0:
-    #    return 2**16 - shift 
-    
+    #    return 2**16 - shift
+
     return shift
 
 def encodeXYString(gap):
@@ -103,6 +132,10 @@ def getAngle(x, y):
     if angle < 0:
         angle += 360 # [0, 360]
     return angle
+
+def intToChar(valeur):
+    return "\\u"+hex(valeur)[2:].zfill(4)
+
 
 def isAngleInBounds(angle_min, angle_max, angle):
     """
@@ -128,14 +161,14 @@ def visionCells(unit, direction):
         print(f"Unit {unit} is unknow. Should be in {list(unitsVisionRadius.keys())}")
         return []
 
-    if not direction in anglesDirections.keys():
-        print(f"Direction {direction} is unknow. Should be in {list(anglesDirections.keys())}")
+    if not direction in directionsToAngle.keys():
+        print(f"Direction {direction} is unknow. Should be in {list(directionsToAngle.keys())}")
         return []
 
     R = unitsVisionRadius[unit]
     A = unitsVisionAngle[unit]
     cappedR = int(R**0.5 + 1)
-    angleDirection = anglesDirections[direction]
+    angleDirection = directionsToAngle[direction]
 
     cells = []
     for x in range(-cappedR, cappedR + 1):
@@ -159,13 +192,17 @@ def visionCells(unit, direction):
             cells.append((x, y))
     return cells
 
+def visionCellsXY(unit, direction, gap):
+    return [encodeShift(cell, gap) for cell in visionCells(unit, direction)]
+
+
 ############################### Generating functions ###############################
 
 def genVisionCell(unit, direction, movement):
     cells = shiftCells(visionCells(unit, direction), movement)
     return sanitizeOperation(
         "new MapLocation[]{" + ", ".join(
-            [f"new MapLocation(x + {x}, y + {y})" for x, y in cells] 
+            [f"new MapLocation(x + {x}, y + {y})" for x, y in cells]
         ) + "}"
     )
 
@@ -203,39 +240,39 @@ def extract_destination(template_path):
 def process_template(template_path, base_dir, is_prod):
     """Process a single .jinja2 template file."""
     print(f"Processing: {template_path}")
-    
+
     # Extract destination from template
     destination = extract_destination(template_path)
     if not destination:
         print(f"  ⚠️  Warning: No '# Destination:' line found in {template_path}")
-        return False
-    
+        return None
+
     # Resolve destination path relative to base directory
     if os.path.isabs(destination):
         output_path = destination
     else:
         output_path = os.path.join(base_dir, destination)
-    
+
     # Normalize path
     output_path = os.path.normpath(output_path)
-    
+
     print(f"  Destination: {output_path}")
-    
+
     # Extract class name from output path (filename without extension)
     output_filename = os.path.basename(output_path)
     class_name = os.path.splitext(output_filename)[0]
-    
+
     # Setup Jinja2 environment
     template_dir = os.path.dirname(template_path)
     env = Environment(loader=FileSystemLoader(searchpath=template_dir), trim_blocks=True)
-    
+
     # Add global utility functions
     env.globals['visionCells'] = visionCells
-    
+
     # Get template name (relative to template_dir)
     template_name = os.path.basename(template_path)
     template = env.get_template(template_name)
-    
+
     # Render template
     rendered_content = template.render(
         ratsUnits=["BABY_RAT", "RAT_KING"],
@@ -245,28 +282,31 @@ def process_template(template_path, base_dir, is_prod):
         reverseRange=reverseRange,
         directionsLong=directionsLong,
         directionsShort=directionsShort,
-        anglesDirections=anglesDirections,
+        anglesToDirections=anglesToDirections,
         unitsVisionAngle=unitsVisionAngle,
         unitsVisionRadius=unitsVisionRadius,
         directionsOrdinal=directionsOrdinal,
         directionsWhitoutCenter=directionsWhitoutCenter,
         encodeXY=encodeXY,
         encodeShift=encodeShift,
+        dirsShift60xy=dirsShift60xy,
+        rotate=rotate,
         encodeXYLoc=encodeXYLoc,
         encodeXYString=encodeXYString,
         genVisionCell=genVisionCell,
+        visionCellsXY=visionCellsXY,
         genScoreInView=genScoreInView,
+        dirsOrds=dirsOrds,
+        intToChar=intToChar,
+        dirsOrdsOpposite=dirsOrdsOpposite,
+        ordsDirsOpposite=ordsDirsOpposite,
         genMemoryCharArray=genMemoryCharArray,
         prod=is_prod,
         className=class_name
     )
-    
+
+    # Calculate statistics
     if is_prod:
-        # Create output directory if it doesn't exist
-        output_dir = os.path.dirname(output_path)
-        if output_dir and not os.path.exists(output_dir):
-            os.makedirs(output_dir, exist_ok=True)
-        
         # Add header comment for generated files
         header = """// #########################################################
 // !!!!!!!!!! This file is generated by jinja.py !!!!!!!!!!!
@@ -274,20 +314,45 @@ def process_template(template_path, base_dir, is_prod):
 // #########################################################
 
 """
-        final_content = header + rendered_content
+        final_content = sanitizeOperation(header + rendered_content)
         
+        # Calculate statistics
+        line_count = len(final_content.splitlines())
+        file_size = len(final_content.encode('utf-8'))
+        
+        # Create output directory if it doesn't exist
+        output_dir = os.path.dirname(output_path)
+        if output_dir and not os.path.exists(output_dir):
+            os.makedirs(output_dir, exist_ok=True)
+
         # Write to file
         with open(output_path, 'w', encoding='utf-8') as output_file:
             output_file.write(final_content)
         print(f"  ✅ File generated: {output_path}")
+        
+        return {
+            'success': True,
+            'output_path': output_path,
+            'line_count': line_count,
+            'file_size': file_size
+        }
     else:
         # Draft mode: print content
         print(f"  📄 Generated content (draft mode):")
         print("=" * 80)
         print(rendered_content)
         print("=" * 80)
-    
-    return True
+        
+        # Calculate statistics for draft mode
+        line_count = len(rendered_content.splitlines())
+        file_size = len(rendered_content.encode('utf-8'))
+        
+        return {
+            'success': True,
+            'output_path': output_path,
+            'line_count': line_count,
+            'file_size': file_size
+        }
 
 
 ############################### CLI stuff ###############################
@@ -309,6 +374,11 @@ def main():
         "--draft",
         action="store_true",
         help="Draft mode: displays only the result without writing a file"
+    )
+    parser.add_argument(
+        "--report",
+        action="store_true",
+        help="Display statistics report (number of lines and file size) at the end"
     )
     args = parser.parse_args()
     
@@ -362,12 +432,59 @@ def main():
     
     # Process each template
     success_count = 0
+    stats_list = []
     for template_path in templates_to_process:
-        if process_template(template_path, base_dir, is_prod):
+        result = process_template(template_path, base_dir, is_prod)
+        if result and result.get('success'):
             success_count += 1
+            if args.report:
+                stats_list.append(result)
         print()
     
     print(f"✅ {success_count}/{len(templates_to_process)} template(s) processed successfully")
+    
+    # Display statistics only if --report is passed
+    if args.report and stats_list:
+        print("\n" + "=" * 80)
+        print("📊 Statistiques des fichiers générés")
+        print("=" * 80)
+        
+        total_lines = 0
+        total_size = 0
+        
+        for stat in stats_list:
+            output_path = stat['output_path']
+            line_count = stat['line_count']
+            file_size = stat['file_size']
+            total_lines += line_count
+            total_size += file_size
+            
+            # Format file size
+            if file_size < 1024:
+                size_str = f"{file_size} B"
+            elif file_size < 1024 * 1024:
+                size_str = f"{file_size / 1024:.2f} KB"
+            else:
+                size_str = f"{file_size / (1024 * 1024):.2f} MB"
+            
+            print(f"  📄 {os.path.basename(output_path)}")
+            print(f"     Lignes: {line_count:,}")
+            print(f"     Taille: {size_str}")
+            print()
+        
+        # Display cumulative statistics
+        print("-" * 80)
+        if total_size < 1024:
+            total_size_str = f"{total_size} B"
+        elif total_size < 1024 * 1024:
+            total_size_str = f"{total_size / 1024:.2f} KB"
+        else:
+            total_size_str = f"{total_size / (1024 * 1024):.2f} MB"
+        
+        print(f"  📊 Total cumulatif:")
+        print(f"     Lignes: {total_lines:,}")
+        print(f"     Taille: {total_size_str}")
+        print("=" * 80)
 
 if __name__ == "__main__":
     main()

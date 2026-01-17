@@ -10,11 +10,12 @@ public class MapLocationsWithId {
      * You can use a publicly available size element on iterate on only (!) these elements.
      * */
 
-    public int maxlen;
-    public MapLocation[] locs;
-    public int[] ids;
-    public char size;
-    public char[] hashmap; // = "\uFFFF ..... * 4096"; Defined at end of class
+    public int maxlen;          // Max capacity of the data structure
+    public char[] hashmap;      // Index of the stored (loc, unit id)
+                                // = "\uFFFF ..... * 4096"; Defined at end of class
+    public MapLocation[] locs;  // locs[hashmap[id]] = loc of the unit
+    public int[] ids;           // ids [hashmap[id]] = id  of the unit
+    public char size;           // Number of units contains
     // Give for an hash, his index in the locs
 
     public MapLocationsWithId(char len) {
@@ -33,7 +34,7 @@ public class MapLocationsWithId {
 
         if(hashmap[id] != '\uFFFF'){
             // Replace already existing element
-            locs[hashmap[id]] = locs[size];
+            locs[hashmap[id]] = loc;
         }else {
             // Add new location
             hashmap[id] = size;
@@ -52,7 +53,7 @@ public class MapLocationsWithId {
 
         if(hashmap[id] != '\uFFFF'){
             // Replace already existing element
-            locs[hashmap[id]] = locs[size];
+            locs[hashmap[id]] = new MapLocation(xy & 0b111111, xy >> 6);
         }else {
             // Add new location
             hashmap[id] = size;
@@ -68,7 +69,10 @@ public class MapLocationsWithId {
         id = id % 4096;
 
         // Not in set
-        if(hashmap[id] == 0){return;}
+        if(hashmap[id] == '\uFFFF'){
+            System.out.println("WARN: removing unit " + id + "but not in set");
+            return;
+        }
 
         // Replace by last element
         size--;
@@ -77,8 +81,8 @@ public class MapLocationsWithId {
         ids[indexRemoved] = ids[size];
         hashmap[id] = '\uFFFF';
 
-        // Update index of the replacing element
-        hashmap[hashmap[size]] = indexRemoved;
+        // Update index of the moved element
+        hashmap[ids[size]] = indexRemoved;
 
         // Okay if we are removing last element of the list
     }

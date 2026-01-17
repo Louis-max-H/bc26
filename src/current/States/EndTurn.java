@@ -14,13 +14,11 @@ public class EndTurn extends State {
 
     @Override
     public Result run() throws GameActionException {
-        System.out.println("Printing kings");
         print("Nearest kings :");
         for(char i=0; i< kings.size; i++){
             print("\t King at " + kings.locs[i]);
         }
         print("");
-
 
         // Communication
         SenseForComs.senseForComs();  // Generate messages to send
@@ -34,7 +32,7 @@ public class EndTurn extends State {
         }
 
         // Debug scores
-        if(!competitiveMode && round <= 100) {
+        if(!competitiveMode && round <= 300 && isKing) {
             int startX = myLoc.x - 6;
             int startY = myLoc.y - 6;
             int endX = myLoc.x + 7;

@@ -3,6 +3,7 @@ package current.Utils;
 {% set scoreNotAlreadyViewed = 700 %}
 
 import battlecode.common.*;
+import current.Robots.Robot;
 
 //  Destination: Utils/VisionUtils.java
 
@@ -77,6 +78,45 @@ public class {{ className }} {
         };
     };
 
+    public static void setScoreInRatVision(MapLocation from, Direction dir, char score){
+        int x = from.x;
+        int y = from.y;
+        int xy = {{ encodeXYString(8) }};
+        switch(dir){
+            {% for dir in directionsWhitoutCenter %}
+            
+            case {{ dir }}:
+            {% for xyShift in visionCellsXY("BABY_RAT", dir, 8) -%}
+                scores[xy + {{xyShift}}] = score;
+            {% endfor %}
+            return;
+            {% endfor %}
+
+            case CENTER:
+                System.out.println("ERR: can't addScoreToRatVision for CENTER");
+                return;
+        }  
+    };
+
+    public static void divideScoreBy2InRatVision(MapLocation from, Direction dir){
+        int x = from.x;
+        int y = from.y;
+        int xy = {{ encodeXYString(8) }};
+        switch(dir){
+            {% for dir in directionsWhitoutCenter %}
+            
+            case {{ dir }}:
+            {% for xyShift in visionCellsXY("BABY_RAT", dir, 8) %}
+                scores[xy + {{xyShift}}] /= 2;
+            {% endfor %}
+            return;
+            {% endfor %}
+            case CENTER:
+                System.out.println("ERR: can't divideScoreBy2InRatVision for CENTER");
+                return;
+        }
+    };
+
     public static void shiftCells(MapLocation[] cells, Direction dir){
         switch(cells.length){
             {# length is one more than last index#}
@@ -121,5 +161,21 @@ public class {{ className }} {
         };
     }
 
+    public static void updatePathfindingCost(MapLocation from, Direction direction, UnitType unit){
+        char[] scores = BugNavLmx.mapCosts;
+        char dirt = (char) BugNavLmx.SCORE_CELL_IF_DIG;
+        char passable = (char) BugNavLmx.SCORE_CELL_PASSABLE;
+        char wall = (char) BugNavLmx.SCORE_CELL_WALL;
+        RobotController rc = Robot.rc;
 
+        for(MapInfo infos: rc.senseNearbyMapInfos()){
+            if (infos.isPassable()) {
+                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = passable;
+            } else if (infos.isDirt()) {
+                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = dirt;
+            } else {
+                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = wall;
+            }
+        }
+    }
 }
