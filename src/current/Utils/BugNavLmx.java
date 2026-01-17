@@ -152,7 +152,7 @@ public class BugNavLmx {
                         }
 
                         xyTmp = xy + 60;
-                        if(mapCosts[xyTmp] >= cost_max_per_cell){
+                        if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
@@ -169,7 +169,7 @@ public class BugNavLmx {
                         }
 
                         xyTmp = xy + 61;
-                        if(mapCosts[xyTmp] >= cost_max_per_cell){
+                        if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
@@ -186,7 +186,7 @@ public class BugNavLmx {
                         }
 
                         xyTmp = xy + 1;
-                        if(mapCosts[xyTmp] >= cost_max_per_cell){
+                        if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
@@ -203,7 +203,7 @@ public class BugNavLmx {
                         }
 
                         xyTmp = xy - 59;
-                        if(mapCosts[xyTmp] >= cost_max_per_cell){
+                        if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
@@ -220,7 +220,7 @@ public class BugNavLmx {
                         }
 
                         xyTmp = xy - 60;
-                        if(mapCosts[xyTmp] >= cost_max_per_cell){
+                        if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
@@ -237,7 +237,7 @@ public class BugNavLmx {
                         }
 
                         xyTmp = xy - 61;
-                        if(mapCosts[xyTmp] >= cost_max_per_cell){
+                        if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
@@ -254,7 +254,7 @@ public class BugNavLmx {
                         }
 
                         xyTmp = xy - 1;
-                        if(mapCosts[xyTmp] >= cost_max_per_cell){
+                        if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
@@ -271,7 +271,7 @@ public class BugNavLmx {
                         }
 
                         xyTmp = xy + 59;
-                        if(mapCosts[xyTmp] >= cost_max_per_cell){
+                        if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
@@ -310,42 +310,42 @@ public class BugNavLmx {
                 case NORTH:
                     // Look for the first empty cell
                     initSideLeft:{
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHEAST);
                         xyLeft = xy + 61;
                         lastDirectionLeft = Direction.NORTHEAST;
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.EAST);
                         xyLeft = xy + 1;
                         lastDirectionLeft = Direction.EAST;
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHEAST);
                         xyLeft = xy - 59;
                         lastDirectionLeft = Direction.SOUTHEAST;
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTH);
                         xyLeft = xy - 60;
                         lastDirectionLeft = Direction.SOUTH;
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHWEST);
                         xyLeft = xy - 61;
                         lastDirectionLeft = Direction.SOUTHWEST;
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.WEST);
                         xyLeft = xy - 1;
                         lastDirectionLeft = Direction.WEST;
@@ -355,42 +355,42 @@ public class BugNavLmx {
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHWEST);
                         xyRight = xy + 59;
                         lastDirectionRight = Direction.NORTHWEST;
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.WEST);
                         xyRight = xy - 1;
                         lastDirectionRight = Direction.WEST;
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHWEST);
                         xyRight = xy - 61;
                         lastDirectionRight = Direction.SOUTHWEST;
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTH);
                         xyRight = xy - 60;
                         lastDirectionRight = Direction.SOUTH;
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHEAST);
                         xyRight = xy - 59;
                         lastDirectionRight = Direction.SOUTHEAST;
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.EAST);
                         xyRight = xy + 1;
                         lastDirectionRight = Direction.EAST;
@@ -403,42 +403,42 @@ public class BugNavLmx {
                 case NORTHEAST:
                     // Look for the first empty cell
                     initSideLeft:{
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.EAST);
                         xyLeft = xy + 1;
                         lastDirectionLeft = Direction.EAST;
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHEAST);
                         xyLeft = xy - 59;
                         lastDirectionLeft = Direction.SOUTHEAST;
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTH);
                         xyLeft = xy - 60;
                         lastDirectionLeft = Direction.SOUTH;
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHWEST);
                         xyLeft = xy - 61;
                         lastDirectionLeft = Direction.SOUTHWEST;
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.WEST);
                         xyLeft = xy - 1;
                         lastDirectionLeft = Direction.WEST;
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHWEST);
                         xyLeft = xy + 59;
                         lastDirectionLeft = Direction.NORTHWEST;
@@ -448,42 +448,42 @@ public class BugNavLmx {
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTH);
                         xyRight = xy + 60;
                         lastDirectionRight = Direction.NORTH;
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHWEST);
                         xyRight = xy + 59;
                         lastDirectionRight = Direction.NORTHWEST;
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.WEST);
                         xyRight = xy - 1;
                         lastDirectionRight = Direction.WEST;
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHWEST);
                         xyRight = xy - 61;
                         lastDirectionRight = Direction.SOUTHWEST;
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTH);
                         xyRight = xy - 60;
                         lastDirectionRight = Direction.SOUTH;
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHEAST);
                         xyRight = xy - 59;
                         lastDirectionRight = Direction.SOUTHEAST;
@@ -496,42 +496,42 @@ public class BugNavLmx {
                 case EAST:
                     // Look for the first empty cell
                     initSideLeft:{
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHEAST);
                         xyLeft = xy - 59;
                         lastDirectionLeft = Direction.SOUTHEAST;
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTH);
                         xyLeft = xy - 60;
                         lastDirectionLeft = Direction.SOUTH;
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHWEST);
                         xyLeft = xy - 61;
                         lastDirectionLeft = Direction.SOUTHWEST;
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.WEST);
                         xyLeft = xy - 1;
                         lastDirectionLeft = Direction.WEST;
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHWEST);
                         xyLeft = xy + 59;
                         lastDirectionLeft = Direction.NORTHWEST;
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTH);
                         xyLeft = xy + 60;
                         lastDirectionLeft = Direction.NORTH;
@@ -541,42 +541,42 @@ public class BugNavLmx {
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHEAST);
                         xyRight = xy + 61;
                         lastDirectionRight = Direction.NORTHEAST;
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTH);
                         xyRight = xy + 60;
                         lastDirectionRight = Direction.NORTH;
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHWEST);
                         xyRight = xy + 59;
                         lastDirectionRight = Direction.NORTHWEST;
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.WEST);
                         xyRight = xy - 1;
                         lastDirectionRight = Direction.WEST;
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHWEST);
                         xyRight = xy - 61;
                         lastDirectionRight = Direction.SOUTHWEST;
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTH);
                         xyRight = xy - 60;
                         lastDirectionRight = Direction.SOUTH;
@@ -589,42 +589,42 @@ public class BugNavLmx {
                 case SOUTHEAST:
                     // Look for the first empty cell
                     initSideLeft:{
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTH);
                         xyLeft = xy - 60;
                         lastDirectionLeft = Direction.SOUTH;
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHWEST);
                         xyLeft = xy - 61;
                         lastDirectionLeft = Direction.SOUTHWEST;
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.WEST);
                         xyLeft = xy - 1;
                         lastDirectionLeft = Direction.WEST;
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHWEST);
                         xyLeft = xy + 59;
                         lastDirectionLeft = Direction.NORTHWEST;
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTH);
                         xyLeft = xy + 60;
                         lastDirectionLeft = Direction.NORTH;
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHEAST);
                         xyLeft = xy + 61;
                         lastDirectionLeft = Direction.NORTHEAST;
@@ -634,42 +634,42 @@ public class BugNavLmx {
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.EAST);
                         xyRight = xy + 1;
                         lastDirectionRight = Direction.EAST;
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHEAST);
                         xyRight = xy + 61;
                         lastDirectionRight = Direction.NORTHEAST;
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTH);
                         xyRight = xy + 60;
                         lastDirectionRight = Direction.NORTH;
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHWEST);
                         xyRight = xy + 59;
                         lastDirectionRight = Direction.NORTHWEST;
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.WEST);
                         xyRight = xy - 1;
                         lastDirectionRight = Direction.WEST;
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHWEST);
                         xyRight = xy - 61;
                         lastDirectionRight = Direction.SOUTHWEST;
@@ -682,42 +682,42 @@ public class BugNavLmx {
                 case SOUTH:
                     // Look for the first empty cell
                     initSideLeft:{
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHWEST);
                         xyLeft = xy - 61;
                         lastDirectionLeft = Direction.SOUTHWEST;
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.WEST);
                         xyLeft = xy - 1;
                         lastDirectionLeft = Direction.WEST;
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHWEST);
                         xyLeft = xy + 59;
                         lastDirectionLeft = Direction.NORTHWEST;
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTH);
                         xyLeft = xy + 60;
                         lastDirectionLeft = Direction.NORTH;
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHEAST);
                         xyLeft = xy + 61;
                         lastDirectionLeft = Direction.NORTHEAST;
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.EAST);
                         xyLeft = xy + 1;
                         lastDirectionLeft = Direction.EAST;
@@ -727,42 +727,42 @@ public class BugNavLmx {
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHEAST);
                         xyRight = xy - 59;
                         lastDirectionRight = Direction.SOUTHEAST;
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.EAST);
                         xyRight = xy + 1;
                         lastDirectionRight = Direction.EAST;
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHEAST);
                         xyRight = xy + 61;
                         lastDirectionRight = Direction.NORTHEAST;
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTH);
                         xyRight = xy + 60;
                         lastDirectionRight = Direction.NORTH;
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHWEST);
                         xyRight = xy + 59;
                         lastDirectionRight = Direction.NORTHWEST;
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.WEST);
                         xyRight = xy - 1;
                         lastDirectionRight = Direction.WEST;
@@ -775,42 +775,42 @@ public class BugNavLmx {
                 case SOUTHWEST:
                     // Look for the first empty cell
                     initSideLeft:{
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.WEST);
                         xyLeft = xy - 1;
                         lastDirectionLeft = Direction.WEST;
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHWEST);
                         xyLeft = xy + 59;
                         lastDirectionLeft = Direction.NORTHWEST;
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTH);
                         xyLeft = xy + 60;
                         lastDirectionLeft = Direction.NORTH;
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHEAST);
                         xyLeft = xy + 61;
                         lastDirectionLeft = Direction.NORTHEAST;
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.EAST);
                         xyLeft = xy + 1;
                         lastDirectionLeft = Direction.EAST;
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHEAST);
                         xyLeft = xy - 59;
                         lastDirectionLeft = Direction.SOUTHEAST;
@@ -820,42 +820,42 @@ public class BugNavLmx {
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTH);
                         xyRight = xy - 60;
                         lastDirectionRight = Direction.SOUTH;
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHEAST);
                         xyRight = xy - 59;
                         lastDirectionRight = Direction.SOUTHEAST;
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.EAST);
                         xyRight = xy + 1;
                         lastDirectionRight = Direction.EAST;
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHEAST);
                         xyRight = xy + 61;
                         lastDirectionRight = Direction.NORTHEAST;
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTH);
                         xyRight = xy + 60;
                         lastDirectionRight = Direction.NORTH;
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHWEST);
                         xyRight = xy + 59;
                         lastDirectionRight = Direction.NORTHWEST;
@@ -868,42 +868,42 @@ public class BugNavLmx {
                 case WEST:
                     // Look for the first empty cell
                     initSideLeft:{
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHWEST);
                         xyLeft = xy + 59;
                         lastDirectionLeft = Direction.NORTHWEST;
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTH);
                         xyLeft = xy + 60;
                         lastDirectionLeft = Direction.NORTH;
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHEAST);
                         xyLeft = xy + 61;
                         lastDirectionLeft = Direction.NORTHEAST;
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.EAST);
                         xyLeft = xy + 1;
                         lastDirectionLeft = Direction.EAST;
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHEAST);
                         xyLeft = xy - 59;
                         lastDirectionLeft = Direction.SOUTHEAST;
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTH);
                         xyLeft = xy - 60;
                         lastDirectionLeft = Direction.SOUTH;
@@ -913,42 +913,42 @@ public class BugNavLmx {
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHWEST);
                         xyRight = xy - 61;
                         lastDirectionRight = Direction.SOUTHWEST;
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTH);
                         xyRight = xy - 60;
                         lastDirectionRight = Direction.SOUTH;
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHEAST);
                         xyRight = xy - 59;
                         lastDirectionRight = Direction.SOUTHEAST;
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.EAST);
                         xyRight = xy + 1;
                         lastDirectionRight = Direction.EAST;
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHEAST);
                         xyRight = xy + 61;
                         lastDirectionRight = Direction.NORTHEAST;
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTH);
                         xyRight = xy + 60;
                         lastDirectionRight = Direction.NORTH;
@@ -961,42 +961,42 @@ public class BugNavLmx {
                 case NORTHWEST:
                     // Look for the first empty cell
                     initSideLeft:{
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTH);
                         xyLeft = xy + 60;
                         lastDirectionLeft = Direction.NORTH;
                         ctrLeft = 1;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.NORTHEAST);
                         xyLeft = xy + 61;
                         lastDirectionLeft = Direction.NORTHEAST;
                         ctrLeft = 2;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.EAST);
                         xyLeft = xy + 1;
                         lastDirectionLeft = Direction.EAST;
                         ctrLeft = 3;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHEAST);
                         xyLeft = xy - 59;
                         lastDirectionLeft = Direction.SOUTHEAST;
                         ctrLeft = 4;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTH);
                         xyLeft = xy - 60;
                         lastDirectionLeft = Direction.SOUTH;
                         ctrLeft = 5;
                         break initSideLeft;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
                         locLeft = loc.add(Direction.SOUTHWEST);
                         xyLeft = xy - 61;
                         lastDirectionLeft = Direction.SOUTHWEST;
@@ -1006,42 +1006,42 @@ public class BugNavLmx {
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     initSideRight:{
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.WEST);
                         xyRight = xy - 1;
                         lastDirectionRight = Direction.WEST;
                         ctrRight = 1;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHWEST);
                         xyRight = xy - 61;
                         lastDirectionRight = Direction.SOUTHWEST;
                         ctrRight = 2;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTH);
                         xyRight = xy - 60;
                         lastDirectionRight = Direction.SOUTH;
                         ctrRight = 3;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.SOUTHEAST);
                         xyRight = xy - 59;
                         lastDirectionRight = Direction.SOUTHEAST;
                         ctrRight = 4;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.EAST);
                         xyRight = xy + 1;
                         lastDirectionRight = Direction.EAST;
                         ctrRight = 5;
                         break initSideRight;
                     }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
                         locRight = loc.add(Direction.NORTHEAST);
                         xyRight = xy + 61;
                         lastDirectionRight = Direction.NORTHEAST;
@@ -1082,7 +1082,7 @@ public class BugNavLmx {
                                         if(ctrLeft <= 0){                         switch (locLeft.directionTo(locEnd)){
                             case NORTH:
                                 xyTmp = xyLeft + 60;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothLeft <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 4;
@@ -1094,7 +1094,7 @@ public class BugNavLmx {
                                 break;
                             case NORTHEAST:
                                 xyTmp = xyLeft + 61;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothLeft <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 5;
@@ -1106,7 +1106,7 @@ public class BugNavLmx {
                                 break;
                             case EAST:
                                 xyTmp = xyLeft + 1;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothLeft <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 6;
@@ -1118,7 +1118,7 @@ public class BugNavLmx {
                                 break;
                             case SOUTHEAST:
                                 xyTmp = xyLeft - 59;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothLeft <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 7;
@@ -1130,7 +1130,7 @@ public class BugNavLmx {
                                 break;
                             case SOUTH:
                                 xyTmp = xyLeft - 60;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothLeft <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 0;
@@ -1142,7 +1142,7 @@ public class BugNavLmx {
                                 break;
                             case SOUTHWEST:
                                 xyTmp = xyLeft - 61;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothLeft <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 1;
@@ -1154,7 +1154,7 @@ public class BugNavLmx {
                                 break;
                             case WEST:
                                 xyTmp = xyLeft - 1;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothLeft <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 2;
@@ -1166,7 +1166,7 @@ public class BugNavLmx {
                                 break;
                             case NORTHWEST:
                                 xyTmp = xyLeft + 59;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothLeft <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 3;
@@ -1192,7 +1192,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 2;
@@ -1208,7 +1208,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 3;
@@ -1224,7 +1224,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 4;
@@ -1240,7 +1240,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 5;
@@ -1256,7 +1256,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 6;
@@ -1272,7 +1272,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 7;
@@ -1288,7 +1288,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 0;
@@ -1304,7 +1304,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 1;
@@ -1322,7 +1322,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 3;
@@ -1338,7 +1338,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 4;
@@ -1354,7 +1354,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 5;
@@ -1370,7 +1370,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 6;
@@ -1386,7 +1386,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 7;
@@ -1402,7 +1402,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 0;
@@ -1418,7 +1418,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 1;
@@ -1434,7 +1434,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 2;
@@ -1452,7 +1452,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 4;
@@ -1468,7 +1468,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 5;
@@ -1484,7 +1484,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 6;
@@ -1500,7 +1500,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 7;
@@ -1516,7 +1516,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 0;
@@ -1532,7 +1532,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 1;
@@ -1548,7 +1548,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 2;
@@ -1564,7 +1564,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 3;
@@ -1582,7 +1582,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 5;
@@ -1598,7 +1598,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 6;
@@ -1614,7 +1614,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 7;
@@ -1630,7 +1630,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 0;
@@ -1646,7 +1646,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 1;
@@ -1662,7 +1662,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 2;
@@ -1678,7 +1678,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 3;
@@ -1694,7 +1694,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 4;
@@ -1712,7 +1712,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 6;
@@ -1728,7 +1728,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 7;
@@ -1744,7 +1744,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 0;
@@ -1760,7 +1760,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 1;
@@ -1776,7 +1776,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 2;
@@ -1792,7 +1792,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 3;
@@ -1808,7 +1808,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 4;
@@ -1824,7 +1824,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 5;
@@ -1842,7 +1842,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 7;
@@ -1858,7 +1858,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 0;
@@ -1874,7 +1874,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 1;
@@ -1890,7 +1890,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 2;
@@ -1906,7 +1906,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 3;
@@ -1922,7 +1922,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 4;
@@ -1938,7 +1938,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 5;
@@ -1954,7 +1954,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 6;
@@ -1972,7 +1972,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 0;
@@ -1988,7 +1988,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 1;
@@ -2004,7 +2004,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 2;
@@ -2020,7 +2020,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 3;
@@ -2036,7 +2036,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 4;
@@ -2052,7 +2052,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 5;
@@ -2068,7 +2068,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 6;
@@ -2084,7 +2084,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 7;
@@ -2102,7 +2102,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 1;
@@ -2118,7 +2118,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 2;
@@ -2134,7 +2134,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 3;
@@ -2150,7 +2150,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 4;
@@ -2166,7 +2166,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 5;
@@ -2182,7 +2182,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 6;
@@ -2198,7 +2198,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 7;
@@ -2214,7 +2214,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyLeft - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 0;
@@ -2238,7 +2238,7 @@ public class BugNavLmx {
                                         if(ctrRight <= 0){                         switch (locRight.directionTo(locEnd)){
                             case NORTH:
                                 xyTmp = xyRight + 60;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothRight <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 4;
@@ -2250,7 +2250,7 @@ public class BugNavLmx {
                                 break;
                             case NORTHEAST:
                                 xyTmp = xyRight + 61;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothRight <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 5;
@@ -2262,7 +2262,7 @@ public class BugNavLmx {
                                 break;
                             case EAST:
                                 xyTmp = xyRight + 1;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothRight <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 6;
@@ -2274,7 +2274,7 @@ public class BugNavLmx {
                                 break;
                             case SOUTHEAST:
                                 xyTmp = xyRight - 59;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothRight <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 7;
@@ -2286,7 +2286,7 @@ public class BugNavLmx {
                                 break;
                             case SOUTH:
                                 xyTmp = xyRight - 60;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothRight <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 0;
@@ -2298,7 +2298,7 @@ public class BugNavLmx {
                                 break;
                             case SOUTHWEST:
                                 xyTmp = xyRight - 61;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothRight <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 1;
@@ -2310,7 +2310,7 @@ public class BugNavLmx {
                                 break;
                             case WEST:
                                 xyTmp = xyRight - 1;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothRight <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 2;
@@ -2322,7 +2322,7 @@ public class BugNavLmx {
                                 break;
                             case NORTHWEST:
                                 xyTmp = xyRight + 59;
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smoothRight <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = 3;
@@ -2348,7 +2348,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 6;
@@ -2364,7 +2364,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 5;
@@ -2380,7 +2380,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 4;
@@ -2396,7 +2396,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 3;
@@ -2412,7 +2412,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 2;
@@ -2428,7 +2428,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 1;
@@ -2444,7 +2444,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 0;
@@ -2460,7 +2460,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 7;
@@ -2478,7 +2478,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 7;
@@ -2494,7 +2494,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 6;
@@ -2510,7 +2510,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 5;
@@ -2526,7 +2526,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 4;
@@ -2542,7 +2542,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 3;
@@ -2558,7 +2558,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 2;
@@ -2574,7 +2574,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 1;
@@ -2590,7 +2590,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 0;
@@ -2608,7 +2608,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 0;
@@ -2624,7 +2624,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 7;
@@ -2640,7 +2640,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 6;
@@ -2656,7 +2656,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 5;
@@ -2672,7 +2672,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 4;
@@ -2688,7 +2688,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 3;
@@ -2704,7 +2704,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 2;
@@ -2720,7 +2720,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 1;
@@ -2738,7 +2738,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 1;
@@ -2754,7 +2754,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 0;
@@ -2770,7 +2770,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 7;
@@ -2786,7 +2786,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 6;
@@ -2802,7 +2802,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 5;
@@ -2818,7 +2818,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 4;
@@ -2834,7 +2834,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 3;
@@ -2850,7 +2850,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 2;
@@ -2868,7 +2868,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 2;
@@ -2884,7 +2884,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 1;
@@ -2900,7 +2900,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 0;
@@ -2916,7 +2916,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 7;
@@ -2932,7 +2932,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 6;
@@ -2948,7 +2948,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 5;
@@ -2964,7 +2964,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 4;
@@ -2980,7 +2980,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 3;
@@ -2998,7 +2998,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 3;
@@ -3014,7 +3014,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 2;
@@ -3030,7 +3030,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 1;
@@ -3046,7 +3046,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 0;
@@ -3062,7 +3062,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 7;
@@ -3078,7 +3078,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 6;
@@ -3094,7 +3094,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 5;
@@ -3110,7 +3110,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 4;
@@ -3128,7 +3128,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 4;
@@ -3144,7 +3144,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 3;
@@ -3160,7 +3160,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 2;
@@ -3176,7 +3176,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 1;
@@ -3192,7 +3192,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 0;
@@ -3208,7 +3208,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 7;
@@ -3224,7 +3224,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 6;
@@ -3240,7 +3240,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 5;
@@ -3258,7 +3258,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 5;
@@ -3274,7 +3274,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 4;
@@ -3290,7 +3290,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 3;
@@ -3306,7 +3306,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 2;
@@ -3322,7 +3322,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 61;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 1;
@@ -3338,7 +3338,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 60;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 0;
@@ -3354,7 +3354,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight - 59;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 7;
@@ -3370,7 +3370,7 @@ public class BugNavLmx {
                             }
 
                             xyTmp = xyRight + 1;
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 6;
@@ -3458,56 +3458,56 @@ public class BugNavLmx {
                         rc.setIndicatorDot(loc, 206, 174, 243);
             switch(loc.directionTo(startLoc)){
                 case NORTH:
-                    if(0 != returnDirection && mapCosts[xyReturn + 60] < cost_max_per_cell){
+                    if(0 != returnDirection && mapCosts[xyReturn + 60] <= cost_max_per_cell){
                         loc = loc.add(Direction.NORTH);     
                         break backtrackingLoop;
                     }else{
                         }
                     break;
                 case NORTHEAST:
-                    if(1 != returnDirection && mapCosts[xyReturn + 61] < cost_max_per_cell){
+                    if(1 != returnDirection && mapCosts[xyReturn + 61] <= cost_max_per_cell){
                         loc = loc.add(Direction.NORTHEAST);     
                         break backtrackingLoop;
                     }else{
                         }
                     break;
                 case EAST:
-                    if(2 != returnDirection && mapCosts[xyReturn + 1] < cost_max_per_cell){
+                    if(2 != returnDirection && mapCosts[xyReturn + 1] <= cost_max_per_cell){
                         loc = loc.add(Direction.EAST);     
                         break backtrackingLoop;
                     }else{
                         }
                     break;
                 case SOUTHEAST:
-                    if(3 != returnDirection && mapCosts[xyReturn - 59] < cost_max_per_cell){
+                    if(3 != returnDirection && mapCosts[xyReturn - 59] <= cost_max_per_cell){
                         loc = loc.add(Direction.SOUTHEAST);     
                         break backtrackingLoop;
                     }else{
                         }
                     break;
                 case SOUTH:
-                    if(4 != returnDirection && mapCosts[xyReturn - 60] < cost_max_per_cell){
+                    if(4 != returnDirection && mapCosts[xyReturn - 60] <= cost_max_per_cell){
                         loc = loc.add(Direction.SOUTH);     
                         break backtrackingLoop;
                     }else{
                         }
                     break;
                 case SOUTHWEST:
-                    if(5 != returnDirection && mapCosts[xyReturn - 61] < cost_max_per_cell){
+                    if(5 != returnDirection && mapCosts[xyReturn - 61] <= cost_max_per_cell){
                         loc = loc.add(Direction.SOUTHWEST);     
                         break backtrackingLoop;
                     }else{
                         }
                     break;
                 case WEST:
-                    if(6 != returnDirection && mapCosts[xyReturn - 1] < cost_max_per_cell){
+                    if(6 != returnDirection && mapCosts[xyReturn - 1] <= cost_max_per_cell){
                         loc = loc.add(Direction.WEST);     
                         break backtrackingLoop;
                     }else{
                         }
                     break;
                 case NORTHWEST:
-                    if(7 != returnDirection && mapCosts[xyReturn + 59] < cost_max_per_cell){
+                    if(7 != returnDirection && mapCosts[xyReturn + 59] <= cost_max_per_cell){
                         loc = loc.add(Direction.NORTHWEST);     
                         break backtrackingLoop;
                     }else{

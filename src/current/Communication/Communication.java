@@ -5,11 +5,11 @@ import current.Robots.Robot;
 
 /**
  * Communication system for Battlecode 2026
- * 
+ *
  * Message encoding:
  * - Bits 28-31: Message type (4 bits)
  * - Bits 0-11: Position encoding 12 bits: x + (y << 6)
- * 
+ *
  * Shared Array:
  * - First index : Index of the latest written ID
  * - Second index: Number of kings
@@ -27,71 +27,57 @@ public class Communication extends Robot {
     // Store previous turn's shared array to detect changes
     private static int[] sharedArray = new int[64];
     private static int[] lastDecodedMessages = new int[64];
-    private static int lastDecodedArray = 2; // The first data element is the second array
+    private static int lastMessageIndex = 0;
 
     // Don't send message if we have recently seen a similar message
     public static char COOLDOWN_SEND_AGAIN_SQUEAK = 2;
-    public static char COOLDOWN_SEND_AGAIN_ARRAY = 4;
+    public static char COOLDOWN_SEND_AGAIN_ARRAY = 0;
 
-    // Messages types (short)                         0b0101111122222222; // 16 bits = 2 per squeak, 2 array size
-    public static final int MASK_14BITS         =     0b0011111111111111; // Bits 12-15 : 3 bits
-    public static final int MASK_TYPE           =     0b0101000000000000; // Bits 12-15 : 3 bits
-    public static final int TYPE_MINE           =     0b0001000000000000;
-    public static final int TYPE_ENEMY_RAT      =     0b0100000000000000;
-    public static final int MASK_POSITION       =     0b0000111111111111;
-    //                                                    ^ yyyyyyxxxxxx; // Bits 0-11 : 12 bits = log2(64*64)
-    //                                                    ! This bit should be 0 to not overlap with long messages
 
     //                                            30v   24v    16v      8v      0v
     // Messages types (long)                      0b000000111111112222222233333333; // 30 bits = 1 per squeak, 3 array size
-    public static final int IS_LONG_MESSAGE     = 0b100000000000000000000000000000;
-    public static final int MASK_LONG_TYPE      = 0b111100000000000000000000000000;
-    public static final int TYPE_CAT            = 0b100100000000000000000000000000;
-    public static final int TYPE_KING           = 0b101000000000000000000000000000;
-    public static final int TYPE_ENEMY_KING     = 0b101100000000000000000000000000;
-    public static final int MASK_POSITION_SHORT = 0b000000000000000000111111111111;
-    //                                                                yyyyyyxxxxxx; // Bits 0-11 : 12 bits = log2(64-64)
+    public static final int MASK_TYPE           = 0b111100000000000000000000000000;
+    public static final int TYPE_CAT            = 0b000100000000000000000000000000;
+    public static final int TYPE_KING           = 0b001000000000000000000000000000;
+    public static final int TYPE_ENEMY_KING     = 0b001100000000000000000000000000;
+    public static final int TYPE_MINE           = 0b010000000000000000000000000000;
+    public static final int TYPE_ENEMY_RAT      = 0b010100000000000000000000000000;
+    public static final int MASK_POSITION       = 0b000000000000000000111111111111;
+    //                                                                yyyyyyxxxxxx; // Bits 0-11 : 12 bits = log2(64*64)
     public static final int MASK_UNIT_ID        = 0b000000111111111111000000000000; // 12 bits 4096 values
-
-    public static int messageRemainingPart1 = 0;
-    
+    public static final int MASK_14BITS         = 0b000000000000000011111111111111; // Used to hash a message content
     /////////////////////////////////////// Message Decoding ///////////////////////////////////////
 
     /**
      * Update memory field of the robot with received messages
      */
-    public static void decodeLongMessage(int msg) {
-        switch (msg & MASK_LONG_TYPE) {
+    public static void decodeMessage(int msg) {
+        int x = msg & 0b111111;
+        int y = (msg & MASK_POSITION) >> 6;
 
+        switch (msg & MASK_TYPE) {
             case TYPE_CAT:
-                cats.add(msg & MASK_POSITION, (msg & MASK_UNIT_ID) >> 12);
+                debug("###Decoding cat position : at x: " + x + " y: " + y);
+                cats.add(new MapLocation(x, y), (msg & MASK_UNIT_ID) >> 12);
                 break;
 
             case TYPE_KING:
-                kings.add(msg & MASK_POSITION, (msg & MASK_UNIT_ID) >> 12);
+                debug("###Decoding king position : at x: " + x + " y: " + y);
+                kings.add(new MapLocation(x, y), (msg & MASK_UNIT_ID) >> 12);
                 break;
 
             case TYPE_ENEMY_KING:
-                enemiesKings.add(msg & MASK_POSITION, (msg & MASK_UNIT_ID) >> 12);
+                debug("###Decoding enemy king position : at x: " + x + " y: " + y);
+                enemiesKings.add(new MapLocation(x, y), (msg & MASK_UNIT_ID) >> 12);
                 break;
 
-            case 0:
-                // TODO: check why we have empty message, maybe during splitting messages ?
-                break;
-
-            default:
-                Robot.err("ERR: Long message can't be parsed: " + msg + " not recognized.");
-                break;
-        }
-    }
-
-    public static void decodeShortMessage(int msg){
-        switch (msg & MASK_TYPE) {
             case TYPE_MINE:
+                debug("###Decoding mine position : at x: " + x + " y: " + y);
                 cheeseMines.add(msg & MASK_POSITION);
                 break;
 
             case TYPE_ENEMY_RAT:
+                debug("###Decoding enemy rat : at x: " + x + " y: " + y);
                 enemiesRats.add(msg & MASK_POSITION);
                 break;
 
@@ -111,37 +97,28 @@ public class Communication extends Robot {
         char sendCooldown = (char) (round + COOLDOWN_SEND_AGAIN_ARRAY);
 
         for(;;){
+            debug("Reading message at index : " + lastMessageIndex);
             // Assuming it's long
-            int message = sharedArray[lastDecodedArray] << 20 | sharedArray[lastDecodedArray + 1] << 10;
+            int message = (sharedArray[lastMessageIndex] << 20) | (sharedArray[lastMessageIndex + 1] << 10) | (sharedArray[lastMessageIndex + 2]);
 
             // If same content, no need to read more
-            if(message == lastDecodedMessages[lastDecodedArray]){break;}
-            lastDecodedMessages[lastDecodedArray] = message;
-
-            // Decode message
-            if((message & IS_LONG_MESSAGE) != 0){
-                // If long message, need to read last cell
-                message |= sharedArray[lastDecodedArray + 2];
-                lastDecodedArray += 3;
-                decodeLongMessage(message);
-
-            }else{
-                // If short message, we only keep 2 first cells
-                message >>= 8;
-                lastDecodedArray += 2;
-                decodeShortMessage(message);
+            if(message == lastDecodedMessages[lastMessageIndex]){
+                break;
             }
+            lastDecodedMessages[lastMessageIndex] = message;
 
-
+            lastMessageIndex += 3;
+            decodeMessage(message);
             lastTimeSeenMessage[message & MASK_14BITS] = sendCooldown;
             nDecoded++;
 
             // Wrap around because a circular array
-            if(lastDecodedArray >= 61){ // Need more gap if message of size 3
-                lastDecodedArray = 2;
+            if(lastMessageIndex > 60){ // Need more gap if message of size 3
+                lastMessageIndex = 0;
             }
         }
 
+        debug("End reading messages at index : " + lastMessageIndex);
         print("Shared Array : " + nDecoded + " messages in " + (Clock.getBytecodeNum() - startBytecode) + " bytecode(s)");
     }
 
@@ -157,12 +134,7 @@ public class Communication extends Robot {
         for(int r = round; r >= min_round; r--){
             for(Message msg:  rc.readSqueaks(r)) {
                 int raw = msg.getBytes();
-                if((raw & IS_LONG_MESSAGE) != 0){
-                    decodeLongMessage(raw);
-                }else{
-                    decodeShortMessage(raw & 0b1111111111111111); // 16 bits
-                }
-
+                decodeMessage(raw);
                 lastTimeSeenMessage[raw & MASK_14BITS] = sendCooldown;
 
                 nDecoded++;
@@ -186,33 +158,29 @@ public class Communication extends Robot {
 
     /////////////////////////////////////// Add messages to buffer ///////////////////////////////////////
     // Add message to the buffer if we haven't seen it recently'
-    public static void addMessage(int encodedMsg, int priority){
+    public static void addMessage(String debugMsg, int encodedMsg, int priority){
         if(lastTimeSeenMessage[encodedMsg & MASK_14BITS] <= round){
+            debug(debugMsg + ": " + encodedMsg + " (" + priority + ")");
             MessageLIFO.add(encodedMsg, priority);
         }else{
-            debug("addMessage: Skipping message " + encodedMsg + " because it was seen recently");
+            debug("addMessage: Skipping " + debugMsg + " " + encodedMsg + " because it was seen recently");
         }
     }
 
     public static void addMessageMine(MapLocation loc) {
-        debug("addMessageMine: " + (TYPE_MINE + loc.x + (loc.y << 6)));
-        addMessage((char) (TYPE_MINE + loc.x + (loc.y << 6)), PRIORITY_HIGH);
+        addMessage("addMessageMine", (char) (TYPE_MINE + loc.x + (loc.y << 6)), PRIORITY_HIGH);
     }
     public static void addMessageEnemyRat(MapLocation loc) {
-        debug("addMessageEnemyRat: " + (TYPE_ENEMY_RAT + loc.x + (loc.y << 6)));
-        addMessage((char) (TYPE_ENEMY_RAT + loc.x + (loc.y << 6)), PRIORITY_NORMAL);
+        addMessage("addMessageEnemyRat", (char) (TYPE_ENEMY_RAT + loc.x + (loc.y << 6)), PRIORITY_NORMAL);
     }
     public static void addMessageEnemyKing(MapLocation loc, int id) {
-        debug("addMessageEnemyKing: " + (TYPE_ENEMY_KING + ((id % 4096) << 12) + loc.x + (loc.y << 6)));
-        addMessage(TYPE_ENEMY_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
+        addMessage("addMessageEnemyKing", TYPE_ENEMY_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
     }
     public static void addMessageCat(MapLocation loc, int id) {
-        debug("addMessageCat: " + (TYPE_CAT + ((id % 4096) << 12) + loc.x + (loc.y << 6)));
-        addMessage(TYPE_CAT | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
+        addMessage("addMessageCat", TYPE_CAT | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
     }
     public static void addMessageKing(MapLocation loc, int id) {
-        debug("addMessageKing: " + (TYPE_KING + ((id % 4096) << 12) + loc.x + (loc.y << 6)));
-        addMessage(TYPE_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
+        addMessage("addMessageKing", TYPE_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
     }
 
     /////////////////////////////////////// Send messages from MessageLIFO ///////////////////////////////////////
@@ -243,32 +211,8 @@ public class Communication extends Robot {
     }
 
     public static void sendSqueak() throws GameActionException {
-        // Resume previous message sending
-        int part1 = messageRemainingPart1;
-
-        // If no previous message sending, get new one
-        if(part1 == 0){
-            part1 = getMessage(COOLDOWN_SEND_AGAIN_SQUEAK);
-        }
-
-        // If long message, send it alone
-        if((part1 & IS_LONG_MESSAGE) != 0){
-            rc.squeak(part1);
-            return;
-        }
-
-        // If short, take a second message to send together
-        int part2 = getMessage(COOLDOWN_SEND_AGAIN_SQUEAK);
-
-        // If second part is long, send it alone, messageRemainingPart1 will stay in remaining ...
-        if((part2 & IS_LONG_MESSAGE) != 0){
-            rc.squeak(part2);
-            return;
-        }
-
-        // Else, send grouped message and free remaining part
-        rc.squeak(part1 | (part2 << 16));
-        messageRemainingPart1 = 0;
+        int msg = getMessage(COOLDOWN_SEND_AGAIN_SQUEAK);
+        rc.squeak(msg);
     }
 
     public static void writeToArray() throws GameActionException {
@@ -282,34 +226,25 @@ public class Communication extends Robot {
 
             int message = getMessage(COOLDOWN_SEND_AGAIN_ARRAY);
             if(message == 0){break;}
-            debug("writeToArray: Sending message " + message);
-            if((message & IS_LONG_MESSAGE) != 0){
-                // First part, top 10 bits
-                rc.writeSharedArray(lastDecodedArray, message >> 20);
-                lastDecodedArray++;
+            debug("writeToArray: Sending message " + message + " at index " + lastMessageIndex);
 
-                // Second part, 10 middle bits
-                rc.writeSharedArray(lastDecodedArray, (message >> 10) & 0b111111111);
-                lastDecodedArray++;
+            // First part, top 10 bits
+            rc.writeSharedArray(lastMessageIndex, message >> 20);
+            lastMessageIndex++;
 
-                // Third part, 10 remaining bits
-                rc.writeSharedArray(lastDecodedArray, message & 0b111111111);
-                lastDecodedArray++;
+            // Second part, 10 middle bits
+            rc.writeSharedArray(lastMessageIndex, (message >> 10) & 0b1111111111);
+            lastMessageIndex++;
 
-            }else {
-                // First part, top 10 bits
-                rc.writeSharedArray(lastDecodedArray, message >> 10);
-                lastDecodedArray++;
+            // Third part, 10 remaining bits
+            rc.writeSharedArray(lastMessageIndex, message & 0b1111111111);
+            lastMessageIndex++;
 
-                // Second part, 10 remaining bits
-                rc.writeSharedArray(lastDecodedArray, message & 0b111111111);
-                lastDecodedArray++;
-            }
             nWritten++;
 
             // Wrap around because a circular array
-            if(lastDecodedArray >= 61){
-                lastDecodedArray = 2;
+            if(lastMessageIndex >= 60){
+                lastMessageIndex = 0;
             }
         }
 

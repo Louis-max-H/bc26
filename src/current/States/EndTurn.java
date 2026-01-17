@@ -32,8 +32,7 @@ public class EndTurn extends State {
         }
 
         // Debug scores
-        /*
-        if(!competitiveMode && round <= 100) {
+        if(!competitiveMode && round <= 300 && isKing) {
             int startX = myLoc.x - 6;
             int startY = myLoc.y - 6;
             int endX = myLoc.x + 7;
@@ -56,7 +55,6 @@ public class EndTurn extends State {
                 }
             }
         }
-        */
 
         Clock.yield();
         return new Result(OK, "Ending turn gracefully.");

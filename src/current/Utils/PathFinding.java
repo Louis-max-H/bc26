@@ -37,15 +37,11 @@ public class PathFinding {
 
         // Debug
         Robot.debug("Exploring:");
-        Robot.debug(" ⬆️ " + scores[Direction.NORTH.ordinal()]);
-        Robot.debug(" ↗️ " + scores[Direction.NORTHEAST.ordinal()]);
-        Robot.debug(" ➡️ " + scores[Direction.EAST.ordinal()]);
-        Robot.debug(" ↘️ " + scores[Direction.SOUTHEAST.ordinal()]);
-        Robot.debug(" ⬇️ " + scores[Direction.SOUTH.ordinal()]);
-        Robot.debug(" ↙️ " + scores[Direction.SOUTHWEST.ordinal()]);
-        Robot.debug(" ⬅️ " + scores[Direction.WEST.ordinal()]);
-        Robot.debug(" ↖️ " + scores[Direction.NORTHWEST.ordinal()]);
-        Robot.debug(" ⏹️ " + scores[Direction.CENTER.ordinal()]);
+        Robot.debug("              " +  scores[Direction.NORTH.ordinal()]);
+        Robot.debug(String.format("%10s  ↖️⬆️↗️  %10s", scores[Direction.NORTHWEST.ordinal()], scores[Direction.NORTHEAST.ordinal()]));
+        Robot.debug(String.format("%10s  ⬅️⏹️➡️  %10s", scores[Direction.WEST.ordinal()], scores[Direction.EAST.ordinal()]));
+        Robot.debug(String.format("%10s  ↙️⬇️↘️  %10s", scores[Direction.SOUTHWEST.ordinal()], scores[Direction.SOUTHEAST.ordinal()]));
+        Robot.debug("              " +  scores[Direction.SOUTH.ordinal()] + "     CENTER : " + scores[Direction.CENTER.ordinal()]);
 
         // move
         return bestDir;
@@ -64,7 +60,7 @@ public class PathFinding {
             null, // mapScore = null to use memory
             BugNavLmx.SCORE_CELL_PASSABLE * 30, // Max 30 cells
             BugNavLmx.SCORE_CELL_IF_DIG, // Allow digging
-            max(1000, min(Clock.getBytecodesLeft(), 3000)) // Number bytecode used
+            max(1000, min(Clock.getBytecodesLeft() - 1000, 6000)) // Number bytecode used
         );
 
         if(bugNavDir == null || bugNavDir == Direction.CENTER){
@@ -91,7 +87,14 @@ public class PathFinding {
             return new Result(ERR, "Can't move to center");
         }
 
+        // If can't sense location, turn to see it
+        if(!rc.canSenseLocation(rc.getLocation().add(dir)) && rc.canTurn()){
+            // TODO: , optim by turning one of the 3 direction covering the location
+            rc.turn(dir);
+        }
+
         if(rc.canRemoveDirt(rc.getLocation().add(dir))){
+            Robot.print("Removing dirt on my direction.");
             rc.removeDirt(rc.getLocation().add(dir));
         }
 

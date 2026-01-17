@@ -187,7 +187,7 @@ public class {{ className }} {
                         }
 
                         xyTmp = xy + {{dirsShift60xy[dir]}};
-                        if(mapCosts[xyTmp] >= cost_max_per_cell){
+                        if(mapCosts[xyTmp] > cost_max_per_cell){
                             {% if DEBUG -%}System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=WALL");
                             {% endif -%}
 
@@ -244,7 +244,7 @@ public class {{ className }} {
                     initSide{{side}}:{
                     {% for i in range(1, 7) -%}
                     {% set dirTest = rotate(dir, side, i) -%}
-                    if(onTheMap(loc.add(Direction.{{dirTest}})) && mapCosts[xy + {{dirsShift60xy[dirTest]}}] < cost_max_per_cell) {
+                    if(onTheMap(loc.add(Direction.{{dirTest}})) && mapCosts[xy + {{dirsShift60xy[dirTest]}}] <= cost_max_per_cell) {
                         loc{{side}} = loc.add(Direction.{{dirTest}});
                         xy{{side}} = xy + {{dirsShift60xy[dirTest]}};
                         lastDirection{{side}} = Direction.{{dirTest}};
@@ -318,7 +318,7 @@ public class {{ className }} {
                             {% for dir in dirs -%}
                             case {{ dir }}:
                                 xyTmp = xy{{side}} + {{dirsShift60xy[dir]}};
-                                if(mapCosts[xyTmp] < cost_max_per_cell && --smooth{{side}} <= 0){
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smooth{{side}} <= 0){
                                     xy = xyTmp;
 
                                     mapResult[xyTmp] = {{dirsOrdsOpposite[dir]}};
@@ -357,7 +357,7 @@ public class {{ className }} {
                             }
 
                             xyTmp = xy{{side}} + {{dirsShift60xy[dirTesting]}};
-                            if(mapCosts[xyTmp] < cost_max_per_cell){
+                            if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 {% if DEBUG -%}System.out.println("MODE={{ side }}, POS=" + xy{{side}} + ", DIR={{dirTesting}}, RESULT=OK");
                                 {% endif -%}
 
@@ -502,7 +502,7 @@ public class {{ className }} {
             switch(loc.directionTo(startLoc)){
                 {% for dir in dirs -%}
                 case {{dir}}:
-                    if({{dirsOrds[dir]}} != returnDirection && mapCosts[xyReturn + {{dirsShift60xy[dir]}}] < cost_max_per_cell){
+                    if({{dirsOrds[dir]}} != returnDirection && mapCosts[xyReturn + {{dirsShift60xy[dir]}}] <= cost_max_per_cell){
                         {% if DEBUG -%}System.out.println("MODE=BACK, POS=" + xyReturn + ", DIR={{dir}}, RESULT=DIVERGE from return path");
                         {% endif -%}
                         loc = loc.add(Direction.{{dir}});     

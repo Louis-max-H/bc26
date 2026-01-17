@@ -22,12 +22,6 @@ public class SenseForComs extends Robot {
             Communication.addMessageCat(infos.getLocation(), infos.getID());
         }
 
-        // Give position of enemy king
-        if(nearestEnemyKing != null && rc.canSenseRobotAtLocation(nearestEnemyKing) && round % 2 == 0){
-            RobotInfo infos = rc.senseRobotAtLocation(nearestKing);
-            Communication.addMessageEnemyKing(infos.getLocation(), infos.getID());
-        }
-
         // Give position of nearest enemy king
         if(nearestEnemyKing != null && rc.canSenseRobotAtLocation(nearestEnemyKing) && round % 2 == 0){
             RobotInfo infos = rc.senseRobotAtLocation(nearestEnemyKing);

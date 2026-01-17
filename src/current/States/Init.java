@@ -141,11 +141,12 @@ public class Init extends State {
         debug("Nearest: king");
         // Update nearest king if can see it but not here
         if(!isInformationCorrect(nearestKing, nearestKingID)){
+            print("King info not correct");
             nearestKing = null;
             nearestKingID = -1;
         }
 
-        // Update nearest
+        // Update nearest king
         i = 0;
         bestDistance = 99999;
         while (i < kings.size) {
@@ -163,7 +164,6 @@ public class Init extends State {
 
             i++;
         }
-
 
         debug("Nearest: enemy king");
         // Update nearest enemy king if can see it but not here
@@ -215,7 +215,24 @@ public class Init extends State {
             i++;
         }
 
-        printBytecode("Done intit!");
+
+        if(nearestKing != null){
+            rc.setIndicatorLine(rc.getLocation(), nearestKing, 0, 10, 10);
+        }
+        if(nearestCat != null){
+            rc.setIndicatorLine(rc.getLocation(), nearestCat, 45, 105, 199);
+        }
+        if(nearestEnemyKing != null){
+            rc.setIndicatorLine(rc.getLocation(), nearestEnemyKing, 50, 0, 0);
+        }
+        if(nearestMine != null){
+            rc.setIndicatorLine(rc.getLocation(), nearestMine, 255, 228, 181);
+        }
+        if(nearestEnemyRat != null){
+            rc.setIndicatorLine(rc.getLocation(), nearestEnemyRat, 20, 0, 0);
+        }
+
+
         return new Result(OK, "");
     }
 }
