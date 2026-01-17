@@ -5,6 +5,8 @@
 {% set SCORE_CELL_WALL      =  32000 %}
 {% set DEBUG = false %}
 {% set BATTLECODE = true %}
+{% set getRound = "rc.getRoundNum()" if BATTLECODE else "0" %}
+{% set MAX_DEBUG_ROUND = 150 %}
 
 {% if BATTLECODE %}
 package current.Utils;
@@ -66,14 +68,16 @@ public class {{ className }} {
         if(cost_max_per_cell > {{SCORE_CELL_WALL}}){
             {{ impossible(MSG="cost_max_per_cell is greater than SCORE_CELL_WALL {{SCORE_CELL_WALL}}") }}
         }
+
+        {% if BATTLECODE -%}RobotController rc = Robot.rc;{% endif -%}
+        if( {{ getRound }} < {{ MAX_DEBUG_ROUND }}){
+            System.out.println("Start Pathfinding from " + startLoc + " to " + endLoc);
+        }
+        
         mode = "DEFAULT";
         int resultCode = generatePathTo(startLoc, endLoc, mapCosts, getMap3600(), MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
 
-        if(resultCode < 0){
-            System.out.println("Pathfinding: Warning return code : " + resultCode);
-        }
-
-        return switch(mapResult[startLoc.x + startLoc.y*60]){
+        Direction dir = switch(mapResult[startLoc.x + startLoc.y*60]){
             {% for dir in dirs%}
             case {{dirsOrds[dir]}} -> Direction.{{dir}};
             {% endfor %}
@@ -82,21 +86,29 @@ public class {{ className }} {
                 yield Direction.CENTER;
             }
         };
+
+        if({{ getRound }} < {{ MAX_DEBUG_ROUND }}){
+            if(resultCode < 0){
+                System.out.println("Pathfinding: Warning return code : " + resultCode + " : " + dir);
+            }else{
+                System.out.println("Pathfinding: SUCCESS -> " + dir);
+            }
+        }
+
+        return dir;
     }
 
     // Int code (To continue): 
     // 1 : OK
     // -1: Not enought bytecode
     // -2: 
-    public static int generatePathTo(
+    private static int generatePathTo(
         MapLocation startLoc, MapLocation endLoc, 
         char[] mapCosts, char[] mapResult,
         int MAX_SCORE, boolean withReturn, 
         int cost_max_per_cell, int maxBytecodeUsed){% if BATTLECODE %} throws GameActionException {% endif -%}{
 
-        {% if BATTLECODE -%}
-        RobotController rc = Robot.rc;
-        {% endif -%}
+        {% if BATTLECODE -%}RobotController rc = Robot.rc;{% endif -%}
 
         if(mapCosts == null){
             mapCosts = {{ className }}.mapCosts;
@@ -390,11 +402,12 @@ public class {{ className }} {
         } // End mainLoopLabel
 
         if(!withReturn){
-            System.out.println("===Pathfinding report : Backtracking===");
-            System.out.println("Iterations normal : " + iterationsNormal);
-            System.out.println("Iterations split  : " + iterationsSplit);
-            System.out.println("Bytecode used     : " + (startRemainingBytecode - {{getBytecodeRemaining}}));
-            System.out.println("");
+            if( {{ getRound }} < {{ MAX_DEBUG_ROUND }}){
+                System.out.println("===Pathfinding report : Backtracking===");
+                System.out.println("Iterations normal : " + iterationsNormal);
+                System.out.println("Iterations split  : " + iterationsSplit);
+                System.out.println("Bytecode used     : " + (startRemainingBytecode - {{getBytecodeRemaining}}));
+            }
 
             {% if DEBUG -%}System.out.println("MSG=no return");
             {% endif -%}
@@ -524,12 +537,14 @@ public class {{ className }} {
             }
         }// End backtrackingLoop
 
-        System.out.println("===Pathfinding report : Normal===");
-        System.out.println("Iterations normal : " + iterationsNormal);
-        System.out.println("Iterations split  : " + iterationsSplit);
-        System.out.println("Iterations return : " + iterationsReturn);
-        System.out.println("Bytecode used     : " + (startRemainingBytecode - {{getBytecodeRemaining}}));
-        System.out.println("");
+        if( {{ getRound }} < {{ MAX_DEBUG_ROUND }}){
+            System.out.println("===Pathfinding report : Normal===");
+            System.out.println("Iterations normal : " + iterationsNormal);
+            System.out.println("Iterations split  : " + iterationsSplit);
+            System.out.println("Iterations return : " + iterationsReturn);
+            System.out.println("Bytecode used     : " + (startRemainingBytecode - {{getBytecodeRemaining}}));
+            System.out.println("");
+        }
 
         return generatePathTo(
             loc, startLoc, 

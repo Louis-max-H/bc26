@@ -47,14 +47,15 @@ public class BugNavLmx {
         if(cost_max_per_cell > 32000){
             throw new java.lang.Error("ERR Pathfinding: cost_max_per_cell is greater than SCORE_CELL_WALL {{SCORE_CELL_WALL}}");
         }
+
+        RobotController rc = Robot.rc;if( rc.getRoundNum() < 150){
+            System.out.println("Start Pathfinding from " + startLoc + " to " + endLoc);
+        }
+        
         mode = "DEFAULT";
         int resultCode = generatePathTo(startLoc, endLoc, mapCosts, getMap3600(), MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
 
-        if(resultCode < 0){
-            System.out.println("Pathfinding: Warning return code : " + resultCode);
-        }
-
-        return switch(mapResult[startLoc.x + startLoc.y*60]){
+        Direction dir = switch(mapResult[startLoc.x + startLoc.y*60]){
                         case 0 -> Direction.NORTH;
                         case 1 -> Direction.NORTHEAST;
                         case 2 -> Direction.EAST;
@@ -68,20 +69,29 @@ public class BugNavLmx {
                 yield Direction.CENTER;
             }
         };
+
+        if(rc.getRoundNum() < 150){
+            if(resultCode < 0){
+                System.out.println("Pathfinding: Warning return code : " + resultCode + " : " + dir);
+            }else{
+                System.out.println("Pathfinding: SUCCESS -> " + dir);
+            }
+        }
+
+        return dir;
     }
 
     // Int code (To continue): 
     // 1 : OK
     // -1: Not enought bytecode
     // -2: 
-    public static int generatePathTo(
+    private static int generatePathTo(
         MapLocation startLoc, MapLocation endLoc, 
         char[] mapCosts, char[] mapResult,
         int MAX_SCORE, boolean withReturn, 
         int cost_max_per_cell, int maxBytecodeUsed) throws GameActionException {
 
-        RobotController rc = Robot.rc;
-        if(mapCosts == null){
+        RobotController rc = Robot.rc;if(mapCosts == null){
             mapCosts = BugNavLmx.mapCosts;
         }
         int xy = startLoc.x + 60*startLoc.y;
@@ -3383,11 +3393,12 @@ public class BugNavLmx {
         } // End mainLoopLabel
 
         if(!withReturn){
-            System.out.println("===Pathfinding report : Backtracking===");
-            System.out.println("Iterations normal : " + iterationsNormal);
-            System.out.println("Iterations split  : " + iterationsSplit);
-            System.out.println("Bytecode used     : " + (startRemainingBytecode - Clock.getBytecodesLeft()));
-            System.out.println("");
+            if( rc.getRoundNum() < 150){
+                System.out.println("===Pathfinding report : Backtracking===");
+                System.out.println("Iterations normal : " + iterationsNormal);
+                System.out.println("Iterations split  : " + iterationsSplit);
+                System.out.println("Bytecode used     : " + (startRemainingBytecode - Clock.getBytecodesLeft()));
+            }
 
             BugNavLmx.mapResult = mapResult;
             if(xy != xyEnd){
@@ -3560,12 +3571,14 @@ public class BugNavLmx {
                             }
         }// End backtrackingLoop
 
-        System.out.println("===Pathfinding report : Normal===");
-        System.out.println("Iterations normal : " + iterationsNormal);
-        System.out.println("Iterations split  : " + iterationsSplit);
-        System.out.println("Iterations return : " + iterationsReturn);
-        System.out.println("Bytecode used     : " + (startRemainingBytecode - Clock.getBytecodesLeft()));
-        System.out.println("");
+        if( rc.getRoundNum() < 150){
+            System.out.println("===Pathfinding report : Normal===");
+            System.out.println("Iterations normal : " + iterationsNormal);
+            System.out.println("Iterations split  : " + iterationsSplit);
+            System.out.println("Iterations return : " + iterationsReturn);
+            System.out.println("Bytecode used     : " + (startRemainingBytecode - Clock.getBytecodesLeft()));
+            System.out.println("");
+        }
 
         return generatePathTo(
             loc, startLoc, 

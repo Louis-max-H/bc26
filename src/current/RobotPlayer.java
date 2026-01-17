@@ -12,6 +12,16 @@ public class RobotPlayer {
             default -> null;
         };
 
-        robot.run(rc);
+        try {
+            robot.run(rc);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+
+            if(!Robot.competitiveMode && rc.getTeam() == Team.A){
+                System.out.println("Not in competitive mode. We have found an error, I will surrender to be sure the error is seen by the debugger ;)");
+                rc.resign();
+            }
+        }
+
     }
 }

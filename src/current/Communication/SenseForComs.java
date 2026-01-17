@@ -17,25 +17,25 @@ public class SenseForComs extends Robot {
         }
 
         // Give position of cats
-        if(nearestCat != null && rc.canSenseLocation(nearestCat) && round % 2 == 0){
+        if(nearestCat != null && rc.canSenseRobotAtLocation(nearestCat) && round % 2 == 0){
             RobotInfo infos = rc.senseRobotAtLocation(nearestCat);
             Communication.addMessageCat(infos.getLocation(), infos.getID());
         }
 
         // Give position of enemy king
-        if(nearestEnemyKing != null && rc.canSenseLocation(nearestEnemyKing) && round % 2 == 0){
+        if(nearestEnemyKing != null && rc.canSenseRobotAtLocation(nearestEnemyKing) && round % 2 == 0){
             RobotInfo infos = rc.senseRobotAtLocation(nearestKing);
             Communication.addMessageEnemyKing(infos.getLocation(), infos.getID());
         }
 
         // Give position of nearest enemy king
-        if(nearestEnemyKing != null && rc.canSenseLocation(nearestEnemyKing) && round % 2 == 0){
+        if(nearestEnemyKing != null && rc.canSenseRobotAtLocation(nearestEnemyKing) && round % 2 == 0){
             RobotInfo infos = rc.senseRobotAtLocation(nearestEnemyKing);
             Communication.addMessageEnemyKing(infos.getLocation(), infos.getID());
         }
 
         // Give position of enemy rat
-        if(nearestEnemyRat != null && rc.canSenseLocation(nearestEnemyRat) && round % 2 == 0){
+        if(nearestEnemyRat != null && rc.canSenseRobotAtLocation(nearestEnemyRat) && round % 2 == 0){
             RobotInfo infos = rc.senseRobotAtLocation(nearestEnemyRat);
             Communication.addMessageEnemyKing(infos.getLocation(), infos.getID());
         }

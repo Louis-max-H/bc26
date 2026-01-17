@@ -20,7 +20,6 @@ public class EndTurn extends State {
         }
         print("");
 
-
         // Communication
         SenseForComs.senseForComs();  // Generate messages to send
         Communication.sendMessages(); // Send messages (squeak or shared array)

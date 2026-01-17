@@ -79,10 +79,6 @@ public class Init extends State {
         VisionUtils.setScoreInRatVision(myLoc, rc.getDirection(), scoreTurn);
 
         // Add penalty if some rats are already looking in this direction
-        char penalty;
-        if(gamePhase <= PHASE_START){penalty = 300;
-        }else                       {penalty = 100;}
-
         for(RobotInfo info: rc.senseNearbyRobots(-1, rc.getTeam())){
             if(info.type == UnitType.RAT_KING){continue;}
             VisionUtils.divideScoreBy2InRatVision(info.getLocation(), info.getDirection());
@@ -90,11 +86,11 @@ public class Init extends State {
         }
 
 
+        printBytecode("Init with sensing");
         // Clear data
         enemiesRats.clear();
         rats.clear();
 
-        printBytecode("Init with sensing");
         debug("Sensing: ally");
         for(RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam())){
             if(info.type == UnitType.RAT_KING) {
@@ -109,7 +105,7 @@ public class Init extends State {
         for (RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam().opponent())) {
             if(info.type == UnitType.RAT_KING) {
                 enemiesKings.add(info.location, info.getID());
-            }else {
+            } else {
                 enemiesRats.add(info.location);
             }
         }
@@ -136,8 +132,6 @@ public class Init extends State {
             if(info.hasCheeseMine()){
                 cheeseMines.add(info.getMapLocation());
             }
-
-            // TODO: Water ??
         }
 
         int i;
@@ -155,6 +149,7 @@ public class Init extends State {
         i = 0;
         bestDistance = 99999;
         while (i < kings.size) {
+            // TODO: lmx, move this code directly to struct to save bytecode
             if(!isInformationCorrect(kings.locs[i], kings.ids[i])){
                 kings.remove(kings.ids[i]);
                 continue;

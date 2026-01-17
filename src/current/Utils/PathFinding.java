@@ -15,7 +15,8 @@ public class PathFinding {
     /// All functions you may need
 
     public static void resetScores(){
-        scores = new int[9];
+        // Default score of 1 everywhere
+        scores = new int[]{100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000};
     }
 
     public static Direction bestDir() {
@@ -110,16 +111,17 @@ public class PathFinding {
 
     public static void modificatorOrientation(Direction dir){
         // Boost score toward direction. Set to 0 if not toward.
-        scores[dir.rotateLeft().ordinal()] /= 2;
-        scores[dir.ordinal()] *= 1;
-        scores[dir.rotateRight().ordinal()] /= 2;
+        scores[dir.rotateLeft().ordinal()] *= 4;
+        scores[dir.ordinal()] *= 8;
+        scores[dir.rotateRight().ordinal()] *= 4;
 
         Direction opposite = dir.opposite();
-        scores[opposite.rotateLeft().rotateLeft().ordinal()] = 0;
-        scores[opposite.rotateLeft().ordinal()] = 0;
-        scores[opposite.ordinal()] = 0;
-        scores[opposite.rotateRight().ordinal()] = 0;
-        scores[opposite.rotateRight().rotateRight().ordinal()] = 0;
+        scores[opposite.rotateLeft().rotateLeft().ordinal()] *= 2;
+        scores[opposite.rotateLeft().ordinal()] *= 1;
+        scores[opposite.ordinal()] /= 2;
+        scores[opposite.rotateRight().ordinal()] *= 1;
+        scores[opposite.rotateRight().rotateRight().ordinal()] *= 2;
+
         scores[Direction.CENTER.ordinal()] = 0;
     }
 
