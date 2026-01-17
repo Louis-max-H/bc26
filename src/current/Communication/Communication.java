@@ -243,7 +243,7 @@ public class Communication extends Robot {
             nWritten++;
 
             // Wrap around because a circular array
-            if(lastMessageIndex >= 60){
+            if(lastMessageIndex > 60){
                 lastMessageIndex = 0;
             }
         }
