@@ -287,7 +287,7 @@ public class {{ className }} {
                     break mainLoop;
                 }
 
-                if(scoreLeft < scoreRight){
+                if(scoreLeft < scoreRight + SCORE_CELL_PASSABLE * 4){ // Little advantage on right
                     if(scoreLeft >= MAX_SCORE){
                         {% if DEBUG -%}System.out.println("MSG=MAX_SCORE left " + scoreLeft + " and right " + scoreRight + " are >= " + MAX_SCORE);
                         {% endif -%}

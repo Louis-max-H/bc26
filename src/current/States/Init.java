@@ -90,7 +90,6 @@ public class Init extends State {
         for(RobotInfo info: rc.senseNearbyRobots(-1, rc.getTeam())){
             if(info.type == UnitType.RAT_KING){continue;}
             VisionUtils.divideScoreBy2InRatVision(info.getLocation(), info.getDirection());
-            break; // Only one rat
         }
 
 

@@ -139,7 +139,7 @@ public class Robot {
 
     /////////////////////////////////////// Debug ///////////////////////////////////////
     public static void _debug(String msg){
-        if(round < 100 && rc.getTeam() == Team.A) {
+        if(round < 400 && rc.getTeam() == Team.A) {
             System.out.println(msg);
         }
     }

@@ -1071,7 +1071,7 @@ public class BugNavLmx {
                     break mainLoop;
                 }
 
-                if(scoreLeft < scoreRight){
+                if(scoreLeft < scoreRight + SCORE_CELL_PASSABLE * 4){ // Little advantage on right
                     if(scoreLeft >= MAX_SCORE){
                         break mainLoop;
                     }

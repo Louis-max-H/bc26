@@ -7,6 +7,7 @@ import current.Utils.VisionUtils;
 import current.Communication.Communication;
 
 import static current.States.Code.*;
+import static current.Utils.Tools.bestDirOfInt9;
 
 public class EndTurn extends State {
     public EndTurn(){
@@ -15,6 +16,18 @@ public class EndTurn extends State {
 
     @Override
     public Result run() throws GameActionException {
+        // Force turn at end of turn
+        if(rc.canTurn() && !isKing){
+            int[] scores = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+            for(Direction dir : Direction.values()){
+                if(dir != Direction.CENTER){
+                    scores[dir.ordinal()] = VisionUtils.getScoreInView(myLoc.add(dir), dir, rc.getType());
+                }
+            }
+
+            rc.turn(bestDirOfInt9(scores));
+        }
+
         // Force move at end of turn
         if(rc.getMovementCooldownTurns() == 0){
             print("Force moving at end of turn");

@@ -1,9 +1,6 @@
 package current.States;
 
-import battlecode.common.GameActionException;
-import battlecode.common.MapLocation;
-import battlecode.common.RobotInfo;
-import battlecode.common.UnitType;
+import battlecode.common.*;
 import current.Robots.King;
 import current.Utils.PathFinding;
 
@@ -29,6 +26,14 @@ public class CheeseToKing extends State {
 
         // Check if we can sense location, and if so, check if king
         // -> It's part of nearestKing function to check correct value
+
+        // Turn to king to transfert
+        if(rc.getLocation().distanceSquaredTo(nearestKing) <= GameConstants.CHEESE_TRANSFER_RADIUS_SQUARED){
+            if(rc.canTurn()){
+                rc.turn(rc.getLocation().directionTo(nearestKing));
+            }
+            // TODO: Make a function to choose the best direction voering the cell
+        }
 
         // Try to transfer
         if(rc.canTransferCheese(nearestKing, rc.getRawCheese())){

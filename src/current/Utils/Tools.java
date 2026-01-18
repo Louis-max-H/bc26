@@ -28,6 +28,19 @@ public class Tools {
         );
     }
 
+    public static Direction bestDirOfInt9(int[] array){
+        int max = 0;
+        Direction bestDir = Direction.CENTER;
+        for(Direction dir: Direction.values()){
+            if(array[dir.ordinal()] > max){
+                max = array[dir.ordinal()];
+                bestDir = dir;
+            }
+        }
+        return bestDir;
+        
+    }
+
     public static int[] toInt9(char[] array){
         /**
          * convert char[8] to int[8]
