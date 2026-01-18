@@ -235,7 +235,7 @@ public class Init extends State {
             i++;
         }
 
-        debug("Nearest: mine out of " + cheeseMines.size);
+        debug("Nearest: mine out of " + (int)cheeseMines.size);
         // Update nearest
         i = 0;
         bestDistance = 99999;

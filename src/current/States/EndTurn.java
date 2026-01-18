@@ -18,14 +18,7 @@ public class EndTurn extends State {
     public Result run() throws GameActionException {
         // Force turn at end of turn
         if(rc.canTurn() && !isKing){
-            long[] scores = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-            for(Direction dir : Direction.values()){
-                if(dir != Direction.CENTER){
-                    scores[dir.ordinal()] = VisionUtils.getScoreInView(myLoc.add(dir), dir, rc.getType());
-                }
-            }
-
-            rc.turn(bestDirOfLong9(scores));
+            VisionUtils.smartLook();
         }
 
         // Force move at end of turn
