@@ -1,6 +1,6 @@
 package current.Utils;
 
-{% set scoreNotAlreadyViewed = 700 %}
+{% set scoreNotAlreadyViewed = 2000 * 1000 %}
 
 import current.States.Result;
 import battlecode.common.*;
@@ -18,14 +18,14 @@ import static current.States.Code.OK;
 
 public class {{ className }} {
     // encodeXYString(gap : 8 ) = {{ encodeXYString(8) }}
-    public static char SCORE_NOT_ALREADY_VIEWED = {{ scoreNotAlreadyViewed }};
-    public static char scores[] = {{genMemoryCharArray(scoreNotAlreadyViewed, 0, 8)}}; {# defaultValue, gapValue, gap size #}
+    public static int SCORE_NOT_ALREADY_VIEWED = {{ scoreNotAlreadyViewed }};
+    public static int scores[] = new int[] {{genMemoryIntArray(scoreNotAlreadyViewed, 0, 8)}}; /* defaultValue, gapValue, gap size */
 
-    public static void addScore(MapLocation loc, char score){
+    public static void addScore(MapLocation loc, int score){
         scores[{{ encodeXYLoc(8) }}] = score;
     }
 
-    public static char getScore(MapLocation loc){
+    public static int getScore(MapLocation loc){
         return scores[{{ encodeXYLoc(8) }}];
     }
 
@@ -78,7 +78,7 @@ public class {{ className }} {
 
         Direction bestDir = Direction.CENTER;
         int bestScore = 0;
-        {% for dir in dirs -%}
+        {% for dir in directionsWhitoutCenter -%}
         if(lookDirections[{{dirsOrds[dir]}}] > 0){
             int score = getScoreInView(rc.getLocation(), Direction.{{dir}}, rc.getType()) * lookDirections[{{dirsOrds[dir]}}];
             if(score > bestScore){
@@ -146,7 +146,7 @@ public class {{ className }} {
         };
     };
 
-    public static void setScoreInRatVision(MapLocation from, Direction dir, char score){
+    public static void setScoreInRatVision(MapLocation from, Direction dir, int score){
         int x = from.x;
         int y = from.y;
         int xy = {{ encodeXYString(8) }};
@@ -202,7 +202,7 @@ public class {{ className }} {
     }
 
     public static int getScoreInView(MapLocation from, Direction direction, UnitType unit){
-        char[] scores = VisionUtils.scores;
+        int[] scores = VisionUtils.scores;
         int x = from.x;
         int y = from.y;
         int xy = {{ encodeXYString(8)}};
@@ -216,7 +216,7 @@ public class {{ className }} {
                 {% endfor %}
 
                 case CENTER -> {
-                    System.out.println("ERR: Can't turn to center");
+                    System.out.println("ERR: getScoreInViewCan't turn to center");
                     yield 0;
                 }
             };

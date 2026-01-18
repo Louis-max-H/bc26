@@ -23,12 +23,13 @@ public class MoveKing extends State {
         }
 
         // Add a score to move to rats with cheese
-        int[] scores = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+        long[] scores = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
         for(RobotInfo info: rc.senseNearbyRobots(-1, rc.getTeam())){
             scores[myLoc.directionTo(info.location).ordinal()] += info.cheeseAmount;
         }
 
         PathFinding.addScoresWithNormalization(scores, 5);
+        PathFinding.moveBest();
         return new Result(OK, "Done updating scores");
     };
 }

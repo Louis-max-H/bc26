@@ -231,16 +231,12 @@ def genScoreInView(unit, direction, movement, gap=8):
 
     return sanitizeOperation(result)
 
-def genMemoryCharArray(defaultValue, gapValue, gap):
-    # Convert gapValue to hex \u0000
-    gapValue = "\\u"+hex(gapValue)[2:].zfill(4)
-    defaultValue = "\\u"+hex(defaultValue)[2:].zfill(4)
-
+def genMemoryIntArray(defaultValue, gapValue, gap):
     array = [gapValue for _ in range((60 + gap*2) * (60 + gap*2))]
     for x in range(60):
         for y in range(60):
             array[encodeXY((x, y), gap)] = defaultValue
-    return  '"' + "".join(array) + '".toCharArray()'
+    return  '{' + ",".join(map(str, array)) + '}'
 
 
 ############################### Jinja toolchain ###############################
@@ -322,7 +318,7 @@ def process_template(template_path, base_dir, is_prod):
         intToChar=intToChar,
         dirsOrdsOpposite=dirsOrdsOpposite,
         ordsDirsOpposite=ordsDirsOpposite,
-        genMemoryCharArray=genMemoryCharArray,
+        genMemoryIntArray=genMemoryIntArray,
         prod=is_prod,
         className=class_name
     )

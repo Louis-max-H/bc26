@@ -28,12 +28,12 @@ public class AvoidCat extends State {
         int catDist = myLoc.distanceSquaredTo(nearestCat);
 
         // Set scores: only allow left/right of away direction, penalize all others
-        int[] scores = new int[9];
+        long[] scores = new long[9];
         for (Direction dir : Direction.values()) {
-            int distance = myLoc.add(dir).distanceSquaredTo(nearestCat);
+            long distance = myLoc.add(dir).distanceSquaredTo(nearestCat);
             if (distance < safetyDist) {
 
-                int level = 4 - (distance * 4) / safetyDist; // Level 4 is when very cloose of cat
+                long level = 4 - (distance * 4) / safetyDist; // Level 4 is when very cloose of cat
                 scores[dir.ordinal()] = - level * 100_000; // High score when close to cat
             }
         }

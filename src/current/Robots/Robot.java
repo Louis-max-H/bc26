@@ -85,7 +85,6 @@ public class Robot {
 
     public void run(RobotController rc) throws GameActionException {
         Robot.rc = rc;
-        System.out.println("Dir of : " + Direction.NORTH.ordinal());
         if(!competitiveMode && rc.getRoundNum() <= 2) {
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             System.out.println("   This bot is running with competitiveMode set to false    ");
@@ -108,6 +107,10 @@ public class Robot {
 
         // Playing
         while (true) {
+            if(!competitiveMode && round > 400) {
+                rc.resign();
+            }
+
             // Playing state
             header("\t" + currentState.name + "\t" + Clock.getBytecodeNum());
             Result result = currentState.run();

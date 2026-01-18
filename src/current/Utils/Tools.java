@@ -1,16 +1,11 @@
 package current.Utils;
 
 import battlecode.common.*;
-import current.RobotPlayer;
-import current.States.Result;
-
-import java.util.Map;
 
 import static java.lang.Math.max;
-import static current.States.Code.*;
 
 public class Tools {
-    static int maxInt9(int[] array){
+    static long maxLong9(long[] array){
         /**
          * Max of an array of 8 elements
          * */
@@ -28,8 +23,8 @@ public class Tools {
         );
     }
 
-    public static Direction bestDirOfInt9(int[] array){
-        int max = 0;
+    public static Direction bestDirOfLong9(long[] array){
+        long max = 0;
         Direction bestDir = Direction.CENTER;
         for(Direction dir: Direction.values()){
             if(array[dir.ordinal()] > max){
@@ -41,11 +36,11 @@ public class Tools {
         
     }
 
-    public static int[] toInt9(char[] array){
+    public static long[] toLong9(char[] array){
         /**
-         * convert char[8] to int[8]
+         * convert char[8] to Long[8]
          * */
-        return new int[]{
+        return new long[]{
             array[0],
             array[1],
             array[2],

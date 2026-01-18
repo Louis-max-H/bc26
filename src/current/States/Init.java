@@ -42,13 +42,14 @@ public class Init extends State {
     @Override
     public Result run() throws GameActionException {
         // Called on new turns
-
         print("Update classic variables");
         round = rc.getRoundNum();
         lastInitRound = round;
         isKing = rc.getType().isRatKingType();
-        PathFinding.resetScores();
         myLoc = rc.getLocation();
+
+        // Utils
+        PathFinding.resetScores();
         VisionUtils.resetDirections();
 
 
@@ -68,24 +69,26 @@ public class Init extends State {
         printBytecode("Update communications");
         Communication.readMessages(); // Read messsages
 
-        printBytecode("Update pathFinding");
+        printBytecode("Update pathFinding costs");
         VisionUtils.updatePathfindingCost(rc.getLocation(), rc.getDirection(), rc.getType());
 
         printBytecode("Update vision score state");
         /**
-         * We want to give a score of interest to each cell. Default is 700
+         * We want to give a score of interest to each cell. Default is 21000 = 2000 * 10 + 1000 = score(turn = 0) + 1000
+         *
          * When the unit can see a cell, we give it a score according to the actual turn : score(t).
          * We want to have score(t1) > score(t2) iff t1 < t2   (the score is bigger if last visit is a turn from long ago)
          *
-         * King can view 9*9 cells, with max char of 65536, max values is around 800, taking default value of 600
-         *
-         * We use score(t) = (2000 - t) / 7
-         * score(0) ~ 285 << 700 and score(2000) = 0
+         * Imagine, it's 2D we can have
+         * [t-4][t-3][ t ] < rat [t-1][000]
+         * We want the rat to go checkout the cells at t-3 rather than checking again t-1.
+         * Thus, 7 * score(t-3) + 22 * score(t) > 29 score(t-1)
+         * Thus score(t) > 29 score(t-1) - 7 score(t-3)
          * */
 
         // Reset score if we can view the cell
-        char scoreTurn = (char)((2000 - round) / 28);
-        VisionUtils.setScoreInRatVision(myLoc, rc.getDirection(), scoreTurn);
+        int scoreTurn = (2000 - round) * 100;
+        VisionUtils.setScoreInRatVision(rc.getLocation(), rc.getDirection(), scoreTurn);
 
         // Add penalty if some rats are already looking in this direction
         for(RobotInfo info: rc.senseNearbyRobots(-1, rc.getTeam())){
@@ -176,7 +179,7 @@ public class Init extends State {
             if(myLoc.distanceSquaredTo(kings.locs[i]) < bestDistance){
                 nearestKing = kings.locs[i];
                 nearestKingID = kings.ids[i];
-                bestDistance = myLoc.distanceSquaredTo(kings.locs[i]);
+                bestDistance = myLoc.distanceSquaredTo(nearestKing);
             }
 
             i++;
@@ -201,7 +204,7 @@ public class Init extends State {
             if(myLoc.distanceSquaredTo(enemiesKings.locs[i]) < bestDistance){
                 nearestEnemyKing = enemiesKings.locs[i];
                 nearestEnemyKingID = enemiesKings.ids[i];
-                bestDistance = myLoc.distanceSquaredTo(enemiesKings.locs[i]);
+                bestDistance = myLoc.distanceSquaredTo(nearestEnemyKing);
             }
 
             i++;
@@ -226,19 +229,31 @@ public class Init extends State {
             if(myLoc.distanceSquaredTo(cats.locs[i]) < bestDistance){
                 nearestCat = cats.locs[i];
                 nearestCatID = cats.ids[i];
-                bestDistance = myLoc.distanceSquaredTo(cats.locs[i]);
+                bestDistance = myLoc.distanceSquaredTo(nearestCat);
             }
 
             i++;
         }
 
+        debug("Nearest: mine out of " + cheeseMines.size);
+        // Update nearest
+        i = 0;
+        bestDistance = 99999;
+        while (i < cheeseMines.size) {
+            if(myLoc.distanceSquaredTo(cheeseMines.locs[i]) < bestDistance){
+                nearestMine = cheeseMines.locs[i];
+                bestDistance = myLoc.distanceSquaredTo(nearestMine);
+            }
+            i++;
+        }
 
-        if(nearestKing != null){
+
+        /*if(nearestKing != null){
             rc.setIndicatorLine(rc.getLocation(), nearestKing, 0, 10, 10);
-        }
-        if(nearestCat != null){
+        }*/
+        /*if(nearestCat != null){
             rc.setIndicatorLine(rc.getLocation(), nearestCat, 45, 105, 199);
-        }
+        }*/
         if(nearestEnemyKing != null){
             rc.setIndicatorLine(rc.getLocation(), nearestEnemyKing, 50, 0, 0);
         }

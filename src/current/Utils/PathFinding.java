@@ -9,14 +9,14 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class PathFinding {
-    static int scores[]; // Contain score for each direction
+    static long scores[]; // Contain score for each direction
 
     //////////////////////////////////// public functions //////////////////////////////////////////////////////////////
     /// All functions you may need
 
     public static void resetScores(){
         // Default score of 1 everywhere
-        scores = new int[]{100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 0};
+        scores = new long[]{100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 0};
     }
     public static boolean digEnable = true;
 
@@ -54,7 +54,7 @@ public class PathFinding {
         addCanMoveConstraint();
 
         // Take best score
-        int bestScore = scores[Direction.NORTH.ordinal()] - 100_000; // Small malus
+        long bestScore = scores[Direction.CENTER.ordinal()];
         Direction bestDir = Direction.CENTER;
         for(Direction dir: Direction.values()){
             if(bestScore < scores[dir.ordinal()]){
@@ -64,7 +64,7 @@ public class PathFinding {
         }
 
         // Debug
-        Robot.debug("Exploring:");
+        Robot.debug("Best direction:");
         Robot.debug("              " +  scores[Direction.NORTH.ordinal()]);
         Robot.debug(String.format("%10s  ↖️⬆️↗️  %10s", scores[Direction.NORTHWEST.ordinal()], scores[Direction.NORTHEAST.ordinal()]));
         Robot.debug(String.format("%10s  ⬅️⏹️➡️  %10s", scores[Direction.WEST.ordinal()], scores[Direction.EAST.ordinal()]));
@@ -115,7 +115,7 @@ public class PathFinding {
 
         // Can't move center
         if(dir == Direction.CENTER){
-            return new Result(ERR, "Can't move to center");
+            return new Result(WARN, "Can't move to center");
         }
 
         // If dirt, turn to the direction and remove dirt
@@ -183,18 +183,13 @@ public class PathFinding {
     // You don't need to go further this point
     //////////////////////////////////// Scoring ///////////////////////////////////////////////////////////////////////
 
-    public static void addScoresWithNormalization(int[] newScores, int coef){
-        int max = Tools.maxInt9(newScores);
+    public static void addScoresWithNormalization(long[] newScores, long coef){
+        long max = Tools.maxLong9(newScores);
         if(max == 0){return;}
 
-        /** Normalize to    200.000
-         *  Max int is 2147.483.647
-         *               20.000.000 with coef of 100
-         *             2000.000.000 with 100 different coefs
-         *
-         *  Values should not exceed coef*normalize/2, or we will have normalization = 0
+        /** Normalize to 100.000.000
          * */
-        int normalize = 200_000 * coef / max;
+        long normalize = 100_000_000 * coef / max;
         Robot.print("Normalize coef : " + normalize);
         scores[0] += newScores[0] * normalize;
         scores[1] += newScores[1] * normalize;
@@ -207,7 +202,7 @@ public class PathFinding {
         scores[8] += newScores[8] * normalize;
     }
 
-    public static void addScoresWithoutNormalization(int[] newScores){
+    public static void addScoresWithoutNormalization(long[] newScores){
         scores[0] += newScores[0];
         scores[1] += newScores[1];
         scores[2] += newScores[2];

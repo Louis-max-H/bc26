@@ -44,7 +44,7 @@ public class AttackEnemy extends State {
                 PathFinding.resetScores();
                 PathFinding.modificatorOrientation(awayFromEnemy);
                 // Boost directions that get us out of enemy view
-                int[] escapeScores = new int[9];
+                long[] escapeScores = new long[9];
                 for (Direction dir : Direction.values()) {
                     if (dir != Direction.CENTER) {
                         MapLocation nextLoc = myLoc.add(dir);
@@ -80,7 +80,7 @@ public class AttackEnemy extends State {
             PathFinding.resetScores();
             PathFinding.modificatorOrientation(awayFromEnemy);
             // Boost directions that get us out of enemy view
-            int[] escapeScores = new int[9];
+            long[] escapeScores = new long[9];
             for (Direction dir : Direction.values()) {
                 if (dir != Direction.CENTER) {
                     MapLocation nextLoc = myLoc.add(dir);

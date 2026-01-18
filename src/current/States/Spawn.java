@@ -12,6 +12,7 @@ public class Spawn extends State {
     public Spawn(){
         this.name = "Spawn";
     }
+    public int MAX_RATS = 30;
 
     @Override
     public Result run() throws GameActionException {
@@ -35,22 +36,14 @@ public class Spawn extends State {
         int currentSpawnCost = rc.getCurrentRatCost();
         int conservativeBuffer = minCheeseFor200Rounds + currentSpawnCost; // Always have enough for one spawn + 200 rounds
 
-        // Check if we have enough cheese for 200 rounds
+        // Only spawn if we can afford it
         if(cheeseStock < conservativeBuffer){
-            return new Result(OK, "Conserving cheese for 200 rounds. Have: " + cheeseStock + ", Need: " + conservativeBuffer);
+            return new Result(OK, "Not enough cheese: " + cheeseStock + ", Need: " + conservativeBuffer);
         }
 
-        // Only spawn if we can afford it AND still have buffer
-        int cheeseAfterSpawn = cheeseStock - currentSpawnCost;
-        if(cheeseAfterSpawn < minCheeseFor200Rounds){
-            return new Result(OK, "Can't spawn - would drop below 200-round buffer. After spawn: " + cheeseAfterSpawn + ", Need: " + minCheeseFor200Rounds);
-        }
-
-        // Additional cost cap check - don't spawn if cost is too high
-        // 10 base cost of rat, but costs increase with more rats
-        // Be more conservative with cost cap
-        int maxAcceptableCost = 15; // Lower cap to be more conservative
-        if(currentSpawnCost > maxAcceptableCost){
+        // Don't spawn if costs is too high
+        int maxAcceptableCost = 10 + (MAX_RATS / 4)*10 ; // 10 cheese per 4 rats
+        if(currentSpawnCost >= maxAcceptableCost){
             return new Result(OK, "Cost too high: " + currentSpawnCost + " (max: " + maxAcceptableCost + ")");
         }
 

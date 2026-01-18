@@ -7,7 +7,7 @@ import current.Utils.VisionUtils;
 import current.Communication.Communication;
 
 import static current.States.Code.*;
-import static current.Utils.Tools.bestDirOfInt9;
+import static current.Utils.Tools.bestDirOfLong9;
 
 public class EndTurn extends State {
     public EndTurn(){
@@ -18,18 +18,18 @@ public class EndTurn extends State {
     public Result run() throws GameActionException {
         // Force turn at end of turn
         if(rc.canTurn() && !isKing){
-            int[] scores = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+            long[] scores = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
             for(Direction dir : Direction.values()){
                 if(dir != Direction.CENTER){
                     scores[dir.ordinal()] = VisionUtils.getScoreInView(myLoc.add(dir), dir, rc.getType());
                 }
             }
 
-            rc.turn(bestDirOfInt9(scores));
+            rc.turn(bestDirOfLong9(scores));
         }
 
         // Force move at end of turn
-        if(rc.getMovementCooldownTurns() == 0){
+        if(!isKing && rc.getMovementCooldownTurns() == 0){
             print("Force moving at end of turn");
             PathFinding.moveBest();
         }
@@ -47,7 +47,7 @@ public class EndTurn extends State {
 
         // Debug scores
         /*
-        if(!competitiveMode && round <= 300 && isKing) {
+        if(!competitiveMode && round <= 300) {
             int startX = myLoc.x - 6;
             int startY = myLoc.y - 6;
             int endX = myLoc.x + 7;
@@ -62,15 +62,14 @@ public class EndTurn extends State {
                     if (rc.onTheMap(loc)) {
                         int score = VisionUtils.scores[x + 68 * y + 552];
                         if(score == VisionUtils.SCORE_NOT_ALREADY_VIEWED){
-                            rc.setIndicatorDot(loc, 0, 20, 0);
+                            rc.setIndicatorDot(loc, 0, 50, 0);
                         }else{
                             rc.setIndicatorDot(loc, score , 0, 0);
                         }
                     }
                 }
             }
-        }
-        */
+        }*/
 
         Clock.yield();
         return new Result(OK, "Ending turn gracefully.");
