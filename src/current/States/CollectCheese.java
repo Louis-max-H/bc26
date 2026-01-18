@@ -3,6 +3,7 @@ package current.States;
 import battlecode.common.*;
 import current.Robots.Robot;
 import current.Utils.PathFinding;
+import current.Utils.VisionUtils;
 
 import static current.States.Code.*;
 
@@ -15,12 +16,54 @@ public class CollectCheese extends State {
 
     @Override
     public Result run() throws GameActionException {
-        // Priority 1: If we have cheese, transfer to king
-        if(rc.getRawCheese() > 0){
-            return new Result(OK, "Have cheese, should transfer");
+
+        // If cheese
+        if(nearestCheese == null){
+            return new Result(OK, "No cheese nearby");
         }
 
-        // Priority 2: Find nearest cheese mine if we don't have a target
+        // Try pickup
+        if(rc.getLocation().distanceSquaredTo(nearestCheese) <= 2){
+            Result r = VisionUtils.smartLookAt(nearestCheese);
+            if(r.notOk()){
+                return new Result(r.code, "Looking at cheese : " + r.msg);
+            }
+
+            if(rc.canPickUpCheese(nearestCheese)){
+                rc.pickUpCheese(nearestCheese);
+                return new Result(OK, "Cheese picked up at "  + nearestCheese);
+            }
+
+            return new Result(WARN, "Can't pickupt cheese");
+        }
+
+        // Move to cheese
+        PathFinding.smartMoveTo(nearestCheese);
+
+        // Try pickup
+        if(rc.getLocation().distanceSquaredTo(nearestCheese) <= 2){
+            Result r = VisionUtils.smartLookAt(nearestCheese);
+            if(r.notOk()){
+                return new Result(r.code, "Looking at cheese : " + r.msg);
+            }
+
+            if(rc.canPickUpCheese(nearestCheese)){
+                rc.pickUpCheese(nearestCheese);
+                return new Result(OK, "Cheese picked up at "  + nearestCheese);
+            }
+
+            return new Result(WARN, "Can't pickupt cheese");
+        }
+
+        rc.setIndicatorLine(rc.getLocation(), nearestCheese, 184, 163, 51);
+        return new Result(END_OF_TURN, "Moving to cheese at " + nearestCheese);
+
+/*        
+        if(true){
+            return new Result(CANT, "Need to check this function");
+        }
+
+        // Priority 1: Find nearest cheese mine if we don't have a target
         if(targetMine == null && Robot.cheeseMines.size > 0){
             int minDist = Integer.MAX_VALUE;
             for(char i = 0; i < Robot.cheeseMines.size; i++){
@@ -91,5 +134,6 @@ public class CollectCheese extends State {
         }
 
         return new Result(OK, "No cheese to collect");
+        */
     };
 }

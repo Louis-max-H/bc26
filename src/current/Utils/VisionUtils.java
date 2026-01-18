@@ -6,8 +6,12 @@
 package current.Utils;
 
 
+import current.States.Result;
 import battlecode.common.*;
 import current.Robots.Robot;
+
+import static current.States.Code.CANT;
+import static current.States.Code.OK;
 
 //  Destination: Utils/VisionUtils.java
 
@@ -27,6 +31,254 @@ public class VisionUtils {
     public static char getScore(MapLocation loc){
         return scores[loc.x + loc.y*68 + 552];
     }
+
+    public static Direction[] directionsToSeeTarget(MapLocation target, MapLocation from){
+        RobotController rc = Robot.rc;
+        target = target.translate(-from.x, -from.y);
+        return switch(target.hashCode()){ // (this.y x8000) & 0xffff | (this.x << 16)
+                        /* cell : (-4, -2) */
+            case -229378 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,};
+                        /* cell : (-4, -1) */
+            case -229377 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,};
+                        /* cell : (-4, 0) */
+            case -229376 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.SOUTHWEST,};
+                        /* cell : (-4, 1) */
+            case -229375 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,};
+                        /* cell : (-4, 2) */
+            case -229374 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,};
+                        /* cell : (-3, -3) */
+            case -163843 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,Direction.SOUTH,};
+                        /* cell : (-3, -2) */
+            case -163842 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,};
+                        /* cell : (-3, -1) */
+            case -163841 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,};
+                        /* cell : (-3, 0) */
+            case -163840 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.SOUTHWEST,};
+                        /* cell : (-3, 1) */
+            case -163839 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,};
+                        /* cell : (-3, 2) */
+            case -163838 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,};
+                        /* cell : (-3, 3) */
+            case -163837 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.NORTH,};
+                        /* cell : (-2, -4) */
+            case -98308 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,};
+                        /* cell : (-2, -3) */
+            case -98307 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,};
+                        /* cell : (-2, -2) */
+            case -98306 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,Direction.SOUTH,};
+                        /* cell : (-2, -1) */
+            case -98305 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,};
+                        /* cell : (-2, 0) */
+            case -98304 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.SOUTHWEST,};
+                        /* cell : (-2, 1) */
+            case -98303 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,};
+                        /* cell : (-2, 2) */
+            case -98302 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.NORTH,};
+                        /* cell : (-2, 3) */
+            case -98301 -> new Direction[]{Direction.NORTHWEST,Direction.NORTH,};
+                        /* cell : (-2, 4) */
+            case -98300 -> new Direction[]{Direction.NORTHWEST,Direction.NORTH,};
+                        /* cell : (-1, -4) */
+            case -32772 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,};
+                        /* cell : (-1, -3) */
+            case -32771 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,};
+                        /* cell : (-1, -2) */
+            case -32770 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,};
+                        /* cell : (-1, -1) */
+            case -32769 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,Direction.SOUTH,};
+                        /* cell : (-1, 0) */
+            case -32768 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.SOUTHWEST,};
+                        /* cell : (-1, 1) */
+            case -32767 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.NORTH,};
+                        /* cell : (-1, 2) */
+            case -32766 -> new Direction[]{Direction.NORTHWEST,Direction.NORTH,};
+                        /* cell : (-1, 3) */
+            case -32765 -> new Direction[]{Direction.NORTHWEST,Direction.NORTH,};
+                        /* cell : (-1, 4) */
+            case -32764 -> new Direction[]{Direction.NORTHWEST,Direction.NORTH,};
+                        /* cell : (0, -4) */
+            case 32764 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,Direction.SOUTHEAST,};
+                        /* cell : (0, -3) */
+            case 32765 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,Direction.SOUTHEAST,};
+                        /* cell : (0, -2) */
+            case 32766 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,Direction.SOUTHEAST,};
+                        /* cell : (0, -1) */
+            case 32767 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,Direction.SOUTHEAST,};
+                        /* cell : (0, 0) */
+            case 32768 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+                        /* cell : (0, 1) */
+            case 32769 -> new Direction[]{Direction.NORTHWEST,Direction.NORTHEAST,Direction.NORTH,};
+                        /* cell : (0, 2) */
+            case 32770 -> new Direction[]{Direction.NORTHWEST,Direction.NORTHEAST,Direction.NORTH,};
+                        /* cell : (0, 3) */
+            case 32771 -> new Direction[]{Direction.NORTHWEST,Direction.NORTHEAST,Direction.NORTH,};
+                        /* cell : (0, 4) */
+            case 32772 -> new Direction[]{Direction.NORTHWEST,Direction.NORTHEAST,Direction.NORTH,};
+                        /* cell : (1, -4) */
+            case 98300 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,};
+                        /* cell : (1, -3) */
+            case 98301 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,};
+                        /* cell : (1, -2) */
+            case 98302 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,};
+                        /* cell : (1, -1) */
+            case 98303 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+                        /* cell : (1, 0) */
+            case 98304 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+                        /* cell : (1, 1) */
+            case 98305 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.NORTH,Direction.CENTER,};
+                        /* cell : (1, 2) */
+            case 98306 -> new Direction[]{Direction.NORTHEAST,Direction.NORTH,};
+                        /* cell : (1, 3) */
+            case 98307 -> new Direction[]{Direction.NORTHEAST,Direction.NORTH,};
+                        /* cell : (1, 4) */
+            case 98308 -> new Direction[]{Direction.NORTHEAST,Direction.NORTH,};
+                        /* cell : (2, -4) */
+            case 163836 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,};
+                        /* cell : (2, -3) */
+            case 163837 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,};
+                        /* cell : (2, -2) */
+            case 163838 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+                        /* cell : (2, -1) */
+            case 163839 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+                        /* cell : (2, 0) */
+            case 163840 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+                        /* cell : (2, 1) */
+            case 163841 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+                        /* cell : (2, 2) */
+            case 163842 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.NORTH,Direction.CENTER,};
+                        /* cell : (2, 3) */
+            case 163843 -> new Direction[]{Direction.NORTHEAST,Direction.NORTH,};
+                        /* cell : (2, 4) */
+            case 163844 -> new Direction[]{Direction.NORTHEAST,Direction.NORTH,};
+                        /* cell : (3, -3) */
+            case 229373 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+                        /* cell : (3, -2) */
+            case 229374 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+                        /* cell : (3, -1) */
+            case 229375 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+                        /* cell : (3, 0) */
+            case 229376 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+                        /* cell : (3, 1) */
+            case 229377 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+                        /* cell : (3, 2) */
+            case 229378 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+                        /* cell : (3, 3) */
+            case 229379 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.NORTH,Direction.CENTER,};
+                        /* cell : (4, -2) */
+            case 294910 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+                        /* cell : (4, -1) */
+            case 294911 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+                        /* cell : (4, 0) */
+            case 294912 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+                        /* cell : (4, 1) */
+            case 294913 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+                        /* cell : (4, 2) */
+            case 294914 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+                        default -> {
+                System.out.println("ERR: Target location is out of radius");
+                yield Direction.values();
+            }
+        };
+    }
+
+
+    public static int lookDirections[] = new int[]{1, 1, 1, 1, 1, 1, 1, 1, 0};
+    public static void resetDirections(){
+        lookDirections = new int[]{1, 1, 1, 1, 1, 1, 1, 1, 0};
+    }
+
+    public static void forceLookCell(MapLocation cell){
+        resetDirections();
+        for(Direction dir : directionsToSeeTarget(cell, Robot.rc.getLocation())){
+            lookDirections[dir.ordinal()] = 1;
+        }
+    }
+
+    public static Result smartLookAt(MapLocation target) throws GameActionException{
+        if(Robot.rc.canSenseLocation(target)){
+            return new Result(OK, "Target is already in vision");
+        }
+
+        forceLookCell(target);
+        return smartLook();
+    }
+
+    public static Result smartLook() throws GameActionException {
+        RobotController rc = Robot.rc;
+        if(!rc.canTurn()){
+            return new Result(CANT, "Can't turn");
+        }
+
+        Direction bestDir = Direction.CENTER;
+        int bestScore = 0;
+        if(lookDirections[6] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.WEST, rc.getType()) * lookDirections[6];
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.WEST;
+            }
+        }
+        if(lookDirections[7] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.NORTHWEST, rc.getType()) * lookDirections[7];
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.NORTHWEST;
+            }
+        }
+        if(lookDirections[5] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.SOUTHWEST, rc.getType()) * lookDirections[5];
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.SOUTHWEST;
+            }
+        }
+        if(lookDirections[4] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.SOUTH, rc.getType()) * lookDirections[4];
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.SOUTH;
+            }
+        }
+        if(lookDirections[3] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.SOUTHEAST, rc.getType()) * lookDirections[3];
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.SOUTHEAST;
+            }
+        }
+        if(lookDirections[2] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.EAST, rc.getType()) * lookDirections[2];
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.EAST;
+            }
+        }
+        if(lookDirections[1] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.NORTHEAST, rc.getType()) * lookDirections[1];
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.NORTHEAST;
+            }
+        }
+        if(lookDirections[0] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.NORTH, rc.getType()) * lookDirections[0];
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.NORTH;
+            }
+        }
+        if(lookDirections[8] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.CENTER, rc.getType()) * lookDirections[8];
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.CENTER;
+            }
+        }
+        
+        rc.turn(bestDir);
+        return new Result(OK, "Looked at " + bestDir + " with score " + bestScore);
+    }
+
 
     public static void initScore(int width, int height){
         // Width

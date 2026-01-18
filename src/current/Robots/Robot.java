@@ -120,11 +120,13 @@ public class Robot {
             switch(result.code){
                 case LOCK:
                     print("Lock: End turn and resume to state.");
+                    rc.setIndicatorString("LOCK " + currentState.name);
                     endTurn.run();
                     init.run();
                     break;
 
                 case END_OF_TURN:
+                    rc.setIndicatorString("END_OF_TURN " + currentState.name);
                     print("Skipping to end of turn");
                     currentState = endTurn;
                     break;

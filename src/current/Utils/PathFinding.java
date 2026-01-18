@@ -145,9 +145,18 @@ public class PathFinding {
     //////////////////////////////////// Modificator ///////////////////////////////////////////////////////////////////
 
     public static void modificatorOrientation(Direction dir){
-        // Boost score toward direction. Set to 0 if not toward.
+        // Add bonus for moving
+        scores[0] += 100_000;
+        scores[1] += 100_000;
+        scores[2] += 100_000;
+        scores[3] += 100_000;
+        scores[4] += 100_000;
+        scores[5] += 100_000;
+        scores[6] += 100_000;
+        scores[7] += 100_000;
+
+        // Boost score toward direction
         scores[dir.rotateLeft().ordinal()] *= 4;
-        scores[dir.ordinal()] += 100_000;
         scores[dir.ordinal()] *= 8;
         scores[dir.rotateRight().ordinal()] *= 4;
 
@@ -157,8 +166,6 @@ public class PathFinding {
         scores[opposite.ordinal()] /= 2;
         scores[opposite.rotateRight().ordinal()] *= 1;
         scores[opposite.rotateRight().rotateRight().ordinal()] *= 2;
-
-        scores[Direction.CENTER.ordinal()] = 0;
     }
 
     public static void modificatorHortogonal(){

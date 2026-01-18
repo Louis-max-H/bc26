@@ -11,8 +11,8 @@ import static current.States.Code.*;
  */
 public class AvoidCat extends State {
     // Safe distance from cat (want to be outside cat vision)
-    private static final int SAFE_DISTANCE_SQUARED = 25; // 5^2, outside cat vision
-    private static final int SAFE_DISTANCE_KING_SQUARED = 50; // 7^2 for kings
+    private static final int SAFE_DISTANCE_SQUARED = 10;
+    private static final int SAFE_DISTANCE_KING_SQUARED = 20;
     
     public AvoidCat() {
         this.name = "AvoidCat";

@@ -124,18 +124,13 @@ def encodeXYLoc(gap):
         return f"loc.x + loc.y*{(60 + gap)} + {gap + gap*(60+gap)}"
     return f"loc.x + loc.y*60"
 
-
+def intToChar(valeur):
+    return "\\u"+hex(valeur)[2:].zfill(4)
 
 def getAngle(x, y):
     angle = math.atan2(y, x) # [-pi, pi]
     angle = angle * 180 / math.pi # [-180, 180]
-    if angle < 0:
-        angle += 360 # [0, 360]
-    return angle
-
-def intToChar(valeur):
-    return "\\u"+hex(valeur)[2:].zfill(4)
-
+    return angle % 360
 
 def isAngleInBounds(angle_min, angle_max, angle):
     """
@@ -155,6 +150,19 @@ def isAngleInBounds(angle_min, angle_max, angle):
     else:
         # Wrapping interval (e.g., 300 to 60 means [300, 360) U [0, 60])
         return a >= amin or a <= amax
+
+def cellInVision(cell, direction):
+    if cell[0] ** 2 + cell[1] ** 2 > 20:
+        return False
+
+    result = isAngleInBounds(
+        directionsToAngle[direction] - unitsVisionAngle["BABY_RAT"]/2,
+        directionsToAngle[direction] + unitsVisionAngle["BABY_RAT"]/2,
+        getAngle(cell[0], cell[1])
+    )
+    # Debug: print(f"cell: {cell}, direction: {direction}, angle: {getAngle(cell[0], cell[1])}, bounds: {directionsToAngle[direction] - unitsVisionAngle["BABY_RAT"]/2}, {directionsToAngle[direction] + unitsVisionAngle["BABY_RAT"]/2}")
+    
+    return result
 
 def visionCells(unit, direction):
     if not unit in unitsVisionRadius.keys():
@@ -195,6 +203,16 @@ def visionCells(unit, direction):
 def visionCellsXY(unit, direction, gap):
     return [encodeShift(cell, gap) for cell in visionCells(unit, direction)]
 
+def cellsInRadius(r):
+    cells = []
+    for x in range(-r, r + 1):
+        for y in range(-r, r + 1):
+            if x**2 + y**2 <= r:
+                cells.append((x, y))
+    return cells
+
+def battleCodehash(cell):
+    return (cell[1] + 0x8000) & 0xffff | (cell[0] << 16)
 
 ############################### Generating functions ###############################
 
@@ -289,10 +307,14 @@ def process_template(template_path, base_dir, is_prod):
         directionsWhitoutCenter=directionsWhitoutCenter,
         encodeXY=encodeXY,
         encodeShift=encodeShift,
+        dirs=directions,
         dirsShift60xy=dirsShift60xy,
         rotate=rotate,
+        battleCodehash=battleCodehash,
+        cellsInRadius=cellsInRadius,
         encodeXYLoc=encodeXYLoc,
         encodeXYString=encodeXYString,
+        cellInVision=cellInVision,
         genVisionCell=genVisionCell,
         visionCellsXY=visionCellsXY,
         genScoreInView=genScoreInView,
@@ -357,12 +379,84 @@ def process_template(template_path, base_dir, is_prod):
 
 ############################### CLI stuff ###############################
 
+def test_cellInVision():
+    """Test la fonction cellInVision avec différents cas."""
+    print("🧪 Tests de la fonction cellInVision\n")
+    print("=" * 80)
+    
+    # Cas de test: (cellule, direction, résultat attendu)
+    test_cases = [
+        # Cellules dans la direction EAST (angle 0, vision de -45 à +45)
+        ((4, 0), "EAST", True, "Cellule directement à l'est"),
+        ((4, 2), "EAST", True, "Cellule à l'est avec petit décalage vertical"),
+        ((4, 4), "EAST", True, "Cellule à 45° (limite supérieure)"),
+        ((2, 4), "EAST", False, "Cellule à plus de 45° (hors vision)"),
+        
+        # Cellules dans la direction NORTH (angle 90, vision de 45 à 135)
+        ((0, 4), "NORTH", True, "Cellule directement au nord"),
+        ((2, 4), "NORTH", True, "Cellule au nord avec petit décalage horizontal"),
+        ((4, 4), "NORTH", True, "Cellule à 45° (limite inférieure)"),
+        
+        # Cellules dans la direction WEST (angle 180, vision de 135 à 225)
+        ((-4, 0), "WEST", True, "Cellule directement à l'ouest"),
+        ((-4, 2), "WEST", True, "Cellule à l'ouest avec petit décalage"),
+        ((-4, -2), "WEST", True, "Cellule à l'ouest avec décalage négatif"),
+        
+        # Cellules dans la direction SOUTH (angle 270, vision de 225 à 315)
+        ((0, -4), "SOUTH", True, "Cellule directement au sud"),
+        ((-2, -4), "SOUTH", True, "Cellule au sud avec décalage"),
+        
+        # Test de la limite de distance (rayon > 20)
+        ((5, 0), "EAST", False, "Cellule trop loin (distance > 20)"),
+        ((4, 3), "EAST", False, "Cellule à la limite de distance"),
+        
+        # Cellule au centre
+        ((0, 0), "EAST", False, "Cellule au centre (distance = 0)"),
+        
+        # Tests avec différentes directions
+        ((3, 3), "NORTHEAST", True, "Cellule au nord-est"),
+        ((-3, 3), "NORTHWEST", True, "Cellule au nord-ouest"),
+        ((3, -3), "SOUTHEAST", True, "Cellule au sud-est"),
+        ((-3, -3), "SOUTHWEST", True, "Cellule au sud-ouest"),
+    ]
+    
+    passed = 0
+    failed = 0
+    
+    for cell, direction, expected, description in test_cases:
+        result = cellInVision(cell, direction)
+        status = "✅ PASS" if result == expected else "❌ FAIL"
+        
+        if result == expected:
+            passed += 1
+        else:
+            failed += 1
+        
+        print(f"{status} | {description}")
+        print(f"      Cellule: {cell}, Direction: {direction}")
+        print(f"      Attendu: {expected}, Obtenu: {result}")
+        if result != expected:
+            angle = getAngle(cell[0], cell[1])
+            angle_min = directionsToAngle[direction] - unitsVisionAngle["BABY_RAT"]/2
+            angle_max = directionsToAngle[direction] + unitsVisionAngle["BABY_RAT"]/2
+            print(f"      Angle: {angle:.2f}°, Limites: [{angle_min:.2f}°, {angle_max:.2f}°]")
+        print()
+    
+    print("=" * 80)
+    print(f"📊 Résultats: {passed} tests réussis, {failed} tests échoués sur {len(test_cases)} tests")
+    print("=" * 80)
+    
+    return failed == 0
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generates .java files from .jinja2 templates."
     )
     parser.add_argument(
         "target",
+        nargs='?',
+        default=None,
         help="Path to a directory (to process all .jinja2 files in Templates/) or a .jinja2 file"
     )
     parser.add_argument(
@@ -380,7 +474,21 @@ def main():
         action="store_true",
         help="Display statistics report (number of lines and file size) at the end"
     )
+    parser.add_argument(
+        "--test",
+        action="store_true",
+        help="Run tests for the cellInVision function"
+    )
     args = parser.parse_args()
+    
+    # Si le flag --test est activé, exécuter les tests et sortir
+    if args.test:
+        success = test_cellInVision()
+        return 0 if success else 1
+    
+    # Valider que target est fourni pour les autres modes
+    if args.target is None:
+        parser.error("the following arguments are required: target (sauf si --test est utilisé)")
     
     # Validate mode arguments
     if args.prod and args.draft:

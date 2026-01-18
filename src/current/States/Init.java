@@ -49,6 +49,7 @@ public class Init extends State {
         isKing = rc.getType().isRatKingType();
         PathFinding.resetScores();
         myLoc = rc.getLocation();
+        VisionUtils.resetDirections();
 
 
         // Game phase
@@ -123,15 +124,24 @@ public class Init extends State {
             cats.add(info.location, info.getID());
         }
 
+        // Update sensing itm
+        if(nearestCheese != null && rc.canSenseLocation(nearestCheese) && rc.senseMapInfo(nearestCheese).getCheeseAmount() == 0){
+            nearestCheese = null;
+        }
+        if(nearestDirt != null && rc.canSenseLocation(nearestDirt) && !rc.senseMapInfo(nearestDirt).isDirt()){
+            nearestDirt = null;
+        }
+
+        // Sensing map info
         debug("Sensing: mapinfo (mines, cheese, dirt, ...)");
         for(MapInfo info : rc.senseNearbyMapInfos()){
             // Dirt
-            if(info.isDirt() && (nearestDirt == null || nearestDirt.distanceSquaredTo(info.getMapLocation()) > nearestDirt.distanceSquaredTo(myLoc))){
+            if(info.isDirt() && (nearestDirt == null || myLoc.distanceSquaredTo(info.getMapLocation()) < myLoc.distanceSquaredTo(nearestDirt))){
                 nearestDirt = info.getMapLocation();
             }
 
             // Cheese
-            if(info.getCheeseAmount() > 0 && (nearestCheese == null || nearestCheese.distanceSquaredTo(info.getMapLocation()) > nearestCheese.distanceSquaredTo(myLoc))){
+            if(info.getCheeseAmount() > 0 && (nearestCheese == null || myLoc.distanceSquaredTo(info.getMapLocation()) < myLoc.distanceSquaredTo(nearestCheese))){
                 nearestCheese = info.getMapLocation();
             }
 

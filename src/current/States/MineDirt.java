@@ -2,6 +2,7 @@ package current.States;
 
 import battlecode.common.*;
 import current.Utils.PathFinding;
+import current.Utils.VisionUtils;
 
 import static current.States.Code.*;
 
@@ -31,22 +32,16 @@ public class MineDirt extends State {
             return new Result(OK, "No dirt nearby");
         }
 
-        // Check if we can sense and dig the dirt
-        if(rc.canSenseLocation(nearestDirt)){
-            MapInfo info = rc.senseMapInfo(nearestDirt);
-            if(!info.isDirt()){
-                nearestDirt = null; // Dirt was removed
-                return new Result(OK, "Dirt no longer there");
-            }
+        // If close enought, force looking to dirt (required to dig it)
+        if(rc.getLocation().distanceSquaredTo(nearestDirt) <= 2){
+            VisionUtils.smartLookAt(nearestDirt);
+        }
 
-            // If adjacent, remove it
-            if(myLoc.distanceSquaredTo(nearestDirt) <= 2){
-                if(rc.canRemoveDirt(nearestDirt)){
-                    rc.removeDirt(nearestDirt);
-                    nearestDirt = null;
-                    return new Result(OK, "Removed dirt");
-                }
-            }
+        // Try to remove it
+        if(rc.canRemoveDirt(nearestDirt)){
+            rc.removeDirt(nearestDirt);
+            nearestDirt = null;
+            return new Result(OK, "Removed dirt");
         }
 
         // Move toward dirt
