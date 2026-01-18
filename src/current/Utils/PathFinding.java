@@ -16,7 +16,7 @@ public class PathFinding {
 
     public static void resetScores(){
         // Default score of 1 everywhere
-        scores = new int[9];
+        scores = new int[]{100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 0};
     }
     public static boolean digEnable = true;
 
@@ -54,7 +54,7 @@ public class PathFinding {
         addCanMoveConstraint();
 
         // Take best score
-        int bestScore = 0;
+        int bestScore = scores[Direction.NORTH.ordinal()] - 100_000; // Small malus
         Direction bestDir = Direction.CENTER;
         for(Direction dir: Direction.values()){
             if(bestScore < scores[dir.ordinal()]){

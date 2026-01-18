@@ -37,8 +37,25 @@ public class BugNavLmx {
     public static int xyLastWallHit = -1;
     public static int xyLastWallLeave = -1;
     public static char[] mapResult;
+    public static MapLocation lastDestination;
+    public static int timeBeforeRefresh = 0;
     public static String mode = "DEFAULT";
+    public static int resultCode = 0;
     public static char[] mapCosts = generateEmptyMapCosts();
+
+    public static Direction getSuggestion(int startXY){
+        return switch(mapResult[startXY]){
+                        case 0 -> Direction.NORTH;
+                        case 1 -> Direction.NORTHEAST;
+                        case 2 -> Direction.EAST;
+                        case 3 -> Direction.SOUTHEAST;
+                        case 4 -> Direction.SOUTH;
+                        case 5 -> Direction.SOUTHWEST;
+                        case 6 -> Direction.WEST;
+                        case 7 -> Direction.NORTHWEST;
+                        default -> Direction.CENTER;
+        };
+    }
 
     public static Direction pathTo(
         MapLocation startLoc, MapLocation endLoc,
@@ -48,34 +65,45 @@ public class BugNavLmx {
             throw new java.lang.Error("ERR Pathfinding: cost_max_per_cell is greater than SCORE_CELL_WALL {{SCORE_CELL_WALL}}");
         }
 
+        int startXY = startLoc.x + 60*startLoc.y;
+
         RobotController rc = Robot.rc;if( rc.getRoundNum() < 150){
             System.out.println("Start Pathfinding from " + startLoc + " to " + endLoc);
         }
         
-        mode = "DEFAULT";
-        int resultCode = generatePathTo(startLoc, endLoc, mapCosts, getMap3600(), MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
+        Direction dir;
+        if(timeBeforeRefresh > 0 && lastDestination.equals(endLoc)){
+            dir = getSuggestion(startXY);
+            if(dir != Direction.CENTER){
+                if( rc.getRoundNum() < 150){
+                    System.out.println("Pathfinding: Reuse previous path -> " + dir);
+                }   
 
-        Direction dir = switch(mapResult[startLoc.x + startLoc.y*60]){
-                        case 0 -> Direction.NORTH;
-                        case 1 -> Direction.NORTHEAST;
-                        case 2 -> Direction.EAST;
-                        case 3 -> Direction.SOUTHEAST;
-                        case 4 -> Direction.SOUTH;
-                        case 5 -> Direction.SOUTHWEST;
-                        case 6 -> Direction.WEST;
-                        case 7 -> Direction.NORTHWEST;
-                        default -> {
-                System.out.println("Unknow direction return from Pathfinding : " + (int)mapResult[startLoc.x + startLoc.y*60]);
-                yield Direction.CENTER;
+                timeBeforeRefresh -= 3;
+                return dir;
             }
-        };
+        }
 
-        if(rc.getRoundNum() < 150){
-            if(resultCode < 0){
+        mode = "DEFAULT";
+        resultCode = generatePathTo(startLoc, endLoc, mapCosts, getMap3600(), MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
+        dir = getSuggestion(startXY);
+
+        if(dir == Direction.CENTER && rc.getRoundNum() < 150){
+            System.out.println("Unknow direction return from Pathfinding : " + (int)mapResult[startXY]);
+        }
+
+        if(resultCode < 0){
+            if(rc.getRoundNum() < 150){
                 System.out.println("Pathfinding: Warning return code : " + resultCode + " : " + dir);
-            }else{
+            }    
+            timeBeforeRefresh = 0; // Don't save query result
+            
+        }else{
+            if(rc.getRoundNum() < 150){
                 System.out.println("Pathfinding: SUCCESS -> " + dir);
             }
+            timeBeforeRefresh = 3; // Save query result for 3 rounds
+            lastDestination = endLoc;
         }
 
         return dir;
@@ -117,7 +145,7 @@ public class BugNavLmx {
         int startRemainingBytecode =  Clock.getBytecodesLeft() ;
         int stopBellowBytecodeRemaining;
         if(withReturn){
-            stopBellowBytecodeRemaining =  Clock.getBytecodesLeft() - maxBytecodeUsed / 2 ;
+            stopBellowBytecodeRemaining =  Clock.getBytecodesLeft() - maxBytecodeUsed / 3 ;
         }else{
             stopBellowBytecodeRemaining =  Clock.getBytecodesLeft() - maxBytecodeUsed ;
         }
@@ -315,6 +343,7 @@ public class BugNavLmx {
                         xyLeft = xy + 61;
                         lastDirectionLeft = Direction.NORTHEAST;
                         ctrLeft = 1;
+                        mapResult[xyLeft] = 5;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
@@ -322,6 +351,7 @@ public class BugNavLmx {
                         xyLeft = xy + 1;
                         lastDirectionLeft = Direction.EAST;
                         ctrLeft = 2;
+                        mapResult[xyLeft] = 6;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
@@ -329,6 +359,7 @@ public class BugNavLmx {
                         xyLeft = xy - 59;
                         lastDirectionLeft = Direction.SOUTHEAST;
                         ctrLeft = 3;
+                        mapResult[xyLeft] = 7;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
@@ -336,6 +367,7 @@ public class BugNavLmx {
                         xyLeft = xy - 60;
                         lastDirectionLeft = Direction.SOUTH;
                         ctrLeft = 4;
+                        mapResult[xyLeft] = 0;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
@@ -343,6 +375,7 @@ public class BugNavLmx {
                         xyLeft = xy - 61;
                         lastDirectionLeft = Direction.SOUTHWEST;
                         ctrLeft = 5;
+                        mapResult[xyLeft] = 1;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
@@ -350,6 +383,7 @@ public class BugNavLmx {
                         xyLeft = xy - 1;
                         lastDirectionLeft = Direction.WEST;
                         ctrLeft = 6;
+                        mapResult[xyLeft] = 2;
                         break initSideLeft;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -360,6 +394,7 @@ public class BugNavLmx {
                         xyRight = xy + 59;
                         lastDirectionRight = Direction.NORTHWEST;
                         ctrRight = 1;
+                        mapResult[xyRight] = 3;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
@@ -367,6 +402,7 @@ public class BugNavLmx {
                         xyRight = xy - 1;
                         lastDirectionRight = Direction.WEST;
                         ctrRight = 2;
+                        mapResult[xyRight] = 2;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
@@ -374,6 +410,7 @@ public class BugNavLmx {
                         xyRight = xy - 61;
                         lastDirectionRight = Direction.SOUTHWEST;
                         ctrRight = 3;
+                        mapResult[xyRight] = 1;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
@@ -381,6 +418,7 @@ public class BugNavLmx {
                         xyRight = xy - 60;
                         lastDirectionRight = Direction.SOUTH;
                         ctrRight = 4;
+                        mapResult[xyRight] = 0;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
@@ -388,6 +426,7 @@ public class BugNavLmx {
                         xyRight = xy - 59;
                         lastDirectionRight = Direction.SOUTHEAST;
                         ctrRight = 5;
+                        mapResult[xyRight] = 7;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
@@ -395,6 +434,7 @@ public class BugNavLmx {
                         xyRight = xy + 1;
                         lastDirectionRight = Direction.EAST;
                         ctrRight = 6;
+                        mapResult[xyRight] = 6;
                         break initSideRight;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -408,6 +448,7 @@ public class BugNavLmx {
                         xyLeft = xy + 1;
                         lastDirectionLeft = Direction.EAST;
                         ctrLeft = 1;
+                        mapResult[xyLeft] = 6;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
@@ -415,6 +456,7 @@ public class BugNavLmx {
                         xyLeft = xy - 59;
                         lastDirectionLeft = Direction.SOUTHEAST;
                         ctrLeft = 2;
+                        mapResult[xyLeft] = 7;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
@@ -422,6 +464,7 @@ public class BugNavLmx {
                         xyLeft = xy - 60;
                         lastDirectionLeft = Direction.SOUTH;
                         ctrLeft = 3;
+                        mapResult[xyLeft] = 0;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
@@ -429,6 +472,7 @@ public class BugNavLmx {
                         xyLeft = xy - 61;
                         lastDirectionLeft = Direction.SOUTHWEST;
                         ctrLeft = 4;
+                        mapResult[xyLeft] = 1;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
@@ -436,6 +480,7 @@ public class BugNavLmx {
                         xyLeft = xy - 1;
                         lastDirectionLeft = Direction.WEST;
                         ctrLeft = 5;
+                        mapResult[xyLeft] = 2;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
@@ -443,6 +488,7 @@ public class BugNavLmx {
                         xyLeft = xy + 59;
                         lastDirectionLeft = Direction.NORTHWEST;
                         ctrLeft = 6;
+                        mapResult[xyLeft] = 3;
                         break initSideLeft;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -453,6 +499,7 @@ public class BugNavLmx {
                         xyRight = xy + 60;
                         lastDirectionRight = Direction.NORTH;
                         ctrRight = 1;
+                        mapResult[xyRight] = 4;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
@@ -460,6 +507,7 @@ public class BugNavLmx {
                         xyRight = xy + 59;
                         lastDirectionRight = Direction.NORTHWEST;
                         ctrRight = 2;
+                        mapResult[xyRight] = 3;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
@@ -467,6 +515,7 @@ public class BugNavLmx {
                         xyRight = xy - 1;
                         lastDirectionRight = Direction.WEST;
                         ctrRight = 3;
+                        mapResult[xyRight] = 2;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
@@ -474,6 +523,7 @@ public class BugNavLmx {
                         xyRight = xy - 61;
                         lastDirectionRight = Direction.SOUTHWEST;
                         ctrRight = 4;
+                        mapResult[xyRight] = 1;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
@@ -481,6 +531,7 @@ public class BugNavLmx {
                         xyRight = xy - 60;
                         lastDirectionRight = Direction.SOUTH;
                         ctrRight = 5;
+                        mapResult[xyRight] = 0;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
@@ -488,6 +539,7 @@ public class BugNavLmx {
                         xyRight = xy - 59;
                         lastDirectionRight = Direction.SOUTHEAST;
                         ctrRight = 6;
+                        mapResult[xyRight] = 7;
                         break initSideRight;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -501,6 +553,7 @@ public class BugNavLmx {
                         xyLeft = xy - 59;
                         lastDirectionLeft = Direction.SOUTHEAST;
                         ctrLeft = 1;
+                        mapResult[xyLeft] = 7;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
@@ -508,6 +561,7 @@ public class BugNavLmx {
                         xyLeft = xy - 60;
                         lastDirectionLeft = Direction.SOUTH;
                         ctrLeft = 2;
+                        mapResult[xyLeft] = 0;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
@@ -515,6 +569,7 @@ public class BugNavLmx {
                         xyLeft = xy - 61;
                         lastDirectionLeft = Direction.SOUTHWEST;
                         ctrLeft = 3;
+                        mapResult[xyLeft] = 1;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
@@ -522,6 +577,7 @@ public class BugNavLmx {
                         xyLeft = xy - 1;
                         lastDirectionLeft = Direction.WEST;
                         ctrLeft = 4;
+                        mapResult[xyLeft] = 2;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
@@ -529,6 +585,7 @@ public class BugNavLmx {
                         xyLeft = xy + 59;
                         lastDirectionLeft = Direction.NORTHWEST;
                         ctrLeft = 5;
+                        mapResult[xyLeft] = 3;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
@@ -536,6 +593,7 @@ public class BugNavLmx {
                         xyLeft = xy + 60;
                         lastDirectionLeft = Direction.NORTH;
                         ctrLeft = 6;
+                        mapResult[xyLeft] = 4;
                         break initSideLeft;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -546,6 +604,7 @@ public class BugNavLmx {
                         xyRight = xy + 61;
                         lastDirectionRight = Direction.NORTHEAST;
                         ctrRight = 1;
+                        mapResult[xyRight] = 5;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
@@ -553,6 +612,7 @@ public class BugNavLmx {
                         xyRight = xy + 60;
                         lastDirectionRight = Direction.NORTH;
                         ctrRight = 2;
+                        mapResult[xyRight] = 4;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
@@ -560,6 +620,7 @@ public class BugNavLmx {
                         xyRight = xy + 59;
                         lastDirectionRight = Direction.NORTHWEST;
                         ctrRight = 3;
+                        mapResult[xyRight] = 3;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
@@ -567,6 +628,7 @@ public class BugNavLmx {
                         xyRight = xy - 1;
                         lastDirectionRight = Direction.WEST;
                         ctrRight = 4;
+                        mapResult[xyRight] = 2;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
@@ -574,6 +636,7 @@ public class BugNavLmx {
                         xyRight = xy - 61;
                         lastDirectionRight = Direction.SOUTHWEST;
                         ctrRight = 5;
+                        mapResult[xyRight] = 1;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
@@ -581,6 +644,7 @@ public class BugNavLmx {
                         xyRight = xy - 60;
                         lastDirectionRight = Direction.SOUTH;
                         ctrRight = 6;
+                        mapResult[xyRight] = 0;
                         break initSideRight;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -594,6 +658,7 @@ public class BugNavLmx {
                         xyLeft = xy - 60;
                         lastDirectionLeft = Direction.SOUTH;
                         ctrLeft = 1;
+                        mapResult[xyLeft] = 0;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
@@ -601,6 +666,7 @@ public class BugNavLmx {
                         xyLeft = xy - 61;
                         lastDirectionLeft = Direction.SOUTHWEST;
                         ctrLeft = 2;
+                        mapResult[xyLeft] = 1;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
@@ -608,6 +674,7 @@ public class BugNavLmx {
                         xyLeft = xy - 1;
                         lastDirectionLeft = Direction.WEST;
                         ctrLeft = 3;
+                        mapResult[xyLeft] = 2;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
@@ -615,6 +682,7 @@ public class BugNavLmx {
                         xyLeft = xy + 59;
                         lastDirectionLeft = Direction.NORTHWEST;
                         ctrLeft = 4;
+                        mapResult[xyLeft] = 3;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
@@ -622,6 +690,7 @@ public class BugNavLmx {
                         xyLeft = xy + 60;
                         lastDirectionLeft = Direction.NORTH;
                         ctrLeft = 5;
+                        mapResult[xyLeft] = 4;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
@@ -629,6 +698,7 @@ public class BugNavLmx {
                         xyLeft = xy + 61;
                         lastDirectionLeft = Direction.NORTHEAST;
                         ctrLeft = 6;
+                        mapResult[xyLeft] = 5;
                         break initSideLeft;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -639,6 +709,7 @@ public class BugNavLmx {
                         xyRight = xy + 1;
                         lastDirectionRight = Direction.EAST;
                         ctrRight = 1;
+                        mapResult[xyRight] = 6;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
@@ -646,6 +717,7 @@ public class BugNavLmx {
                         xyRight = xy + 61;
                         lastDirectionRight = Direction.NORTHEAST;
                         ctrRight = 2;
+                        mapResult[xyRight] = 5;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
@@ -653,6 +725,7 @@ public class BugNavLmx {
                         xyRight = xy + 60;
                         lastDirectionRight = Direction.NORTH;
                         ctrRight = 3;
+                        mapResult[xyRight] = 4;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
@@ -660,6 +733,7 @@ public class BugNavLmx {
                         xyRight = xy + 59;
                         lastDirectionRight = Direction.NORTHWEST;
                         ctrRight = 4;
+                        mapResult[xyRight] = 3;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
@@ -667,6 +741,7 @@ public class BugNavLmx {
                         xyRight = xy - 1;
                         lastDirectionRight = Direction.WEST;
                         ctrRight = 5;
+                        mapResult[xyRight] = 2;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
@@ -674,6 +749,7 @@ public class BugNavLmx {
                         xyRight = xy - 61;
                         lastDirectionRight = Direction.SOUTHWEST;
                         ctrRight = 6;
+                        mapResult[xyRight] = 1;
                         break initSideRight;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -687,6 +763,7 @@ public class BugNavLmx {
                         xyLeft = xy - 61;
                         lastDirectionLeft = Direction.SOUTHWEST;
                         ctrLeft = 1;
+                        mapResult[xyLeft] = 1;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
@@ -694,6 +771,7 @@ public class BugNavLmx {
                         xyLeft = xy - 1;
                         lastDirectionLeft = Direction.WEST;
                         ctrLeft = 2;
+                        mapResult[xyLeft] = 2;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
@@ -701,6 +779,7 @@ public class BugNavLmx {
                         xyLeft = xy + 59;
                         lastDirectionLeft = Direction.NORTHWEST;
                         ctrLeft = 3;
+                        mapResult[xyLeft] = 3;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
@@ -708,6 +787,7 @@ public class BugNavLmx {
                         xyLeft = xy + 60;
                         lastDirectionLeft = Direction.NORTH;
                         ctrLeft = 4;
+                        mapResult[xyLeft] = 4;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
@@ -715,6 +795,7 @@ public class BugNavLmx {
                         xyLeft = xy + 61;
                         lastDirectionLeft = Direction.NORTHEAST;
                         ctrLeft = 5;
+                        mapResult[xyLeft] = 5;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
@@ -722,6 +803,7 @@ public class BugNavLmx {
                         xyLeft = xy + 1;
                         lastDirectionLeft = Direction.EAST;
                         ctrLeft = 6;
+                        mapResult[xyLeft] = 6;
                         break initSideLeft;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -732,6 +814,7 @@ public class BugNavLmx {
                         xyRight = xy - 59;
                         lastDirectionRight = Direction.SOUTHEAST;
                         ctrRight = 1;
+                        mapResult[xyRight] = 7;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
@@ -739,6 +822,7 @@ public class BugNavLmx {
                         xyRight = xy + 1;
                         lastDirectionRight = Direction.EAST;
                         ctrRight = 2;
+                        mapResult[xyRight] = 6;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
@@ -746,6 +830,7 @@ public class BugNavLmx {
                         xyRight = xy + 61;
                         lastDirectionRight = Direction.NORTHEAST;
                         ctrRight = 3;
+                        mapResult[xyRight] = 5;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
@@ -753,6 +838,7 @@ public class BugNavLmx {
                         xyRight = xy + 60;
                         lastDirectionRight = Direction.NORTH;
                         ctrRight = 4;
+                        mapResult[xyRight] = 4;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
@@ -760,6 +846,7 @@ public class BugNavLmx {
                         xyRight = xy + 59;
                         lastDirectionRight = Direction.NORTHWEST;
                         ctrRight = 5;
+                        mapResult[xyRight] = 3;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
@@ -767,6 +854,7 @@ public class BugNavLmx {
                         xyRight = xy - 1;
                         lastDirectionRight = Direction.WEST;
                         ctrRight = 6;
+                        mapResult[xyRight] = 2;
                         break initSideRight;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -780,6 +868,7 @@ public class BugNavLmx {
                         xyLeft = xy - 1;
                         lastDirectionLeft = Direction.WEST;
                         ctrLeft = 1;
+                        mapResult[xyLeft] = 2;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
@@ -787,6 +876,7 @@ public class BugNavLmx {
                         xyLeft = xy + 59;
                         lastDirectionLeft = Direction.NORTHWEST;
                         ctrLeft = 2;
+                        mapResult[xyLeft] = 3;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
@@ -794,6 +884,7 @@ public class BugNavLmx {
                         xyLeft = xy + 60;
                         lastDirectionLeft = Direction.NORTH;
                         ctrLeft = 3;
+                        mapResult[xyLeft] = 4;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
@@ -801,6 +892,7 @@ public class BugNavLmx {
                         xyLeft = xy + 61;
                         lastDirectionLeft = Direction.NORTHEAST;
                         ctrLeft = 4;
+                        mapResult[xyLeft] = 5;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
@@ -808,6 +900,7 @@ public class BugNavLmx {
                         xyLeft = xy + 1;
                         lastDirectionLeft = Direction.EAST;
                         ctrLeft = 5;
+                        mapResult[xyLeft] = 6;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
@@ -815,6 +908,7 @@ public class BugNavLmx {
                         xyLeft = xy - 59;
                         lastDirectionLeft = Direction.SOUTHEAST;
                         ctrLeft = 6;
+                        mapResult[xyLeft] = 7;
                         break initSideLeft;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -825,6 +919,7 @@ public class BugNavLmx {
                         xyRight = xy - 60;
                         lastDirectionRight = Direction.SOUTH;
                         ctrRight = 1;
+                        mapResult[xyRight] = 0;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
@@ -832,6 +927,7 @@ public class BugNavLmx {
                         xyRight = xy - 59;
                         lastDirectionRight = Direction.SOUTHEAST;
                         ctrRight = 2;
+                        mapResult[xyRight] = 7;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
@@ -839,6 +935,7 @@ public class BugNavLmx {
                         xyRight = xy + 1;
                         lastDirectionRight = Direction.EAST;
                         ctrRight = 3;
+                        mapResult[xyRight] = 6;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
@@ -846,6 +943,7 @@ public class BugNavLmx {
                         xyRight = xy + 61;
                         lastDirectionRight = Direction.NORTHEAST;
                         ctrRight = 4;
+                        mapResult[xyRight] = 5;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
@@ -853,6 +951,7 @@ public class BugNavLmx {
                         xyRight = xy + 60;
                         lastDirectionRight = Direction.NORTH;
                         ctrRight = 5;
+                        mapResult[xyRight] = 4;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
@@ -860,6 +959,7 @@ public class BugNavLmx {
                         xyRight = xy + 59;
                         lastDirectionRight = Direction.NORTHWEST;
                         ctrRight = 6;
+                        mapResult[xyRight] = 3;
                         break initSideRight;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -873,6 +973,7 @@ public class BugNavLmx {
                         xyLeft = xy + 59;
                         lastDirectionLeft = Direction.NORTHWEST;
                         ctrLeft = 1;
+                        mapResult[xyLeft] = 3;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
@@ -880,6 +981,7 @@ public class BugNavLmx {
                         xyLeft = xy + 60;
                         lastDirectionLeft = Direction.NORTH;
                         ctrLeft = 2;
+                        mapResult[xyLeft] = 4;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
@@ -887,6 +989,7 @@ public class BugNavLmx {
                         xyLeft = xy + 61;
                         lastDirectionLeft = Direction.NORTHEAST;
                         ctrLeft = 3;
+                        mapResult[xyLeft] = 5;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
@@ -894,6 +997,7 @@ public class BugNavLmx {
                         xyLeft = xy + 1;
                         lastDirectionLeft = Direction.EAST;
                         ctrLeft = 4;
+                        mapResult[xyLeft] = 6;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
@@ -901,6 +1005,7 @@ public class BugNavLmx {
                         xyLeft = xy - 59;
                         lastDirectionLeft = Direction.SOUTHEAST;
                         ctrLeft = 5;
+                        mapResult[xyLeft] = 7;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
@@ -908,6 +1013,7 @@ public class BugNavLmx {
                         xyLeft = xy - 60;
                         lastDirectionLeft = Direction.SOUTH;
                         ctrLeft = 6;
+                        mapResult[xyLeft] = 0;
                         break initSideLeft;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -918,6 +1024,7 @@ public class BugNavLmx {
                         xyRight = xy - 61;
                         lastDirectionRight = Direction.SOUTHWEST;
                         ctrRight = 1;
+                        mapResult[xyRight] = 1;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
@@ -925,6 +1032,7 @@ public class BugNavLmx {
                         xyRight = xy - 60;
                         lastDirectionRight = Direction.SOUTH;
                         ctrRight = 2;
+                        mapResult[xyRight] = 0;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
@@ -932,6 +1040,7 @@ public class BugNavLmx {
                         xyRight = xy - 59;
                         lastDirectionRight = Direction.SOUTHEAST;
                         ctrRight = 3;
+                        mapResult[xyRight] = 7;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
@@ -939,6 +1048,7 @@ public class BugNavLmx {
                         xyRight = xy + 1;
                         lastDirectionRight = Direction.EAST;
                         ctrRight = 4;
+                        mapResult[xyRight] = 6;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
@@ -946,6 +1056,7 @@ public class BugNavLmx {
                         xyRight = xy + 61;
                         lastDirectionRight = Direction.NORTHEAST;
                         ctrRight = 5;
+                        mapResult[xyRight] = 5;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
@@ -953,6 +1064,7 @@ public class BugNavLmx {
                         xyRight = xy + 60;
                         lastDirectionRight = Direction.NORTH;
                         ctrRight = 6;
+                        mapResult[xyRight] = 4;
                         break initSideRight;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -966,6 +1078,7 @@ public class BugNavLmx {
                         xyLeft = xy + 60;
                         lastDirectionLeft = Direction.NORTH;
                         ctrLeft = 1;
+                        mapResult[xyLeft] = 4;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
@@ -973,6 +1086,7 @@ public class BugNavLmx {
                         xyLeft = xy + 61;
                         lastDirectionLeft = Direction.NORTHEAST;
                         ctrLeft = 2;
+                        mapResult[xyLeft] = 5;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
@@ -980,6 +1094,7 @@ public class BugNavLmx {
                         xyLeft = xy + 1;
                         lastDirectionLeft = Direction.EAST;
                         ctrLeft = 3;
+                        mapResult[xyLeft] = 6;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
@@ -987,6 +1102,7 @@ public class BugNavLmx {
                         xyLeft = xy - 59;
                         lastDirectionLeft = Direction.SOUTHEAST;
                         ctrLeft = 4;
+                        mapResult[xyLeft] = 7;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
@@ -994,6 +1110,7 @@ public class BugNavLmx {
                         xyLeft = xy - 60;
                         lastDirectionLeft = Direction.SOUTH;
                         ctrLeft = 5;
+                        mapResult[xyLeft] = 0;
                         break initSideLeft;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
@@ -1001,6 +1118,7 @@ public class BugNavLmx {
                         xyLeft = xy - 61;
                         lastDirectionLeft = Direction.SOUTHWEST;
                         ctrLeft = 6;
+                        mapResult[xyLeft] = 1;
                         break initSideLeft;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
@@ -1011,6 +1129,7 @@ public class BugNavLmx {
                         xyRight = xy - 1;
                         lastDirectionRight = Direction.WEST;
                         ctrRight = 1;
+                        mapResult[xyRight] = 2;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
@@ -1018,6 +1137,7 @@ public class BugNavLmx {
                         xyRight = xy - 61;
                         lastDirectionRight = Direction.SOUTHWEST;
                         ctrRight = 2;
+                        mapResult[xyRight] = 1;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
@@ -1025,6 +1145,7 @@ public class BugNavLmx {
                         xyRight = xy - 60;
                         lastDirectionRight = Direction.SOUTH;
                         ctrRight = 3;
+                        mapResult[xyRight] = 0;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
@@ -1032,6 +1153,7 @@ public class BugNavLmx {
                         xyRight = xy - 59;
                         lastDirectionRight = Direction.SOUTHEAST;
                         ctrRight = 4;
+                        mapResult[xyRight] = 7;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
@@ -1039,6 +1161,7 @@ public class BugNavLmx {
                         xyRight = xy + 1;
                         lastDirectionRight = Direction.EAST;
                         ctrRight = 5;
+                        mapResult[xyRight] = 6;
                         break initSideRight;
                     }
                     if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
@@ -1046,6 +1169,7 @@ public class BugNavLmx {
                         xyRight = xy + 61;
                         lastDirectionRight = Direction.NORTHEAST;
                         ctrRight = 6;
+                        mapResult[xyRight] = 5;
                         break initSideRight;
                     }
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");

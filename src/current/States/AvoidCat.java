@@ -31,9 +31,10 @@ public class AvoidCat extends State {
         int[] scores = new int[9];
         for (Direction dir : Direction.values()) {
             int distance = myLoc.add(dir).distanceSquaredTo(nearestCat);
-
             if (distance < safetyDist) {
-                scores[dir.ordinal()] = - (safetyDist - distance) * 100_000; // High score when close to cat
+
+                int level = 4 - (distance * 4) / safetyDist; // Level 4 is when very cloose of cat
+                scores[dir.ordinal()] = - level * 100_000; // High score when close to cat
             }
         }
         PathFinding.addScoresWithoutNormalization(scores);

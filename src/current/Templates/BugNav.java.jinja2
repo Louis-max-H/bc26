@@ -58,8 +58,20 @@ public class {{ className }} {
     public static int xyLastWallHit = -1;
     public static int xyLastWallLeave = -1;
     public static char[] mapResult;
+    public static MapLocation lastDestination;
+    public static int timeBeforeRefresh = 0;
     public static String mode = "DEFAULT";
+    public static int resultCode = 0;
     public static char[] mapCosts = generateEmptyMapCosts();
+
+    public static Direction getSuggestion(int startXY){
+        return switch(mapResult[startXY]){
+            {% for dir in dirs%}
+            case {{dirsOrds[dir]}} -> Direction.{{dir}};
+            {% endfor %}
+            default -> Direction.CENTER;
+        };
+    }
 
     public static Direction pathTo(
         MapLocation startLoc, MapLocation endLoc,
@@ -69,30 +81,46 @@ public class {{ className }} {
             {{ impossible(MSG="cost_max_per_cell is greater than SCORE_CELL_WALL {{SCORE_CELL_WALL}}") }}
         }
 
+        int startXY = startLoc.x + 60*startLoc.y;
+
         {% if BATTLECODE -%}RobotController rc = Robot.rc;{% endif -%}
         if( {{ getRound }} < {{ MAX_DEBUG_ROUND }}){
             System.out.println("Start Pathfinding from " + startLoc + " to " + endLoc);
         }
         
-        mode = "DEFAULT";
-        int resultCode = generatePathTo(startLoc, endLoc, mapCosts, getMap3600(), MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
+        Direction dir;
+        if(timeBeforeRefresh > 0 && lastDestination.equals(endLoc)){
+            dir = getSuggestion(startXY);
+            if(dir != Direction.CENTER){
+                if( {{ getRound }} < {{ MAX_DEBUG_ROUND }}){
+                    System.out.println("Pathfinding: Reuse previous path -> " + dir);
+                }   
 
-        Direction dir = switch(mapResult[startLoc.x + startLoc.y*60]){
-            {% for dir in dirs%}
-            case {{dirsOrds[dir]}} -> Direction.{{dir}};
-            {% endfor %}
-            default -> {
-                System.out.println("Unknow direction return from Pathfinding : " + (int)mapResult[startLoc.x + startLoc.y*60]);
-                yield Direction.CENTER;
+                timeBeforeRefresh -= 3;
+                return dir;
             }
-        };
+        }
 
-        if({{ getRound }} < {{ MAX_DEBUG_ROUND }}){
-            if(resultCode < 0){
+        mode = "DEFAULT";
+        resultCode = generatePathTo(startLoc, endLoc, mapCosts, getMap3600(), MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
+        dir = getSuggestion(startXY);
+
+        if(dir == Direction.CENTER && {{ getRound }} < {{ MAX_DEBUG_ROUND }}){
+            System.out.println("Unknow direction return from Pathfinding : " + (int)mapResult[startXY]);
+        }
+
+        if(resultCode < 0){
+            if({{ getRound }} < {{ MAX_DEBUG_ROUND }}){
                 System.out.println("Pathfinding: Warning return code : " + resultCode + " : " + dir);
-            }else{
+            }    
+            timeBeforeRefresh = 0; // Don't save query result
+            
+        }else{
+            if({{ getRound }} < {{ MAX_DEBUG_ROUND }}){
                 System.out.println("Pathfinding: SUCCESS -> " + dir);
             }
+            timeBeforeRefresh = 3; // Save query result for 3 rounds
+            lastDestination = endLoc;
         }
 
         return dir;
@@ -136,7 +164,7 @@ public class {{ className }} {
         int startRemainingBytecode = {% if BATTLECODE %} Clock.getBytecodesLeft() {% else %} 0 {% endif -%};
         int stopBellowBytecodeRemaining;
         if(withReturn){
-            stopBellowBytecodeRemaining = {% if BATTLECODE %} Clock.getBytecodesLeft() - maxBytecodeUsed / 2 {% else %} 0 {% endif -%};
+            stopBellowBytecodeRemaining = {% if BATTLECODE %} Clock.getBytecodesLeft() - maxBytecodeUsed / 3 {% else %} 0 {% endif -%};
         }else{
             stopBellowBytecodeRemaining = {% if BATTLECODE %} Clock.getBytecodesLeft() - maxBytecodeUsed {% else %} 0 {% endif -%};
         }
@@ -196,7 +224,7 @@ public class {{ className }} {
                         }
 
 
-                        {% if DEBUG -%}System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=OK");
+                        {% if DEBUG -%}System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=OK score: " + (int)mapCosts[xyTmp]);
                         {% endif -%}
                         xy = xyTmp;
                         mapResult[xyTmp] = {{dirsOrdsOpposite[dir]}};
@@ -253,6 +281,7 @@ public class {{ className }} {
                             System.out.println("MSG={{side}} init to " + xy{{side}});
                         {% endif -%}
                         ctr{{side}} = {{i}};
+                        mapResult[xy{{side}}] = {{dirsOrdsOpposite[dirTest]}};
                         break initSide{{side}};
                     }
                     {% if DEBUG -%}System.out.println("MODE={{ side }}, POS=" + xy + ", DIR={{dirTest}}, RESULT=WALL");
