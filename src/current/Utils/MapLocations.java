@@ -34,7 +34,7 @@ public class MapLocations {
 
         // Already exist
         int xy = loc.x + (loc.y << 6);
-        if(hashmap[xy] != 0){return false;}
+        if(hashmap[xy] != '\uFFFF'){return false;}
 
         // Adding element
         hashmap[xy] = size;
