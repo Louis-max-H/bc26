@@ -19,6 +19,7 @@ public class RobotPlayer {
                 robot.run(rc);
             } catch (Exception e) {
                 e.printStackTrace(System.out);
+                Robot.rc.setTimelineMarker(e.getMessage(), 255, 0, 0);
             }
 
             // Resign if not competitive

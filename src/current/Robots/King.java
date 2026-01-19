@@ -6,7 +6,6 @@ import current.States.*;
 public class King extends Robot {
     State moveKing;
     State spawn;
-    State avoidCat;
 
     @Override
     public void init() throws GameActionException {
@@ -14,7 +13,6 @@ public class King extends Robot {
         this.moveKing = new MoveKing();
         this.endTurn = new EndTurn();
         this.spawn = new Spawn();
-        this.avoidCat = new AvoidCat();
     }
 
     @Override

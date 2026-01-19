@@ -22,7 +22,7 @@ public class Robot {
     public static MapLocation myLoc;
     public static int round;
 
-    public static boolean competitiveMode = false;
+    public static boolean competitiveMode = true;
 
     // Nearest locations
     public static MapLocation nearestCat;
@@ -82,6 +82,7 @@ public class Robot {
 
     // State Machine
     public State init;
+    public State avoidCat;
     public State endTurn;
     public State currentState;
     public void onNewTurn(){};
@@ -107,6 +108,7 @@ public class Robot {
         // Init states
         header("Starting at round " + Clock.getBytecodeNum());
         init = new Init();
+        avoidCat = new AvoidCat();
         endTurn = new EndTurn();
         currentState = init;
         init();
@@ -133,6 +135,7 @@ public class Robot {
                     rc.setIndicatorString("LOCK " + currentState.name);
                     endTurn.run();
                     init.run();
+                    avoidCat.run();
                     break;
 
                 case END_OF_TURN:

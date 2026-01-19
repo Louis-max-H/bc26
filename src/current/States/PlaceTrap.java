@@ -21,7 +21,7 @@ public class PlaceTrap extends State {
     @Override
     public Result run() throws GameActionException {
         // Need action ready to place trap
-        if(!rc.isActionReady() || true){
+        if(!rc.isActionReady()){
             return new Result(OK, "Action not ready");
         }
 
