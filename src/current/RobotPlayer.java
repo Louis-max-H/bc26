@@ -6,22 +6,26 @@ import current.States.*;
 
 public class RobotPlayer {
     public static void run(RobotController rc) throws GameActionException {
-        Robot robot = switch(rc.getType()){
-            case BABY_RAT -> new Baby();
-            case RAT_KING -> new King();
-            default -> null;
-        };
+        while(true) {
+            // Instantiate
+            Robot robot = switch (rc.getType()) {
+                case BABY_RAT -> new Baby();
+                case RAT_KING -> new King();
+                default -> null;
+            };
 
-        try {
-            robot.run(rc);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            // Run
+            try {
+                robot.run(rc);
+            } catch (Exception e) {
+                e.printStackTrace(System.out);
+            }
 
-            if(!Robot.competitiveMode && rc.getTeam() == Team.A){
-                System.out.println("Not in competitive mode. We have found an error, I will surrender to be sure the error is seen by the debugger ;)");
+            // Resign if not competitive
+            if (!Robot.competitiveMode && rc.getTeam() == Team.A) {
+                System.out.println("\nNot in competitive mode. We have found an error, I will surrender to be sure the error is seen by the debugger ;)");
                 rc.resign();
             }
         }
-
     }
 }

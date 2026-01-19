@@ -117,7 +117,7 @@ public class Init extends State {
             if(info.type == UnitType.RAT_KING) {
                 enemiesKings.add(info.location, info.getID());
             } else {
-                enemiesRats.add(info.location);
+                enemiesRats.add(info.location, info.getID());
             }
         }
 
@@ -127,7 +127,7 @@ public class Init extends State {
             cats.add(info.location, info.getID());
         }
 
-        // Update sensing itm
+        // Update sensing item
         if(nearestCheese != null && rc.canSenseLocation(nearestCheese) && rc.senseMapInfo(nearestCheese).getCheeseAmount() == 0){
             nearestCheese = null;
         }
@@ -154,100 +154,57 @@ public class Init extends State {
             }
         }
 
-        int i;
-        int bestDistance;
         printBytecode("Update nearest units");
+        int maxDistance = 10800;
+
 
         debug("Nearest: king");
-        // Update nearest king if can see it but not here
-        if(!isInformationCorrect(nearestKing, nearestKingID)){
-            print("King info not correct");
+        int i = kings.nearestAndClear(myLoc, maxDistance);
+        if(i == -1){
             nearestKing = null;
-            nearestKingID = -1;
+        }else{
+            nearestKing = kings.locs[i];
+            nearestKingID = kings.ids[i];
         }
 
-        // Update nearest king
-        i = 0;
-        bestDistance = 99999;
-        while (i < kings.size) {
-            // TODO: lmx, move this code directly to struct to save bytecode
-            if(!isInformationCorrect(kings.locs[i], kings.ids[i])){
-                kings.remove(kings.ids[i]);
-                continue;
-            }
-
-            if(myLoc.distanceSquaredTo(kings.locs[i]) < bestDistance){
-                nearestKing = kings.locs[i];
-                nearestKingID = kings.ids[i];
-                bestDistance = myLoc.distanceSquaredTo(nearestKing);
-            }
-
-            i++;
-        }
 
         debug("Nearest: enemy king");
-        // Update nearest enemy king if can see it but not here
-        if(!isInformationCorrect(nearestEnemyKing, nearestEnemyKingID)){
+        i = enemiesKings.nearestAndClear(myLoc, maxDistance);
+        if(i == -1){
             nearestEnemyKing = null;
-            nearestEnemyKingID = -1;
-        }
-
-        // Update nearest
-        i = 0;
-        bestDistance = 99999;   
-        while (i < enemiesKings.size) {
-            if(!isInformationCorrect(enemiesKings.locs[i], enemiesKings.ids[i])){
-                enemiesKings.remove(enemiesKings.ids[i]);
-                continue;
-            }
-
-            if(myLoc.distanceSquaredTo(enemiesKings.locs[i]) < bestDistance){
-                nearestEnemyKing = enemiesKings.locs[i];
-                nearestEnemyKingID = enemiesKings.ids[i];
-                bestDistance = myLoc.distanceSquaredTo(nearestEnemyKing);
-            }
-
-            i++;
+        }else{
+            nearestEnemyKing = enemiesKings.locs[i];
+            nearestEnemyKingID = enemiesKings.ids[i];
         }
 
         debug("Nearest: cat");
-        // Update nearest enemy king if can see it but not here
-        if(!isInformationCorrect(nearestCat, nearestCatID)){
+        i = cats.nearestAndClear(myLoc, 200);
+        if(i == -1){
             nearestCat = null;
-            nearestCatID = -1;
+        }else{
+            nearestCat = cats.locs[i];
+            nearestCatID = cats.ids[i];
         }
 
-        // Update nearest
-        i = 0;
-        bestDistance = 99999;
-        while (i < cats.size) {
-            if(!isInformationCorrect(cats.locs[i], cats.ids[i])){
-                cats.remove(cats.ids[i]);
-                continue;
-            }
-
-            if(myLoc.distanceSquaredTo(cats.locs[i]) < bestDistance){
-                nearestCat = cats.locs[i];
-                nearestCatID = cats.ids[i];
-                bestDistance = myLoc.distanceSquaredTo(nearestCat);
-            }
-
-            i++;
+        debug("Nearest: enemy rat");
+        i = enemiesRats.nearestAndClear(myLoc, 100);
+        if(i == -1){
+            nearestEnemyRat = null;
+        }else{
+            nearestEnemyRat = enemiesRats.locs[i];
+            nearestEnemyRatID = enemiesRats.ids[i];
         }
 
-        debug("Nearest: mine out of " + (int)cheeseMines.size);
-        // Update nearest
-        i = 0;
-        bestDistance = 99999;
-        while (i < cheeseMines.size) {
-            if(myLoc.distanceSquaredTo(cheeseMines.locs[i]) < bestDistance){
-                nearestMine = cheeseMines.locs[i];
-                bestDistance = myLoc.distanceSquaredTo(nearestMine);
-            }
-            i++;
+        debug("Nearest: cheese mine");
+        i = cheeseMines.nearest(myLoc);
+        if(i == -1){
+            nearestMine = null;
+        }else{
+            nearestMine = cheeseMines.locs[i];
         }
 
 
+        /// Debug lines
         /*if(nearestKing != null){
             rc.setIndicatorLine(rc.getLocation(), nearestKing, 0, 10, 10);
         }*/
@@ -257,9 +214,10 @@ public class Init extends State {
         if(nearestEnemyKing != null){
             rc.setIndicatorLine(rc.getLocation(), nearestEnemyKing, 50, 0, 0);
         }
+        /*
         if(nearestMine != null){
             rc.setIndicatorLine(rc.getLocation(), nearestMine, 255, 228, 181);
-        }
+        }*/
         if(nearestEnemyRat != null){
             rc.setIndicatorLine(rc.getLocation(), nearestEnemyRat, 20, 0, 0);
         }

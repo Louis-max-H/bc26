@@ -1,6 +1,9 @@
 package current.Utils;
 
+import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
+import battlecode.common.RobotController;
+import current.Robots.Robot;
 
 public class MapLocationsWithId {
     /**
@@ -16,12 +19,15 @@ public class MapLocationsWithId {
     public MapLocation[] locs;  // locs[hashmap[id]] = loc of the unit
     public int[] ids;           // ids [hashmap[id]] = id  of the unit
     public char size;           // Number of units contains
+    public boolean flushIfFull;
+    public static RobotController rc;
     // Give for an hash, his index in the locs
 
-    public MapLocationsWithId(char len) {
-        maxlen = len;
-        locs = new MapLocation[maxlen];
-        ids = new int[maxlen];
+    public MapLocationsWithId(char maxlen, boolean flushIfFull) {
+        this.maxlen = maxlen;
+        this.locs = new MapLocation[maxlen];
+        this.flushIfFull = flushIfFull;
+        this.ids = new int[maxlen];
         clear();
     }
 
@@ -30,7 +36,13 @@ public class MapLocationsWithId {
         id = id % 4096;
 
         // Max size
-        if (size == maxlen){return false;}
+        if (size == maxlen){
+            if(flushIfFull){
+                clear();
+            }else {
+                return false;
+            }
+        }
 
         if(hashmap[id] != '\uFFFF'){
             // Replace already existing element
@@ -62,6 +74,51 @@ public class MapLocationsWithId {
             size++;
         }
         return true;
+    }
+
+    // Get nearest and delete if too far
+    // If can sense unit location and unit is not here, remove it
+    public int nearestAndClear(MapLocation myLoc, int maxDist) throws GameActionException {
+        MapLocationsWithId.rc = Robot.rc;
+        char i = 0;
+        int minDistance = 99999;
+        int minIndex = -1;
+
+        while(i < size){
+            // If too far
+            int dist = myLoc.distanceSquaredTo(locs[i]);
+            if(dist > maxDist){
+                removeIndex(i);
+                continue;
+            }
+
+            // Delete it if we can sense location and (no unit here of wrong id)
+            MapLocation loc = locs[i];
+            if (rc.canSenseLocation(loc) && (!rc.canSenseRobotAtLocation(loc) || rc.senseRobotAtLocation(loc).getID() % 4096 != ids[i])){
+                removeIndex(i);
+                continue;
+            }
+
+            if(dist < minDistance){
+                minDistance = dist;
+                minIndex = i;
+            }
+
+            i++;
+        }
+
+        return minIndex;
+    }
+
+    public void removeIndex(char indexRemoved){
+        // Replace by last element
+        size--;
+        hashmap[ids[indexRemoved]] = '\uFFFF';
+        locs[indexRemoved] = locs[size];
+        ids[indexRemoved] = ids[size];
+
+        // Update index of the moved element
+        hashmap[ids[size]] = indexRemoved;
     }
 
     // Check if an element not in set before removing it

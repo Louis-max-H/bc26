@@ -1,5 +1,6 @@
 package current.Utils;
 
+import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 
 public class MapLocations {
@@ -55,6 +56,24 @@ public class MapLocations {
         locs[size] = new MapLocation(xy & 0b111111, xy >> 6);
         size++;
         return true;
+    }
+
+    public int nearest(MapLocation myLoc) {
+        char i = 0;
+        int minDistance = 99999;
+        int minIndex = -1;
+
+        while(i < size){
+            int dist = myLoc.distanceSquaredTo(locs[i]);
+            if(dist < minDistance){
+                minDistance = dist;
+                minIndex = i;
+            }
+
+            i++;
+        }
+
+        return minIndex;
     }
 
     // Check if an element not in set before removing it

@@ -30,7 +30,7 @@ public class Communication extends Robot {
     private static int lastMessageIndex = 0;
 
     // Don't send message if we have recently seen a similar message
-    public static char COOLDOWN_SEND_AGAIN_SQUEAK = 2;
+    public static char COOLDOWN_SEND_AGAIN_SQUEAK = 4;
     public static char COOLDOWN_SEND_AGAIN_ARRAY = 0;
 
 
@@ -51,7 +51,7 @@ public class Communication extends Robot {
     /**
      * Update memory field of the robot with received messages
      */
-    public static void decodeMessage(int msg) {
+    public static void decodeMessage(int msg, boolean isFromArray) throws GameActionException {
         int x = msg & 0b111111;
         int y = (msg & MASK_POSITION) >> 6;
 
@@ -73,12 +73,16 @@ public class Communication extends Robot {
 
             case TYPE_MINE:
                 debug("###Decoding mine position : at x: " + x + " y: " + y);
-                cheeseMines.add(msg & MASK_POSITION);
+                rc.setIndicatorLine(rc.getLocation(), new MapLocation(x, y), 255, 228, 181);
+                cheeseMines.add(new MapLocation(x, y));
+                if(isFromArray){
+                    cheeseMinesFromArray.add(new MapLocation(x, y));
+                }
                 break;
 
             case TYPE_ENEMY_RAT:
                 debug("###Decoding enemy rat : at x: " + x + " y: " + y);
-                enemiesRats.add(msg & MASK_POSITION);
+                enemiesRats.add(new MapLocation(x, y), (msg & MASK_UNIT_ID) >> 12);
                 break;
 
             case 0:
@@ -91,7 +95,7 @@ public class Communication extends Robot {
         }
     }
 
-    public static void readFromSharedArray(){
+    public static void readFromSharedArray() throws GameActionException {
         int nDecoded = 0;
         int startBytecode = Clock.getBytecodeNum();
         char sendCooldown = (char) (round + COOLDOWN_SEND_AGAIN_ARRAY);
@@ -108,7 +112,7 @@ public class Communication extends Robot {
             lastDecodedMessages[lastMessageIndex] = message;
 
             lastMessageIndex += 3;
-            decodeMessage(message);
+            decodeMessage(message, true);
             lastTimeSeenMessage[message & MASK_14BITS] = sendCooldown;
             nDecoded++;
 
@@ -122,11 +126,11 @@ public class Communication extends Robot {
         print("Shared Array : " + nDecoded + " messages in " + (Clock.getBytecodeNum() - startBytecode) + " bytecode(s)");
     }
 
-    public static void readFromSqueak(){
+    public static void readFromSqueak() throws GameActionException {
         int nDecoded = 0;
         int startBytecode = Clock.getBytecodeNum();
         int MAX_SQUEAKS = 10;
-        int min_round = round - 5;
+        int min_round = round - 2;
         char sendCooldown = (char) (round + COOLDOWN_SEND_AGAIN_SQUEAK);
 
         readMessagesLabel:
@@ -134,7 +138,7 @@ public class Communication extends Robot {
         for(int r = round; r >= min_round; r--){
             for(Message msg:  rc.readSqueaks(r)) {
                 int raw = msg.getBytes();
-                decodeMessage(raw);
+                decodeMessage(raw, false);
                 lastTimeSeenMessage[raw & MASK_14BITS] = sendCooldown;
 
                 nDecoded++;
@@ -170,14 +174,14 @@ public class Communication extends Robot {
     public static void addMessageMine(MapLocation loc) {
         addMessage("addMessageMine", (char) (TYPE_MINE + loc.x + (loc.y << 6)), PRIORITY_HIGH);
     }
-    public static void addMessageEnemyRat(MapLocation loc) {
-        addMessage("addMessageEnemyRat", (char) (TYPE_ENEMY_RAT + loc.x + (loc.y << 6)), PRIORITY_NORMAL);
+    public static void addMessageEnemyRat(MapLocation loc, int id) {
+        addMessage("addMessageEnemyRat", (char) (TYPE_ENEMY_RAT | ((id % 4096) << 12) | loc.x | (loc.y << 6)), PRIORITY_HIGH);
     }
     public static void addMessageEnemyKing(MapLocation loc, int id) {
         addMessage("addMessageEnemyKing", TYPE_ENEMY_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
     }
     public static void addMessageCat(MapLocation loc, int id) {
-        addMessage("addMessageCat", TYPE_CAT | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
+        addMessage("addMessageCat", TYPE_CAT | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_NORMAL);
     }
     public static void addMessageKing(MapLocation loc, int id) {
         addMessage("addMessageKing", TYPE_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
