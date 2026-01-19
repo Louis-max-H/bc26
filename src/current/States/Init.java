@@ -20,6 +20,14 @@ public class Init extends State {
         Robot.spawnRound = rc.getRoundNum();
         Robot.isKing = rc.getType().isRatKingType();
 
+        Robot.mapType = 0; // Small
+        if(rc.getMapWidth() * rc.getMapHeight() > 32*32){
+            mapType = 1; // Medium
+        }
+        if(rc.getMapWidth() * rc.getMapHeight() > 45*45){
+            mapType = 2; // Big
+        }
+
         // Init utils
         VisionUtils.initScore(rc.getMapWidth(), rc.getMapHeight());
         BugNavLmx.init(rc.getMapWidth(), rc.getMapHeight());

@@ -1,6 +1,7 @@
 package current.States;
 
 import battlecode.common.*;
+import current.Params;
 import current.Robots.Robot;
 import current.Utils.*;
 
@@ -52,7 +53,7 @@ public class AttackEnemy extends State {
         long mixedScore[] = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0}; // Mix of attack and danger
 
         // Calculate scores : Score = attack * coefAttack - danger
-        int coefAttack = 10;
+        int coefAttack = Params.aggresivity[gamePhase];
         if(rc.isActionReady()) {
 
             // Compute score only if can move

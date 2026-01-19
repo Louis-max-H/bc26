@@ -62,6 +62,7 @@ public class Robot {
 
     // Phases
     public static int gamePhase;
+    public static int mapType; // 0 Small, 1 Medium, 2 Large
     public static final int PHASE_START = 0;
     public static final int PHASE_EARLY = 1;
     public static final int PHASE_MIDLE = 2;

@@ -16,24 +16,24 @@ public class {{ className }} {
     public static long scoresDanger[]; // Max amount of damage I can deal
     public static char attackDirection[]; // Direction of the best attack
 
-    {% set DANGER_OUT_OF_ENEMY_VIEW = -1 -%}
-    {% set DANGER_IN_ENEMY_VIEW = 1 -%}
-    {% set DANGER_IN_REACH = 15 -%}
-    {% set DANGER_IN_REACH_WITH_MOVEMENT = 15 -%}
+    // Adding safegards if params not defined
+    {% set PARAMS_DANGER_OUT_OF_ENEMY_VIEW      = PARAMS_DANGER_OUT_OF_ENEMY_VIEW or -1 -%}
+    {% set PARAMS_DANGER_IN_ENEMY_VIEW          = PARAMS_DANGER_IN_ENEMY_VIEW or  1 -%}
+    {% set PARAMS_DANGER_IN_REACH               = PARAMS_DANGER_IN_REACH or 15 -%}
+    {% set PARAMS_DANGER_IN_REACH_WITH_MOVEMENT = PARAMS_DANGER_IN_REACH_WITH_MOVEMENT or 15 -%}
+    {% set PARAMS_ATTACK_BONUS_FIRSTMOVE = PARAMS_ATTACK_BONUS_FIRSTMOVE or  10 -%}
+    {% set PARAMS_ATTACK_BONUS_DONT_MOVE = PARAMS_ATTACK_BONUS_DONT_MOVE or  10 -%}
+    {% set PARAMS_ATTACK_BONUS_CANT_SEE  = PARAMS_ATTACK_BONUS_CANT_SEE or  10 -%}
 
-    {% set ATTACK_BONUS_FIRSTMOVE =  10 -%}
-    {% set ATTACK_BONUS_DONT_MOVE =  10 -%}
-    {% set ATTACK_BONUS_CANT_SEE =  10 -%}
 
+    public static long DANGER_OUT_OF_ENEMY_VIEW = {{ PARAMS_DANGER_OUT_OF_ENEMY_VIEW }}; // Get less danger if out of enemy view
+    public static long DANGER_IN_ENEMY_VIEW = {{ PARAMS_DANGER_IN_ENEMY_VIEW }}; // Danger if in enemy view
+    public static long DANGER_IN_REACH = {{ PARAMS_DANGER_IN_REACH }}; // Danger if enemy can attack us without moving
+    public static long DANGER_IN_REACH_WITH_MOVEMENT = {{ PARAMS_DANGER_IN_REACH_WITH_MOVEMENT }}; // Danger if enemy can attack us but need to moving
 
-    public static long DANGER_OUT_OF_ENEMY_VIEW = {{ DANGER_OUT_OF_ENEMY_VIEW }}; // Get less danger if out of enemy view
-    public static long DANGER_IN_ENEMY_VIEW = {{ DANGER_IN_ENEMY_VIEW }}; // Danger if in enemy view
-    public static long DANGER_IN_REACH = {{ DANGER_IN_REACH }}; // Danger if enemy can attack us without moving
-    public static long DANGER_IN_REACH_WITH_MOVEMENT = {{ DANGER_IN_REACH_WITH_MOVEMENT }}; // Danger if enemy can attack us but need to moving
-
-    public static long ATTACK_BONUS_MOVEMENT  = {{ ATTACK_BONUS_FIRSTMOVE }}; // Bonus to attack score if need move to attack unit
-    public static long ATTACK_BONUS_DONT_MOVE = {{ ATTACK_BONUS_DONT_MOVE }}; // Bonus to attack score if I dont need to move
-    public static long ATTACK_BONUS_CANT_SEE  = {{ ATTACK_BONUS_CANT_SEE }}; // Bonus to attack score if the target can't see us
+    public static long ATTACK_BONUS_MOVEMENT  = {{ PARAMS_ATTACK_BONUS_FIRSTMOVE }}; // Bonus to attack score if need move to attack unit
+    public static long ATTACK_BONUS_DONT_MOVE = {{ PARAMS_ATTACK_BONUS_DONT_MOVE }}; // Bonus to attack score if I dont need to move
+    public static long ATTACK_BONUS_CANT_SEE  = {{ PARAMS_ATTACK_BONUS_CANT_SEE }}; // Bonus to attack score if the target can't see us
 
     public static void reset(){
         scoresAttack    = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -75,19 +75,19 @@ public class {{ className }} {
                 {% set scoreDanger = 0 -%}
 
                 {% if cellInVisionFrom(cellEnemy, targetDir, cell)-%}
-                    {% set scoreDanger = scoreDanger + DANGER_IN_ENEMY_VIEW -%}
+                    {% set scoreDanger = scoreDanger + PARAMS_DANGER_IN_ENEMY_VIEW -%}
 
                     {% if chebyshevDistance(cellEnemy, cell) == 2-%}
                         // chebyshevDistance = 2
-                        {% set scoreDanger = scoreDanger + DANGER_IN_REACH_WITH_MOVEMENT -%}
+                        {% set scoreDanger = scoreDanger + PARAMS_DANGER_IN_REACH_WITH_MOVEMENT -%}
                     {% endif -%}
                 {% else -%}
-                    {% set scoreDanger = scoreDanger + DANGER_OUT_OF_ENEMY_VIEW -%}
+                    {% set scoreDanger = scoreDanger + PARAMS_DANGER_OUT_OF_ENEMY_VIEW -%}
                 {% endif -%}
 
                 {% if chebyshevDistance(cellEnemy, cell) == 1-%}
                     // chebyshevDistance = 1
-                    {% set scoreDanger = scoreDanger + DANGER_IN_REACH -%}
+                    {% set scoreDanger = scoreDanger + PARAMS_DANGER_IN_REACH -%}
                 {% endif -%}
 
                 {# ########### Add attack score ########### -#}
@@ -98,15 +98,15 @@ public class {{ className }} {
                 {% endif -%}
 
                 {% if not cellInVisionFrom(cellEnemy, targetDir, cell)-%}
-                    {% set scoreAttack = scoreAttack + ATTACK_BONUS_CANT_SEE -%}
+                    {% set scoreAttack = scoreAttack + PARAMS_ATTACK_BONUS_CANT_SEE -%}
                 {% endif -%}
 
                 {# ########### Write result ########### -#}
                 {% if canAttack -%}
                     {% if dir != "CENTER" %}
-                        {% set scoreAttack = scoreAttack + ATTACK_BONUS_FIRSTMOVE %}
+                        {% set scoreAttack = scoreAttack + PARAMS_ATTACK_BONUS_FIRSTMOVE %}
                     {% else %}
-                        {% set scoreAttack = scoreAttack + ATTACK_BONUS_DONT_MOVE %}
+                        {% set scoreAttack = scoreAttack + PARAMS_ATTACK_BONUS_DONT_MOVE %}
                     {% endif %}
 
                     if(scoresAttack[{{dirsOrds[dir]}}] < {{scoreAttack}}){ // Max because we can attack only once
