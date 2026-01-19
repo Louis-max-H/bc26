@@ -81,6 +81,7 @@ dirsDelta = {
     "NORTHWEST" : (-1,1),
     "CENTER" : (0,0)
 }
+reverseDirsDelta = {v: k for k, v in dirsDelta.items()}
 
 dirsShift60xy = {}
 for dir, coo in dirsDelta.items():
@@ -95,6 +96,9 @@ def rotate(direction, indicator, amount):
         return "INVALID_INDICATOR"
 
     return anglesToDirections[(directionsToAngle[direction] + shift * amount) % 360]
+
+def dirsToNeirbyCell(cellFrom, cellTo):
+    return reverseDirsDelta[(cellTo[0] - cellFrom[0], cellTo[1] - cellFrom[1])]
 
 
 ############################### Utils ###############################
@@ -196,12 +200,11 @@ def cellInVisionFrom(fromCell, fromDirection, cell):
 
 
     # Rather checking : [fromCell] with fromDirection -> cell 
-    # We check        : [0, 0] with directionReverse -> cell - fromCell
+    # Equivalent to   : [0, 0] with fromDirection     -> cell - fromCell
     fromShifted = (cell[0] - fromCell[0], cell[1] - fromCell[1])
-    directionReverse = dirsOpposite[fromDirection]
     result = isAngleInBounds(
-        directionsToAngle[directionReverse] - unitsVisionAngle["BABY_RAT"]/2,
-        directionsToAngle[directionReverse] + unitsVisionAngle["BABY_RAT"]/2,
+        directionsToAngle[fromDirection] - unitsVisionAngle["BABY_RAT"]/2,
+        directionsToAngle[fromDirection] + unitsVisionAngle["BABY_RAT"]/2,
         getAngle(fromShifted[0], fromShifted[1])
     )
     # Debug: print(f"cell: {cell}, direction: {direction}, angle: {getAngle(cell[0], cell[1])}, bounds: {directionsToAngle[direction] - unitsVisionAngle["BABY_RAT"]/2}, {directionsToAngle[direction] + unitsVisionAngle["BABY_RAT"]/2}")
@@ -364,6 +367,7 @@ def process_template(template_path, base_dir, is_prod):
         dirs=directions,
         dirsShift60xy=dirsShift60xy,
         rotate=rotate,
+        dirsToNeirbyCell=dirsToNeirbyCell,
         cellInVisionFrom=cellInVisionFrom,
         battleCodehash=battleCodehash,
         cellsInRadius=cellsInRadius,

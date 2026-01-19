@@ -34,7 +34,7 @@ public class Baby extends Robot {
         currentState = switch (currentState.name) {
             case "Init" -> avoidCat;
             case "AvoidCat" -> {
-                if(rc.getRawCheese() > 20) {
+                if(rc.getRawCheese() > 30) {
                     yield cheeseToKing;
                 }else {
                     yield attackEnemy;

@@ -55,11 +55,10 @@ public class Robot {
     public static char[] directionAllyRats = Tools.arrayOf4096Chars();
     public static char[] directionEnemyRats = Tools.arrayOf4096Chars();
 
-    // Message priority
+    // Messages
     public static int PRIORITY_CRIT   = 3; // King being attacked, rush order
     public static int PRIORITY_HIGH   = 2; // Enemy in view, cat position
     public static int PRIORITY_NORMAL = 1; // King position, cheese mine
-
 
     // Phases
     public static int gamePhase;

@@ -194,6 +194,25 @@ public class {{ className }} {
         }
     };
 
+    public static void multiplyScoreBy2InRatVision(MapLocation from, Direction dir){
+        int x = from.x;
+        int y = from.y;
+        int xy = {{ encodeXYString(8) }};
+        switch(dir){
+            {% for dir in directionsWhitoutCenter %}
+            
+            case {{ dir }}:
+            {% for xyShift in visionCellsXY("BABY_RAT", dir, 8) %}
+                scores[xy + {{xyShift}}] *= 2;
+            {% endfor %}
+            return;
+            {% endfor %}
+            case CENTER:
+                System.out.println("ERR: can't divideScoreBy2InRatVision for CENTER");
+                return;
+        }
+    };
+
     public static void shiftCells(MapLocation[] cells, Direction dir){
         switch(cells.length){
             {# length is one more than last index#}

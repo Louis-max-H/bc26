@@ -12,12 +12,17 @@ import static java.lang.Math.max;
 public class {{ className }} {
     public static long ENEMY_DAMAGE = {{ 10 }}; // Damage of an enemy rat (10 according to battlecode)
 
+    public static long scoresAttack[]; // Sum of danger of enemy units
+    public static long scoresDanger[]; // Max amount of damage I can deal
+    public static char attackDirection[]; // Direction of the best attack
+
     {% set DANGER_OUT_OF_ENEMY_VIEW = -1 -%}
     {% set DANGER_IN_ENEMY_VIEW = 1 -%}
     {% set DANGER_IN_REACH = 15 -%}
-    {% set DANGER_IN_REACH_WITH_MOVEMENT = 10 -%}
+    {% set DANGER_IN_REACH_WITH_MOVEMENT = 15 -%}
 
-    {% set ATTACK_MALUS_MOVEMENT =  1 -%}
+    {% set ATTACK_BONUS_FIRSTMOVE =  10 -%}
+    {% set ATTACK_BONUS_DONT_MOVE =  10 -%}
     {% set ATTACK_BONUS_CANT_SEE =  10 -%}
 
 
@@ -26,33 +31,36 @@ public class {{ className }} {
     public static long DANGER_IN_REACH = {{ DANGER_IN_REACH }}; // Danger if enemy can attack us without moving
     public static long DANGER_IN_REACH_WITH_MOVEMENT = {{ DANGER_IN_REACH_WITH_MOVEMENT }}; // Danger if enemy can attack us but need to moving
 
-    public static long ATTACK_MALUS_MOVEMENT = {{ ATTACK_MALUS_MOVEMENT }}; // Malus to attack score if need move to attack unit
-    public static long ATTACK_BONUS_CANT_SEE = {{ ATTACK_BONUS_CANT_SEE }}; // Bonus to attack score if the target can't see us
+    public static long ATTACK_BONUS_MOVEMENT  = {{ ATTACK_BONUS_FIRSTMOVE }}; // Bonus to attack score if need move to attack unit
+    public static long ATTACK_BONUS_DONT_MOVE = {{ ATTACK_BONUS_DONT_MOVE }}; // Bonus to attack score if I dont need to move
+    public static long ATTACK_BONUS_CANT_SEE  = {{ ATTACK_BONUS_CANT_SEE }}; // Bonus to attack score if the target can't see us
+
+    public static void reset(){
+        scoresAttack    = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+        scoresDanger    = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+        attackDirection = new char[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+    }
 
     public static void addMicroScore(
-        MapLocation myLoc, MapLocation targetLoc, char targetDir,
-        long[] scoresAttack, long[] scoresDanger, char[] attackDirection,
-        long attackScore
+        MapLocation myLoc, MapLocation targetLoc, char targetDir, long attackScore
     ){
         switch(targetDir){
             {% for targetDir in dirsWithoutCenter -%}
             case {{ dirsOrds[targetDir] }}:
-                addMicroScore{{targetDir}}(myLoc, targetLoc, scoresAttack, scoresDanger, attackDirection, attackScore);
-                return;
+                addMicroScore{{targetDir}}(myLoc, targetLoc, attackScore);
+                break;
             {% endfor -%} {# Enemy dirs -#}
 
             default:
                 System.out.println("Err: target dir unsupported " + targetDir);
                 return;
-        }// switch(targetDir)
+        };  // switch(targetDir)
     }
 
 
     {% for targetDir in dirsWithoutCenter -%}
     public static void addMicroScore{{targetDir}}(
-        MapLocation myLoc, MapLocation targetLoc,
-        long[] scoresAttack, long[] scoresDanger, char[] attackDirection,
-        long attackScore
+        MapLocation myLoc, MapLocation targetLoc, long attackScore
     ){
         MapLocation enemyRelativeLoc = targetLoc.translate(-myLoc.x, -myLoc.y);
         switch(enemyRelativeLoc.hashCode()){
@@ -69,8 +77,8 @@ public class {{ className }} {
                 {% if cellInVisionFrom(cellEnemy, targetDir, cell)-%}
                     {% set scoreDanger = scoreDanger + DANGER_IN_ENEMY_VIEW -%}
 
-                    {# If the enemy is 2 cells away, consider that the enemy need vision to attack us -#}
                     {% if chebyshevDistance(cellEnemy, cell) == 2-%}
+                        // chebyshevDistance = 2
                         {% set scoreDanger = scoreDanger + DANGER_IN_REACH_WITH_MOVEMENT -%}
                     {% endif -%}
                 {% else -%}
@@ -78,6 +86,7 @@ public class {{ className }} {
                 {% endif -%}
 
                 {% if chebyshevDistance(cellEnemy, cell) == 1-%}
+                    // chebyshevDistance = 1
                     {% set scoreDanger = scoreDanger + DANGER_IN_REACH -%}
                 {% endif -%}
 
@@ -86,9 +95,6 @@ public class {{ className }} {
                 {% set canAttack = false -%}
                 {% if chebyshevDistance(cellEnemy, cell) == 1-%}
                     {% set canAttack = true -%}
-                {% elif chebyshevDistance(cellEnemy, cell) == 2-%}
-                    {% set canAttack = true -%}
-                    {% set scoreAttack = scoreAttack - ATTACK_MALUS_MOVEMENT -%}
                 {% endif -%}
 
                 {% if not cellInVisionFrom(cellEnemy, targetDir, cell)-%}
@@ -97,13 +103,19 @@ public class {{ className }} {
 
                 {# ########### Write result ########### -#}
                 {% if canAttack -%}
+                    {% if dir != "CENTER" %}
+                        {% set scoreAttack = scoreAttack + ATTACK_BONUS_FIRSTMOVE %}
+                    {% else %}
+                        {% set scoreAttack = scoreAttack + ATTACK_BONUS_DONT_MOVE %}
+                    {% endif %}
+
                     if(scoresAttack[{{dirsOrds[dir]}}] < {{scoreAttack}}){ // Max because we can attack only once
                         scoresAttack[{{dirsOrds[dir]}}] = {{scoreAttack}};
-                        attackDirection[{{dirsOrds[dir]}}] = {{dirsOrds[dir]}};
+                        attackDirection[{{dirsOrds[dir]}}] = {{dirsOrds[dirsToNeirbyCell(cell, cellEnemy)]}};
                     }
                 {% endif -%}
                 {% if scoreDanger > 0-%}
-                    scoresDanger[{{dirsOrds[dir]}}] += {{scoreDanger}};
+                    scoresDanger[{{dirsOrds[dir]}}] += {{scoreDanger}}; // {{dir}}
                 {% endif -%}
 
                 {% endfor -%}{# Nearby cell -#}

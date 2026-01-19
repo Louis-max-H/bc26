@@ -885,6 +885,213 @@ public class VisionUtils {
         }
     };
 
+    public static void multiplyScoreBy2InRatVision(MapLocation from, Direction dir){
+        int x = from.x;
+        int y = from.y;
+        int xy = x + y*68 + 552;
+        switch(dir){
+                        
+            case WEST:
+                            scores[xy - 140] *= 2;
+                            scores[xy - 72] *= 2;
+                            scores[xy - 4] *= 2;
+                            scores[xy + 64] *= 2;
+                            scores[xy + 132] *= 2;
+                            scores[xy - 207] *= 2;
+                            scores[xy - 139] *= 2;
+                            scores[xy - 71] *= 2;
+                            scores[xy - 3] *= 2;
+                            scores[xy + 65] *= 2;
+                            scores[xy + 133] *= 2;
+                            scores[xy + 201] *= 2;
+                            scores[xy - 138] *= 2;
+                            scores[xy - 70] *= 2;
+                            scores[xy - 2] *= 2;
+                            scores[xy + 66] *= 2;
+                            scores[xy + 134] *= 2;
+                            scores[xy - 69] *= 2;
+                            scores[xy - 1] *= 2;
+                            scores[xy + 67] *= 2;
+                            scores[xy ] *= 2;
+                        return;
+                        
+            case NORTHWEST:
+                            scores[xy - 4] *= 2;
+                            scores[xy + 64] *= 2;
+                            scores[xy + 132] *= 2;
+                            scores[xy - 3] *= 2;
+                            scores[xy + 65] *= 2;
+                            scores[xy + 133] *= 2;
+                            scores[xy + 201] *= 2;
+                            scores[xy - 2] *= 2;
+                            scores[xy + 66] *= 2;
+                            scores[xy + 134] *= 2;
+                            scores[xy + 202] *= 2;
+                            scores[xy + 270] *= 2;
+                            scores[xy - 1] *= 2;
+                            scores[xy + 67] *= 2;
+                            scores[xy + 135] *= 2;
+                            scores[xy + 203] *= 2;
+                            scores[xy + 271] *= 2;
+                            scores[xy ] *= 2;
+                            scores[xy + 68] *= 2;
+                            scores[xy + 136] *= 2;
+                            scores[xy + 204] *= 2;
+                            scores[xy + 272] *= 2;
+                        return;
+                        
+            case SOUTHWEST:
+                            scores[xy - 140] *= 2;
+                            scores[xy - 72] *= 2;
+                            scores[xy - 4] *= 2;
+                            scores[xy - 207] *= 2;
+                            scores[xy - 139] *= 2;
+                            scores[xy - 71] *= 2;
+                            scores[xy - 3] *= 2;
+                            scores[xy - 274] *= 2;
+                            scores[xy - 206] *= 2;
+                            scores[xy - 138] *= 2;
+                            scores[xy - 70] *= 2;
+                            scores[xy - 2] *= 2;
+                            scores[xy - 273] *= 2;
+                            scores[xy - 205] *= 2;
+                            scores[xy - 137] *= 2;
+                            scores[xy - 69] *= 2;
+                            scores[xy - 1] *= 2;
+                            scores[xy - 272] *= 2;
+                            scores[xy - 204] *= 2;
+                            scores[xy - 136] *= 2;
+                            scores[xy - 68] *= 2;
+                            scores[xy ] *= 2;
+                        return;
+                        
+            case SOUTH:
+                            scores[xy - 207] *= 2;
+                            scores[xy - 274] *= 2;
+                            scores[xy - 206] *= 2;
+                            scores[xy - 138] *= 2;
+                            scores[xy - 273] *= 2;
+                            scores[xy - 205] *= 2;
+                            scores[xy - 137] *= 2;
+                            scores[xy - 69] *= 2;
+                            scores[xy - 272] *= 2;
+                            scores[xy - 204] *= 2;
+                            scores[xy - 136] *= 2;
+                            scores[xy - 68] *= 2;
+                            scores[xy ] *= 2;
+                            scores[xy - 271] *= 2;
+                            scores[xy - 203] *= 2;
+                            scores[xy - 135] *= 2;
+                            scores[xy - 67] *= 2;
+                            scores[xy - 270] *= 2;
+                            scores[xy - 202] *= 2;
+                            scores[xy - 134] *= 2;
+                            scores[xy - 201] *= 2;
+                        return;
+                        
+            case SOUTHEAST:
+                            scores[xy - 272] *= 2;
+                            scores[xy - 204] *= 2;
+                            scores[xy - 136] *= 2;
+                            scores[xy - 68] *= 2;
+                            scores[xy ] *= 2;
+                            scores[xy - 271] *= 2;
+                            scores[xy - 203] *= 2;
+                            scores[xy - 135] *= 2;
+                            scores[xy - 67] *= 2;
+                            scores[xy + 1] *= 2;
+                            scores[xy - 270] *= 2;
+                            scores[xy - 202] *= 2;
+                            scores[xy - 134] *= 2;
+                            scores[xy - 66] *= 2;
+                            scores[xy + 2] *= 2;
+                            scores[xy - 201] *= 2;
+                            scores[xy - 133] *= 2;
+                            scores[xy - 65] *= 2;
+                            scores[xy + 3] *= 2;
+                            scores[xy - 132] *= 2;
+                            scores[xy - 64] *= 2;
+                            scores[xy + 4] *= 2;
+                        return;
+                        
+            case EAST:
+                            scores[xy ] *= 2;
+                            scores[xy - 67] *= 2;
+                            scores[xy + 1] *= 2;
+                            scores[xy + 69] *= 2;
+                            scores[xy - 134] *= 2;
+                            scores[xy - 66] *= 2;
+                            scores[xy + 2] *= 2;
+                            scores[xy + 70] *= 2;
+                            scores[xy + 138] *= 2;
+                            scores[xy - 201] *= 2;
+                            scores[xy - 133] *= 2;
+                            scores[xy - 65] *= 2;
+                            scores[xy + 3] *= 2;
+                            scores[xy + 71] *= 2;
+                            scores[xy + 139] *= 2;
+                            scores[xy + 207] *= 2;
+                            scores[xy - 132] *= 2;
+                            scores[xy - 64] *= 2;
+                            scores[xy + 4] *= 2;
+                            scores[xy + 72] *= 2;
+                            scores[xy + 140] *= 2;
+                        return;
+                        
+            case NORTHEAST:
+                            scores[xy ] *= 2;
+                            scores[xy + 68] *= 2;
+                            scores[xy + 136] *= 2;
+                            scores[xy + 204] *= 2;
+                            scores[xy + 272] *= 2;
+                            scores[xy + 1] *= 2;
+                            scores[xy + 69] *= 2;
+                            scores[xy + 137] *= 2;
+                            scores[xy + 205] *= 2;
+                            scores[xy + 273] *= 2;
+                            scores[xy + 2] *= 2;
+                            scores[xy + 70] *= 2;
+                            scores[xy + 138] *= 2;
+                            scores[xy + 206] *= 2;
+                            scores[xy + 274] *= 2;
+                            scores[xy + 3] *= 2;
+                            scores[xy + 71] *= 2;
+                            scores[xy + 139] *= 2;
+                            scores[xy + 207] *= 2;
+                            scores[xy + 4] *= 2;
+                            scores[xy + 72] *= 2;
+                            scores[xy + 140] *= 2;
+                        return;
+                        
+            case NORTH:
+                            scores[xy + 201] *= 2;
+                            scores[xy + 134] *= 2;
+                            scores[xy + 202] *= 2;
+                            scores[xy + 270] *= 2;
+                            scores[xy + 67] *= 2;
+                            scores[xy + 135] *= 2;
+                            scores[xy + 203] *= 2;
+                            scores[xy + 271] *= 2;
+                            scores[xy ] *= 2;
+                            scores[xy + 68] *= 2;
+                            scores[xy + 136] *= 2;
+                            scores[xy + 204] *= 2;
+                            scores[xy + 272] *= 2;
+                            scores[xy + 69] *= 2;
+                            scores[xy + 137] *= 2;
+                            scores[xy + 205] *= 2;
+                            scores[xy + 273] *= 2;
+                            scores[xy + 138] *= 2;
+                            scores[xy + 206] *= 2;
+                            scores[xy + 274] *= 2;
+                            scores[xy + 207] *= 2;
+                        return;
+                        case CENTER:
+                System.out.println("ERR: can't divideScoreBy2InRatVision for CENTER");
+                return;
+        }
+    };
+
     public static void shiftCells(MapLocation[] cells, Direction dir){
         switch(cells.length){
                                     case 100: cells[99] = cells[99].add(dir);

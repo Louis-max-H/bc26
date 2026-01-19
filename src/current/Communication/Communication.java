@@ -2,6 +2,8 @@ package current.Communication;
 
 import battlecode.common.*;
 import current.Robots.Robot;
+import current.Utils.Tools;
+import current.Utils.VisionUtils;
 
 /**
  * Communication system for Battlecode 2026
@@ -33,35 +35,39 @@ public class Communication extends Robot {
     public static char COOLDOWN_SEND_AGAIN_SQUEAK = 4;
     public static char COOLDOWN_SEND_AGAIN_ARRAY = 0;
 
+    // Latest turn where sender have been detected
+    static char[] lastSeenSender = Tools.arrayOf4096Chars();
 
-    //                                            30v   24v      16v       8v      0v
-    // Messages types (long)                      0b0000_00111111112222_222233333333; // 30 bits = 1 per squeak, 3 array size
-    public static final int MASK_TYPE         = 0b111111_00000000000000_000000000000;
-    public static final int TYPE_CAT          =   0b0001_00000000000000_000000000000;
-    public static final int TYPE_KING         =   0b0010_00000000000000_000000000000;
-    public static final int TYPE_ENEMY_KING   =   0b0011_00000000000000_000000000000;
-    public static final int TYPE_MINE         =   0b0100_00000000000000_000000000000;
-    public static final int TYPE_ENEMY_RAT    =   0b0101_00000000000000_000000000000;
-    public static final int MASK_POSITION     =   0b0000_00000000000000_111111111111;
-    //                                                  |              |yyyyyyxxxxxx; // Bits 0-11 : 12 bits = log2(64*64)
-    public static final int MASK_UNIT_ID      =   0b0000_00111111111111_000000000000; // 12 bits 4096 values
-    public static final int MASK_14BITS       =   0b0000_00000000000011_111111111111; // Used to hash a message content
+
+    //                                            30v  24v      16v       8v      0v
+    // Messages types (long)                      0b000000_111111112222_222233333333; // 30 bits = 1 per squeak, 3 array size
+    public static final int MASK_TYPE         =   0b011111_000000000000_000000000000;
+    public static final int TYPE_CAT          =   0b000001_000000000000_000000000000;
+    public static final int TYPE_KING         =   0b000010_000000000000_000000000000;
+    public static final int TYPE_ENEMY_KING   =   0b000011_000000000000_000000000000;
+    public static final int TYPE_MINE         =   0b000100_000000000000_000000000000;
+    public static final int TYPE_ENEMY_RAT    =   0b000101_000000000000_000000000000;
+    public static final int TYPE_MICRO        =   0b000111_000000000000_000000000000;
+    public static final int MASK_POSITION     =   0b000000_000000000000_111111111111;
+    //                                                    _            |yyyyyyxxxxxx; // Bits 0-11 : 12 bits = log2(64*64)
+    public static final int MASK_UNIT_ID      =   0b000000_111111111111_000000000000; // 12 bits 4096 values
+    public static final int MASK_14BITS       =   0b000000_000000000011_111111111111; // Used to hash a message content
 
     // We can also encode x/y with relative position
     // With distance max of 8 (16 = -7 / +8) we have 4 bytes
     //
-    //                                          30v   24v     16v       8v      0v
-    // Messages types (long)                    0b0000_001111111122_222222_33333333; // 30 bits = 1 per squeak, 3 array size
-    public static final int TYPE_MICRO        = 0b0111_000000000000_000000_00000000;
-    public static final int RELATIVE_POSITION = 0b0000_000000000000_000000_11111111;
-    //                                                |  target id |  dir |yyyyxxxx; // Bits 0-7 : 8 bits = log2(16*16)
-    public static final int MASK_DIR_TARGET  = 0b0000_000000000000_000111_00000000;
-    public static final int MASK_DIR_SENDER  = 0b0000_000000000000_111000_00000000;
-    public static final int MASK_TARGET_ID   = 0b0000_111111111111_000000_00000000;
+    //                                          32v     24v      16v      8v       0v
+    // Messages types (long)                    0b000_00000_1111111122222222_33333333; // 30 bits = 1 per squeak, 3 array size
+    //                                           |dir| type| target id  |dir|yyyyxxxx; // Bits 0-7 : 8 bits = log2(16*16)
+    public static final int RELATIVE_POSITION = 0b000_00000_000000000000_000_11111111;
+    public static final int MASK_DIR_TARGET =   0b000_00000_000000000000_111_00000000;
+    public static final int MASK_TARGET_ID  =   0b000_00000_111111111111_000_00000000;
+    //     static final int MASK_TYPE         = 0b000_11111_000000000000_000_00000000;
+    public static final int MASK_DIR_SENDER =   0b111_00000_000000000000_000_00000000;
 
     public static final int SHIFT_DIR_TARGET  =  8;
-    public static final int SHIFT_DIR_SENDER  = 11;
-    public static final int SHIFT_TARGET_ID   = 14;
+    public static final int SHIFT_TARGET_ID   = 11;
+    public static final int SHIFT_DIR_SENDER  = 29;
 
     /////////////////////////////////////// Message Decoding ///////////////////////////////////////
 
@@ -79,7 +85,7 @@ public class Communication extends Robot {
                 break;
 
             case TYPE_KING:
-                debug("###Decoding king position : at x: " + x + " y: " + y);
+                // debug("###Decoding king position : at x: " + x + " y: " + y);
                 kings.add(new MapLocation(x, y), (msg & MASK_UNIT_ID) >> 12);
                 break;
 
@@ -102,7 +108,7 @@ public class Communication extends Robot {
                 enemiesRats.add(new MapLocation(x, y), (msg & MASK_UNIT_ID) >> 12);
                 break;
 
-                //TODO: Add ally position ?
+            //TODO: Add ally position ?
             case 0:
                 // TODO: check why we have empty message, maybe during splitting messages ?
                 break;
@@ -119,8 +125,9 @@ public class Communication extends Robot {
         char sendCooldown = (char) (round + COOLDOWN_SEND_AGAIN_ARRAY);
 
         for(;;){
-            debug("Reading message at index : " + lastMessageIndex);
+            // debug("Reading message at index : " + lastMessageIndex);
             // Assuming it's long
+
             int message = (sharedArray[lastMessageIndex] << 20) | (sharedArray[lastMessageIndex + 1] << 10) | (sharedArray[lastMessageIndex + 2]);
 
             // If same content, no need to read more
@@ -147,15 +154,39 @@ public class Communication extends Robot {
     public static void readFromSqueak() throws GameActionException {
         int nDecoded = 0;
         int startBytecode = Clock.getBytecodeNum();
-        int MAX_SQUEAKS = 10;
         int min_round = round - 2;
         char sendCooldown = (char) (round + COOLDOWN_SEND_AGAIN_SQUEAK);
 
         readMessagesLabel:
-        // Round be decreasing number
-        for(int r = round; r >= min_round; r--){
+        // Round be increasing number (to overwritte older messages)
+        for(int r = min_round; r < round + 1; r++){
             for(Message msg:  rc.readSqueaks(r)) {
                 int raw = msg.getBytes();
+
+                // Message already seens ?
+                if(lastSeenSender[msg.getSenderID() % 4096] >= r) {
+                    continue;
+                }
+
+                // Reduce vision score where sender can see
+                print("Raw : " + raw);
+                Direction senderDirection = switch(raw & MASK_DIR_SENDER){
+                    case 0b0000000000000000000000000000000 -> Direction.NORTH;
+                    case 0b0010000000000000000000000000000 -> Direction.NORTHEAST;
+                    case 0b0100000000000000000000000000000 -> Direction.EAST;
+                    case 0b0110000000000000000000000000000 -> Direction.SOUTHEAST;
+                    case 0b1000000000000000000000000000000 -> Direction.SOUTH;
+                    case 0b1010000000000000000000000000000 -> Direction.SOUTHWEST;
+                    case 0b1100000000000000000000000000000 -> Direction.WEST;
+                    case 0b1110000000000000000000000000000 -> Direction.NORTHWEST;
+                    default -> {
+                        print("Warn, no direction found for sender");
+                        yield Direction.NORTH;
+                    }
+                };
+                // TODO: Add bonus if come bacl with cheese, rather than divided
+                VisionUtils.divideScoreBy2InRatVision(msg.getSource(), senderDirection);
+                lastSeenSender[msg.getSenderID() % 4096] = (char) min_round;
 
                 // Decoding MICRO message
                 if((raw & MASK_TYPE) == TYPE_MICRO){
@@ -188,9 +219,6 @@ public class Communication extends Robot {
 
                 lastTimeSeenMessage[raw & MASK_14BITS] = sendCooldown;
                 nDecoded++;
-                if(nDecoded >= MAX_SQUEAKS){
-                    break readMessagesLabel;
-                }
             }
         }
 
@@ -261,7 +289,7 @@ public class Communication extends Robot {
     }
 
     public static void sendSqueak() throws GameActionException {
-        int msg = getMessage(COOLDOWN_SEND_AGAIN_SQUEAK);
+        int msg = getMessage(COOLDOWN_SEND_AGAIN_SQUEAK) + (rc.getDirection().ordinal() << SHIFT_DIR_SENDER);
         rc.squeak(msg);
     }
 

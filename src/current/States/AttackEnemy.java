@@ -1,10 +1,8 @@
 package current.States;
 
 import battlecode.common.*;
-import current.Utils.MapLocationsWithId;
-import current.Utils.Tools;
-import current.Utils.VisionUtils;
-import current.Utils.PathFinding;
+import current.Robots.Robot;
+import current.Utils.*;
 
 import static current.States.Code.*;
 import static current.Utils.Micro.addMicroScore;
@@ -16,8 +14,6 @@ import static current.Utils.Micro.addMicroScore;
  * - Consider suicide if losing battle
  */
 public class AttackEnemy extends State {
-    public static Direction[] dirs = new Direction[]{Direction.NORTH, Direction.NORTHEAST, Direction.EAST, Direction.SOUTHEAST, Direction.SOUTH, Direction.SOUTHWEST, Direction.WEST, Direction.NORTHWEST, Direction.CENTER};
-
     public AttackEnemy() {
         this.name = "AttackEnemy";
     }
@@ -26,33 +22,37 @@ public class AttackEnemy extends State {
     public Result run() throws GameActionException {
 
         // Check if enemy
-        if(nearestEnemyRat == null || myLoc.distanceSquaredTo(nearestEnemyRat) > 13){
-            return new Result(OK, "No enemy");
+        if(nearestEnemyRat == null || myLoc.distanceSquaredTo(nearestEnemyRat) > 18){
+            return new Result(OK, "No enemy or too far");
         }
 
-        // Calculates scores
-        long scoresAttack[] = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0}; // Sum of danger of enemy units
-        long scoresDanger[] = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0}; // Max amount of damage I can deal
+        // Reset scores
+        Micro.reset();
 
-        long mixedScore[] = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0}; // Mix of attack and danger
-        char attackDirection[] = new char[]{0, 0, 0, 0, 0, 0, 0, 0, 0}; // Direction of the best attack
-
-        // For all enemies
+        // For all enemies, add attack and danger
         int i = 0;
         while(i < enemiesRats.size){
+            debug("Rat " + enemiesRats.ids[i] + " at " + enemiesRats.locs[i]);
+
             // Add micro score
             MapLocation targetLoc = enemiesRats.locs[i];
             char targetDir = directionEnemyRats[enemiesRats.ids[i]];
             int damage = 10;
-            addMicroScore(myLoc, targetLoc, targetDir, scoresAttack, scoresDanger, attackDirection, damage);
+            addMicroScore(myLoc, targetLoc, targetDir, damage);
 
-            // Add vision score (or init, we use (2000 - round) * 100, lets take 2000*100)
+            // Add vision score (on init, we use (2000 - round) * 100, lets take 2000*100)
             VisionUtils.addScoreArroundUnit(targetLoc, 200000);
             i++;
         }
 
+        // Calculates scores
+        long scoresAttack[] = Micro.scoresAttack; // Sum of danger of enemy units
+        long scoresDanger[] = Micro.scoresDanger; // Max amount of damage I can deal
+        char attackDirection[] = Micro.attackDirection; // Direction of the best attack
+        long mixedScore[] = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0}; // Mix of attack and danger
+
         // Calculate scores : Score = attack * coefAttack - danger
-        int coefAttack = 1;
+        int coefAttack = 10;
         if(rc.isActionReady()) {
 
             // Compute score only if can move
@@ -64,7 +64,7 @@ public class AttackEnemy extends State {
             if(rc.canMove(Direction.SOUTHWEST)){mixedScore[5] = scoresAttack[5] * coefAttack - scoresDanger[5];}
             if(rc.canMove(Direction.WEST)     ){mixedScore[6] = scoresAttack[6] * coefAttack - scoresDanger[6];}
             if(rc.canMove(Direction.NORTHWEST)){mixedScore[7] = scoresAttack[7] * coefAttack - scoresDanger[7];}
-            if(rc.canMove(Direction.CENTER)   ){mixedScore[8] = scoresAttack[8] * coefAttack - scoresDanger[8];}
+            /*if(rc.canMove(Direction.CENTER) */mixedScore[8] = scoresAttack[8] * coefAttack - scoresDanger[8];
 
         }else{
 
@@ -80,22 +80,38 @@ public class AttackEnemy extends State {
             mixedScore[8] = -scoresDanger[8];
         }
 
+        print(String.format("%10s | %6s | %6s | %6s", "Directions", "Danger", "Attack", "Mixed coef " + coefAttack) );
+        for (Direction dir : Direction.values()) {
+            int k = dir.ordinal();
+            print(String.format("%10s | %6s | %6s | %6s ", dir.name(), scoresDanger[k], scoresAttack[k], mixedScore[k]) + directions[attackDirection[k]].name());
+            if(rc.onTheMap(myLoc.add(dir))){
+                rc.setIndicatorDot(myLoc.add(dir), (int)(scoresDanger[k] * 30), rc.getTeam().ordinal() * 200, (int)(scoresAttack[k] * 30));
+            }
+        }
+
         // take best direction
         Direction bestDir = Tools.bestDirOfLong9(mixedScore);
 
+        if(mixedScore[bestDir.ordinal()] == 0){
+            PathFinding.moveDir(bestDir);
+            return new Result(LOCK, "Mixed attack score is zero, I am too far or can't move");
+            // TODO: Add cooldown, if can"t attack 5 turn, exit mode
+        }
+
         // If the best attack is on the current cell, attack now
-        MapLocation target = myLoc.add(dirs[attackDirection[bestDir.ordinal()]]);
-        if(scoresAttack[8] >= scoresDanger[bestDir.ordinal()]){
+        Direction atteckDirection = directions[attackDirection[bestDir.ordinal()]];
+        MapLocation target = myLoc.add(atteckDirection);
+        if(scoresAttack[8] >= scoresAttack[bestDir.ordinal()]){
             if(!rc.canSenseLocation(target)){
-                print("Can't sense target, smartlook : " + VisionUtils.smartLookAt(target));
+                print("Can't sense target, smartlook : " + VisionUtils.smartLookAt(target).msg);
             }
 
-            if(rc.canAttack(myLoc.add(bestDir))){
-                rc.setIndicatorLine(myLoc, myLoc.add(bestDir), 255, 0, 0);
-                print("Attacking " + myLoc.add(bestDir));
-                rc.attack(myLoc.add(bestDir));
+            if(rc.canAttack(target)){
+                rc.setIndicatorLine(myLoc, target, 255, 0, 0);
+                print("Attacking " + target + " " + atteckDirection);
+                rc.attack(target);
             }else{
-                print("Warn: Can't attack " + myLoc.add(bestDir));
+                print("Warn: Can't attack " + target + " " + atteckDirection);
             }
         }
 
@@ -104,22 +120,23 @@ public class AttackEnemy extends State {
             PathFinding.move(bestDir);
         }else{
             print("Can't move, try to look in the direction : " + VisionUtils.smartLookAt(myLoc.add(bestDir)));
-            return new Result(WARN, "Can't move to " + bestDir);
+            return new Result(LOCK, "Can't move to " + bestDir);
         }
 
         // Then, attack from new cell
-        target = myLoc.add(dirs[attackDirection[bestDir.ordinal()]]);
+        atteckDirection = directions[attackDirection[bestDir.ordinal()]];
+        target = myLoc.add(atteckDirection);
         if(rc.isActionReady()){
             if(!rc.canSenseLocation(target)){
-                print("Can't sense target, smartlook : " + VisionUtils.smartLookAt(target));
+                print("Can't sense target, smartlook : " + VisionUtils.smartLookAt(target).msg);
             }
 
-            if(rc.canAttack(myLoc.add(bestDir))){
-                rc.setIndicatorLine(myLoc, myLoc.add(bestDir), 255, 0, 0);
-                print("Attacking " + myLoc.add(bestDir));
-                rc.attack(myLoc.add(bestDir));
+            if(rc.canAttack(target)){
+                rc.setIndicatorLine(myLoc, target, 255, 0, 0);
+                print("Attacking " + target + " " + atteckDirection);
+                rc.attack(target);
             }else{
-                print("Warn: Can't attack " + myLoc.add(bestDir));
+                print("Warn: Can't attack " + target + " " + atteckDirection);
             }
         }
 
