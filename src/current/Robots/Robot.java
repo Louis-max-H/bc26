@@ -4,6 +4,7 @@ import battlecode.common.*;
 import current.States.*;
 import current.Utils.MapLocations;
 import current.Utils.MapLocationsWithId;
+import current.Utils.Tools;
 
 import java.util.Random;
 
@@ -44,10 +45,15 @@ public class Robot {
     public static MapLocations rats = new MapLocations((char) 100);
     public static MapLocations cheeseMines = new MapLocations((char) 150);
     public static MapLocations cheeseMinesFromArray = new  MapLocations((char) 150);
+    public static MapLocationsWithId allyRats = new MapLocationsWithId((char) 15, true);
     public static MapLocationsWithId enemiesRats = new MapLocationsWithId((char) 30, true);
     public static MapLocationsWithId cats = new MapLocationsWithId((char) 100, true);
     public static MapLocationsWithId kings = new MapLocationsWithId((char) 100, true);
     public static MapLocationsWithId enemiesKings = new MapLocationsWithId((char) 100, true);
+
+    // Direction of units
+    public static char[] directionAllyRats = Tools.arrayOf4096Chars();
+    public static char[] directionEnemyRats = Tools.arrayOf4096Chars();
 
     // Message priority
     public static int PRIORITY_CRIT   = 3; // King being attacked, rush order

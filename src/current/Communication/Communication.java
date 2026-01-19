@@ -34,18 +34,35 @@ public class Communication extends Robot {
     public static char COOLDOWN_SEND_AGAIN_ARRAY = 0;
 
 
-    //                                            30v   24v    16v      8v      0v
-    // Messages types (long)                      0b000000111111112222222233333333; // 30 bits = 1 per squeak, 3 array size
-    public static final int MASK_TYPE           = 0b111100000000000000000000000000;
-    public static final int TYPE_CAT            = 0b000100000000000000000000000000;
-    public static final int TYPE_KING           = 0b001000000000000000000000000000;
-    public static final int TYPE_ENEMY_KING     = 0b001100000000000000000000000000;
-    public static final int TYPE_MINE           = 0b010000000000000000000000000000;
-    public static final int TYPE_ENEMY_RAT      = 0b010100000000000000000000000000;
-    public static final int MASK_POSITION       = 0b000000000000000000111111111111;
-    //                                                                yyyyyyxxxxxx; // Bits 0-11 : 12 bits = log2(64*64)
-    public static final int MASK_UNIT_ID        = 0b000000111111111111000000000000; // 12 bits 4096 values
-    public static final int MASK_14BITS         = 0b000000000000000011111111111111; // Used to hash a message content
+    //                                            30v   24v      16v       8v      0v
+    // Messages types (long)                      0b0000_00111111112222_222233333333; // 30 bits = 1 per squeak, 3 array size
+    public static final int MASK_TYPE         = 0b111111_00000000000000_000000000000;
+    public static final int TYPE_CAT          =   0b0001_00000000000000_000000000000;
+    public static final int TYPE_KING         =   0b0010_00000000000000_000000000000;
+    public static final int TYPE_ENEMY_KING   =   0b0011_00000000000000_000000000000;
+    public static final int TYPE_MINE         =   0b0100_00000000000000_000000000000;
+    public static final int TYPE_ENEMY_RAT    =   0b0101_00000000000000_000000000000;
+    public static final int MASK_POSITION     =   0b0000_00000000000000_111111111111;
+    //                                                  |              |yyyyyyxxxxxx; // Bits 0-11 : 12 bits = log2(64*64)
+    public static final int MASK_UNIT_ID      =   0b0000_00111111111111_000000000000; // 12 bits 4096 values
+    public static final int MASK_14BITS       =   0b0000_00000000000011_111111111111; // Used to hash a message content
+
+    // We can also encode x/y with relative position
+    // With distance max of 8 (16 = -7 / +8) we have 4 bytes
+    //
+    //                                          30v   24v     16v       8v      0v
+    // Messages types (long)                    0b0000_001111111122_222222_33333333; // 30 bits = 1 per squeak, 3 array size
+    public static final int TYPE_MICRO        = 0b0111_000000000000_000000_00000000;
+    public static final int RELATIVE_POSITION = 0b0000_000000000000_000000_11111111;
+    //                                                |  target id |  dir |yyyyxxxx; // Bits 0-7 : 8 bits = log2(16*16)
+    public static final int MASK_DIR_TARGET  = 0b0000_000000000000_000111_00000000;
+    public static final int MASK_DIR_SENDER  = 0b0000_000000000000_111000_00000000;
+    public static final int MASK_TARGET_ID   = 0b0000_111111111111_000000_00000000;
+
+    public static final int SHIFT_DIR_TARGET  =  8;
+    public static final int SHIFT_DIR_SENDER  = 11;
+    public static final int SHIFT_TARGET_ID   = 14;
+
     /////////////////////////////////////// Message Decoding ///////////////////////////////////////
 
     /**
@@ -85,6 +102,7 @@ public class Communication extends Robot {
                 enemiesRats.add(new MapLocation(x, y), (msg & MASK_UNIT_ID) >> 12);
                 break;
 
+                //TODO: Add ally position ?
             case 0:
                 // TODO: check why we have empty message, maybe during splitting messages ?
                 break;
@@ -138,9 +156,37 @@ public class Communication extends Robot {
         for(int r = round; r >= min_round; r--){
             for(Message msg:  rc.readSqueaks(r)) {
                 int raw = msg.getBytes();
-                decodeMessage(raw, false);
-                lastTimeSeenMessage[raw & MASK_14BITS] = sendCooldown;
 
+                // Decoding MICRO message
+                if((raw & MASK_TYPE) == TYPE_MICRO){
+                    // Store sender information
+                    allyRats.add(msg.getSource(), msg.getSenderID());
+                    directionAllyRats[msg.getSenderID() % 4096] = (char)((raw & MASK_DIR_SENDER) >> SHIFT_DIR_TARGET);
+
+                    // Extract target information
+                    MapLocation enemyLoc = MessageMicro.decodeRelativeLocation(msg.getSource(), raw);
+                    char enemyID = (char) ((raw & MASK_TARGET_ID) >> SHIFT_TARGET_ID);
+                    if(enemyLoc == null){
+                        err("ERR: Can't decode relative location for message " + raw);
+                        continue;
+                    }
+
+                    // Store target information
+                    enemiesRats.add(enemyLoc, enemyID);
+                    directionEnemyRats[enemyID] = (char)((raw & MASK_DIR_TARGET) >> SHIFT_DIR_TARGET);
+
+                    // Debug
+                    int id = rc.getID();
+                    rc.setIndicatorLine(myLoc, enemyLoc, id % 255, id % 200, id % 150);
+                    rc.setIndicatorLine(myLoc, msg.getSource(), id % 255, id % 200, id % 150);
+
+                // Decoding standard message
+                }else {
+                    allyRats.add(msg.getSource(), msg.getSenderID());
+                    decodeMessage(raw, false);
+                }
+
+                lastTimeSeenMessage[raw & MASK_14BITS] = sendCooldown;
                 nDecoded++;
                 if(nDecoded >= MAX_SQUEAKS){
                     break readMessagesLabel;

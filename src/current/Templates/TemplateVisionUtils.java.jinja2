@@ -21,6 +21,15 @@ public class {{ className }} {
     public static int SCORE_NOT_ALREADY_VIEWED = {{ scoreNotAlreadyViewed }};
     public static int scores[] = new int[] {{genMemoryIntArray(scoreNotAlreadyViewed, 0, 8)}}; /* defaultValue, gapValue, gap size */
 
+    public static void addScoreArroundUnit(MapLocation loc, int score){
+        int xy = {{ encodeXYLoc(8) }};
+        {% for cell in cellsSquareRadius(1) -%}
+        {% if not (cell[0] == 0 and cell[1] == 0) -%}
+            scores[xy + {{ encodeXY(cell, 8) }}] += score;
+        {% endif -%}
+        {% endfor %}
+    }
+
     public static void addScore(MapLocation loc, int score){
         scores[{{ encodeXYLoc(8) }}] = score;
     }
