@@ -1,13 +1,21 @@
 //  Destination: Utils/BugNavLmx.java
 
+{# Scores pour franchir une cellule#}
 {% set SCORE_CELL_PASSABLE  =    200 %}
 {% set SCORE_CELL_IF_DIG    =    220 %}
 {% set SCORE_CELL_WALL      =  32000 %}
+
+{# Parametres pour la génération du code #}
 {% set DEBUG = false %}
 {% set BATTLECODE = true %}
-{% set getRound = "rc.getRoundNum()" if BATTLECODE else "0" %}
 {% set MAX_DEBUG_ROUND = 150 %}
+{% set DOT_DEBUG_LEVEL = 0%} {# Level of debug for battlecode0: None, 1: Only backtraking, 2: All #}
 
+{# Fonctions utilitaires #}
+{% set getRound = "rc.getRoundNum()" if BATTLECODE else "0" %}
+{% macro impossible(MSG) -%}throw new java.lang.Error("ERR Pathfinding: {{MSG}}");{%- endmacro %}
+
+{# Imports #}
 {% if BATTLECODE %}
 package current.Utils;
 import battlecode.common.*;
@@ -18,8 +26,10 @@ package Bugnav;
 import Bugnav.MapLocation;
 import Bugnav.Direction;
 {% endif -%}
+
 //@formatter:off
 
+{# Directions #}
 {% set dirs = ["NORTH","NORTHEAST","EAST","SOUTHEAST","SOUTH","SOUTHWEST","WEST","NORTHWEST"] %}
 {% set dirsPriority = {
         'NORTH': ['NORTH', 'NORTHEAST', 'NORTHWEST', 'EAST', 'WEST', 'SOUTH', 'SOUTHEAST', 'SOUTHWEST'],
@@ -34,17 +44,14 @@ import Bugnav.Direction;
 %}
 
 
-{% macro impossible(MSG) -%}throw new java.lang.Error("ERR Pathfinding: {{MSG}}");{%- endmacro %}
 
 
-// encode(x, y) = (x+1) + (y + 1)(1 + 60 + 1) = x + 60*y
 public class {{ className }} {
     public static int width = 60;
     public static int height = 60;
-
-    public static int SCORE_CELL_PASSABLE = {{ SCORE_CELL_PASSABLE }};
-    public static int SCORE_CELL_IF_DIG = {{ SCORE_CELL_IF_DIG }};
     public static int SCORE_CELL_WALL = {{ SCORE_CELL_WALL }}; // Should not exceed 8 bits int (If added to anything else, to not overflow)
+    public static int SCORE_CELL_IF_DIG = {{ SCORE_CELL_IF_DIG }};
+    public static int SCORE_CELL_PASSABLE = {{ SCORE_CELL_PASSABLE }};
 
     public static void init(int width, int height){
         {{ className }}.width = width;
@@ -55,28 +62,47 @@ public class {{ className }} {
         return loc.x >= 0 && loc.x < width && loc.y >= 0 && loc.y < height;
     }
 
+    // Attributs for caching
+    public static int timeBeforeRefresh = 0;
+    public static MapLocation lastDestination;
+
+    // Used for backtracking
+    public static int resultCode = 0; // 1 : Ok, -1: Not enought bytecode
+    public static String mode = "DEFAULT";
     public static int xyLastWallHit = -1;
     public static int xyLastWallLeave = -1;
+
+    // Used for pathfinding
     public static char[] mapResult;
-    public static MapLocation lastDestination;
-    public static int timeBeforeRefresh = 0;
-    public static String mode = "DEFAULT";
-    public static int resultCode = 0;
     public static char[] mapCosts = generateEmptyMapCosts();
 
-    public static Direction getSuggestion(int startXY){
+
+    // Convert direction (char value) at index startXY to Direction enum
+    public static Direction getResult(int startXY){
         return switch(mapResult[startXY]){
             {% for dir in dirs%}
             case {{dirsOrds[dir]}} -> Direction.{{dir}};
             {% endfor %}
-            default -> Direction.CENTER;
+
+            default -> {
+               {% if BATTLECODE -%}RobotController rc = Robot.rc;{% endif -%}
+                if( {{ getRound }} < {{ MAX_DEBUG_ROUND }}){
+                    System.out.println("Unknow direction return from Pathfinding : " + (int)mapResult[startXY]);
+                }
+                yield Direction.CENTER;
+            }
         };
     }
 
+
+    // Wrapper for pathfinding with less parameters
     public static Direction pathTo(
         MapLocation startLoc, MapLocation endLoc,
         char[] mapCosts, int MAX_SCORE, int cost_max_per_cell, int maxBytecodeUsed
     ){% if BATTLECODE %} throws GameActionException {% endif -%} {
+        
+
+        // Check if cost_max_per_cell is greater than SCORE_CELL_WALL
         if(cost_max_per_cell > {{SCORE_CELL_WALL}}){
             {{ impossible(MSG="cost_max_per_cell is greater than SCORE_CELL_WALL {{SCORE_CELL_WALL}}") }}
         }
@@ -88,27 +114,24 @@ public class {{ className }} {
             System.out.println("Start Pathfinding from " + startLoc + " to " + endLoc);
         }
         
+        // Check if we can reuse previous path
         Direction dir;
+        if(mapCosts == null){mapCosts = {{ className }}.mapCosts;}
         if(timeBeforeRefresh > 0 && lastDestination.equals(endLoc)){
-            dir = getSuggestion(startXY);
+            dir = getResult(startXY);
             if(dir != Direction.CENTER){
-                if( {{ getRound }} < {{ MAX_DEBUG_ROUND }}){
-                    System.out.println("Pathfinding: Reuse previous path -> " + dir);
-                }   
-
+                System.out.println("Pathfinding: Reuse previous path -> " + dir);
                 timeBeforeRefresh -= 3;
                 return dir;
             }
         }
 
+        // Generate path
         mode = "DEFAULT";
         resultCode = generatePathTo(startLoc, endLoc, mapCosts, getMap3600(), MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
-        dir = getSuggestion(startXY);
-
-        if(dir == Direction.CENTER && {{ getRound }} < {{ MAX_DEBUG_ROUND }}){
-            System.out.println("Unknow direction return from Pathfinding : " + (int)mapResult[startXY]);
-        }
-
+        
+        // Check result validity
+        dir = getResult(startXY);
         if(resultCode < 0){
             if({{ getRound }} < {{ MAX_DEBUG_ROUND }}){
                 System.out.println("Pathfinding: Warning return code : " + resultCode + " : " + dir);
@@ -122,14 +145,10 @@ public class {{ className }} {
             timeBeforeRefresh = 3; // Save query result for 3 rounds
             lastDestination = endLoc;
         }
-
         return dir;
     }
 
-    // Int code (To continue): 
-    // 1 : OK
-    // -1: Not enought bytecode
-    // -2: 
+
     private static int generatePathTo(
         MapLocation startLoc, MapLocation endLoc, 
         char[] mapCosts, char[] mapResult,
@@ -138,9 +157,7 @@ public class {{ className }} {
 
         {% if BATTLECODE -%}RobotController rc = Robot.rc;{% endif -%}
 
-        if(mapCosts == null){
-            mapCosts = {{ className }}.mapCosts;
-        }
+        // Initialize variables
         int xy = startLoc.x + 60*startLoc.y;
         int xyEnd = endLoc.x + 60*endLoc.y;
         int xyTmp;
@@ -150,15 +167,20 @@ public class {{ className }} {
         int ctrLeft = 0;
         int smoothLeft;
         int smoothRight;
+        mapResult[xy] = {{dirsOrdsOpposite["CENTER"]}};
+        MapLocation loc = new MapLocation(startLoc.x, startLoc.y);
+        MapLocation locEnd = new MapLocation(endLoc.x, endLoc.y);
 
 
+        // Initialize result variables
         int score = 0;
         xyLastWallHit = -1;
         xyLastWallLeave = -1;
         MapLocation locLeft = null;
         MapLocation locRight = null;
 
-        // Bytecode and stats
+
+        // Bytecode and benchmark variables
         int iterationsSplit = 0;
         int iterationsNormal = 0;
         int startRemainingBytecode = {% if BATTLECODE %} Clock.getBytecodesLeft() {% else %} 0 {% endif -%};
@@ -170,11 +192,6 @@ public class {{ className }} {
         }
         {% set getBytecodeRemaining = "Clock.getBytecodesLeft()" if BATTLECODE else "1" %}
 
-        MapLocation loc = new MapLocation(startLoc.x, startLoc.y);
-        MapLocation locEnd = new MapLocation(endLoc.x, endLoc.y);
-        {% if DEBUG -%}System.out.println("MSG=start at " + xy);
-        {% endif -%}
-        mapResult[xy] = {{dirsOrdsOpposite["CENTER"]}};
 
 
         mainLoop: // We exit the loop when direction to target is Direction.CENTER
@@ -185,35 +202,36 @@ public class {{ className }} {
             modeDefault:
             for (;;) {
                 iterationsNormal++;
+
+                {# Debug messages #}
                 {% if DEBUG -%}
-                System.out.println("MODE=" + mode + ", resume at POS=" + xy + " " + loc + " want to go to " + locEnd + " -> " + loc.directionTo(locEnd));
-                if(withReturn){System.out.println("SCORE=" + score);}
+                    System.out.println("MODE=" + mode + ", resume at POS=" + xy + " " + loc + " want to go to " + locEnd + " -> " + loc.directionTo(locEnd));
+                    if(withReturn){System.out.println("SCORE=" + score);}
                 {% endif -%}
-                {% if BATTLECODE -%}
-                if(withReturn){
-                    rc.setIndicatorDot(loc, 0, 10, 10); // Blue
-                }else{
-                    rc.setIndicatorDot(loc, 206, 174, 243); // Violet
-                }
+                {% if BATTLECODE and DOT_DEBUG_LEVEL >= 2 -%}
+                    if(withReturn){  rc.setIndicatorDot(loc, 0, 10, 10); // Blue
+                    }else{           rc.setIndicatorDot(loc, 206, 174, 243); // Violet
+                    }
                 {% endif -%}
 
+                {# Check if we have enough bytecode remaining #}
                 if({{getBytecodeRemaining}} < stopBellowBytecodeRemaining){
                     {% if DEBUG -%}System.out.println("MSG=not enough bytecode remaining");
                     {% endif -%}
                     break mainLoop;
                 }
 
+                {# Check direction to target #}
                 switch (loc.directionTo(locEnd)) {
                     {% for dir in dirs -%}
                     case {{dir}}:
-                        // Todos: Update mapCosts with sensing
-                        if(!onTheMap(loc.add(Direction.{{dir}}))){
-                            {% if DEBUG -%}System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=IMPOSSIBLE");
-                            {% endif -%}
 
+                        {# Check if direction is on the map #}
+                        if(!onTheMap(loc.add(Direction.{{dir}}))){
                             {{ impossible(MSG="Reach a border when direction to cell on map") }}
                         }
 
+                        {# Check if we can move to this cell #}
                         xyTmp = xy + {{dirsShift60xy[dir]}};
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             {% if DEBUG -%}System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=WALL");
@@ -223,81 +241,92 @@ public class {{ className }} {
                             break modeDefault;
                         }
 
-
+                        {# Move to this direction #}
                         {% if DEBUG -%}System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=OK score: " + (int)mapCosts[xyTmp]);
                         {% endif -%}
                         xy = xyTmp;
-                        mapResult[xyTmp] = {{dirsOrdsOpposite[dir]}};
                         loc = loc.add(Direction.{{dir}});
+                        mapResult[xyTmp] = {{dirsOrdsOpposite[dir]}};
                         break;
                     {%endfor %}
 
+                    {# If direction to target is center, we have reached our destination #}
                     case CENTER:
                         {% if DEBUG -%}System.out.println("MSG=CENTER");
                         {% endif -%}
-
                         break mainLoop;
                 }
         
+                {# We are on the next cell, update score #}
                 score += mapCosts[xy];
-
-                if(score >= MAX_SCORE){
+                if(score >= MAX_SCORE){ // We haven't enough score to reach our destination
                     {% if DEBUG -%}System.out.println("MSG=MAX_SCORE " + score + " >= " + MAX_SCORE);
                     {% endif -%}
                     break mainLoop;
                 }
             }
 
+
             /// ///////////////////// Init split mode /////////////////////
             {% if DEBUG -%}System.out.println("MSG=init split mode");
             {% endif -%}
 
-            xyRight = xy;
+            {# Initialize split mode variables #}
             xyLeft = xy;
-            smoothLeft = 2;
-            smoothRight = 2;
+            xyRight = xy;
             locLeft = null;
             locRight= null;
-            int scoreRight = 0;
+            smoothLeft = 2;
+            smoothRight = 2;
             int scoreLeft = 0;
+            int scoreRight = 0;
             Direction lastDirectionLeft = Direction.CENTER;
             Direction lastDirectionRight = Direction.CENTER;
 
             // loc.directionTo(locEnd) is an obstacle, we need to init left and right side for exploration
             switch (loc.directionTo(locEnd)) {
+
                 {% for dir in dirs -%}
                 case {{dir}}:
-                    // Look for the first empty cell
+                
                     {% for side in ["Left", "Right"] -%}
+
                     initSide{{side}}:{
                     {% for i in range(1, 7) -%}
-                    {% set dirTest = rotate(dir, side, i) -%}
+                    {% set dirTest = rotate(dir, side, i) -%} {# Test a direction by progressively turning, we stop when we find a cell that is not a wall #}
                     if(onTheMap(loc.add(Direction.{{dirTest}})) && mapCosts[xy + {{dirsShift60xy[dirTest]}}] <= cost_max_per_cell) {
+                        {# We found a cell that is not a wall, we can init the side #}
+                        ctr{{side}} = {{i}};
                         loc{{side}} = loc.add(Direction.{{dirTest}});
                         xy{{side}} = xy + {{dirsShift60xy[dirTest]}};
                         lastDirection{{side}} = Direction.{{dirTest}};
+                        mapResult[xy{{side}}] = {{dirsOrdsOpposite[dirTest]}};
+
+                        {# Debug messages #}
                         {% if DEBUG -%}
                             System.out.println("POS=" + xy + ", DIR={{dirTest}}, RESULT=OK");
                             System.out.println("MSG={{side}} init to " + xy{{side}});
                         {% endif -%}
-                        ctr{{side}} = {{i}};
-                        mapResult[xy{{side}}] = {{dirsOrdsOpposite[dirTest]}};
                         break initSide{{side}};
+
                     }
                     {% if DEBUG -%}System.out.println("MODE={{ side }}, POS=" + xy + ", DIR={{dirTest}}, RESULT=WALL");
                     {% endif -%}
 
-                    {% endfor -%}
+                    {% endfor -%} {# for i in range(1, 7) #}
 
                     {{ impossible(MSG="impossible to init split mode (All directions are blocked)") }}
                     } // End initSide{{side}}
-                    {% endfor %}
+                    {% endfor %} {# for side in ["Left", "Right"] #}
                     break;
-                {% endfor %}
+
+                {% endfor %}     {# for dir in dirs #}
 
                 default:
                     {{ impossible(MSG="dir is center when split init") }}
             }
+
+            
             // TODO: Add default score for left / right depending situation
             scoreLeft = score + mapCosts[xyLeft];
             scoreRight = score + mapCosts[xyRight];
@@ -335,7 +364,7 @@ public class {{ className }} {
                     /// If we can move without obstacle, we are free !
                     {% if DEBUG -%}System.out.println("We want to go from " + loc{{side}} + " to " + locEnd + " -> " + loc{{side}}.directionTo(locEnd));
                     {% endif -%}
-                    {% if BATTLECODE %}
+                    {% if BATTLECODE and DOT_DEBUG_LEVEL >= 2 %}
                     {% if side == "Left" %}
                         rc.setIndicatorDot(loc{{side}}, 255, 228, 181);
                     {% else %}
@@ -519,7 +548,7 @@ public class {{ className }} {
                 break backtrackingLoop;
             }
 
-            {% if BATTLECODE %}
+            {% if BATTLECODE and DOT_DEBUG_LEVEL >= 1 %}
             rc.setIndicatorDot(loc, 206, 174, 243);
             {% endif -%}
 

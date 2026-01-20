@@ -4,6 +4,7 @@ import battlecode.common.*;
 import current.States.*;
 import current.Utils.MapLocations;
 import current.Utils.MapLocationsWithId;
+import current.Utils.Tools;
 
 import java.util.Random;
 
@@ -21,7 +22,7 @@ public class Robot {
     public static MapLocation myLoc;
     public static int round;
 
-    public static boolean competitiveMode = false;
+    public static boolean competitiveMode = true;
 
     // Nearest locations
     public static MapLocation nearestCat;
@@ -44,16 +45,20 @@ public class Robot {
     public static MapLocations rats = new MapLocations((char) 100);
     public static MapLocations cheeseMines = new MapLocations((char) 150);
     public static MapLocations cheeseMinesFromArray = new  MapLocations((char) 150);
+    public static MapLocationsWithId allyRats = new MapLocationsWithId((char) 15, true);
     public static MapLocationsWithId enemiesRats = new MapLocationsWithId((char) 30, true);
     public static MapLocationsWithId cats = new MapLocationsWithId((char) 100, true);
     public static MapLocationsWithId kings = new MapLocationsWithId((char) 100, true);
     public static MapLocationsWithId enemiesKings = new MapLocationsWithId((char) 100, true);
 
-    // Message priority
+    // Direction of units
+    public static char[] directionAllyRats = Tools.arrayOf4096Chars();
+    public static char[] directionEnemyRats = Tools.arrayOf4096Chars();
+
+    // Messages
     public static int PRIORITY_CRIT   = 3; // King being attacked, rush order
     public static int PRIORITY_HIGH   = 2; // Enemy in view, cat position
     public static int PRIORITY_NORMAL = 1; // King position, cheese mine
-
 
     // Phases
     public static int gamePhase;
@@ -77,6 +82,7 @@ public class Robot {
 
     // State Machine
     public State init;
+    public State avoidCat;
     public State endTurn;
     public State currentState;
     public void onNewTurn(){};
@@ -102,6 +108,7 @@ public class Robot {
         // Init states
         header("Starting at round " + Clock.getBytecodeNum());
         init = new Init();
+        avoidCat = new AvoidCat();
         endTurn = new EndTurn();
         currentState = init;
         init();
@@ -128,6 +135,7 @@ public class Robot {
                     rc.setIndicatorString("LOCK " + currentState.name);
                     endTurn.run();
                     init.run();
+                    avoidCat.run();
                     break;
 
                 case END_OF_TURN:

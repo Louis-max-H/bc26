@@ -21,6 +21,15 @@ public class {{ className }} {
     public static int SCORE_NOT_ALREADY_VIEWED = {{ scoreNotAlreadyViewed }};
     public static int scores[] = new int[] {{genMemoryIntArray(scoreNotAlreadyViewed, 0, 8)}}; /* defaultValue, gapValue, gap size */
 
+    public static void addScoreArroundUnit(MapLocation loc, int score){
+        int xy = {{ encodeXYLoc(8) }};
+        {% for cell in cellsSquareRadius(1) -%}
+        {% if not (cell[0] == 0 and cell[1] == 0) -%}
+            scores[xy + {{ encodeXY(cell, 8) }}] += score;
+        {% endif -%}
+        {% endfor %}
+    }
+
     public static void addScore(MapLocation loc, int score){
         scores[{{ encodeXYLoc(8) }}] = score;
     }
@@ -176,6 +185,25 @@ public class {{ className }} {
             case {{ dir }}:
             {% for xyShift in visionCellsXY("BABY_RAT", dir, 8) %}
                 scores[xy + {{xyShift}}] /= 2;
+            {% endfor %}
+            return;
+            {% endfor %}
+            case CENTER:
+                System.out.println("ERR: can't divideScoreBy2InRatVision for CENTER");
+                return;
+        }
+    };
+
+    public static void multiplyScoreBy2InRatVision(MapLocation from, Direction dir){
+        int x = from.x;
+        int y = from.y;
+        int xy = {{ encodeXYString(8) }};
+        switch(dir){
+            {% for dir in directionsWhitoutCenter %}
+            
+            case {{ dir }}:
+            {% for xyShift in visionCellsXY("BABY_RAT", dir, 8) %}
+                scores[xy + {{xyShift}}] *= 2;
             {% endfor %}
             return;
             {% endfor %}

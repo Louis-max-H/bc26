@@ -6,6 +6,8 @@
 //  Destination: Utils/BugNavLmx.java
 
 
+ 
+
 package current.Utils;
 import battlecode.common.*;
 import current.Robots.Robot;
@@ -16,14 +18,12 @@ import current.Robots.Robot;
 
 
 
-// encode(x, y) = (x+1) + (y + 1)(1 + 60 + 1) = x + 60*y
 public class BugNavLmx {
     public static int width = 60;
     public static int height = 60;
-
-    public static int SCORE_CELL_PASSABLE = 200;
-    public static int SCORE_CELL_IF_DIG = 220;
     public static int SCORE_CELL_WALL = 32000; // Should not exceed 8 bits int (If added to anything else, to not overflow)
+    public static int SCORE_CELL_IF_DIG = 220;
+    public static int SCORE_CELL_PASSABLE = 200;
 
     public static void init(int width, int height){
         BugNavLmx.width = width;
@@ -34,16 +34,23 @@ public class BugNavLmx {
         return loc.x >= 0 && loc.x < width && loc.y >= 0 && loc.y < height;
     }
 
+    // Attributs for caching
+    public static int timeBeforeRefresh = 0;
+    public static MapLocation lastDestination;
+
+    // Used for backtracking
+    public static int resultCode = 0; // 1 : Ok, -1: Not enought bytecode
+    public static String mode = "DEFAULT";
     public static int xyLastWallHit = -1;
     public static int xyLastWallLeave = -1;
+
+    // Used for pathfinding
     public static char[] mapResult;
-    public static MapLocation lastDestination;
-    public static int timeBeforeRefresh = 0;
-    public static String mode = "DEFAULT";
-    public static int resultCode = 0;
     public static char[] mapCosts = generateEmptyMapCosts();
 
-    public static Direction getSuggestion(int startXY){
+
+    // Convert direction (char value) at index startXY to Direction enum
+    public static Direction getResult(int startXY){
         return switch(mapResult[startXY]){
                         case 0 -> Direction.NORTH;
                         case 1 -> Direction.NORTHEAST;
@@ -53,14 +60,25 @@ public class BugNavLmx {
                         case 5 -> Direction.SOUTHWEST;
                         case 6 -> Direction.WEST;
                         case 7 -> Direction.NORTHWEST;
-                        default -> Direction.CENTER;
+            
+            default -> {
+               RobotController rc = Robot.rc;if( rc.getRoundNum() < 150){
+                    System.out.println("Unknow direction return from Pathfinding : " + (int)mapResult[startXY]);
+                }
+                yield Direction.CENTER;
+            }
         };
     }
 
+
+    // Wrapper for pathfinding with less parameters
     public static Direction pathTo(
         MapLocation startLoc, MapLocation endLoc,
         char[] mapCosts, int MAX_SCORE, int cost_max_per_cell, int maxBytecodeUsed
     ) throws GameActionException {
+        
+
+        // Check if cost_max_per_cell is greater than SCORE_CELL_WALL
         if(cost_max_per_cell > 32000){
             throw new java.lang.Error("ERR Pathfinding: cost_max_per_cell is greater than SCORE_CELL_WALL {{SCORE_CELL_WALL}}");
         }
@@ -71,27 +89,24 @@ public class BugNavLmx {
             System.out.println("Start Pathfinding from " + startLoc + " to " + endLoc);
         }
         
+        // Check if we can reuse previous path
         Direction dir;
+        if(mapCosts == null){mapCosts = BugNavLmx.mapCosts;}
         if(timeBeforeRefresh > 0 && lastDestination.equals(endLoc)){
-            dir = getSuggestion(startXY);
+            dir = getResult(startXY);
             if(dir != Direction.CENTER){
-                if( rc.getRoundNum() < 150){
-                    System.out.println("Pathfinding: Reuse previous path -> " + dir);
-                }   
-
+                System.out.println("Pathfinding: Reuse previous path -> " + dir);
                 timeBeforeRefresh -= 3;
                 return dir;
             }
         }
 
+        // Generate path
         mode = "DEFAULT";
         resultCode = generatePathTo(startLoc, endLoc, mapCosts, getMap3600(), MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
-        dir = getSuggestion(startXY);
-
-        if(dir == Direction.CENTER && rc.getRoundNum() < 150){
-            System.out.println("Unknow direction return from Pathfinding : " + (int)mapResult[startXY]);
-        }
-
+        
+        // Check result validity
+        dir = getResult(startXY);
         if(resultCode < 0){
             if(rc.getRoundNum() < 150){
                 System.out.println("Pathfinding: Warning return code : " + resultCode + " : " + dir);
@@ -105,23 +120,17 @@ public class BugNavLmx {
             timeBeforeRefresh = 3; // Save query result for 3 rounds
             lastDestination = endLoc;
         }
-
         return dir;
     }
 
-    // Int code (To continue): 
-    // 1 : OK
-    // -1: Not enought bytecode
-    // -2: 
+
     private static int generatePathTo(
         MapLocation startLoc, MapLocation endLoc, 
         char[] mapCosts, char[] mapResult,
         int MAX_SCORE, boolean withReturn, 
         int cost_max_per_cell, int maxBytecodeUsed) throws GameActionException {
 
-        RobotController rc = Robot.rc;if(mapCosts == null){
-            mapCosts = BugNavLmx.mapCosts;
-        }
+        RobotController rc = Robot.rc;// Initialize variables
         int xy = startLoc.x + 60*startLoc.y;
         int xyEnd = endLoc.x + 60*endLoc.y;
         int xyTmp;
@@ -131,15 +140,20 @@ public class BugNavLmx {
         int ctrLeft = 0;
         int smoothLeft;
         int smoothRight;
+        mapResult[xy] = 8;
+        MapLocation loc = new MapLocation(startLoc.x, startLoc.y);
+        MapLocation locEnd = new MapLocation(endLoc.x, endLoc.y);
 
 
+        // Initialize result variables
         int score = 0;
         xyLastWallHit = -1;
         xyLastWallLeave = -1;
         MapLocation locLeft = null;
         MapLocation locRight = null;
 
-        // Bytecode and stats
+
+        // Bytecode and benchmark variables
         int iterationsSplit = 0;
         int iterationsNormal = 0;
         int startRemainingBytecode =  Clock.getBytecodesLeft() ;
@@ -150,9 +164,6 @@ public class BugNavLmx {
             stopBellowBytecodeRemaining =  Clock.getBytecodesLeft() - maxBytecodeUsed ;
         }
         
-        MapLocation loc = new MapLocation(startLoc.x, startLoc.y);
-        MapLocation locEnd = new MapLocation(endLoc.x, endLoc.y);
-        mapResult[xy] = 8;
 
 
         mainLoop: // We exit the loop when direction to target is Direction.CENTER
@@ -163,1022 +174,1229 @@ public class BugNavLmx {
             modeDefault:
             for (;;) {
                 iterationsNormal++;
-                if(withReturn){
-                    rc.setIndicatorDot(loc, 0, 10, 10); // Blue
-                }else{
-                    rc.setIndicatorDot(loc, 206, 174, 243); // Violet
-                }
-                if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
+
+                                                if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
                     break mainLoop;
                 }
 
-                switch (loc.directionTo(locEnd)) {
+                                switch (loc.directionTo(locEnd)) {
                     case NORTH:
-                        // Todos: Update mapCosts with sensing
-                        if(!onTheMap(loc.add(Direction.NORTH))){
+
+                                                if(!onTheMap(loc.add(Direction.NORTH))){
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
-                        xyTmp = xy + 60;
+                                                xyTmp = xy + 60;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-
-                        xy = xyTmp;
-                        mapResult[xyTmp] = 4;
+                                                xy = xyTmp;
                         loc = loc.add(Direction.NORTH);
+                        mapResult[xyTmp] = 4;
                         break;
                     case NORTHEAST:
-                        // Todos: Update mapCosts with sensing
-                        if(!onTheMap(loc.add(Direction.NORTHEAST))){
+
+                                                if(!onTheMap(loc.add(Direction.NORTHEAST))){
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
-                        xyTmp = xy + 61;
+                                                xyTmp = xy + 61;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-
-                        xy = xyTmp;
-                        mapResult[xyTmp] = 5;
+                                                xy = xyTmp;
                         loc = loc.add(Direction.NORTHEAST);
+                        mapResult[xyTmp] = 5;
                         break;
                     case EAST:
-                        // Todos: Update mapCosts with sensing
-                        if(!onTheMap(loc.add(Direction.EAST))){
+
+                                                if(!onTheMap(loc.add(Direction.EAST))){
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
-                        xyTmp = xy + 1;
+                                                xyTmp = xy + 1;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-
-                        xy = xyTmp;
-                        mapResult[xyTmp] = 6;
+                                                xy = xyTmp;
                         loc = loc.add(Direction.EAST);
+                        mapResult[xyTmp] = 6;
                         break;
                     case SOUTHEAST:
-                        // Todos: Update mapCosts with sensing
-                        if(!onTheMap(loc.add(Direction.SOUTHEAST))){
+
+                                                if(!onTheMap(loc.add(Direction.SOUTHEAST))){
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
-                        xyTmp = xy - 59;
+                                                xyTmp = xy - 59;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-
-                        xy = xyTmp;
-                        mapResult[xyTmp] = 7;
+                                                xy = xyTmp;
                         loc = loc.add(Direction.SOUTHEAST);
+                        mapResult[xyTmp] = 7;
                         break;
                     case SOUTH:
-                        // Todos: Update mapCosts with sensing
-                        if(!onTheMap(loc.add(Direction.SOUTH))){
+
+                                                if(!onTheMap(loc.add(Direction.SOUTH))){
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
-                        xyTmp = xy - 60;
+                                                xyTmp = xy - 60;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-
-                        xy = xyTmp;
-                        mapResult[xyTmp] = 0;
+                                                xy = xyTmp;
                         loc = loc.add(Direction.SOUTH);
+                        mapResult[xyTmp] = 0;
                         break;
                     case SOUTHWEST:
-                        // Todos: Update mapCosts with sensing
-                        if(!onTheMap(loc.add(Direction.SOUTHWEST))){
+
+                                                if(!onTheMap(loc.add(Direction.SOUTHWEST))){
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
-                        xyTmp = xy - 61;
+                                                xyTmp = xy - 61;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-
-                        xy = xyTmp;
-                        mapResult[xyTmp] = 1;
+                                                xy = xyTmp;
                         loc = loc.add(Direction.SOUTHWEST);
+                        mapResult[xyTmp] = 1;
                         break;
                     case WEST:
-                        // Todos: Update mapCosts with sensing
-                        if(!onTheMap(loc.add(Direction.WEST))){
+
+                                                if(!onTheMap(loc.add(Direction.WEST))){
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
-                        xyTmp = xy - 1;
+                                                xyTmp = xy - 1;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-
-                        xy = xyTmp;
-                        mapResult[xyTmp] = 2;
+                                                xy = xyTmp;
                         loc = loc.add(Direction.WEST);
+                        mapResult[xyTmp] = 2;
                         break;
                     case NORTHWEST:
-                        // Todos: Update mapCosts with sensing
-                        if(!onTheMap(loc.add(Direction.NORTHWEST))){
+
+                                                if(!onTheMap(loc.add(Direction.NORTHWEST))){
                             throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
                         }
 
-                        xyTmp = xy + 59;
+                                                xyTmp = xy + 59;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-
-                        xy = xyTmp;
-                        mapResult[xyTmp] = 3;
+                                                xy = xyTmp;
                         loc = loc.add(Direction.NORTHWEST);
+                        mapResult[xyTmp] = 3;
                         break;
                     
-                    case CENTER:
+                                        case CENTER:
                         break mainLoop;
                 }
         
-                score += mapCosts[xy];
-
-                if(score >= MAX_SCORE){
+                                score += mapCosts[xy];
+                if(score >= MAX_SCORE){ // We haven't enough score to reach our destination
                     break mainLoop;
                 }
             }
 
+
             /// ///////////////////// Init split mode /////////////////////
+                        xyLeft = xy;
             xyRight = xy;
-            xyLeft = xy;
-            smoothLeft = 2;
-            smoothRight = 2;
             locLeft = null;
             locRight= null;
-            int scoreRight = 0;
+            smoothLeft = 2;
+            smoothRight = 2;
             int scoreLeft = 0;
+            int scoreRight = 0;
             Direction lastDirectionLeft = Direction.CENTER;
             Direction lastDirectionRight = Direction.CENTER;
 
             // loc.directionTo(locEnd) is an obstacle, we need to init left and right side for exploration
             switch (loc.directionTo(locEnd)) {
+
                 case NORTH:
-                    // Look for the first empty cell
-                    initSideLeft:{
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTHEAST);
-                        xyLeft = xy + 61;
-                        lastDirectionLeft = Direction.NORTHEAST;
-                        ctrLeft = 1;
-                        mapResult[xyLeft] = 5;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.EAST);
-                        xyLeft = xy + 1;
-                        lastDirectionLeft = Direction.EAST;
-                        ctrLeft = 2;
-                        mapResult[xyLeft] = 6;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTHEAST);
-                        xyLeft = xy - 59;
-                        lastDirectionLeft = Direction.SOUTHEAST;
-                        ctrLeft = 3;
-                        mapResult[xyLeft] = 7;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTH);
-                        xyLeft = xy - 60;
-                        lastDirectionLeft = Direction.SOUTH;
-                        ctrLeft = 4;
-                        mapResult[xyLeft] = 0;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTHWEST);
-                        xyLeft = xy - 61;
-                        lastDirectionLeft = Direction.SOUTHWEST;
-                        ctrLeft = 5;
-                        mapResult[xyLeft] = 1;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.WEST);
-                        xyLeft = xy - 1;
-                        lastDirectionLeft = Direction.WEST;
-                        ctrLeft = 6;
-                        mapResult[xyLeft] = 2;
-                        break initSideLeft;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideLeft
-                    initSideRight:{
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTHWEST);
-                        xyRight = xy + 59;
-                        lastDirectionRight = Direction.NORTHWEST;
-                        ctrRight = 1;
-                        mapResult[xyRight] = 3;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.WEST);
-                        xyRight = xy - 1;
-                        lastDirectionRight = Direction.WEST;
-                        ctrRight = 2;
-                        mapResult[xyRight] = 2;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTHWEST);
-                        xyRight = xy - 61;
-                        lastDirectionRight = Direction.SOUTHWEST;
-                        ctrRight = 3;
-                        mapResult[xyRight] = 1;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTH);
-                        xyRight = xy - 60;
-                        lastDirectionRight = Direction.SOUTH;
-                        ctrRight = 4;
-                        mapResult[xyRight] = 0;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTHEAST);
-                        xyRight = xy - 59;
-                        lastDirectionRight = Direction.SOUTHEAST;
-                        ctrRight = 5;
-                        mapResult[xyRight] = 7;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.EAST);
-                        xyRight = xy + 1;
-                        lastDirectionRight = Direction.EAST;
-                        ctrRight = 6;
-                        mapResult[xyRight] = 6;
-                        break initSideRight;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideRight
-                                        break;
-                case NORTHEAST:
-                    // Look for the first empty cell
-                    initSideLeft:{
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.EAST);
-                        xyLeft = xy + 1;
-                        lastDirectionLeft = Direction.EAST;
-                        ctrLeft = 1;
-                        mapResult[xyLeft] = 6;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTHEAST);
-                        xyLeft = xy - 59;
-                        lastDirectionLeft = Direction.SOUTHEAST;
-                        ctrLeft = 2;
-                        mapResult[xyLeft] = 7;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTH);
-                        xyLeft = xy - 60;
-                        lastDirectionLeft = Direction.SOUTH;
-                        ctrLeft = 3;
-                        mapResult[xyLeft] = 0;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTHWEST);
-                        xyLeft = xy - 61;
-                        lastDirectionLeft = Direction.SOUTHWEST;
-                        ctrLeft = 4;
-                        mapResult[xyLeft] = 1;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.WEST);
-                        xyLeft = xy - 1;
-                        lastDirectionLeft = Direction.WEST;
-                        ctrLeft = 5;
-                        mapResult[xyLeft] = 2;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTHWEST);
-                        xyLeft = xy + 59;
-                        lastDirectionLeft = Direction.NORTHWEST;
-                        ctrLeft = 6;
-                        mapResult[xyLeft] = 3;
-                        break initSideLeft;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideLeft
-                    initSideRight:{
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTH);
-                        xyRight = xy + 60;
-                        lastDirectionRight = Direction.NORTH;
-                        ctrRight = 1;
-                        mapResult[xyRight] = 4;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTHWEST);
-                        xyRight = xy + 59;
-                        lastDirectionRight = Direction.NORTHWEST;
-                        ctrRight = 2;
-                        mapResult[xyRight] = 3;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.WEST);
-                        xyRight = xy - 1;
-                        lastDirectionRight = Direction.WEST;
-                        ctrRight = 3;
-                        mapResult[xyRight] = 2;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTHWEST);
-                        xyRight = xy - 61;
-                        lastDirectionRight = Direction.SOUTHWEST;
-                        ctrRight = 4;
-                        mapResult[xyRight] = 1;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTH);
-                        xyRight = xy - 60;
-                        lastDirectionRight = Direction.SOUTH;
-                        ctrRight = 5;
-                        mapResult[xyRight] = 0;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTHEAST);
-                        xyRight = xy - 59;
-                        lastDirectionRight = Direction.SOUTHEAST;
-                        ctrRight = 6;
-                        mapResult[xyRight] = 7;
-                        break initSideRight;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideRight
-                                        break;
-                case EAST:
-                    // Look for the first empty cell
-                    initSideLeft:{
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTHEAST);
-                        xyLeft = xy - 59;
-                        lastDirectionLeft = Direction.SOUTHEAST;
-                        ctrLeft = 1;
-                        mapResult[xyLeft] = 7;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTH);
-                        xyLeft = xy - 60;
-                        lastDirectionLeft = Direction.SOUTH;
-                        ctrLeft = 2;
-                        mapResult[xyLeft] = 0;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTHWEST);
-                        xyLeft = xy - 61;
-                        lastDirectionLeft = Direction.SOUTHWEST;
-                        ctrLeft = 3;
-                        mapResult[xyLeft] = 1;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.WEST);
-                        xyLeft = xy - 1;
-                        lastDirectionLeft = Direction.WEST;
-                        ctrLeft = 4;
-                        mapResult[xyLeft] = 2;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTHWEST);
-                        xyLeft = xy + 59;
-                        lastDirectionLeft = Direction.NORTHWEST;
-                        ctrLeft = 5;
-                        mapResult[xyLeft] = 3;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTH);
-                        xyLeft = xy + 60;
-                        lastDirectionLeft = Direction.NORTH;
-                        ctrLeft = 6;
-                        mapResult[xyLeft] = 4;
-                        break initSideLeft;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideLeft
-                    initSideRight:{
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTHEAST);
-                        xyRight = xy + 61;
-                        lastDirectionRight = Direction.NORTHEAST;
-                        ctrRight = 1;
-                        mapResult[xyRight] = 5;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTH);
-                        xyRight = xy + 60;
-                        lastDirectionRight = Direction.NORTH;
-                        ctrRight = 2;
-                        mapResult[xyRight] = 4;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTHWEST);
-                        xyRight = xy + 59;
-                        lastDirectionRight = Direction.NORTHWEST;
-                        ctrRight = 3;
-                        mapResult[xyRight] = 3;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.WEST);
-                        xyRight = xy - 1;
-                        lastDirectionRight = Direction.WEST;
-                        ctrRight = 4;
-                        mapResult[xyRight] = 2;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTHWEST);
-                        xyRight = xy - 61;
-                        lastDirectionRight = Direction.SOUTHWEST;
-                        ctrRight = 5;
-                        mapResult[xyRight] = 1;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTH);
-                        xyRight = xy - 60;
-                        lastDirectionRight = Direction.SOUTH;
-                        ctrRight = 6;
-                        mapResult[xyRight] = 0;
-                        break initSideRight;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideRight
-                                        break;
-                case SOUTHEAST:
-                    // Look for the first empty cell
-                    initSideLeft:{
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTH);
-                        xyLeft = xy - 60;
-                        lastDirectionLeft = Direction.SOUTH;
-                        ctrLeft = 1;
-                        mapResult[xyLeft] = 0;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTHWEST);
-                        xyLeft = xy - 61;
-                        lastDirectionLeft = Direction.SOUTHWEST;
-                        ctrLeft = 2;
-                        mapResult[xyLeft] = 1;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.WEST);
-                        xyLeft = xy - 1;
-                        lastDirectionLeft = Direction.WEST;
-                        ctrLeft = 3;
-                        mapResult[xyLeft] = 2;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTHWEST);
-                        xyLeft = xy + 59;
-                        lastDirectionLeft = Direction.NORTHWEST;
-                        ctrLeft = 4;
-                        mapResult[xyLeft] = 3;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTH);
-                        xyLeft = xy + 60;
-                        lastDirectionLeft = Direction.NORTH;
-                        ctrLeft = 5;
-                        mapResult[xyLeft] = 4;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTHEAST);
-                        xyLeft = xy + 61;
-                        lastDirectionLeft = Direction.NORTHEAST;
-                        ctrLeft = 6;
-                        mapResult[xyLeft] = 5;
-                        break initSideLeft;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideLeft
-                    initSideRight:{
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.EAST);
-                        xyRight = xy + 1;
-                        lastDirectionRight = Direction.EAST;
-                        ctrRight = 1;
-                        mapResult[xyRight] = 6;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTHEAST);
-                        xyRight = xy + 61;
-                        lastDirectionRight = Direction.NORTHEAST;
-                        ctrRight = 2;
-                        mapResult[xyRight] = 5;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTH);
-                        xyRight = xy + 60;
-                        lastDirectionRight = Direction.NORTH;
-                        ctrRight = 3;
-                        mapResult[xyRight] = 4;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTHWEST);
-                        xyRight = xy + 59;
-                        lastDirectionRight = Direction.NORTHWEST;
-                        ctrRight = 4;
-                        mapResult[xyRight] = 3;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.WEST);
-                        xyRight = xy - 1;
-                        lastDirectionRight = Direction.WEST;
-                        ctrRight = 5;
-                        mapResult[xyRight] = 2;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTHWEST);
-                        xyRight = xy - 61;
-                        lastDirectionRight = Direction.SOUTHWEST;
-                        ctrRight = 6;
-                        mapResult[xyRight] = 1;
-                        break initSideRight;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideRight
-                                        break;
-                case SOUTH:
-                    // Look for the first empty cell
-                    initSideLeft:{
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTHWEST);
-                        xyLeft = xy - 61;
-                        lastDirectionLeft = Direction.SOUTHWEST;
-                        ctrLeft = 1;
-                        mapResult[xyLeft] = 1;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.WEST);
-                        xyLeft = xy - 1;
-                        lastDirectionLeft = Direction.WEST;
-                        ctrLeft = 2;
-                        mapResult[xyLeft] = 2;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTHWEST);
-                        xyLeft = xy + 59;
-                        lastDirectionLeft = Direction.NORTHWEST;
-                        ctrLeft = 3;
-                        mapResult[xyLeft] = 3;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTH);
-                        xyLeft = xy + 60;
-                        lastDirectionLeft = Direction.NORTH;
-                        ctrLeft = 4;
-                        mapResult[xyLeft] = 4;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTHEAST);
-                        xyLeft = xy + 61;
-                        lastDirectionLeft = Direction.NORTHEAST;
-                        ctrLeft = 5;
-                        mapResult[xyLeft] = 5;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.EAST);
-                        xyLeft = xy + 1;
-                        lastDirectionLeft = Direction.EAST;
-                        ctrLeft = 6;
-                        mapResult[xyLeft] = 6;
-                        break initSideLeft;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideLeft
-                    initSideRight:{
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTHEAST);
-                        xyRight = xy - 59;
-                        lastDirectionRight = Direction.SOUTHEAST;
-                        ctrRight = 1;
-                        mapResult[xyRight] = 7;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.EAST);
-                        xyRight = xy + 1;
-                        lastDirectionRight = Direction.EAST;
-                        ctrRight = 2;
-                        mapResult[xyRight] = 6;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTHEAST);
-                        xyRight = xy + 61;
-                        lastDirectionRight = Direction.NORTHEAST;
-                        ctrRight = 3;
-                        mapResult[xyRight] = 5;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTH);
-                        xyRight = xy + 60;
-                        lastDirectionRight = Direction.NORTH;
-                        ctrRight = 4;
-                        mapResult[xyRight] = 4;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTHWEST);
-                        xyRight = xy + 59;
-                        lastDirectionRight = Direction.NORTHWEST;
-                        ctrRight = 5;
-                        mapResult[xyRight] = 3;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.WEST);
-                        xyRight = xy - 1;
-                        lastDirectionRight = Direction.WEST;
-                        ctrRight = 6;
-                        mapResult[xyRight] = 2;
-                        break initSideRight;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideRight
-                                        break;
-                case SOUTHWEST:
-                    // Look for the first empty cell
-                    initSideLeft:{
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.WEST);
-                        xyLeft = xy - 1;
-                        lastDirectionLeft = Direction.WEST;
-                        ctrLeft = 1;
-                        mapResult[xyLeft] = 2;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTHWEST);
-                        xyLeft = xy + 59;
-                        lastDirectionLeft = Direction.NORTHWEST;
-                        ctrLeft = 2;
-                        mapResult[xyLeft] = 3;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTH);
-                        xyLeft = xy + 60;
-                        lastDirectionLeft = Direction.NORTH;
-                        ctrLeft = 3;
-                        mapResult[xyLeft] = 4;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTHEAST);
-                        xyLeft = xy + 61;
-                        lastDirectionLeft = Direction.NORTHEAST;
-                        ctrLeft = 4;
-                        mapResult[xyLeft] = 5;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.EAST);
-                        xyLeft = xy + 1;
-                        lastDirectionLeft = Direction.EAST;
-                        ctrLeft = 5;
-                        mapResult[xyLeft] = 6;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTHEAST);
-                        xyLeft = xy - 59;
-                        lastDirectionLeft = Direction.SOUTHEAST;
-                        ctrLeft = 6;
-                        mapResult[xyLeft] = 7;
-                        break initSideLeft;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideLeft
-                    initSideRight:{
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTH);
-                        xyRight = xy - 60;
-                        lastDirectionRight = Direction.SOUTH;
-                        ctrRight = 1;
-                        mapResult[xyRight] = 0;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTHEAST);
-                        xyRight = xy - 59;
-                        lastDirectionRight = Direction.SOUTHEAST;
-                        ctrRight = 2;
-                        mapResult[xyRight] = 7;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.EAST);
-                        xyRight = xy + 1;
-                        lastDirectionRight = Direction.EAST;
-                        ctrRight = 3;
-                        mapResult[xyRight] = 6;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTHEAST);
-                        xyRight = xy + 61;
-                        lastDirectionRight = Direction.NORTHEAST;
-                        ctrRight = 4;
-                        mapResult[xyRight] = 5;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTH);
-                        xyRight = xy + 60;
-                        lastDirectionRight = Direction.NORTH;
-                        ctrRight = 5;
-                        mapResult[xyRight] = 4;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTHWEST);
-                        xyRight = xy + 59;
-                        lastDirectionRight = Direction.NORTHWEST;
-                        ctrRight = 6;
-                        mapResult[xyRight] = 3;
-                        break initSideRight;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideRight
-                                        break;
-                case WEST:
-                    // Look for the first empty cell
-                    initSideLeft:{
-                    if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTHWEST);
-                        xyLeft = xy + 59;
-                        lastDirectionLeft = Direction.NORTHWEST;
-                        ctrLeft = 1;
-                        mapResult[xyLeft] = 3;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTH);
-                        xyLeft = xy + 60;
-                        lastDirectionLeft = Direction.NORTH;
-                        ctrLeft = 2;
-                        mapResult[xyLeft] = 4;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTHEAST);
-                        xyLeft = xy + 61;
-                        lastDirectionLeft = Direction.NORTHEAST;
-                        ctrLeft = 3;
-                        mapResult[xyLeft] = 5;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.EAST);
-                        xyLeft = xy + 1;
-                        lastDirectionLeft = Direction.EAST;
-                        ctrLeft = 4;
-                        mapResult[xyLeft] = 6;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTHEAST);
-                        xyLeft = xy - 59;
-                        lastDirectionLeft = Direction.SOUTHEAST;
-                        ctrLeft = 5;
-                        mapResult[xyLeft] = 7;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTH);
-                        xyLeft = xy - 60;
-                        lastDirectionLeft = Direction.SOUTH;
-                        ctrLeft = 6;
-                        mapResult[xyLeft] = 0;
-                        break initSideLeft;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideLeft
-                    initSideRight:{
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTHWEST);
-                        xyRight = xy - 61;
-                        lastDirectionRight = Direction.SOUTHWEST;
-                        ctrRight = 1;
-                        mapResult[xyRight] = 1;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTH);
-                        xyRight = xy - 60;
-                        lastDirectionRight = Direction.SOUTH;
-                        ctrRight = 2;
-                        mapResult[xyRight] = 0;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTHEAST);
-                        xyRight = xy - 59;
-                        lastDirectionRight = Direction.SOUTHEAST;
-                        ctrRight = 3;
-                        mapResult[xyRight] = 7;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.EAST);
-                        xyRight = xy + 1;
-                        lastDirectionRight = Direction.EAST;
-                        ctrRight = 4;
-                        mapResult[xyRight] = 6;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTHEAST);
-                        xyRight = xy + 61;
-                        lastDirectionRight = Direction.NORTHEAST;
-                        ctrRight = 5;
-                        mapResult[xyRight] = 5;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTH);
-                        xyRight = xy + 60;
-                        lastDirectionRight = Direction.NORTH;
-                        ctrRight = 6;
-                        mapResult[xyRight] = 4;
-                        break initSideRight;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideRight
-                                        break;
-                case NORTHWEST:
-                    // Look for the first empty cell
-                    initSideLeft:{
-                    if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTH);
-                        xyLeft = xy + 60;
-                        lastDirectionLeft = Direction.NORTH;
-                        ctrLeft = 1;
-                        mapResult[xyLeft] = 4;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.NORTHEAST);
-                        xyLeft = xy + 61;
-                        lastDirectionLeft = Direction.NORTHEAST;
-                        ctrLeft = 2;
-                        mapResult[xyLeft] = 5;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.EAST);
-                        xyLeft = xy + 1;
-                        lastDirectionLeft = Direction.EAST;
-                        ctrLeft = 3;
-                        mapResult[xyLeft] = 6;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTHEAST);
-                        xyLeft = xy - 59;
-                        lastDirectionLeft = Direction.SOUTHEAST;
-                        ctrLeft = 4;
-                        mapResult[xyLeft] = 7;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTH);
-                        xyLeft = xy - 60;
-                        lastDirectionLeft = Direction.SOUTH;
-                        ctrLeft = 5;
-                        mapResult[xyLeft] = 0;
-                        break initSideLeft;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                        locLeft = loc.add(Direction.SOUTHWEST);
-                        xyLeft = xy - 61;
-                        lastDirectionLeft = Direction.SOUTHWEST;
-                        ctrLeft = 6;
-                        mapResult[xyLeft] = 1;
-                        break initSideLeft;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideLeft
-                    initSideRight:{
-                    if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.WEST);
-                        xyRight = xy - 1;
-                        lastDirectionRight = Direction.WEST;
-                        ctrRight = 1;
-                        mapResult[xyRight] = 2;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTHWEST);
-                        xyRight = xy - 61;
-                        lastDirectionRight = Direction.SOUTHWEST;
-                        ctrRight = 2;
-                        mapResult[xyRight] = 1;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTH);
-                        xyRight = xy - 60;
-                        lastDirectionRight = Direction.SOUTH;
-                        ctrRight = 3;
-                        mapResult[xyRight] = 0;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.SOUTHEAST);
-                        xyRight = xy - 59;
-                        lastDirectionRight = Direction.SOUTHEAST;
-                        ctrRight = 4;
-                        mapResult[xyRight] = 7;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.EAST);
-                        xyRight = xy + 1;
-                        lastDirectionRight = Direction.EAST;
-                        ctrRight = 5;
-                        mapResult[xyRight] = 6;
-                        break initSideRight;
-                    }
-                    if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                        locRight = loc.add(Direction.NORTHEAST);
-                        xyRight = xy + 61;
-                        lastDirectionRight = Direction.NORTHEAST;
-                        ctrRight = 6;
-                        mapResult[xyRight] = 5;
-                        break initSideRight;
-                    }
-                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
-                    } // End initSideRight
-                                        break;
                 
+                    initSideLeft:{
+                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
+                                                ctrLeft = 1;
+                        locLeft = loc.add(Direction.NORTHEAST);
+                        xyLeft = xy + 61;
+                        lastDirectionLeft = Direction.NORTHEAST;
+                        mapResult[xyLeft] = 5;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
+                                                ctrLeft = 2;
+                        locLeft = loc.add(Direction.EAST);
+                        xyLeft = xy + 1;
+                        lastDirectionLeft = Direction.EAST;
+                        mapResult[xyLeft] = 6;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
+                                                ctrLeft = 3;
+                        locLeft = loc.add(Direction.SOUTHEAST);
+                        xyLeft = xy - 59;
+                        lastDirectionLeft = Direction.SOUTHEAST;
+                        mapResult[xyLeft] = 7;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
+                                                ctrLeft = 4;
+                        locLeft = loc.add(Direction.SOUTH);
+                        xyLeft = xy - 60;
+                        lastDirectionLeft = Direction.SOUTH;
+                        mapResult[xyLeft] = 0;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
+                                                ctrLeft = 5;
+                        locLeft = loc.add(Direction.SOUTHWEST);
+                        xyLeft = xy - 61;
+                        lastDirectionLeft = Direction.SOUTHWEST;
+                        mapResult[xyLeft] = 1;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
+                                                ctrLeft = 6;
+                        locLeft = loc.add(Direction.WEST);
+                        xyLeft = xy - 1;
+                        lastDirectionLeft = Direction.WEST;
+                        mapResult[xyLeft] = 2;
+
+                                                break initSideLeft;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideLeft
+                    initSideRight:{
+                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
+                                                ctrRight = 1;
+                        locRight = loc.add(Direction.NORTHWEST);
+                        xyRight = xy + 59;
+                        lastDirectionRight = Direction.NORTHWEST;
+                        mapResult[xyRight] = 3;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
+                                                ctrRight = 2;
+                        locRight = loc.add(Direction.WEST);
+                        xyRight = xy - 1;
+                        lastDirectionRight = Direction.WEST;
+                        mapResult[xyRight] = 2;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
+                                                ctrRight = 3;
+                        locRight = loc.add(Direction.SOUTHWEST);
+                        xyRight = xy - 61;
+                        lastDirectionRight = Direction.SOUTHWEST;
+                        mapResult[xyRight] = 1;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
+                                                ctrRight = 4;
+                        locRight = loc.add(Direction.SOUTH);
+                        xyRight = xy - 60;
+                        lastDirectionRight = Direction.SOUTH;
+                        mapResult[xyRight] = 0;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
+                                                ctrRight = 5;
+                        locRight = loc.add(Direction.SOUTHEAST);
+                        xyRight = xy - 59;
+                        lastDirectionRight = Direction.SOUTHEAST;
+                        mapResult[xyRight] = 7;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
+                                                ctrRight = 6;
+                        locRight = loc.add(Direction.EAST);
+                        xyRight = xy + 1;
+                        lastDirectionRight = Direction.EAST;
+                        mapResult[xyRight] = 6;
+
+                                                break initSideRight;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideRight
+                                         break;
+
+                case NORTHEAST:
+                
+                    initSideLeft:{
+                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
+                                                ctrLeft = 1;
+                        locLeft = loc.add(Direction.EAST);
+                        xyLeft = xy + 1;
+                        lastDirectionLeft = Direction.EAST;
+                        mapResult[xyLeft] = 6;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
+                                                ctrLeft = 2;
+                        locLeft = loc.add(Direction.SOUTHEAST);
+                        xyLeft = xy - 59;
+                        lastDirectionLeft = Direction.SOUTHEAST;
+                        mapResult[xyLeft] = 7;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
+                                                ctrLeft = 3;
+                        locLeft = loc.add(Direction.SOUTH);
+                        xyLeft = xy - 60;
+                        lastDirectionLeft = Direction.SOUTH;
+                        mapResult[xyLeft] = 0;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
+                                                ctrLeft = 4;
+                        locLeft = loc.add(Direction.SOUTHWEST);
+                        xyLeft = xy - 61;
+                        lastDirectionLeft = Direction.SOUTHWEST;
+                        mapResult[xyLeft] = 1;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
+                                                ctrLeft = 5;
+                        locLeft = loc.add(Direction.WEST);
+                        xyLeft = xy - 1;
+                        lastDirectionLeft = Direction.WEST;
+                        mapResult[xyLeft] = 2;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
+                                                ctrLeft = 6;
+                        locLeft = loc.add(Direction.NORTHWEST);
+                        xyLeft = xy + 59;
+                        lastDirectionLeft = Direction.NORTHWEST;
+                        mapResult[xyLeft] = 3;
+
+                                                break initSideLeft;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideLeft
+                    initSideRight:{
+                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
+                                                ctrRight = 1;
+                        locRight = loc.add(Direction.NORTH);
+                        xyRight = xy + 60;
+                        lastDirectionRight = Direction.NORTH;
+                        mapResult[xyRight] = 4;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
+                                                ctrRight = 2;
+                        locRight = loc.add(Direction.NORTHWEST);
+                        xyRight = xy + 59;
+                        lastDirectionRight = Direction.NORTHWEST;
+                        mapResult[xyRight] = 3;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
+                                                ctrRight = 3;
+                        locRight = loc.add(Direction.WEST);
+                        xyRight = xy - 1;
+                        lastDirectionRight = Direction.WEST;
+                        mapResult[xyRight] = 2;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
+                                                ctrRight = 4;
+                        locRight = loc.add(Direction.SOUTHWEST);
+                        xyRight = xy - 61;
+                        lastDirectionRight = Direction.SOUTHWEST;
+                        mapResult[xyRight] = 1;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
+                                                ctrRight = 5;
+                        locRight = loc.add(Direction.SOUTH);
+                        xyRight = xy - 60;
+                        lastDirectionRight = Direction.SOUTH;
+                        mapResult[xyRight] = 0;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
+                                                ctrRight = 6;
+                        locRight = loc.add(Direction.SOUTHEAST);
+                        xyRight = xy - 59;
+                        lastDirectionRight = Direction.SOUTHEAST;
+                        mapResult[xyRight] = 7;
+
+                                                break initSideRight;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideRight
+                                         break;
+
+                case EAST:
+                
+                    initSideLeft:{
+                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
+                                                ctrLeft = 1;
+                        locLeft = loc.add(Direction.SOUTHEAST);
+                        xyLeft = xy - 59;
+                        lastDirectionLeft = Direction.SOUTHEAST;
+                        mapResult[xyLeft] = 7;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
+                                                ctrLeft = 2;
+                        locLeft = loc.add(Direction.SOUTH);
+                        xyLeft = xy - 60;
+                        lastDirectionLeft = Direction.SOUTH;
+                        mapResult[xyLeft] = 0;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
+                                                ctrLeft = 3;
+                        locLeft = loc.add(Direction.SOUTHWEST);
+                        xyLeft = xy - 61;
+                        lastDirectionLeft = Direction.SOUTHWEST;
+                        mapResult[xyLeft] = 1;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
+                                                ctrLeft = 4;
+                        locLeft = loc.add(Direction.WEST);
+                        xyLeft = xy - 1;
+                        lastDirectionLeft = Direction.WEST;
+                        mapResult[xyLeft] = 2;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
+                                                ctrLeft = 5;
+                        locLeft = loc.add(Direction.NORTHWEST);
+                        xyLeft = xy + 59;
+                        lastDirectionLeft = Direction.NORTHWEST;
+                        mapResult[xyLeft] = 3;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
+                                                ctrLeft = 6;
+                        locLeft = loc.add(Direction.NORTH);
+                        xyLeft = xy + 60;
+                        lastDirectionLeft = Direction.NORTH;
+                        mapResult[xyLeft] = 4;
+
+                                                break initSideLeft;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideLeft
+                    initSideRight:{
+                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
+                                                ctrRight = 1;
+                        locRight = loc.add(Direction.NORTHEAST);
+                        xyRight = xy + 61;
+                        lastDirectionRight = Direction.NORTHEAST;
+                        mapResult[xyRight] = 5;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
+                                                ctrRight = 2;
+                        locRight = loc.add(Direction.NORTH);
+                        xyRight = xy + 60;
+                        lastDirectionRight = Direction.NORTH;
+                        mapResult[xyRight] = 4;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
+                                                ctrRight = 3;
+                        locRight = loc.add(Direction.NORTHWEST);
+                        xyRight = xy + 59;
+                        lastDirectionRight = Direction.NORTHWEST;
+                        mapResult[xyRight] = 3;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
+                                                ctrRight = 4;
+                        locRight = loc.add(Direction.WEST);
+                        xyRight = xy - 1;
+                        lastDirectionRight = Direction.WEST;
+                        mapResult[xyRight] = 2;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
+                                                ctrRight = 5;
+                        locRight = loc.add(Direction.SOUTHWEST);
+                        xyRight = xy - 61;
+                        lastDirectionRight = Direction.SOUTHWEST;
+                        mapResult[xyRight] = 1;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
+                                                ctrRight = 6;
+                        locRight = loc.add(Direction.SOUTH);
+                        xyRight = xy - 60;
+                        lastDirectionRight = Direction.SOUTH;
+                        mapResult[xyRight] = 0;
+
+                                                break initSideRight;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideRight
+                                         break;
+
+                case SOUTHEAST:
+                
+                    initSideLeft:{
+                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
+                                                ctrLeft = 1;
+                        locLeft = loc.add(Direction.SOUTH);
+                        xyLeft = xy - 60;
+                        lastDirectionLeft = Direction.SOUTH;
+                        mapResult[xyLeft] = 0;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
+                                                ctrLeft = 2;
+                        locLeft = loc.add(Direction.SOUTHWEST);
+                        xyLeft = xy - 61;
+                        lastDirectionLeft = Direction.SOUTHWEST;
+                        mapResult[xyLeft] = 1;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
+                                                ctrLeft = 3;
+                        locLeft = loc.add(Direction.WEST);
+                        xyLeft = xy - 1;
+                        lastDirectionLeft = Direction.WEST;
+                        mapResult[xyLeft] = 2;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
+                                                ctrLeft = 4;
+                        locLeft = loc.add(Direction.NORTHWEST);
+                        xyLeft = xy + 59;
+                        lastDirectionLeft = Direction.NORTHWEST;
+                        mapResult[xyLeft] = 3;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
+                                                ctrLeft = 5;
+                        locLeft = loc.add(Direction.NORTH);
+                        xyLeft = xy + 60;
+                        lastDirectionLeft = Direction.NORTH;
+                        mapResult[xyLeft] = 4;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
+                                                ctrLeft = 6;
+                        locLeft = loc.add(Direction.NORTHEAST);
+                        xyLeft = xy + 61;
+                        lastDirectionLeft = Direction.NORTHEAST;
+                        mapResult[xyLeft] = 5;
+
+                                                break initSideLeft;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideLeft
+                    initSideRight:{
+                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
+                                                ctrRight = 1;
+                        locRight = loc.add(Direction.EAST);
+                        xyRight = xy + 1;
+                        lastDirectionRight = Direction.EAST;
+                        mapResult[xyRight] = 6;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
+                                                ctrRight = 2;
+                        locRight = loc.add(Direction.NORTHEAST);
+                        xyRight = xy + 61;
+                        lastDirectionRight = Direction.NORTHEAST;
+                        mapResult[xyRight] = 5;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
+                                                ctrRight = 3;
+                        locRight = loc.add(Direction.NORTH);
+                        xyRight = xy + 60;
+                        lastDirectionRight = Direction.NORTH;
+                        mapResult[xyRight] = 4;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
+                                                ctrRight = 4;
+                        locRight = loc.add(Direction.NORTHWEST);
+                        xyRight = xy + 59;
+                        lastDirectionRight = Direction.NORTHWEST;
+                        mapResult[xyRight] = 3;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
+                                                ctrRight = 5;
+                        locRight = loc.add(Direction.WEST);
+                        xyRight = xy - 1;
+                        lastDirectionRight = Direction.WEST;
+                        mapResult[xyRight] = 2;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
+                                                ctrRight = 6;
+                        locRight = loc.add(Direction.SOUTHWEST);
+                        xyRight = xy - 61;
+                        lastDirectionRight = Direction.SOUTHWEST;
+                        mapResult[xyRight] = 1;
+
+                                                break initSideRight;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideRight
+                                         break;
+
+                case SOUTH:
+                
+                    initSideLeft:{
+                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
+                                                ctrLeft = 1;
+                        locLeft = loc.add(Direction.SOUTHWEST);
+                        xyLeft = xy - 61;
+                        lastDirectionLeft = Direction.SOUTHWEST;
+                        mapResult[xyLeft] = 1;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
+                                                ctrLeft = 2;
+                        locLeft = loc.add(Direction.WEST);
+                        xyLeft = xy - 1;
+                        lastDirectionLeft = Direction.WEST;
+                        mapResult[xyLeft] = 2;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
+                                                ctrLeft = 3;
+                        locLeft = loc.add(Direction.NORTHWEST);
+                        xyLeft = xy + 59;
+                        lastDirectionLeft = Direction.NORTHWEST;
+                        mapResult[xyLeft] = 3;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
+                                                ctrLeft = 4;
+                        locLeft = loc.add(Direction.NORTH);
+                        xyLeft = xy + 60;
+                        lastDirectionLeft = Direction.NORTH;
+                        mapResult[xyLeft] = 4;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
+                                                ctrLeft = 5;
+                        locLeft = loc.add(Direction.NORTHEAST);
+                        xyLeft = xy + 61;
+                        lastDirectionLeft = Direction.NORTHEAST;
+                        mapResult[xyLeft] = 5;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
+                                                ctrLeft = 6;
+                        locLeft = loc.add(Direction.EAST);
+                        xyLeft = xy + 1;
+                        lastDirectionLeft = Direction.EAST;
+                        mapResult[xyLeft] = 6;
+
+                                                break initSideLeft;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideLeft
+                    initSideRight:{
+                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
+                                                ctrRight = 1;
+                        locRight = loc.add(Direction.SOUTHEAST);
+                        xyRight = xy - 59;
+                        lastDirectionRight = Direction.SOUTHEAST;
+                        mapResult[xyRight] = 7;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
+                                                ctrRight = 2;
+                        locRight = loc.add(Direction.EAST);
+                        xyRight = xy + 1;
+                        lastDirectionRight = Direction.EAST;
+                        mapResult[xyRight] = 6;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
+                                                ctrRight = 3;
+                        locRight = loc.add(Direction.NORTHEAST);
+                        xyRight = xy + 61;
+                        lastDirectionRight = Direction.NORTHEAST;
+                        mapResult[xyRight] = 5;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
+                                                ctrRight = 4;
+                        locRight = loc.add(Direction.NORTH);
+                        xyRight = xy + 60;
+                        lastDirectionRight = Direction.NORTH;
+                        mapResult[xyRight] = 4;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
+                                                ctrRight = 5;
+                        locRight = loc.add(Direction.NORTHWEST);
+                        xyRight = xy + 59;
+                        lastDirectionRight = Direction.NORTHWEST;
+                        mapResult[xyRight] = 3;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
+                                                ctrRight = 6;
+                        locRight = loc.add(Direction.WEST);
+                        xyRight = xy - 1;
+                        lastDirectionRight = Direction.WEST;
+                        mapResult[xyRight] = 2;
+
+                                                break initSideRight;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideRight
+                                         break;
+
+                case SOUTHWEST:
+                
+                    initSideLeft:{
+                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
+                                                ctrLeft = 1;
+                        locLeft = loc.add(Direction.WEST);
+                        xyLeft = xy - 1;
+                        lastDirectionLeft = Direction.WEST;
+                        mapResult[xyLeft] = 2;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
+                                                ctrLeft = 2;
+                        locLeft = loc.add(Direction.NORTHWEST);
+                        xyLeft = xy + 59;
+                        lastDirectionLeft = Direction.NORTHWEST;
+                        mapResult[xyLeft] = 3;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
+                                                ctrLeft = 3;
+                        locLeft = loc.add(Direction.NORTH);
+                        xyLeft = xy + 60;
+                        lastDirectionLeft = Direction.NORTH;
+                        mapResult[xyLeft] = 4;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
+                                                ctrLeft = 4;
+                        locLeft = loc.add(Direction.NORTHEAST);
+                        xyLeft = xy + 61;
+                        lastDirectionLeft = Direction.NORTHEAST;
+                        mapResult[xyLeft] = 5;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
+                                                ctrLeft = 5;
+                        locLeft = loc.add(Direction.EAST);
+                        xyLeft = xy + 1;
+                        lastDirectionLeft = Direction.EAST;
+                        mapResult[xyLeft] = 6;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
+                                                ctrLeft = 6;
+                        locLeft = loc.add(Direction.SOUTHEAST);
+                        xyLeft = xy - 59;
+                        lastDirectionLeft = Direction.SOUTHEAST;
+                        mapResult[xyLeft] = 7;
+
+                                                break initSideLeft;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideLeft
+                    initSideRight:{
+                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
+                                                ctrRight = 1;
+                        locRight = loc.add(Direction.SOUTH);
+                        xyRight = xy - 60;
+                        lastDirectionRight = Direction.SOUTH;
+                        mapResult[xyRight] = 0;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
+                                                ctrRight = 2;
+                        locRight = loc.add(Direction.SOUTHEAST);
+                        xyRight = xy - 59;
+                        lastDirectionRight = Direction.SOUTHEAST;
+                        mapResult[xyRight] = 7;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
+                                                ctrRight = 3;
+                        locRight = loc.add(Direction.EAST);
+                        xyRight = xy + 1;
+                        lastDirectionRight = Direction.EAST;
+                        mapResult[xyRight] = 6;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
+                                                ctrRight = 4;
+                        locRight = loc.add(Direction.NORTHEAST);
+                        xyRight = xy + 61;
+                        lastDirectionRight = Direction.NORTHEAST;
+                        mapResult[xyRight] = 5;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
+                                                ctrRight = 5;
+                        locRight = loc.add(Direction.NORTH);
+                        xyRight = xy + 60;
+                        lastDirectionRight = Direction.NORTH;
+                        mapResult[xyRight] = 4;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
+                                                ctrRight = 6;
+                        locRight = loc.add(Direction.NORTHWEST);
+                        xyRight = xy + 59;
+                        lastDirectionRight = Direction.NORTHWEST;
+                        mapResult[xyRight] = 3;
+
+                                                break initSideRight;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideRight
+                                         break;
+
+                case WEST:
+                
+                    initSideLeft:{
+                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
+                                                ctrLeft = 1;
+                        locLeft = loc.add(Direction.NORTHWEST);
+                        xyLeft = xy + 59;
+                        lastDirectionLeft = Direction.NORTHWEST;
+                        mapResult[xyLeft] = 3;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
+                                                ctrLeft = 2;
+                        locLeft = loc.add(Direction.NORTH);
+                        xyLeft = xy + 60;
+                        lastDirectionLeft = Direction.NORTH;
+                        mapResult[xyLeft] = 4;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
+                                                ctrLeft = 3;
+                        locLeft = loc.add(Direction.NORTHEAST);
+                        xyLeft = xy + 61;
+                        lastDirectionLeft = Direction.NORTHEAST;
+                        mapResult[xyLeft] = 5;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
+                                                ctrLeft = 4;
+                        locLeft = loc.add(Direction.EAST);
+                        xyLeft = xy + 1;
+                        lastDirectionLeft = Direction.EAST;
+                        mapResult[xyLeft] = 6;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
+                                                ctrLeft = 5;
+                        locLeft = loc.add(Direction.SOUTHEAST);
+                        xyLeft = xy - 59;
+                        lastDirectionLeft = Direction.SOUTHEAST;
+                        mapResult[xyLeft] = 7;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
+                                                ctrLeft = 6;
+                        locLeft = loc.add(Direction.SOUTH);
+                        xyLeft = xy - 60;
+                        lastDirectionLeft = Direction.SOUTH;
+                        mapResult[xyLeft] = 0;
+
+                                                break initSideLeft;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideLeft
+                    initSideRight:{
+                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
+                                                ctrRight = 1;
+                        locRight = loc.add(Direction.SOUTHWEST);
+                        xyRight = xy - 61;
+                        lastDirectionRight = Direction.SOUTHWEST;
+                        mapResult[xyRight] = 1;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
+                                                ctrRight = 2;
+                        locRight = loc.add(Direction.SOUTH);
+                        xyRight = xy - 60;
+                        lastDirectionRight = Direction.SOUTH;
+                        mapResult[xyRight] = 0;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
+                                                ctrRight = 3;
+                        locRight = loc.add(Direction.SOUTHEAST);
+                        xyRight = xy - 59;
+                        lastDirectionRight = Direction.SOUTHEAST;
+                        mapResult[xyRight] = 7;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
+                                                ctrRight = 4;
+                        locRight = loc.add(Direction.EAST);
+                        xyRight = xy + 1;
+                        lastDirectionRight = Direction.EAST;
+                        mapResult[xyRight] = 6;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
+                                                ctrRight = 5;
+                        locRight = loc.add(Direction.NORTHEAST);
+                        xyRight = xy + 61;
+                        lastDirectionRight = Direction.NORTHEAST;
+                        mapResult[xyRight] = 5;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
+                                                ctrRight = 6;
+                        locRight = loc.add(Direction.NORTH);
+                        xyRight = xy + 60;
+                        lastDirectionRight = Direction.NORTH;
+                        mapResult[xyRight] = 4;
+
+                                                break initSideRight;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideRight
+                                         break;
+
+                case NORTHWEST:
+                
+                    initSideLeft:{
+                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
+                                                ctrLeft = 1;
+                        locLeft = loc.add(Direction.NORTH);
+                        xyLeft = xy + 60;
+                        lastDirectionLeft = Direction.NORTH;
+                        mapResult[xyLeft] = 4;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
+                                                ctrLeft = 2;
+                        locLeft = loc.add(Direction.NORTHEAST);
+                        xyLeft = xy + 61;
+                        lastDirectionLeft = Direction.NORTHEAST;
+                        mapResult[xyLeft] = 5;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
+                                                ctrLeft = 3;
+                        locLeft = loc.add(Direction.EAST);
+                        xyLeft = xy + 1;
+                        lastDirectionLeft = Direction.EAST;
+                        mapResult[xyLeft] = 6;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
+                                                ctrLeft = 4;
+                        locLeft = loc.add(Direction.SOUTHEAST);
+                        xyLeft = xy - 59;
+                        lastDirectionLeft = Direction.SOUTHEAST;
+                        mapResult[xyLeft] = 7;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
+                                                ctrLeft = 5;
+                        locLeft = loc.add(Direction.SOUTH);
+                        xyLeft = xy - 60;
+                        lastDirectionLeft = Direction.SOUTH;
+                        mapResult[xyLeft] = 0;
+
+                                                break initSideLeft;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
+                                                ctrLeft = 6;
+                        locLeft = loc.add(Direction.SOUTHWEST);
+                        xyLeft = xy - 61;
+                        lastDirectionLeft = Direction.SOUTHWEST;
+                        mapResult[xyLeft] = 1;
+
+                                                break initSideLeft;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideLeft
+                    initSideRight:{
+                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
+                                                ctrRight = 1;
+                        locRight = loc.add(Direction.WEST);
+                        xyRight = xy - 1;
+                        lastDirectionRight = Direction.WEST;
+                        mapResult[xyRight] = 2;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
+                                                ctrRight = 2;
+                        locRight = loc.add(Direction.SOUTHWEST);
+                        xyRight = xy - 61;
+                        lastDirectionRight = Direction.SOUTHWEST;
+                        mapResult[xyRight] = 1;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
+                                                ctrRight = 3;
+                        locRight = loc.add(Direction.SOUTH);
+                        xyRight = xy - 60;
+                        lastDirectionRight = Direction.SOUTH;
+                        mapResult[xyRight] = 0;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
+                                                ctrRight = 4;
+                        locRight = loc.add(Direction.SOUTHEAST);
+                        xyRight = xy - 59;
+                        lastDirectionRight = Direction.SOUTHEAST;
+                        mapResult[xyRight] = 7;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
+                                                ctrRight = 5;
+                        locRight = loc.add(Direction.EAST);
+                        xyRight = xy + 1;
+                        lastDirectionRight = Direction.EAST;
+                        mapResult[xyRight] = 6;
+
+                                                break initSideRight;
+
+                    }
+                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
+                                                ctrRight = 6;
+                        locRight = loc.add(Direction.NORTHEAST);
+                        xyRight = xy + 61;
+                        lastDirectionRight = Direction.NORTHEAST;
+                        mapResult[xyRight] = 5;
+
+                                                break initSideRight;
+
+                    }
+                    
+                    throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
+                    } // End initSideRight
+                                         break;
+
+                     
                 default:
                     throw new java.lang.Error("ERR Pathfinding: dir is center when split init");
             }
+
+            
             // TODO: Add default score for left / right depending situation
             scoreLeft = score + mapCosts[xyLeft];
             scoreRight = score + mapCosts[xyRight];
@@ -1202,7 +1420,6 @@ public class BugNavLmx {
 
                                         modeSplitGoLeft: {
                     /// If we can move without obstacle, we are free !
-                                                                rc.setIndicatorDot(locLeft, 255, 228, 181);
                                         if(ctrLeft <= 0){                         switch (locLeft.directionTo(locEnd)){
                             case NORTH:
                                 xyTmp = xyLeft + 60;
@@ -2358,7 +2575,6 @@ public class BugNavLmx {
                                                         }else{
                                                             modeSplitGoRight: {
                     /// If we can move without obstacle, we are free !
-                                                                rc.setIndicatorDot(locRight, 173, 216, 230);
                                         if(ctrRight <= 0){                         switch (locRight.directionTo(locEnd)){
                             case NORTH:
                                 xyTmp = xyRight + 60;
@@ -3579,7 +3795,6 @@ public class BugNavLmx {
                 break backtrackingLoop;
             }
 
-                        rc.setIndicatorDot(loc, 206, 174, 243);
             switch(loc.directionTo(startLoc)){
                 case NORTH:
                     if(0 != returnDirection && mapCosts[xyReturn + 60] <= cost_max_per_cell){

@@ -8,7 +8,6 @@ public class Baby extends Robot {
     State cheeseToKing;
     State collectCheese;
     State explore;
-    State avoidCat;
     State attackCat;
     State attackEnemy;
     State placeTrap;
@@ -20,7 +19,6 @@ public class Baby extends Robot {
     public void init() throws GameActionException {
         this.attackCat = new AttackCat();
         this.attackEnemy = new AttackEnemy();
-        this.avoidCat = new AvoidCat();
         this.cheeseToKing = new CheeseToKing();
         this.collectCheese = new CollectCheese();
         this.explore = new Explore();
@@ -34,7 +32,7 @@ public class Baby extends Robot {
         currentState = switch (currentState.name) {
             case "Init" -> avoidCat;
             case "AvoidCat" -> {
-                if(rc.getRawCheese() > 20) {
+                if(rc.getRawCheese() > 30) {
                     yield cheeseToKing;
                 }else {
                     yield attackEnemy;

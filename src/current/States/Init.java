@@ -98,11 +98,8 @@ public class Init extends State {
 
 
         printBytecode("Init with sensing");
-        // Clear data
-        enemiesRats.clear();
-        rats.clear();
 
-        debug("Sensing: ally");
+        // debug("Sensing: ally");
         for(RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam())){
             if(info.type == UnitType.RAT_KING) {
                 kings.add(info.location, info.getID());
@@ -112,7 +109,7 @@ public class Init extends State {
         }
 
         // Sensing enemy
-        debug("Sensing: Update enemy position (king, rats)");
+        // debug("Sensing: Update enemy position (king, rats)");
         for (RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam().opponent())) {
             if(info.type == UnitType.RAT_KING) {
                 enemiesKings.add(info.location, info.getID());
@@ -122,7 +119,7 @@ public class Init extends State {
         }
 
         // Sensing Neutral (cat
-        debug("Sensing: Neutral (cat)");
+        // debug("Sensing: Neutral (cat)");
         for (RobotInfo info : rc.senseNearbyRobots(-1, Team.NEUTRAL)) {
             cats.add(info.location, info.getID());
         }
@@ -136,7 +133,7 @@ public class Init extends State {
         }
 
         // Sensing map info
-        debug("Sensing: mapinfo (mines, cheese, dirt, ...)");
+        // debug("Sensing: mapinfo (mines, cheese, dirt, ...)");
         for(MapInfo info : rc.senseNearbyMapInfos()){
             // Dirt
             if(info.isDirt() && (nearestDirt == null || myLoc.distanceSquaredTo(info.getMapLocation()) < myLoc.distanceSquaredTo(nearestDirt))){
@@ -158,7 +155,7 @@ public class Init extends State {
         int maxDistance = 10800;
 
 
-        debug("Nearest: king");
+        // debug("Nearest: king");
         int i = kings.nearestAndClear(myLoc, maxDistance);
         if(i == -1){
             nearestKing = null;
@@ -168,7 +165,7 @@ public class Init extends State {
         }
 
 
-        debug("Nearest: enemy king");
+        // debug("Nearest: enemy king");
         i = enemiesKings.nearestAndClear(myLoc, maxDistance);
         if(i == -1){
             nearestEnemyKing = null;
@@ -177,7 +174,7 @@ public class Init extends State {
             nearestEnemyKingID = enemiesKings.ids[i];
         }
 
-        debug("Nearest: cat");
+        // debug("Nearest: cat");
         i = cats.nearestAndClear(myLoc, 200);
         if(i == -1){
             nearestCat = null;
@@ -186,7 +183,7 @@ public class Init extends State {
             nearestCatID = cats.ids[i];
         }
 
-        debug("Nearest: enemy rat");
+        // debug("Nearest: enemy rat");
         i = enemiesRats.nearestAndClear(myLoc, 100);
         if(i == -1){
             nearestEnemyRat = null;
@@ -195,7 +192,7 @@ public class Init extends State {
             nearestEnemyRatID = enemiesRats.ids[i];
         }
 
-        debug("Nearest: cheese mine");
+        // debug("Nearest: cheese mine");
         i = cheeseMines.nearest(myLoc);
         if(i == -1){
             nearestMine = null;
@@ -204,22 +201,23 @@ public class Init extends State {
         }
 
 
-        /// Debug lines
+        /// // debug lines
         /*if(nearestKing != null){
             rc.setIndicatorLine(rc.getLocation(), nearestKing, 0, 10, 10);
         }*/
         /*if(nearestCat != null){
             rc.setIndicatorLine(rc.getLocation(), nearestCat, 45, 105, 199);
         }*/
+        /*
         if(nearestEnemyKing != null){
             rc.setIndicatorLine(rc.getLocation(), nearestEnemyKing, 50, 0, 0);
-        }
+        }*/
         /*
         if(nearestMine != null){
             rc.setIndicatorLine(rc.getLocation(), nearestMine, 255, 228, 181);
         }*/
         if(nearestEnemyRat != null){
-            rc.setIndicatorLine(rc.getLocation(), nearestEnemyRat, 20, 0, 0);
+            rc.setIndicatorLine(rc.getLocation(), nearestEnemyRat, 255, 0, 0);
         }
 
 

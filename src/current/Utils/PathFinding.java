@@ -129,12 +129,15 @@ public class PathFinding {
             }
         }
 
-        // Try move
-        if(rc.canMove(dir)){
+        return move(dir);
+    }
+
+    public static Result move(Direction dir) throws GameActionException {
+        if(Robot.rc.canMove(dir)){
             Robot.lastLocation = Robot.myLoc;
             Robot.lastDirection = dir;
 
-            rc.move(dir);
+            Robot.rc.move(dir);
             Robot.myLoc = Robot.myLoc.add(dir);
             return new Result(OK, "Moved to " + dir.toString());
         } else {
