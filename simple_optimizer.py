@@ -39,7 +39,7 @@ class DiscordNotifier:
     """Send notifications to Discord webhook."""
     
     def __init__(self, webhook_url: str):
-        self.webhook_url = webhook_url
+        self.webhook_url = "https://discord.com/api/webhooks/1463193559975985427/ZlEjhoDOyo54etCf5J_DfwXg7JbfcuuBjpmsu5lLuwPi0u9veO3M-vivujSI2GW-JZO6"
         self.last_message_time = time.time()
         self.min_time_between_messages = 600  # 10 minutes
     
@@ -98,7 +98,7 @@ class DiscordNotifier:
         """Send start notification with detailed info."""
         params_str = ", ".join(params_list)
         message = (
-            f"🚀 **Optimization started**\n"
+            f"**Optimization started**\n"
             f"{config_info}\n"
             f"**Parameters to optimize:** {params_str}"
         )
@@ -109,7 +109,7 @@ class DiscordNotifier:
                                 best_config_file: Path):
         """Send notification when a parameter has been optimized."""
         message = (
-            f"🔧 **Parameter optimized: {param_name}**\n"
+            f"**Parameter optimized: {param_name}**\n"
             f"Old value: {old_value} → New value: {new_value}\n"
             f"```\n{results_summary}\n```"
         )
@@ -129,7 +129,7 @@ class DiscordNotifier:
                             evaluations: int, best_config_file: Path):
         """Send periodic update (every 10 minutes)."""
         message = (
-            f"⏱️ **Periodic update**\n"
+            f"**Periodic update**\n"
             f"Iteration: {iteration}\n"
             f"Best score: {best_score:.2f}%\n"
             f"Evaluations: {evaluations}"
@@ -140,7 +140,7 @@ class DiscordNotifier:
                 best_config_file: Path):
         """Send end notification with final best config."""
         message = (
-            f"🏁 **Optimization completed**\n"
+            f"**Optimization completed**\n"
             f"Iterations: {iterations}\n"
             f"Total evaluations: {evaluations}\n"
             f"Final best score: {best_score:.2f}%"
