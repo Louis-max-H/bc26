@@ -19,9 +19,10 @@ import shutil
 file_lock = threading.Lock()
 
 
-def generate_random_id() -> str:
-    """Génère un ID aléatoire unique pour un joueur."""
-    return f"tmp{uuid.uuid4().hex[:8]}"
+def generate_random_id(params_file: Path) -> str:
+    """Génère un ID aléatoire unique pour un joueur basé sur le nom du fichier de paramètres."""
+    base_name = params_file.stem  # Obtient le nom sans extension
+    return f"{base_name}_{uuid.uuid4().hex[:8]}"
 
 
 def copy_bot(source: str, destination: str, project_root: Path) -> None:
@@ -33,7 +34,7 @@ def copy_bot(source: str, destination: str, project_root: Path) -> None:
         destination: Nom du dossier de destination
         project_root: Racine du projet
     """
-    print(f"📦 Copie de {source} vers {destination}...")
+    print(f"Copie de {source} vers {destination}...")
     
     result = subprocess.run(
         ["python3", str(project_root / "src" / "copybot.py"), source, destination],
@@ -44,8 +45,6 @@ def copy_bot(source: str, destination: str, project_root: Path) -> None:
     
     if result.returncode != 0:
         raise RuntimeError(f"Erreur lors de la copie du bot: {result.stderr}")
-    
-    print(f"✅ Bot copié: {destination}")
 
 
 def import_params(module: str, params_file: Path, project_root: Path) -> None:
@@ -57,7 +56,7 @@ def import_params(module: str, params_file: Path, project_root: Path) -> None:
         params_file: Chemin vers le fichier JSON des paramètres
         project_root: Racine du projet
     """
-    print(f"📥 Import des paramètres dans {module}...")
+    print(f"Import des paramètres dans {module}...")
     
     result = subprocess.run(
         ["python3", str(project_root / "src" / "params.py"), module, "--import", str(params_file)],
@@ -68,8 +67,6 @@ def import_params(module: str, params_file: Path, project_root: Path) -> None:
     
     if result.returncode != 0:
         raise RuntimeError(f"Erreur lors de l'import des paramètres: {result.stderr}")
-    
-    print(f"✅ Paramètres importés dans {module}")
 
 
 def run_jinja(module: str, params_file: Path, project_root: Path) -> None:
@@ -81,7 +78,7 @@ def run_jinja(module: str, params_file: Path, project_root: Path) -> None:
         params_file: Chemin vers le fichier JSON des paramètres
         project_root: Racine du projet
     """
-    print(f"⚙️  Génération des fichiers avec Jinja pour {module}...")
+    print(f"Génération des fichiers avec Jinja pour {module}...")
     
     module_path = project_root / "src" / module
     
@@ -101,13 +98,12 @@ def run_jinja(module: str, params_file: Path, project_root: Path) -> None:
     
     if result.returncode != 0:
         raise RuntimeError(f"Erreur lors de l'exécution de Jinja: {result.stderr}")
-    
-    print(f"✅ Fichiers générés pour {module}")
 
 
 def compare_bots(player_a: str, player_b: str, project_root: Path, maps: str = None) -> Dict[str, Any]:
     """
     Compare deux bots et retourne les résultats.
+    Affiche la sortie en temps réel tout en capturant pour le JSON final.
     
     Args:
         player_a: Nom du premier joueur
@@ -118,38 +114,91 @@ def compare_bots(player_a: str, player_b: str, project_root: Path, maps: str = N
     Returns:
         Dict contenant les résultats de la comparaison
     """
-    print(f"⚔️  Comparaison de {player_a} vs {player_b}...")
+    print(f"Comparaison de {player_a} vs {player_b}...")
     
-    # Construire la commande
-    cmd = ["python3", str(project_root / "src" / "compare_bots.py"), player_a, player_b]
+    # Construire la commande avec --json pour obtenir une sortie structurée
+    cmd = ["python3", str(project_root / "src" / "compare_bots.py"), player_a, player_b, "--json"]
     
     # Ajouter les maps si spécifiées
     if maps:
         cmd.extend(["--maps", maps])
-        print(f"   📍 Maps: {maps}")
+        print(f"Maps: {maps}")
     else:
-        print(f"   📍 Maps: toutes les maps du dossier maps/")
+        print(f"Maps: toutes les maps du dossier maps/")
     
-    result = subprocess.run(
+    print()  # Ligne vide pour séparer
+    
+    # Utiliser Popen pour capturer stdout (JSON) et stderr (messages de progression) séparément
+    process = subprocess.Popen(
         cmd,
         cwd=str(project_root),
-        capture_output=True,
-        text=True
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        bufsize=1  # Ligne par ligne
     )
     
-    if result.returncode != 0:
-        raise RuntimeError(f"Erreur lors de la comparaison des bots: {result.stderr}")
+    # Lire stdout et stderr en parallèle
+    import threading
     
-    print(f"✅ Comparaison terminée: {player_a} vs {player_b}")
+    stdout_lines = []
+    stderr_lines = []
     
-    # Parse la sortie pour extraire les résultats
-    # Note: compare_bots.py affiche une table, on retourne la sortie brute
-    return {
-        "player_a": player_a,
-        "player_b": player_b,
-        "raw_output": result.stdout,
-        "stderr": result.stderr
-    }
+    def read_stderr():
+        """Lire stderr et afficher en temps réel"""
+        try:
+            for line in process.stderr:
+                print(line, end='', flush=True)  # Afficher immédiatement
+                stderr_lines.append(line)
+        except:
+            pass
+    
+    def read_stdout():
+        """Lire stdout (JSON) silencieusement"""
+        try:
+            for line in process.stdout:
+                stdout_lines.append(line)
+        except:
+            pass
+    
+    # Démarrer les threads de lecture
+    stderr_thread = threading.Thread(target=read_stderr)
+    stdout_thread = threading.Thread(target=read_stdout)
+    
+    stderr_thread.start()
+    stdout_thread.start()
+    
+    try:
+        # Attendre que le processus se termine
+        return_code = process.wait()
+        
+        # Attendre que les threads de lecture se terminent
+        stderr_thread.join()
+        stdout_thread.join()
+    except KeyboardInterrupt:
+        process.terminate()
+        process.wait()
+        raise
+    
+    if return_code != 0:
+        raise RuntimeError(f"Erreur lors de la comparaison des bots (code: {return_code})")
+    
+    print(f"\nComparaison terminée: {player_a} vs {player_b}")
+    
+    # Parser le JSON retourné par compare_bots.py (stdout uniquement)
+    full_output = ''.join(stdout_lines)
+    try:
+        results = json.loads(full_output)
+        return results
+    except json.JSONDecodeError as e:
+        # En cas d'erreur de parsing, retourner la sortie brute
+        return {
+            "player_a": player_a,
+            "player_b": player_b,
+            "raw_output": full_output,
+            "stderr": ''.join(stderr_lines),
+            "parsing_error": f"Failed to parse JSON output: {str(e)}"
+        }
 
 
 def save_results(results: Dict[str, Any], results_file: Path) -> None:
@@ -173,7 +222,7 @@ def save_results(results: Dict[str, Any], results_file: Path) -> None:
                     if not isinstance(existing_results, list):
                         existing_results = [existing_results]
             except json.JSONDecodeError:
-                print(f"⚠️  Attention: Le fichier {results_file} existe mais n'est pas un JSON valide")
+                print(f"Attention: Le fichier {results_file} existe mais n'est pas un JSON valide")
                 existing_results = []
         
         # Ajouter les nouveaux résultats
@@ -183,7 +232,7 @@ def save_results(results: Dict[str, Any], results_file: Path) -> None:
         with open(results_file, 'w', encoding='utf-8') as f:
             json.dump(existing_results, f, indent=2, ensure_ascii=False)
         
-        print(f"💾 Résultats sauvegardés dans {results_file}")
+        print(f"Résultats sauvegardés dans {results_file}")
 
 
 def save_config(config: Dict[str, Any], config_file: Path) -> None:
@@ -202,7 +251,7 @@ def save_config(config: Dict[str, Any], config_file: Path) -> None:
         with open(config_file, 'w', encoding='utf-8') as f:
             json.dump(config, f, indent=2, ensure_ascii=False)
         
-        print(f"💾 Configuration sauvegardée dans {config_file}")
+        print(f"Configuration sauvegardée dans {config_file}")
 
 
 def cleanup_bot(module: str, project_root: Path) -> None:
@@ -214,10 +263,11 @@ def cleanup_bot(module: str, project_root: Path) -> None:
         project_root: Racine du projet
     """
     bot_path = project_root / "src" / module
-    if bot_path.exists() and module.startswith("tmp"):
-        print(f"🧹 Nettoyage de {module}...")
+    # Vérifier si le module contient un UUID (indique un bot temporaire)
+    if bot_path.exists() and "_" in module and any(c in module.split("_")[-1] for c in "0123456789abcdef"):
+        print(f"Nettoyage de {module}...")
         shutil.rmtree(bot_path)
-        print(f"✅ {module} supprimé")
+        print(f"{module} supprimé")
 
 
 def main():
@@ -290,11 +340,11 @@ def main():
     bots_dir.mkdir(parents=True, exist_ok=True)
     
     # Générer les IDs aléatoires
-    player_id_a = generate_random_id()
-    player_id_b = generate_random_id()
+    player_id_a = generate_random_id(params_team_a)
+    player_id_b = generate_random_id(params_team_b)
     
     print(f"\n{'='*60}")
-    print(f"🎮 Comparaison de configurations")
+    print(f"Comparaison de configurations")
     print(f"{'='*60}")
     print(f"Source: {args.source}")
     print(f"Team A: {player_id_a} (config: {params_team_a.name})")
@@ -303,30 +353,44 @@ def main():
     
     try:
         # Étape 1: Copier les bots
-        print("\n📋 Étape 1/5: Copie des bots")
+        print("\nÉtape 1/5: Copie des bots")
         print("-" * 60)
         copy_bot(args.source, player_id_a, project_root)
         copy_bot(args.source, player_id_b, project_root)
         
         # Étape 2: Importer les paramètres
-        print("\n📋 Étape 2/5: Import des paramètres")
+        print("\nÉtape 2/5: Import des paramètres")
         print("-" * 60)
         import_params(player_id_a, params_team_a, project_root)
         import_params(player_id_b, params_team_b, project_root)
         
         # Étape 3: Générer les fichiers avec Jinja
-        print("\n📋 Étape 3/5: Génération des fichiers")
+        print("\nÉtape 3/5: Génération des fichiers")
         print("-" * 60)
         run_jinja(player_id_a, params_team_a, project_root)
         run_jinja(player_id_b, params_team_b, project_root)
         
         # Étape 4: Comparer les bots
-        print("\n📋 Étape 4/5: Comparaison des bots")
+        print("\nÉtape 4/5: Comparaison des bots")
         print("-" * 60)
         comparison_results = compare_bots(player_id_a, player_id_b, project_root, args.maps)
         
+        # Afficher les résultats avant sauvegarde
+        print("\n" + "="*60)
+        print("RÉSULTATS DE LA COMPARAISON")
+        print("="*60)
+        
+        # Si c'est une sortie brute, l'afficher directement
+        if "raw_output" in comparison_results:
+            print(comparison_results["raw_output"])
+        else:
+            # Sinon, afficher le JSON structuré
+            print(json.dumps(comparison_results, indent=2, ensure_ascii=False))
+        
+        print("="*60 + "\n")
+        
         # Étape 5: Sauvegarder les résultats
-        print("\n📋 Étape 5/5: Sauvegarde des résultats")
+        print("\nÉtape 5/5: Sauvegarde des résultats")
         print("-" * 60)
         
         # Charger les configs
@@ -356,24 +420,24 @@ def main():
         save_config(config_b, config_b_file)
         
         print(f"\n{'='*60}")
-        print(f"✅ Comparaison terminée avec succès!")
+        print(f"Comparaison terminée avec succès!")
         print(f"{'='*60}")
-        print(f"📊 Résultats: {results_file}")
-        print(f"📁 Config Team A: {config_a_file}")
-        print(f"📁 Config Team B: {config_b_file}")
+        print(f"Résultats: {results_file}")
+        print(f"Config Team A: {config_a_file}")
+        print(f"Config Team B: {config_b_file}")
         print(f"{'='*60}\n")
         
     except Exception as e:
-        print(f"\n❌ Erreur: {e}", file=sys.stderr)
+        print(f"\nErreur: {e}", file=sys.stderr)
         sys.exit(1)
     
     finally:
         # Nettoyage des dossiers temporaires
         if not args.no_cleanup:
-            print(f"\n🧹 Nettoyage des dossiers temporaires...")
+            print(f"\nNettoyage des dossiers temporaires...")
             cleanup_bot(player_id_a, project_root)
             cleanup_bot(player_id_b, project_root)
-            print(f"✅ Nettoyage terminé")
+            print(f"Nettoyage terminé")
 
 
 if __name__ == "__main__":

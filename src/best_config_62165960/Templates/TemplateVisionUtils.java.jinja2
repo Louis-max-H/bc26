@@ -1,0 +1,277 @@
+package best_config_62165960.Utils;
+
+{% set scoreNotAlreadyViewed = 2000 * 1000 %}
+
+import best_config_62165960.States.Result;
+import battlecode.common.*;
+import best_config_62165960.Robots.Robot;
+
+import static best_config_62165960.States.Code.CANT;
+import static best_config_62165960.States.Code.OK;
+
+//  Destination: Utils/VisionUtils.java
+
+// this file contain :
+// public static MapLocation[] getAllLocationsFrom(MapLocation from, Direction dir, UnitType unit)
+// public static void shiftCells(MapLocation[] cells, Direction dir)
+// public static void getScoreInView(MapLocation[] scores, MapLocation from, Direction dir, UnitType unit)
+
+public class {{ className }} {
+    // encodeXYString(gap : 8 ) = {{ encodeXYString(8) }}
+    public static int SCORE_NOT_ALREADY_VIEWED = {{ scoreNotAlreadyViewed }};
+    public static int scores[] = new int[] {{genMemoryIntArray(scoreNotAlreadyViewed, 0, 8)}}; /* defaultValue, gapValue, gap size */
+
+    public static void addScoreArroundUnit(MapLocation loc, int score){
+        int xy = {{ encodeXYLoc(8) }};
+        {% for cell in cellsSquareRadius(1) -%}
+        {% if not (cell[0] == 0 and cell[1] == 0) -%}
+            scores[xy + {{ encodeXY(cell, 8) }}] += score;
+        {% endif -%}
+        {% endfor %}
+    }
+
+    public static void addScore(MapLocation loc, int score){
+        scores[{{ encodeXYLoc(8) }}] = score;
+    }
+
+    public static int getScore(MapLocation loc){
+        return scores[{{ encodeXYLoc(8) }}];
+    }
+
+    public static Direction[] directionsToSeeTarget(MapLocation target, MapLocation from){
+        RobotController rc = Robot.rc;
+        target = target.translate(-from.x, -from.y);
+        return switch(target.hashCode()){ // (this.y + 0x8000) & 0xffff | (this.x << 16)
+            {% for cell in cellsInRadius(20) %}
+            /* cell : {{ cell }} */
+            case {{ battleCodehash(cell) }} -> new Direction[]{
+                    {%- for dir in dirs %}{% if cellInVision(cell, dir) -%}
+                    Direction.{{ dir }}, 
+                    {%- endif %}{%- endfor -%}
+                };
+            {% endfor %}
+            default -> {
+                System.out.println("ERR: Target location is out of radius");
+                yield Direction.values();
+            }
+        };
+    }
+
+
+    public static int lookDirections[] = new int[]{1, 1, 1, 1, 1, 1, 1, 1, 0};
+    public static void resetDirections(){
+        lookDirections = new int[]{1, 1, 1, 1, 1, 1, 1, 1, 0};
+    }
+
+    public static void forceLookCell(MapLocation cell){
+        resetDirections();
+        for(Direction dir : directionsToSeeTarget(cell, Robot.rc.getLocation())){
+            lookDirections[dir.ordinal()] = 1;
+        }
+    }
+
+    public static Result smartLookAt(MapLocation target) throws GameActionException{
+        if(Robot.rc.canSenseLocation(target)){
+            return new Result(OK, "Target is already in vision");
+        }
+
+        forceLookCell(target);
+        return smartLook();
+    }
+
+    public static Result smartLook() throws GameActionException {
+        RobotController rc = Robot.rc;
+        if(!rc.canTurn()){
+            return new Result(CANT, "Can't turn");
+        }
+
+        Direction bestDir = Direction.CENTER;
+        int bestScore = 0;
+        {% for dir in directionsWhitoutCenter -%}
+        if(lookDirections[{{dirsOrds[dir]}}] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.{{dir}}, rc.getType()) * lookDirections[{{dirsOrds[dir]}}];
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.{{dir}};
+            }
+        }
+        {% endfor %}
+
+        rc.turn(bestDir);
+        return new Result(OK, "Looked at " + bestDir + " with score " + bestScore);
+    }
+
+
+    public static void initScore(int width, int height){
+        // Width
+        switch(width){
+            {% for x in range(30, 60) %}
+            case {{x}}:
+                if({{x}} == width + 8){break;}
+                {% for y in range(0, 60 ) %} scores[{{ encodeXY((x, y), 8) }}] = 0; {% endfor %}
+            {% endfor %}
+                break;
+            default:
+                System.out.println("ERR: Width is out of bounds");
+                break;
+        }
+
+        // height
+        switch(height){
+            {% for y in range(30, 61) %}
+            case {{y}}:
+                if({{y}} == height + 8){break;}
+                {% for x in range(0, 60 ) %}scores[{{ encodeXY((x, y), 8) }}] = 0; {% endfor %}
+            {% endfor %}
+                break;
+            default:
+                System.out.println("ERR: Height is out of bounds");
+                break;
+        }
+    }
+
+    public static MapLocation[] getAllLocationsVisibleFrom(MapLocation from, Direction dir, UnitType unit){
+        int x = from.x;
+        int y = from.y;
+        return switch(unit){
+            {% for unit in ratsUnits %}
+
+            case {{ unit }} -> switch(dir){
+                {% for direction in directionsWhitoutCenter %}
+                case {{ direction }} -> {{ genVisionCell(unit, direction, "CENTER") }};
+                {% endfor %}
+
+                case CENTER -> {
+                    System.out.println("ERR: can't getAllLocationsFrom for CENTER");
+                    yield new MapLocation[0];
+               }  
+            };
+            {% endfor %}
+
+            case CAT -> {
+                System.out.println("ERR: can't getAllLocationsFrom for CAT");
+                yield new MapLocation[0];
+            }
+        };
+    };
+
+    public static void setScoreInRatVision(MapLocation from, Direction dir, int score){
+        int x = from.x;
+        int y = from.y;
+        int xy = {{ encodeXYString(8) }};
+        switch(dir){
+            {% for dir in directionsWhitoutCenter %}
+            
+            case {{ dir }}:
+            {% for xyShift in visionCellsXY("BABY_RAT", dir, 8) -%}
+                scores[xy + {{xyShift}}] = score;
+            {% endfor %}
+            return;
+            {% endfor %}
+
+            case CENTER:
+                System.out.println("ERR: can't addScoreToRatVision for CENTER");
+                return;
+        }  
+    };
+
+    public static void divideScoreBy2InRatVision(MapLocation from, Direction dir){
+        int x = from.x;
+        int y = from.y;
+        int xy = {{ encodeXYString(8) }};
+        switch(dir){
+            {% for dir in directionsWhitoutCenter %}
+            
+            case {{ dir }}:
+            {% for xyShift in visionCellsXY("BABY_RAT", dir, 8) %}
+                scores[xy + {{xyShift}}] /= 2;
+            {% endfor %}
+            return;
+            {% endfor %}
+            case CENTER:
+                System.out.println("ERR: can't divideScoreBy2InRatVision for CENTER");
+                return;
+        }
+    };
+
+    public static void multiplyScoreBy2InRatVision(MapLocation from, Direction dir){
+        int x = from.x;
+        int y = from.y;
+        int xy = {{ encodeXYString(8) }};
+        switch(dir){
+            {% for dir in directionsWhitoutCenter %}
+            
+            case {{ dir }}:
+            {% for xyShift in visionCellsXY("BABY_RAT", dir, 8) %}
+                scores[xy + {{xyShift}}] *= 2;
+            {% endfor %}
+            return;
+            {% endfor %}
+            case CENTER:
+                System.out.println("ERR: can't divideScoreBy2InRatVision for CENTER");
+                return;
+        }
+    };
+
+    public static void shiftCells(MapLocation[] cells, Direction dir){
+        switch(cells.length){
+            {# length is one more than last index#}
+            {% for x in reverseRange(100) %}
+            case {{ x + 1 }}: cells[{{x}}] = cells[{{x}}].add(dir);
+            {% endfor %}
+                break;
+            default:
+                System.out.println("WARN: To many cells to shift, do it with for loop.");
+                for(int i = 0; i < cells.length; i++){
+                    cells[i] = cells[i].add(dir);
+                }
+                break;
+        }
+    }
+
+    public static int getScoreInView(MapLocation from, Direction direction, UnitType unit){
+        int[] scores = VisionUtils.scores;
+        int x = from.x;
+        int y = from.y;
+        int xy = {{ encodeXYString(8)}};
+
+        return switch(unit){
+            {%- for unit in ratsUnits %}
+            case {{ unit }} -> switch(direction){
+
+                {% for directionIter in directionsWhitoutCenter %}
+                case {{ directionIter }} -> (int)({{ genScoreInView(unit, directionIter, "CENTER", gap=8) }});
+                {% endfor %}
+
+                case CENTER -> {
+                    System.out.println("ERR: getScoreInViewCan't turn to center");
+                    yield 0;
+                }
+            };
+            {% endfor %}{# rat type #}
+
+            case CAT -> {
+                System.out.println("ERR: Cat can't get score in view");
+                yield 0;
+            }
+        };
+    }
+
+    public static void updatePathfindingCost(MapLocation from, Direction direction, UnitType unit){
+        char[] scores = BugNavLmx.mapCosts;
+        char dirt = (char) BugNavLmx.SCORE_CELL_IF_DIG;
+        char passable = (char) BugNavLmx.SCORE_CELL_PASSABLE;
+        char wall = (char) BugNavLmx.SCORE_CELL_WALL;
+        RobotController rc = Robot.rc;
+
+        for(MapInfo infos: rc.senseNearbyMapInfos()){
+            if (infos.isPassable()) {
+                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = passable;
+            } else if (infos.isDirt()) {
+                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = dirt;
+            } else {
+                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = wall;
+            }
+        }
+    }
+}

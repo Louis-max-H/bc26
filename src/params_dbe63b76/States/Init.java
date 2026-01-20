@@ -1,18 +1,18 @@
-package current.States;
+package params_dbe63b76.States;
 
 import battlecode.common.*;
-import current.Communication.SenseForComs;
-import current.Params;
-import current.Robots.Robot;
-import current.Utils.BugNavLmx;
-import current.Utils.PathFinding;
-import current.Utils.VisionUtils;
-import current.Communication.Communication;
+import params_dbe63b76.Communication.SenseForComs;
+import params_dbe63b76.Params;
+import params_dbe63b76.Robots.Robot;
+import params_dbe63b76.Utils.BugNavLmx;
+import params_dbe63b76.Utils.PathFinding;
+import params_dbe63b76.Utils.VisionUtils;
+import params_dbe63b76.Communication.Communication;
 
-import static current.Communication.Communication.TYPE_KING;
-import static current.Robots.Robot.rats;
-import static current.States.Code.*;
-import static current.Communication.Communication.TYPE_CAT;
+import static params_dbe63b76.Communication.Communication.TYPE_KING;
+import static params_dbe63b76.Robots.Robot.rats;
+import static params_dbe63b76.States.Code.*;
+import static params_dbe63b76.Communication.Communication.TYPE_CAT;
 
 public class Init extends State {
     public Init() throws GameActionException {
@@ -71,9 +71,9 @@ public class Init extends State {
 
         // Can dig ?
         if(!isKing && rc.getActionCooldownTurns() > 0 && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST){
-            current.Utils.PathFinding.digEnable = true;
+            params_dbe63b76.Utils.PathFinding.digEnable = true;
         }else{
-            current.Utils.PathFinding.digEnable = false;
+            params_dbe63b76.Utils.PathFinding.digEnable = false;
         }
 
         printBytecode("Update communications");

@@ -19,6 +19,7 @@ import shutil
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Tuple, Any
+from tqdm import tqdm
 
 
 class ProgressTracker:
@@ -300,8 +301,9 @@ class SimpleOptimizer:
         
         # Evaluate each value
         results = []
-        for i, value in enumerate(test_values, 1):
-            print(f"\n   [{i}/3] Testing {param_name} = {value}...")
+        pbar = tqdm(test_values, desc=f"   Testing {param_name}", unit="value", leave=False)
+        for value in pbar:
+            pbar.set_postfix_str(f"value={value}")
             
             # Create test config
             test_config = self.current_config.copy()
@@ -315,10 +317,12 @@ class SimpleOptimizer:
             score = self.evaluate_config(test_config)
             results.append((value, score, test_config))
             
-            print(f"         Score: {score:.2f}%")
+            pbar.set_postfix_str(f"value={value}, score={score:.2f}%")
             
             # Log evaluation
             self.tracker.log_evaluation(param_name, value, score, test_config)
+        
+        pbar.close()
         
         # Find best result
         best_value, best_score, best_config = max(results, key=lambda x: x[1])
@@ -369,18 +373,30 @@ class SimpleOptimizer:
         iteration = 0
         no_improvement_count = 0
         
-        while iteration < max_iterations:
+        iteration_pbar = tqdm(range(max_iterations), desc="Optimization", unit="iter")
+        for iteration_num in iteration_pbar:
             self.tracker.start_iteration()
             
             improved_this_iteration = False
             
             # Iterate through each parameter
-            for param_name in self.template_config.keys():
+            param_pbar = tqdm(list(self.template_config.keys()), 
+                            desc=f"  Iteration {iteration + 1}", 
+                            unit="param", 
+                            leave=False)
+            for param_name in param_pbar:
+                param_pbar.set_postfix_str(f"optimizing {param_name}")
                 improved = self.optimize_parameter(param_name)
                 if improved:
                     improved_this_iteration = True
+            param_pbar.close()
             
             iteration += 1
+            
+            # Update main progress bar
+            iteration_pbar.set_postfix_str(
+                f"best={self.tracker.best_score:.2f}%, evals={self.tracker.evaluations}"
+            )
             
             # Check for convergence
             if not improved_this_iteration:
@@ -389,9 +405,12 @@ class SimpleOptimizer:
                 
                 if no_improvement_count >= 3:
                     print(f"\n✅ Converged after {iteration} iterations (no improvement for 3 iterations)")
+                    iteration_pbar.close()
                     break
             else:
                 no_improvement_count = 0
+        else:
+            iteration_pbar.close()
         
         # Final summary
         print(f"\n{'='*80}")

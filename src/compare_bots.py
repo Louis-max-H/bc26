@@ -279,7 +279,7 @@ def run_match(state: State, map: str, reverse: bool, json_mode: bool = False) ->
     player1 = state.player1 if not reverse else state.player2
     player2 = state.player2 if not reverse else state.player1
 
-    replay_name = f"replays/run-{state.timestamp}-{player1}-vs-{player2}-on-{map}.bc24"
+    replay_name = f"matches/run-{state.timestamp}-{player1}-vs-{player2}-on-{map}.bc26"
 
     process = subprocess.run([
         str(Path(__file__).parent.parent / "gradlew"),
@@ -289,6 +289,7 @@ def run_match(state: State, map: str, reverse: bool, json_mode: bool = False) ->
         f"-Pmaps={map.split('.')[0]}",
         f"-PlanguageA=java",
         f"-PlanguageB=java",
+        f"-Preplay={replay_name}",
     ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=str(Path(__file__).parent.parent))
     stdout = process.stdout.decode("utf-8")
 
@@ -304,8 +305,15 @@ def run_match(state: State, map: str, reverse: bool, json_mode: bool = False) ->
     win_condition_line = next(line for line in lines if line.startswith("[server] Reason: "))
     win_condition = win_condition_line.split(": ", 1)[1]
 
-    state.matches.append(Match(map, reverse, player1_wins, win_condition, replay_name))
-    if not json_mode:
+    match = Match(map, reverse, player1_wins, win_condition, replay_name)
+    state.matches.append(match)
+    
+    # Afficher un message simple après chaque match
+    if json_mode:
+        winner = player1 if player1_wins else player2
+        # Utiliser stderr pour les messages de progression afin de ne pas polluer stdout (JSON)
+        print(f"Match terminé: {map} ({'reverse' if reverse else 'normal'}) - Vainqueur: {winner} ({match.win_condition_short})", file=sys.stderr, flush=True)
+    else:
         state.print()
 
 def main() -> None:

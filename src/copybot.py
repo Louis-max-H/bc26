@@ -18,6 +18,11 @@ def main():
 
     print("Copying {} to {}".format(source, destination))
 
+    # Create destination directory if it doesn't exist
+    if not os.path.exists(destination):
+        os.makedirs(destination)
+        print(f"Created directory: {destination}")
+
     # Copy folder
     os.system("cp -a {}/. {}/".format(source, destination))
 
