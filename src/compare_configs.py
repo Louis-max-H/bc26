@@ -38,7 +38,7 @@ def copy_bot(source: str, destination: str, project_root: Path) -> None:
     
     result = subprocess.run(
         ["python3", str(project_root / "src" / "copybot.py"), source, destination],
-        cwd=str(project_root),
+        cwd=str(project_root / "src"),
         capture_output=True,
         text=True
     )

@@ -20,6 +20,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Tuple, Any
 from tqdm import tqdm
+from multiprocessing.pool import ThreadPool
 
 
 class ProgressTracker:
@@ -106,7 +107,8 @@ class SimpleOptimizer:
         project_root: Path,
         output_dir: Path,
         source: str = "current",
-        maps: str = None
+        maps: str = None,
+        threads: int = 1
     ):
         self.template_config = template_config
         self.base_config = base_config
@@ -114,6 +116,7 @@ class SimpleOptimizer:
         self.output_dir = output_dir
         self.source = source
         self.maps = maps
+        self.threads = threads
         
         self.tracker = ProgressTracker(output_dir)
         
@@ -146,7 +149,7 @@ class SimpleOptimizer:
         # Copy bot
         result = subprocess.run(
             ["python3", str(self.project_root / "src" / "copybot.py"), self.source, bot_id],
-            cwd=str(self.project_root),
+            cwd=str(self.project_root / "src"),
             capture_output=True,
             text=True
         )
@@ -298,13 +301,10 @@ class SimpleOptimizer:
         test_values = test_values[:3]  # Keep only 3
         
         print(f"   Testing values: {test_values}")
+        print(f"   Using {self.threads} thread(s)")
         
-        # Evaluate each value
-        results = []
-        pbar = tqdm(test_values, desc=f"   Testing {param_name}", unit="value", leave=False)
-        for value in pbar:
-            pbar.set_postfix_str(f"value={value}")
-            
+        # Function to evaluate a single value
+        def evaluate_value(value):
             # Create test config
             test_config = self.current_config.copy()
             test_config[param_name] = {
@@ -315,14 +315,36 @@ class SimpleOptimizer:
             
             # Evaluate
             score = self.evaluate_config(test_config)
-            results.append((value, score, test_config))
-            
-            pbar.set_postfix_str(f"value={value}, score={score:.2f}%")
-            
-            # Log evaluation
-            self.tracker.log_evaluation(param_name, value, score, test_config)
+            return (value, score, test_config)
         
-        pbar.close()
+        # Evaluate each value (parallel or sequential based on threads)
+        results = []
+        if self.threads > 1:
+            # Parallel evaluation
+            with ThreadPool(self.threads) as pool:
+                pbar = tqdm(total=len(test_values), desc=f"   Testing {param_name}", unit="value", leave=False)
+                for result in pool.imap(evaluate_value, test_values):
+                    value, score, test_config = result
+                    results.append(result)
+                    pbar.set_postfix_str(f"value={value}, score={score:.2f}%")
+                    pbar.update(1)
+                    
+                    # Log evaluation
+                    self.tracker.log_evaluation(param_name, value, score, test_config)
+                pbar.close()
+        else:
+            # Sequential evaluation (original behavior)
+            pbar = tqdm(test_values, desc=f"   Testing {param_name}", unit="value", leave=False)
+            for value in pbar:
+                pbar.set_postfix_str(f"value={value}")
+                result = evaluate_value(value)
+                value, score, test_config = result
+                results.append(result)
+                pbar.set_postfix_str(f"value={value}, score={score:.2f}%")
+                
+                # Log evaluation
+                self.tracker.log_evaluation(param_name, value, score, test_config)
+            pbar.close()
         
         # Find best result
         best_value, best_score, best_config = max(results, key=lambda x: x[1])
@@ -357,6 +379,7 @@ class SimpleOptimizer:
         print(f"Max iterations: {max_iterations}")
         print(f"Source: {self.source}")
         print(f"Maps: {self.maps or 'all'}")
+        print(f"Threads: {self.threads}")
         print(f"Output directory: {self.output_dir}")
         print(f"{'='*80}\n")
         
@@ -466,6 +489,13 @@ def main():
         help="Maximum number of iterations (default: 100)"
     )
     
+    parser.add_argument(
+        "--threads",
+        type=int,
+        default=1,
+        help="Number of threads to use for parallel evaluation (default: 1)"
+    )
+    
     args = parser.parse_args()
     
     # Load configurations
@@ -488,7 +518,7 @@ def main():
     
     # Find project root
     script_dir = Path(__file__).parent
-    project_root = script_dir.parent
+    project_root = script_dir
     
     output_dir = Path(args.output_dir).resolve()
     
@@ -499,7 +529,8 @@ def main():
         project_root=project_root,
         output_dir=output_dir,
         source=args.source,
-        maps=args.maps
+        maps=args.maps,
+        threads=args.threads
     )
     
     optimizer.run(max_iterations=args.max_iterations)

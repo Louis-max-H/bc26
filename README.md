@@ -75,10 +75,13 @@ Options:
 Optimize parameters one at a time - simple and easy to understand:
 
 ```bash
-python3 src/simple_optimizer.py \
-    --template example_configs/template_example.json \
-    --base-config example_configs/base_example.json \
-    --maps DefaultSmall,DefaultMedium
+python3 simple_optimizer.py \
+    --template configs/template_config.json \
+    --base-config configs/base_config.json \
+    --source current \
+    --output-dir logs/my_optimization \
+    --max-iterations 50 \
+    --threads 3
 ```
 
 **How it works:**
@@ -87,70 +90,3 @@ python3 src/simple_optimizer.py \
    - Compare these 3 bots
    - Keep the best one
 2. Repeat until convergence
-
-**Features:**
-- ✅ Simple and easy to understand
-- 📊 Clear progress tracking
-- 💾 JSON results (easy to parse and reuse)
-- 🎯 Automatic convergence detection
-- 📈 Full history of all evaluations
-
-**Results:** Best configuration saved in `BC26/simple_optimizer/best_config.json`
-
-**See `SIMPLE_OPTIMIZER.md` for detailed documentation.**
-
-### GRASP Optimization (Advanced)
-
-Optimize bot parameters using GRASP (Greedy Randomized Adaptive Search Procedure).
-
-**Local execution:**
-```bash
-python3 src/grasp_parallel.py --template example_config.json --base-config example_config.json --iterations 15 --batch-size 2 --maps DefaultSmall,DefaultMedium
-```
-
-Template : Domaine que l'on veut tester
-Base config : Meilleur configuration
-
-**On SLURM cluster:**
-```bash
-# Quick test (2 iterations)
-sbatch run_grasp_quick.sbatch
-
-# Full optimization (5 iterations)
-sbatch run_grasp.sbatch
-
-# Check status
-squeue -u $USER
-
-# View logs in real-time
-tail -f logs/grasp_JOBID.out
-```
-
-**Features:**
-- 🔄 Adaptive memory: learns from good parameter values
-- ⚡ Parallel evaluation: uses all available CPUs
-- 📊 Progress bars: shows performance metrics (eval/s, best score, etc.)
-- 💾 Automatic checkpoints: saves progress every N iterations
-- 🎯 Auto-detection: automatically detects number of CPUs
-
-**Results:** Best configuration saved in `BC26/grasp_results/best_config.json`
-
-**See `GRASP_README.md` for detailed documentation.**
-
-## Useful Gradlew Commands
-
-- `./gradlew build` - Compiles your player
-- `./gradlew run` - Runs a game with the settings in gradle.properties
-- `./gradlew update` - Update configurations for the latest version (run often)
-- `./gradlew zipForSubmit` - Create a submittable zip file
-- `./gradlew tasks` - See what else you can do!
-
-## Documentation
-
-- `README.md` - This file (quick start guide)
-- `PARAMS_README.md` - Parameter system documentation
-- `GRASP_README.md` - GRASP optimization guide (cluster usage, tuning)
-- `docs/` - Official Battlecode documentation
-
-# Start to code!
-You may check `.html` or `.md` files in the `docs/` folder for tutorials on the template code.
