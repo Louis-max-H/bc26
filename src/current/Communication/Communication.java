@@ -169,7 +169,6 @@ public class Communication extends Robot {
                 }
 
                 // Reduce vision score where sender can see
-                print("Raw : " + raw);
                 Direction senderDirection = switch(raw & MASK_DIR_SENDER){
                     case 0b0000000000000000000000000000000 -> Direction.NORTH;
                     case 0b0010000000000000000000000000000 -> Direction.NORTHEAST;

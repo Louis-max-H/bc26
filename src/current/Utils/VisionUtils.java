@@ -194,15 +194,15 @@ public class VisionUtils {
         };
     }
 
-
     public static int lookDirections[] = new int[]{1, 1, 1, 1, 1, 1, 1, 1, 0};
     public static void resetDirections(){
         lookDirections = new int[]{1, 1, 1, 1, 1, 1, 1, 1, 0};
     }
 
     public static void forceLookCell(MapLocation cell){
-        resetDirections();
+        lookDirections = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
         for(Direction dir : directionsToSeeTarget(cell, Robot.rc.getLocation())){
+            Robot.print(String.format("Force look cell, need to look at dir : %10s", dir));
             lookDirections[dir.ordinal()] = 1;
         }
     }
@@ -226,6 +226,7 @@ public class VisionUtils {
         int bestScore = 0;
         if(lookDirections[6] > 0){
             int score = getScoreInView(rc.getLocation(), Direction.WEST, rc.getType()) * lookDirections[6];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.WEST, lookDirections[6]));
             if(score > bestScore){
                 bestScore = score;
                 bestDir = Direction.WEST;
@@ -233,6 +234,7 @@ public class VisionUtils {
         }
         if(lookDirections[7] > 0){
             int score = getScoreInView(rc.getLocation(), Direction.NORTHWEST, rc.getType()) * lookDirections[7];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.NORTHWEST, lookDirections[7]));
             if(score > bestScore){
                 bestScore = score;
                 bestDir = Direction.NORTHWEST;
@@ -240,6 +242,7 @@ public class VisionUtils {
         }
         if(lookDirections[5] > 0){
             int score = getScoreInView(rc.getLocation(), Direction.SOUTHWEST, rc.getType()) * lookDirections[5];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.SOUTHWEST, lookDirections[5]));
             if(score > bestScore){
                 bestScore = score;
                 bestDir = Direction.SOUTHWEST;
@@ -247,6 +250,7 @@ public class VisionUtils {
         }
         if(lookDirections[4] > 0){
             int score = getScoreInView(rc.getLocation(), Direction.SOUTH, rc.getType()) * lookDirections[4];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.SOUTH, lookDirections[4]));
             if(score > bestScore){
                 bestScore = score;
                 bestDir = Direction.SOUTH;
@@ -254,6 +258,7 @@ public class VisionUtils {
         }
         if(lookDirections[3] > 0){
             int score = getScoreInView(rc.getLocation(), Direction.SOUTHEAST, rc.getType()) * lookDirections[3];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.SOUTHEAST, lookDirections[3]));
             if(score > bestScore){
                 bestScore = score;
                 bestDir = Direction.SOUTHEAST;
@@ -261,6 +266,7 @@ public class VisionUtils {
         }
         if(lookDirections[2] > 0){
             int score = getScoreInView(rc.getLocation(), Direction.EAST, rc.getType()) * lookDirections[2];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.EAST, lookDirections[2]));
             if(score > bestScore){
                 bestScore = score;
                 bestDir = Direction.EAST;
@@ -268,6 +274,7 @@ public class VisionUtils {
         }
         if(lookDirections[1] > 0){
             int score = getScoreInView(rc.getLocation(), Direction.NORTHEAST, rc.getType()) * lookDirections[1];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.NORTHEAST, lookDirections[1]));
             if(score > bestScore){
                 bestScore = score;
                 bestDir = Direction.NORTHEAST;
@@ -275,13 +282,17 @@ public class VisionUtils {
         }
         if(lookDirections[0] > 0){
             int score = getScoreInView(rc.getLocation(), Direction.NORTH, rc.getType()) * lookDirections[0];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.NORTH, lookDirections[0]));
             if(score > bestScore){
                 bestScore = score;
                 bestDir = Direction.NORTH;
             }
         }
         
-        rc.turn(bestDir);
+        if(bestDir != Direction.CENTER){
+            rc.turn(bestDir);
+        }
+        Robot.print(String.format("Smart look best dir is %10s with score %d", bestDir, bestScore));
         return new Result(OK, "Looked at " + bestDir + " with score " + bestScore);
     }
 

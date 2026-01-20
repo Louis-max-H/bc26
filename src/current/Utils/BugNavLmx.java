@@ -3795,6 +3795,7 @@ public class BugNavLmx {
                 break backtrackingLoop;
             }
 
+                        rc.setIndicatorDot(loc, 206, 174, 243);
             switch(loc.directionTo(startLoc)){
                 case NORTH:
                     if(0 != returnDirection && mapCosts[xyReturn + 60] <= cost_max_per_cell){

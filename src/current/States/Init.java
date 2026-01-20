@@ -69,13 +69,6 @@ public class Init extends State {
         else                   { gamePhase = PHASE_FINAL;}
         Params.init();
 
-        // Can dig ?
-        if(!isKing && rc.getActionCooldownTurns() > 0 && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST){
-            current.Utils.PathFinding.digEnable = true;
-        }else{
-            current.Utils.PathFinding.digEnable = false;
-        }
-
         printBytecode("Update communications");
         Communication.readMessages(); // Read messsages
 
@@ -222,9 +215,9 @@ public class Init extends State {
         if(nearestEnemyKing != null){
             rc.setIndicatorLine(rc.getLocation(), nearestEnemyKing, 50, 0, 0);
         }*/
-        /*
-        if(nearestMine != null){
-            rc.setIndicatorLine(rc.getLocation(), nearestMine, 255, 228, 181);
+
+        /*if(nearestMine != null){
+            rc.setIndicatorLine(rc.getLocation(), nearestMine, 0, 255, 0);
         }*/
         if(nearestEnemyRat != null){
             rc.setIndicatorLine(rc.getLocation(), nearestEnemyRat, 255, 0, 0);

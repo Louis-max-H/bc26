@@ -11,8 +11,6 @@ public class Baby extends Robot {
     State attackCat;
     State attackEnemy;
     State placeTrap;
-    State mineDirt;
-    State placeDirt;
 
 
     @Override
@@ -23,8 +21,6 @@ public class Baby extends Robot {
         this.collectCheese = new CollectCheese();
         this.explore = new Explore();
         this.placeTrap = new PlaceTrap();
-        this.mineDirt = new MineDirt();
-        this.placeDirt = new PlaceDirt();
     }
 
     @Override
@@ -46,16 +42,7 @@ public class Baby extends Robot {
             // Go back to normal mode
             case "CheeseToKing" -> placeTrap;
             case "PlaceTrap" -> collectCheese;
-            case "CollectCheese" -> {
-                // If not in rush phase and have nothing urgent, can mine dirt
-                if(gamePhase > PHASE_START){
-                    yield mineDirt;
-                }else{
-                    yield placeDirt;
-                }
-            }
-            case "MineDirt" -> placeDirt;
-            case "PlaceDirt" -> explore;
+            case "CollectCheese" -> explore;
             case "Explore" -> endTurn;
             case "EndTurn" -> init;
             default -> {

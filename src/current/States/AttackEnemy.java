@@ -94,7 +94,7 @@ public class AttackEnemy extends State {
         Direction bestDir = Tools.bestDirOfLong9(mixedScore);
 
         if(mixedScore[bestDir.ordinal()] == 0){
-            PathFinding.moveDir(bestDir);
+            PathFinding.smartMoveTo(nearestEnemyRat);
             return new Result(LOCK, "Mixed attack score is zero, I am too far or can't move");
             // TODO: Add cooldown, if can"t attack 5 turn, exit mode
         }
