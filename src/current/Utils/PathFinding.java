@@ -4,6 +4,8 @@ import battlecode.common.*;
 import current.Robots.Robot;
 import current.States.Result;
 
+import java.util.Random;
+
 import static current.States.Code.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -13,6 +15,8 @@ public class PathFinding {
 
     //////////////////////////////////// public functions //////////////////////////////////////////////////////////////
     /// All functions you may need
+
+    public static int numberMove = 0;
 
     public static void resetScores(){
         // Default score of 1 everywhere
@@ -133,6 +137,13 @@ public class PathFinding {
     }
 
     public static Result move(Direction dir) throws GameActionException {
+        numberMove++;
+        if(Robot.moveRandom && numberMove % 15 == 0){
+            // use math random to get a random direction
+            int randomDir = (int) (Math.random() * 8);
+            dir = Direction.values()[randomDir];
+        }
+
         if(Robot.rc.canMove(dir)){
             Robot.lastLocation = Robot.myLoc;
             Robot.lastDirection = dir;

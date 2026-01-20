@@ -22,6 +22,8 @@ public class Robot {
     public static MapLocation myLoc;
     public static int round;
 
+    // Meta variables
+    public static boolean moveRandom = true;
     public static boolean competitiveMode = true;
 
     // Nearest locations

@@ -1,0 +1,97 @@
+{
+  "PARAMS_aggressivitySmall1": {
+    "value": 97,
+    "min": 1,
+    "max": 100
+  },
+  "PARAMS_aggressivitySmall2": {
+    "value": 13,
+    "min": 1,
+    "max": 100
+  },
+  "PARAMS_aggressivitySmall3": {
+    "value": 66,
+    "min": 1,
+    "max": 100
+  },
+  "PARAMS_aggressivitySmall4": {
+    "value": 80,
+    "min": 1,
+    "max": 100
+  },
+  "PARAMS_aggressivityMedium1": {
+    "value": 99,
+    "min": 1,
+    "max": 100
+  },
+  "PARAMS_aggressivityMedium2": {
+    "value": 36,
+    "min": 1,
+    "max": 100
+  },
+  "PARAMS_aggressivityMedium3": {
+    "value": 52,
+    "min": 1,
+    "max": 100
+  },
+  "PARAMS_aggressivityMedium4": {
+    "value": 25,
+    "min": 1,
+    "max": 100
+  },
+  "PARAMS_aggressivityLarge1": {
+    "value": 44,
+    "min": 1,
+    "max": 100
+  },
+  "PARAMS_aggressivityLarge2": {
+    "value": 46,
+    "min": 1,
+    "max": 100
+  },
+  "PARAMS_aggressivityLarge3": {
+    "value": 94,
+    "min": 1,
+    "max": 100
+  },
+  "PARAMS_aggressivityLarge4": {
+    "value": 73,
+    "min": 1,
+    "max": 100
+  },
+  "PARAMS_DANGER_OUT_OF_ENEMY_VIEW": {
+    "value": -27,
+    "min": -30,
+    "max": -1
+  },
+  "PARAMS_DANGER_IN_ENEMY_VIEW": {
+    "value": 22,
+    "min": 1,
+    "max": 30
+  },
+  "PARAMS_DANGER_IN_REACH": {
+    "value": 7,
+    "min": 1,
+    "max": 30
+  },
+  "PARAMS_DANGER_IN_REACH_WITH_MOVEMENT": {
+    "value": 27,
+    "min": 1,
+    "max": 30
+  },
+  "PARAMS_ATTACK_BONUS_FIRSTMOVE": {
+    "value": 27,
+    "min": 1,
+    "max": 30
+  },
+  "PARAMS_ATTACK_BONUS_DONT_MOVE": {
+    "value": 16,
+    "min": 1,
+    "max": 30
+  },
+  "PARAMS_ATTACK_BONUS_CANT_SEE": {
+    "value": 10,
+    "min": 1,
+    "max": 30
+  }
+}

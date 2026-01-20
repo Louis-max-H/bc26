@@ -23,15 +23,9 @@ class Match:
     @property
     def win_condition_short(self) -> str:
         return {
-           "The winning team painted enough of the map.": "Coverage",
-            "The winning team destroyed all of the enemy team's units.": "Destroyed",
-            "The winning team won on tiebreakers (painted more of the map).": "T Coverage",
-            "The winning team won on tiebreakers (more towers alive).": "T Towers",
-            "The winning team won on tiebreakers (more money).": "T Money",
-            "The winning team won on tiebreakers (more paint stored in units).": "T Paint",
-            "The winning team won on tiebreakers (more robots alive).": "T Robots",
-            "The winning team won arbitrarily (coin flip).": "T Coin Flip",
-            "Other team has resigned. Congrats on scaring them I guess...": "Resignation",
+           "The winning team destroyed all of the enemy team's rat kings.": "Kings",
+            "The winning team won arbitrarily (coin flip).": "Coin",
+            "Other team has resigned. ": "Resignation",
         }.get(self.win_condition, self.win_condition)
 
 @dataclass
@@ -217,11 +211,11 @@ def run_match(state: State, map: str, reverse: bool) -> None:
     process = subprocess.run([
         str(Path(__file__).parent.parent / "gradlew"),
         "run",
-        "-x", "unpackClient",
         f"-PteamA={player1}",
         f"-PteamB={player2}",
-        f"-Pmaps={map}",
-        f"-PreplayPath={replay_name}"
+        f"-Pmaps={map.split('.')[0]}",
+        f"-PlanguageA=java",
+        f"-PlanguageB=java",
     ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=str(Path(__file__).parent.parent))
     stdout = process.stdout.decode("utf-8")
 
@@ -244,6 +238,7 @@ def main() -> None:
     parser = ArgumentParser(description="Compare the performance of two players.")
     parser.add_argument("player1", type=str, help="name of the first player")
     parser.add_argument("player2", type=str, help="name of the second player")
+    parser.add_argument("--maps", type=str, help="comma-separated list of maps (e.g., map1,map2,map3)")
 
     args = parser.parse_args()
 
@@ -251,81 +246,25 @@ def main() -> None:
     # if build_proc.returncode != 0:
     #     sys.exit(build_proc.returncode)
 
-    # Based on ENGINE_BUILTIN_MAP_NAMES in https://github.com/battlecode/battlecode24/blob/master/client/src/constants.ts
-    maps = """
-      AlarmClock
-      Barcode
-      BatSignal
-      Brat
-      Bread
-      Bunny
-      BunnyGame
-      Castle
-      CastleDefense
-      Circuit
-      Crab
-      DefaultLarge
-      DefaultMedium
-      DefaultSmall
-      Dominoes
-      DonkeyKong
-      Filter
-      Flower
-      Fossil
-      FourCorners
-      Gears
-      HungerGames
-      Jail
-      Justice
-      Mirage
-      Money
-      MoneyTower
-      Oasis
-      Paintball
-      Parking_lot
-      Piglets2
-      PlumberGame
-      Portal
-      Racetrack
-      Restart
-      Rose
-      SaltyPepper
-      SandyBeach
-      Snowglobe
-      Snowman
-      TargetPractice
-      Terminal
-      TheBest
-      Thirds
-      UglySweater
-      UnderTheSea
-      box
-      boxofchocolates
-      catface
-      defensetower
-      fix
-      galaxy
-      gardenworld
-      giver
-      gridworld
-      headphones
-      leavemealone
-      lighthouse
-      maze
-      memstore
-      mit
-      quack
-      rain
-      roads
-      sayhi
-      shell
-      sierpinski
-      starburst
-      sunrise
-      walalilongla
-      windmill
-      yearofthesnake""".split()
+    # Determine maps to use
+    if args.maps:
+        # Use maps from command line
+        maps = [m.strip() for m in args.maps.split(',')]
+    else:
+        # Load maps from maps folder
+        maps_folder = Path(__file__).parent.parent / "maps"
+        if maps_folder.exists():
+            map_files = sorted(maps_folder.glob("*.map26"))
+            maps = [map_file.stem for map_file in map_files]
+        else:
+            print(f"Le dossier maps n'existe pas: {maps_folder}")
+            sys.exit(1)
     
+    if not maps:
+        print("Aucune map trouvée. Utilisez --maps ou ajoutez des fichiers .map26 dans le dossier maps/")
+        sys.exit(1)
+    
+    maps = [map.split('.')[0] for map in maps]
 
     console = Console(highlight=False)
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
