@@ -2,6 +2,7 @@ package current.States;
 
 import battlecode.common.*;
 import current.Communication.SenseForComs;
+import current.Params;
 import current.Robots.Robot;
 import current.Utils.BugNavLmx;
 import current.Utils.PathFinding;
@@ -19,6 +20,14 @@ public class Init extends State {
         Robot.spawnLoc = rc.getLocation();
         Robot.spawnRound = rc.getRoundNum();
         Robot.isKing = rc.getType().isRatKingType();
+
+        Robot.mapType = 0; // Small
+        if(rc.getMapWidth() * rc.getMapHeight() > 32*32){
+            mapType = 1; // Medium
+        }
+        if(rc.getMapWidth() * rc.getMapHeight() > 45*45){
+            mapType = 2; // Big
+        }
 
         // Init utils
         VisionUtils.initScore(rc.getMapWidth(), rc.getMapHeight());
@@ -58,13 +67,7 @@ public class Init extends State {
         else if (round <  500) { gamePhase = PHASE_EARLY;}
         else if (round < 1500) { gamePhase = PHASE_MIDLE;}
         else                   { gamePhase = PHASE_FINAL;}
-
-        // Can dig ?
-        if(!isKing && rc.getActionCooldownTurns() > 0 && rc.getAllCheese() >= GameConstants.DIG_DIRT_CHEESE_COST){
-            current.Utils.PathFinding.digEnable = true;
-        }else{
-            current.Utils.PathFinding.digEnable = false;
-        }
+        Params.init();
 
         printBytecode("Update communications");
         Communication.readMessages(); // Read messsages
@@ -212,9 +215,9 @@ public class Init extends State {
         if(nearestEnemyKing != null){
             rc.setIndicatorLine(rc.getLocation(), nearestEnemyKing, 50, 0, 0);
         }*/
-        /*
-        if(nearestMine != null){
-            rc.setIndicatorLine(rc.getLocation(), nearestMine, 255, 228, 181);
+
+        /*if(nearestMine != null){
+            rc.setIndicatorLine(rc.getLocation(), nearestMine, 0, 255, 0);
         }*/
         if(nearestEnemyRat != null){
             rc.setIndicatorLine(rc.getLocation(), nearestEnemyRat, 255, 0, 0);

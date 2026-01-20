@@ -4,6 +4,7 @@ from jinja2.ext import Extension
 from collections import defaultdict
 import os
 import re
+import json
 from pathlib import Path
 
 import math
@@ -311,7 +312,7 @@ def extract_destination(template_path):
                 return match.group(1).strip()
     return None
 
-def process_template(template_path, base_dir, is_prod):
+def process_template(template_path, base_dir, is_prod, params_dict=None):
     """Process a single .jinja2 template file."""
     print(f"Processing: {template_path}")
 
@@ -347,8 +348,8 @@ def process_template(template_path, base_dir, is_prod):
     template_name = os.path.basename(template_path)
     template = env.get_template(template_name)
 
-    # Render template
-    rendered_content = template.render(
+    # Prepare render context
+    render_context = dict(
         ratsUnits=["BABY_RAT", "RAT_KING"],
         directions=directions,
         dirsDelta=dirsDelta,
@@ -388,6 +389,14 @@ def process_template(template_path, base_dir, is_prod):
         prod=is_prod,
         className=class_name
     )
+    
+    # Add params if provided
+    if params_dict:
+        for params_name, params_value in params_dict.items():
+            render_context[params_name] = params_value
+    
+    # Render template
+    rendered_content = template.render(**render_context)
 
     # Calculate statistics
     if is_prod:
@@ -466,6 +475,11 @@ def main():
         action="store_true",
         help="Display statistics report (number of lines and file size) at the end"
     )
+    parser.add_argument(
+        "--params",
+        metavar="FILE",
+        help="Path to JSON file containing parameters to load in templates"
+    )
     args = parser.parse_args()
     
     # Valider que target est fourni pour les autres modes
@@ -484,6 +498,27 @@ def main():
     if not os.path.exists(target_path):
         print(f"❌ Error: The path '{target_path}' does not exist")
         return
+    
+    # Load parameters if --params is provided
+    params_dict = None
+    if args.params:
+        params_path = os.path.abspath(args.params)
+        if not os.path.exists(params_path):
+            print(f"❌ Error: The params file '{params_path}' does not exist")
+            return
+        
+        try:
+            with open(params_path, 'r', encoding='utf-8') as f:
+                params_data = json.load(f)
+            # Extract only the values from the params data
+            params_dict = {name: data['value'] for name, data in params_data.items()}
+            print(f"📦 Loaded {len(params_dict)} parameter(s) from {params_path}")
+        except json.JSONDecodeError as e:
+            print(f"❌ Error: Failed to parse JSON file '{params_path}': {e}")
+            return
+        except Exception as e:
+            print(f"❌ Error: Failed to load params file: {e}")
+            return
     
     templates_to_process = []
     
@@ -524,7 +559,7 @@ def main():
     success_count = 0
     stats_list = []
     for template_path in templates_to_process:
-        result = process_template(template_path, base_dir, is_prod)
+        result = process_template(template_path, base_dir, is_prod, params_dict)
         if result and result.get('success'):
             success_count += 1
             if args.report:

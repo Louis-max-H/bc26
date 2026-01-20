@@ -22,7 +22,9 @@ public class Robot {
     public static MapLocation myLoc;
     public static int round;
 
-    public static boolean competitiveMode = true;
+    // Meta variables
+    public static boolean moveRandom = false; // Move random direction each 10 moves
+    public static boolean competitiveMode = false;
 
     // Nearest locations
     public static MapLocation nearestCat;
@@ -62,6 +64,7 @@ public class Robot {
 
     // Phases
     public static int gamePhase;
+    public static int mapType; // 0 Small, 1 Medium, 2 Large
     public static final int PHASE_START = 0;
     public static final int PHASE_EARLY = 1;
     public static final int PHASE_MIDLE = 2;

@@ -57,15 +57,15 @@ public class {{ className }} {
         };
     }
 
-
     public static int lookDirections[] = new int[]{1, 1, 1, 1, 1, 1, 1, 1, 0};
     public static void resetDirections(){
         lookDirections = new int[]{1, 1, 1, 1, 1, 1, 1, 1, 0};
     }
 
     public static void forceLookCell(MapLocation cell){
-        resetDirections();
+        lookDirections = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
         for(Direction dir : directionsToSeeTarget(cell, Robot.rc.getLocation())){
+            Robot.print(String.format("Force look cell, need to look at dir : %10s", dir));
             lookDirections[dir.ordinal()] = 1;
         }
     }
@@ -88,8 +88,10 @@ public class {{ className }} {
         Direction bestDir = Direction.CENTER;
         int bestScore = 0;
         {% for dir in directionsWhitoutCenter -%}
+
         if(lookDirections[{{dirsOrds[dir]}}] > 0){
             int score = getScoreInView(rc.getLocation(), Direction.{{dir}}, rc.getType()) * lookDirections[{{dirsOrds[dir]}}];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.{{dir}}, lookDirections[{{dirsOrds[dir]}}]));
             if(score > bestScore){
                 bestScore = score;
                 bestDir = Direction.{{dir}};
@@ -97,7 +99,10 @@ public class {{ className }} {
         }
         {% endfor %}
 
-        rc.turn(bestDir);
+        if(bestDir != Direction.CENTER){
+            rc.turn(bestDir);
+        }
+        Robot.print(String.format("Smart look best dir is %10s with score %d", bestDir, bestScore));
         return new Result(OK, "Looked at " + bestDir + " with score " + bestScore);
     }
 

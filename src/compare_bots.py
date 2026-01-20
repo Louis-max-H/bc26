@@ -1,3 +1,4 @@
+import json
 import math
 import subprocess
 import sys
@@ -23,15 +24,9 @@ class Match:
     @property
     def win_condition_short(self) -> str:
         return {
-           "The winning team painted enough of the map.": "Coverage",
-            "The winning team destroyed all of the enemy team's units.": "Destroyed",
-            "The winning team won on tiebreakers (painted more of the map).": "T Coverage",
-            "The winning team won on tiebreakers (more towers alive).": "T Towers",
-            "The winning team won on tiebreakers (more money).": "T Money",
-            "The winning team won on tiebreakers (more paint stored in units).": "T Paint",
-            "The winning team won on tiebreakers (more robots alive).": "T Robots",
-            "The winning team won arbitrarily (coin flip).": "T Coin Flip",
-            "Other team has resigned. Congrats on scaring them I guess...": "Resignation",
+           "The winning team destroyed all of the enemy team's rat kings.": "Kings",
+            "The winning team won arbitrarily (coin flip).": "Coin",
+            "Other team has resigned. ": "Resignation",
         }.get(self.win_condition, self.win_condition)
 
 @dataclass
@@ -207,21 +202,94 @@ class State:
 
     def get_viewer_url(self, replay_name: str) -> str:
         return f"http://localhost:8000/client/resources/app/dist/index.html?gameSource=http://localhost:8000/{replay_name}"
+    
+    def to_json(self) -> dict:
+        """Convert state to JSON-serializable dictionary."""
+        player1_stats = PlayerStatistics()
+        player2_stats = PlayerStatistics()
+        
+        for map in self.maps:
+            wins = 0
+            losses = 0
+            
+            for reverse in [False, True]:
+                match = next((match for match in self.matches if match.map == map and match.reverse == reverse), None)
+                if match is None:
+                    continue
+                
+                if match.player1_wins != reverse:
+                    wins += 1
+                    player1_stats.wins += 1
+                    player1_stats.wins_by_condition[match.win_condition_short] += 1
+                else:
+                    losses += 1
+                    player2_stats.wins += 1
+                    player2_stats.wins_by_condition[match.win_condition_short] += 1
+            
+            if wins == 2:
+                player1_stats.win_maps += 1
+                player2_stats.lose_maps += 1
+            elif losses == 2:
+                player1_stats.lose_maps += 1
+                player2_stats.win_maps += 1
+            elif wins + losses == 2:
+                player1_stats.draw_maps += 1
+                player2_stats.draw_maps += 1
+        
+        match_count = len(self.matches)
+        
+        return {
+            "player1": self.player1,
+            "player2": self.player2,
+            "timestamp": self.timestamp,
+            "total_matches": match_count,
+            "player1_stats": {
+                "wins": player1_stats.wins,
+                "losses": match_count - player1_stats.wins,
+                "win_rate": (player1_stats.wins / match_count * 100) if match_count > 0 else 0,
+                "win_maps": player1_stats.win_maps,
+                "draw_maps": player1_stats.draw_maps,
+                "lose_maps": player1_stats.lose_maps,
+                "wins_by_condition": dict(player1_stats.wins_by_condition)
+            },
+            "player2_stats": {
+                "wins": player2_stats.wins,
+                "losses": match_count - player2_stats.wins,
+                "win_rate": (player2_stats.wins / match_count * 100) if match_count > 0 else 0,
+                "win_maps": player2_stats.win_maps,
+                "draw_maps": player2_stats.draw_maps,
+                "lose_maps": player2_stats.lose_maps,
+                "wins_by_condition": dict(player2_stats.wins_by_condition)
+            },
+            "maps": self.maps,
+            "matches": [
+                {
+                    "map": match.map,
+                    "reverse": match.reverse,
+                    "player1_wins": match.player1_wins,
+                    "win_condition": match.win_condition,
+                    "win_condition_short": match.win_condition_short,
+                    "replay_name": match.replay_name
+                }
+                for match in self.matches
+            ]
+        }
 
-def run_match(state: State, map: str, reverse: bool) -> None:
+def run_match(state: State, map: str, reverse: bool, json_mode: bool = False) -> None:
     player1 = state.player1 if not reverse else state.player2
     player2 = state.player2 if not reverse else state.player1
 
-    replay_name = f"replays/run-{state.timestamp}-{player1}-vs-{player2}-on-{map}.bc24"
+    replay_name = f"matches/run-{state.timestamp}-{player1}-vs-{player2}-on-{map}.bc26"
 
     process = subprocess.run([
         str(Path(__file__).parent.parent / "gradlew"),
         "run",
-        "-x", "unpackClient",
         f"-PteamA={player1}",
         f"-PteamB={player2}",
-        f"-Pmaps={map}",
-        f"-PreplayPath={replay_name}"
+        f"-Pmaps={map.split('.')[0]}",
+        f"-PlanguageA=java",
+        f"-PlanguageB=java",
+        f"-Preplay={replay_name}",
     ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=str(Path(__file__).parent.parent))
     stdout = process.stdout.decode("utf-8")
 
@@ -237,13 +305,23 @@ def run_match(state: State, map: str, reverse: bool) -> None:
     win_condition_line = next(line for line in lines if line.startswith("[server] Reason: "))
     win_condition = win_condition_line.split(": ", 1)[1]
 
-    state.matches.append(Match(map, reverse, player1_wins, win_condition, replay_name))
-    state.print()
+    match = Match(map, reverse, player1_wins, win_condition, replay_name)
+    state.matches.append(match)
+    
+    # Afficher un message simple après chaque match
+    if json_mode:
+        winner = player1 if player1_wins else player2
+        # Utiliser stderr pour les messages de progression afin de ne pas polluer stdout (JSON)
+        print(f"Match terminé: {map} ({'reverse' if reverse else 'normal'}) - Vainqueur: {winner} ({match.win_condition_short})", file=sys.stderr, flush=True)
+    else:
+        state.print()
 
 def main() -> None:
     parser = ArgumentParser(description="Compare the performance of two players.")
     parser.add_argument("player1", type=str, help="name of the first player")
     parser.add_argument("player2", type=str, help="name of the second player")
+    parser.add_argument("--maps", type=str, help="comma-separated list of maps (e.g., map1,map2,map3)")
+    parser.add_argument("--json", action="store_true", help="output results as JSON instead of table")
 
     args = parser.parse_args()
 
@@ -251,95 +329,48 @@ def main() -> None:
     # if build_proc.returncode != 0:
     #     sys.exit(build_proc.returncode)
 
-    # Based on ENGINE_BUILTIN_MAP_NAMES in https://github.com/battlecode/battlecode24/blob/master/client/src/constants.ts
-    maps = """
-      AlarmClock
-      Barcode
-      BatSignal
-      Brat
-      Bread
-      Bunny
-      BunnyGame
-      Castle
-      CastleDefense
-      Circuit
-      Crab
-      DefaultLarge
-      DefaultMedium
-      DefaultSmall
-      Dominoes
-      DonkeyKong
-      Filter
-      Flower
-      Fossil
-      FourCorners
-      Gears
-      HungerGames
-      Jail
-      Justice
-      Mirage
-      Money
-      MoneyTower
-      Oasis
-      Paintball
-      Parking_lot
-      Piglets2
-      PlumberGame
-      Portal
-      Racetrack
-      Restart
-      Rose
-      SaltyPepper
-      SandyBeach
-      Snowglobe
-      Snowman
-      TargetPractice
-      Terminal
-      TheBest
-      Thirds
-      UglySweater
-      UnderTheSea
-      box
-      boxofchocolates
-      catface
-      defensetower
-      fix
-      galaxy
-      gardenworld
-      giver
-      gridworld
-      headphones
-      leavemealone
-      lighthouse
-      maze
-      memstore
-      mit
-      quack
-      rain
-      roads
-      sayhi
-      shell
-      sierpinski
-      starburst
-      sunrise
-      walalilongla
-      windmill
-      yearofthesnake""".split()
+    # Determine maps to use
+    if args.maps:
+        # Use maps from command line
+        maps = [m.strip() for m in args.maps.split(',')]
+    else:
+        # Load maps from maps folder
+        maps_folder = Path(__file__).parent.parent / "maps"
+        if maps_folder.exists():
+            map_files = sorted(maps_folder.glob("*.map26"))
+            maps = [map_file.stem for map_file in map_files]
+        else:
+            print(f"Le dossier maps n'existe pas: {maps_folder}")
+            sys.exit(1)
     
+    if not maps:
+        print("Aucune map trouvée. Utilisez --maps ou ajoutez des fichiers .map26 dans le dossier maps/")
+        sys.exit(1)
+    
+    maps = [map.split('.')[0] for map in maps]
 
     console = Console(highlight=False)
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     state = State(args.player1, args.player2, maps, [], console, timestamp)
-    state.print()
+    
+    if not args.json:
+        state.print()
 
     matches = []
     for map in maps:
         for reverse in [False, True]:
-            matches.append((state, map, reverse))
+            matches.append((state, map, reverse, args.json))
 
-    with ThreadPool(8) as pool:
+    with ThreadPool(6) as pool:
         pool.starmap(run_match, matches)
+    
+    # Output results
+    if args.json:
+        print(json.dumps(state.to_json(), indent=2))
+    else:
+        # Final print is already done by run_match
+        pass
 
 if __name__ == "__main__":
     main()

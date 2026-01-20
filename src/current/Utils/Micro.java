@@ -19,13 +19,14 @@ public class Micro {
     public static long scoresDanger[]; // Max amount of damage I can deal
     public static char attackDirection[]; // Direction of the best attack
 
-    public static long DANGER_OUT_OF_ENEMY_VIEW = -1; // Get less danger if out of enemy view
-    public static long DANGER_IN_ENEMY_VIEW = 1; // Danger if in enemy view
-    public static long DANGER_IN_REACH = 15; // Danger if enemy can attack us without moving
-    public static long DANGER_IN_REACH_WITH_MOVEMENT = 15; // Danger if enemy can attack us but need to moving
+    // Adding safegards if params not defined
+    public static long DANGER_OUT_OF_ENEMY_VIEW = -3; // Get less danger if out of enemy view
+    public static long DANGER_IN_ENEMY_VIEW = 6; // Danger if in enemy view
+    public static long DANGER_IN_REACH = 22; // Danger if enemy can attack us without moving
+    public static long DANGER_IN_REACH_WITH_MOVEMENT = 20; // Danger if enemy can attack us but need to moving
 
-    public static long ATTACK_BONUS_MOVEMENT  = 10; // Bonus to attack score if need move to attack unit
-    public static long ATTACK_BONUS_DONT_MOVE = 10; // Bonus to attack score if I dont need to move
+    public static long ATTACK_BONUS_MOVEMENT  = 14; // Bonus to attack score if need move to attack unit
+    public static long ATTACK_BONUS_DONT_MOVE = 17; // Bonus to attack score if I dont need to move
     public static long ATTACK_BONUS_CANT_SEE  = 10; // Bonus to attack score if the target can't see us
 
     public static void reset(){
@@ -198,83 +199,83 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 5;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 return;
 
             case -98305: // Cell (-2, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 5;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 6;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 return;
 
             case -98304: // Cell (-2, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 6;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 5;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 7;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 return;
 
             case -98303: // Cell (-2, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 7;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 6;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 return;
 
             case -98302: // Cell (-2, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 7;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 return;
 
             case -98301: // Cell (-2, 3)
@@ -305,125 +306,125 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 4;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 5;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 return;
 
             case -32769: // Cell (-1, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 4;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 6;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 5;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32768: // Cell (-1, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 4;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 0;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 7;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 5;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 6;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32767: // Cell (-1, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 0;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 6;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 7;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32766: // Cell (-1, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 0;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 7;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case -32765: // Cell (-1, 3)
@@ -454,188 +455,188 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 3;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 4;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 5;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 32767: // Cell (0, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 3;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 2;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 6;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 5;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 4;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 32768: // Cell (0, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 2;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 3;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 1;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 0;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 7;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 6;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 5;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 4;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case 32769: // Cell (0, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 1;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 2;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 7;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 6;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 0;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 32770: // Cell (0, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 1;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 7;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 0;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case 32771: // Cell (0, 3)
@@ -661,164 +662,164 @@ public class Micro {
             case 98301: // Cell (1, -3)
 
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 return;
 
             case 98302: // Cell (1, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 3;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 4;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 98303: // Cell (1, -1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 2;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 4;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 3;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 98304: // Cell (1, 0)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 1;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 0;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 4;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 3;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 2;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 98305: // Cell (1, 1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 0;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 2;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 1;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 98306: // Cell (1, 2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 0;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 1;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 return;
 
             case 98307: // Cell (1, 3)
 
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 return;
 
             case 98308: // Cell (1, 4)
@@ -835,152 +836,152 @@ public class Micro {
 
             case 163836: // Cell (2, -4)
 
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case 163837: // Cell (2, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 return;
 
             case 163838: // Cell (2, -2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 3;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 163839: // Cell (2, -1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 2;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 3;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 163840: // Cell (2, 0)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 1;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 2;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 3;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 163841: // Cell (2, 1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 1;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 2;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 163842: // Cell (2, 2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 1;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 163843: // Cell (2, 3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 return;
 
             case 163844: // Cell (2, 4)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case 163845: // Cell (2, 5)
@@ -993,104 +994,104 @@ public class Micro {
 
             case 229372: // Cell (3, -4)
 
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[4] += 6; // SOUTH
                 return;
 
             case 229373: // Cell (3, -3)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[3] += 26; // SOUTHEAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229374: // Cell (3, -2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[2] += 26; // EAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229375: // Cell (3, -1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[1] += 26; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229376: // Cell (3, 0)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[1] += 26; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229377: // Cell (3, 1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[1] += 26; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229378: // Cell (3, 2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[1] += 26; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229379: // Cell (3, 3)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[1] += 26; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229380: // Cell (3, 4)
 
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 229381: // Cell (3, 5)
@@ -1099,117 +1100,117 @@ public class Micro {
 
             case 294908: // Cell (4, -4)
 
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 294909: // Cell (4, -3)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 return;
 
             case 294910: // Cell (4, -2)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 294911: // Cell (4, -1)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 294912: // Cell (4, 0)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 294913: // Cell (4, 1)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 294914: // Cell (4, 2)
 
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 294915: // Cell (4, 3)
 
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 294916: // Cell (4, 4)
 
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 360445: // Cell (5, -3)
 
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 360446: // Cell (5, -2)
 
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 return;
 
             case 360447: // Cell (5, -1)
 
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 360448: // Cell (5, 0)
 
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 360449: // Cell (5, 1)
 
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 360450: // Cell (5, 2)
 
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 360451: // Cell (5, 3)
 
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             default:
@@ -1347,83 +1348,83 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 5;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 return;
 
             case -98305: // Cell (-2, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 5;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 6;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 return;
 
             case -98304: // Cell (-2, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 6;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 5;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 7;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 return;
 
             case -98303: // Cell (-2, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 7;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 6;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 return;
 
             case -98302: // Cell (-2, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 7;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 return;
 
             case -98301: // Cell (-2, 3)
@@ -1440,151 +1441,151 @@ public class Micro {
 
             case -32773: // Cell (-1, -5)
 
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -32772: // Cell (-1, -4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -32771: // Cell (-1, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 return;
 
             case -32770: // Cell (-1, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                        scoresDanger[6] += 26; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 4;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 5;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 return;
 
             case -32769: // Cell (-1, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 4;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 6;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 5;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32768: // Cell (-1, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 4;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 0;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 7;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 5;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 6;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32767: // Cell (-1, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 0;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 6;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 7;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32766: // Cell (-1, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 0;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 7;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case -32765: // Cell (-1, 3)
@@ -1601,226 +1602,226 @@ public class Micro {
 
             case 32763: // Cell (0, -5)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 return;
 
             case 32764: // Cell (0, -4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32765: // Cell (0, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[4] += 26; // SOUTH
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32766: // Cell (0, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                        scoresDanger[6] += 26; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 3;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 4;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 5;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[3] += 19; // SOUTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 32767: // Cell (0, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 3;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 2;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 6;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 5;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 4;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 32768: // Cell (0, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 2;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 3;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 1;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 0;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 7;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 6;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 5;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 4;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 return;
 
             case 32769: // Cell (0, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 1;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 2;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 7;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 6;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 0;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 32770: // Cell (0, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 1;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 7;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 0;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case 32771: // Cell (0, 3)
@@ -1837,187 +1838,187 @@ public class Micro {
 
             case 98299: // Cell (1, -5)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 98300: // Cell (1, -4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 98301: // Cell (1, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[3] += 26; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 98302: // Cell (1, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                        scoresDanger[6] += 26; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 3;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 4;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                        scoresDanger[2] += 26; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 98303: // Cell (1, -1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 2;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 4;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 3;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 98304: // Cell (1, 0)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 1;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 0;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 4;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 3;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 2;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 98305: // Cell (1, 1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 0;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 2;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 1;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98306: // Cell (1, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 0;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 1;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case 98307: // Cell (1, 3)
@@ -2034,145 +2035,145 @@ public class Micro {
 
             case 163835: // Cell (2, -5)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 163836: // Cell (2, -4)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 163837: // Cell (2, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[3] += 26; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 163838: // Cell (2, -2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 3;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                        scoresDanger[2] += 26; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 163839: // Cell (2, -1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 2;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 3;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 163840: // Cell (2, 0)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 1;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 2;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 3;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 163841: // Cell (2, 1)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 1;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 2;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 return;
 
             case 163842: // Cell (2, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 1;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163843: // Cell (2, 3)
@@ -2189,75 +2190,75 @@ public class Micro {
 
             case 229371: // Cell (3, -5)
 
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 229372: // Cell (3, -4)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 return;
 
             case 229373: // Cell (3, -3)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[3] += 26; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229374: // Cell (3, -2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[2] += 26; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229375: // Cell (3, -1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[1] += 26; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229376: // Cell (3, 0)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[1] += 26; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229377: // Cell (3, 1)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                        scoresDanger[1] += 26; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 229378: // Cell (3, 2)
@@ -2278,47 +2279,47 @@ public class Micro {
 
             case 294908: // Cell (4, -4)
 
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 294909: // Cell (4, -3)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 return;
 
             case 294910: // Cell (4, -2)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 294911: // Cell (4, -1)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 294912: // Cell (4, 0)
 
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 294913: // Cell (4, 1)
 
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 294914: // Cell (4, 2)
@@ -2335,31 +2336,31 @@ public class Micro {
 
             case 360445: // Cell (5, -3)
 
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 360446: // Cell (5, -2)
 
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 return;
 
             case 360447: // Cell (5, -1)
 
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 360448: // Cell (5, 0)
 
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 360449: // Cell (5, 1)
 
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 360450: // Cell (5, 2)
@@ -2505,83 +2506,83 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 5;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 return;
 
             case -98305: // Cell (-2, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 5;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 6;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 return;
 
             case -98304: // Cell (-2, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 6;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 5;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 7;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 return;
 
             case -98303: // Cell (-2, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 7;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 6;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 return;
 
             case -98302: // Cell (-2, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 7;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 return;
 
             case -98301: // Cell (-2, 3)
@@ -2612,149 +2613,149 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 4;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 5;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 return;
 
             case -32769: // Cell (-1, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 4;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 6;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 5;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32768: // Cell (-1, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 4;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 0;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 7;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 5;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 6;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32767: // Cell (-1, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 0;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 6;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 7;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32766: // Cell (-1, 2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 0;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 7;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case -32765: // Cell (-1, 3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -32764: // Cell (-1, 4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case -32763: // Cell (-1, 5)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case 32763: // Cell (0, -5)
@@ -2773,224 +2774,224 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 3;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 4;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 5;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 32767: // Cell (0, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 3;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 2;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 6;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 5;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 4;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 32768: // Cell (0, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 2;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 3;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 1;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 0;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 7;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 6;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 5;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 4;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case 32769: // Cell (0, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 1;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 2;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 7;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 6;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 0;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 32770: // Cell (0, 2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 1;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[7] += 28; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 7;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 0;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 32771: // Cell (0, 3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[0] += 26; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32772: // Cell (0, 4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32773: // Cell (0, 5)
 
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 98299: // Cell (1, -5)
@@ -3009,185 +3010,185 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 3;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 4;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 98303: // Cell (1, -1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 2;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 4;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 3;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98304: // Cell (1, 0)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 1;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 0;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 4;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 3;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 2;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 98305: // Cell (1, 1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 0;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 2;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 1;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 98306: // Cell (1, 2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 0;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 1;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 98307: // Cell (1, 3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[0] += 26; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 98308: // Cell (1, 4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 98309: // Cell (1, 5)
 
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 163835: // Cell (2, -5)
@@ -3206,143 +3207,143 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 3;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 163839: // Cell (2, -1)
 
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 2;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 3;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 return;
 
             case 163840: // Cell (2, 0)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 1;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 2;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 3;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 163841: // Cell (2, 1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 1;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 2;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 163842: // Cell (2, 2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 1;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 163843: // Cell (2, 3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[0] += 26; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 163844: // Cell (2, 4)
 
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 163845: // Cell (2, 5)
 
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 229371: // Cell (3, -5)
@@ -3363,75 +3364,75 @@ public class Micro {
 
             case 229375: // Cell (3, -1)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 return;
 
             case 229376: // Cell (3, 0)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[2] += 26; // EAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229377: // Cell (3, 1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[1] += 26; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229378: // Cell (3, 2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[1] += 26; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229379: // Cell (3, 3)
 
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[1] += 26; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229380: // Cell (3, 4)
 
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 229381: // Cell (3, 5)
 
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 294908: // Cell (4, -4)
@@ -3448,47 +3449,47 @@ public class Micro {
 
             case 294911: // Cell (4, -1)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 294912: // Cell (4, 0)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 294913: // Cell (4, 1)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 294914: // Cell (4, 2)
 
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 294915: // Cell (4, 3)
 
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 294916: // Cell (4, 4)
 
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 360445: // Cell (5, -3)
@@ -3501,31 +3502,31 @@ public class Micro {
 
             case 360447: // Cell (5, -1)
 
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 360448: // Cell (5, 0)
 
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 return;
 
             case 360449: // Cell (5, 1)
 
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 360450: // Cell (5, 2)
 
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 360451: // Cell (5, 3)
 
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             default:
@@ -3593,17 +3594,17 @@ public class Micro {
 
             case -229374: // Cell (-4, 2)
 
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -229373: // Cell (-4, 3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 return;
 
             case -229372: // Cell (-4, 4)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case -163845: // Cell (-3, -5)
@@ -3633,36 +3634,36 @@ public class Micro {
             case -163839: // Cell (-3, 1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 return;
 
             case -163838: // Cell (-3, 2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                        scoresDanger[6] += 26; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 return;
 
             case -163837: // Cell (-3, 3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163836: // Cell (-3, 4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case -163835: // Cell (-3, 5)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case -98309: // Cell (-2, -5)
@@ -3681,122 +3682,122 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 5;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 return;
 
             case -98305: // Cell (-2, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 5;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 6;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 return;
 
             case -98304: // Cell (-2, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 6;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 5;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 7;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 return;
 
             case -98303: // Cell (-2, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 7;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 6;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 return;
 
             case -98302: // Cell (-2, 2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 7;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[7] += 28; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -98301: // Cell (-2, 3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[2] += 1; // EAST
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[0] += 26; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -98300: // Cell (-2, 4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -98299: // Cell (-2, 5)
 
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case -32773: // Cell (-1, -5)
@@ -3815,173 +3816,173 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 4;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 5;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 return;
 
             case -32769: // Cell (-1, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 4;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 6;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 5;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32768: // Cell (-1, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 4;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 0;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 7;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 5;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 6;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32767: // Cell (-1, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 0;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 6;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 7;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case -32766: // Cell (-1, 2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 0;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[7] += 28; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 7;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -32765: // Cell (-1, 3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[0] += 26; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -32764: // Cell (-1, 4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -32763: // Cell (-1, 5)
 
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 32763: // Cell (0, -5)
@@ -4000,236 +4001,236 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 3;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 4;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 5;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 32767: // Cell (0, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 3;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 2;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 6;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 5;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 4;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 32768: // Cell (0, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 2;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 3;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 1;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 0;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 7;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 6;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 5;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 4;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case 32769: // Cell (0, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 1;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 2;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 7;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 6;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 0;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 32770: // Cell (0, 2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 1;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[7] += 28; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 7;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 0;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 32771: // Cell (0, 3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[0] += 26; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32772: // Cell (0, 4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32773: // Cell (0, 5)
 
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 98299: // Cell (1, -5)
@@ -4248,173 +4249,173 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 3;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 4;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 98303: // Cell (1, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 2;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 4;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 3;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98304: // Cell (1, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 1;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 0;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 4;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 3;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 2;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98305: // Cell (1, 1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 0;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 2;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 1;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 98306: // Cell (1, 2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                        scoresDanger[6] += 26; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 0;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 1;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 98307: // Cell (1, 3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[0] += 26; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 98308: // Cell (1, 4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 98309: // Cell (1, 5)
 
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 163835: // Cell (2, -5)
@@ -4433,122 +4434,122 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 3;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 163839: // Cell (2, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 2;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 3;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 return;
 
             case 163840: // Cell (2, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 1;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 2;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 3;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163841: // Cell (2, 1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 1;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 2;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163842: // Cell (2, 2)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 1;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 163843: // Cell (2, 3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[0] += 26; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 163844: // Cell (2, 4)
 
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 163845: // Cell (2, 5)
 
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 229371: // Cell (3, -5)
@@ -4578,36 +4579,36 @@ public class Micro {
             case 229377: // Cell (3, 1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 return;
 
             case 229378: // Cell (3, 2)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 return;
 
             case 229379: // Cell (3, 3)
 
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[1] += 26; // NORTHEAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229380: // Cell (3, 4)
 
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 229381: // Cell (3, 5)
 
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 294908: // Cell (4, -4)
@@ -4636,17 +4637,17 @@ public class Micro {
 
             case 294914: // Cell (4, 2)
 
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 294915: // Cell (4, 3)
 
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[2] += 6; // EAST
                 return;
 
             case 294916: // Cell (4, 4)
 
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 360445: // Cell (5, -3)
@@ -4698,31 +4699,31 @@ public class Micro {
 
             case -294913: // Cell (-5, -1)
 
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -294912: // Cell (-5, 0)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -294911: // Cell (-5, 1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -294910: // Cell (-5, 2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case -294909: // Cell (-5, 3)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case -229380: // Cell (-4, -4)
@@ -4739,47 +4740,47 @@ public class Micro {
 
             case -229377: // Cell (-4, -1)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 return;
 
             case -229376: // Cell (-4, 0)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -229375: // Cell (-4, 1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -229374: // Cell (-4, 2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -229373: // Cell (-4, 3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case -229372: // Cell (-4, 4)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case -163845: // Cell (-3, -5)
@@ -4801,74 +4802,74 @@ public class Micro {
             case -163841: // Cell (-3, -1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                        scoresDanger[5] += 26; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case -163840: // Cell (-3, 0)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[5] += 26; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163839: // Cell (-3, 1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[5] += 26; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163838: // Cell (-3, 2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163837: // Cell (-3, 3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163836: // Cell (-3, 4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case -163835: // Cell (-3, 5)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case -98309: // Cell (-2, -5)
@@ -4887,143 +4888,143 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 5;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 return;
 
             case -98305: // Cell (-2, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 5;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 6;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                        scoresDanger[4] += 26; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case -98304: // Cell (-2, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 6;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 5;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 7;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                        scoresDanger[4] += 26; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -98303: // Cell (-2, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 7;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 6;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                        scoresDanger[4] += 26; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -98302: // Cell (-2, 2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 7;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[7] += 28; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -98301: // Cell (-2, 3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[0] += 26; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -98300: // Cell (-2, 4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -98299: // Cell (-2, 5)
 
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case -32773: // Cell (-1, -5)
@@ -5042,188 +5043,188 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 4;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 5;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 return;
 
             case -32769: // Cell (-1, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 4;
                     }
-                scoresDanger[6] += 14; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 19; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 6;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 5;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32768: // Cell (-1, 0)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 4;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 0;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 7;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 5;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 6;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case -32767: // Cell (-1, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 0;
                     }
-                scoresDanger[6] += 16; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 28; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 6;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 7;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case -32766: // Cell (-1, 2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 0;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[7] += 28; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 7;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -32765: // Cell (-1, 3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[0] += 26; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -32764: // Cell (-1, 4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -32763: // Cell (-1, 5)
 
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 32763: // Cell (0, -5)
@@ -5242,227 +5243,227 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 3;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 4;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 5;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 32767: // Cell (0, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 3;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 2;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[5] += 19; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 6;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 5;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 4;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 32768: // Cell (0, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 2;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 3;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 1;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 0;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 7;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 6;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 5;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 4;
                     }
-                scoresDanger[0] += 14; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[0] += 19; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32769: // Cell (0, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 1;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 2;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 7;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 6;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[1] += 28; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 0;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 32770: // Cell (0, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 1;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[7] += 19; // NORTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 7;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 0;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 32771: // Cell (0, 3)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[0] += 26; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32772: // Cell (0, 4)
 
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32773: // Cell (0, 5)
 
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 98299: // Cell (1, -5)
@@ -5481,152 +5482,152 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 3;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 4;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 98303: // Cell (1, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 2;
                     }
-                scoresDanger[4] += 14; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[4] += 19; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 4;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 3;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98304: // Cell (1, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 1;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 0;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[3] += 28; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 4;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 3;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 2;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98305: // Cell (1, 1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 0;
                     }
-                scoresDanger[2] += 16; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[2] += 28; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 2;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 1;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98306: // Cell (1, 2)
 
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 0;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 1;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case 98307: // Cell (1, 3)
 
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 return;
 
             case 98308: // Cell (1, 4)
 
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 98309: // Cell (1, 5)
 
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 163835: // Cell (2, -5)
@@ -5645,83 +5646,83 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 3;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 163839: // Cell (2, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 2;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 3;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 return;
 
             case 163840: // Cell (2, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 1;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 2;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 3;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163841: // Cell (2, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 1;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 2;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163842: // Cell (2, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 1;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163843: // Cell (2, 3)
@@ -5857,117 +5858,117 @@ public class Micro {
         switch(enemyRelativeLoc.hashCode()){
             case -294915: // Cell (-5, -3)
 
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -294914: // Cell (-5, -2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -294913: // Cell (-5, -1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -294912: // Cell (-5, 0)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -294911: // Cell (-5, 1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -294910: // Cell (-5, 2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case -294909: // Cell (-5, 3)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case -229380: // Cell (-4, -4)
 
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -229379: // Cell (-4, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 return;
 
             case -229378: // Cell (-4, -2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -229377: // Cell (-4, -1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -229376: // Cell (-4, 0)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -229375: // Cell (-4, 1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -229374: // Cell (-4, 2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -229373: // Cell (-4, 3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case -229372: // Cell (-4, 4)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case -163845: // Cell (-3, -5)
@@ -5976,104 +5977,104 @@ public class Micro {
 
             case -163844: // Cell (-3, -4)
 
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[4] += 6; // SOUTH
                 return;
 
             case -163843: // Cell (-3, -3)
 
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[5] += 26; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163842: // Cell (-3, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[5] += 26; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163841: // Cell (-3, -1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[5] += 26; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163840: // Cell (-3, 0)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[5] += 26; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163839: // Cell (-3, 1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[5] += 26; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163838: // Cell (-3, 2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163837: // Cell (-3, 3)
 
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163836: // Cell (-3, 4)
 
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case -163835: // Cell (-3, 5)
@@ -6086,152 +6087,152 @@ public class Micro {
 
             case -98308: // Cell (-2, -4)
 
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case -98307: // Cell (-2, -3)
 
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                        scoresDanger[4] += 26; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 return;
 
             case -98306: // Cell (-2, -2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 5;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                        scoresDanger[4] += 26; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -98305: // Cell (-2, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 5;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 6;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                        scoresDanger[4] += 26; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -98304: // Cell (-2, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 6;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 5;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 7;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                        scoresDanger[4] += 26; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -98303: // Cell (-2, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 7;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 6;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                        scoresDanger[4] += 26; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -98302: // Cell (-2, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 7;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[7] += 28; // NORTHWEST
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -98301: // Cell (-2, 3)
 
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 return;
 
             case -98300: // Cell (-2, 4)
 
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case -98299: // Cell (-2, 5)
@@ -6249,167 +6250,167 @@ public class Micro {
             case -32771: // Cell (-1, -3)
 
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 return;
 
             case -32770: // Cell (-1, -2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 4;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 5;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 return;
 
             case -32769: // Cell (-1, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 4;
                     }
-                scoresDanger[6] += 14; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 19; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 6;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 5;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case -32768: // Cell (-1, 0)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 4;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 0;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 7;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 5;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 6;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case -32767: // Cell (-1, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 0;
                     }
-                scoresDanger[6] += 14; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 19; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 6;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 7;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case -32766: // Cell (-1, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 0;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 7;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 return;
 
             case -32765: // Cell (-1, 3)
 
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 return;
 
             case -32764: // Cell (-1, 4)
@@ -6436,191 +6437,191 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 3;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 4;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 5;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 return;
 
             case 32767: // Cell (0, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 3;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 2;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[5] += 19; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 6;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 5;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 4;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 32768: // Cell (0, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 2;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 3;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 1;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 0;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 7;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 6;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 5;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 4;
                     }
-                scoresDanger[0] += 14; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[0] += 19; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32769: // Cell (0, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 1;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 2;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 7;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 6;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[1] += 28; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 0;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 32770: // Cell (0, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 1;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 7;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 0;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case 32771: // Cell (0, 3)
@@ -6651,128 +6652,128 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 3;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 4;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 98303: // Cell (1, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 2;
                     }
-                scoresDanger[4] += 14; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[4] += 19; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 4;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 3;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98304: // Cell (1, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 1;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 0;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[3] += 19; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 4;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 3;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 2;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98305: // Cell (1, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 0;
                     }
-                scoresDanger[2] += 14; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[2] += 19; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 2;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 1;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98306: // Cell (1, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 0;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 1;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case 98307: // Cell (1, 3)
@@ -6803,83 +6804,83 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 3;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 163839: // Cell (2, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 2;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 3;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 return;
 
             case 163840: // Cell (2, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 1;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 2;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 3;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163841: // Cell (2, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 1;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 2;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163842: // Cell (2, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 1;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163843: // Cell (2, 3)
@@ -7015,31 +7016,31 @@ public class Micro {
         switch(enemyRelativeLoc.hashCode()){
             case -294915: // Cell (-5, -3)
 
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -294914: // Cell (-5, -2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -294913: // Cell (-5, -1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -294912: // Cell (-5, 0)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case -294911: // Cell (-5, 1)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case -294910: // Cell (-5, 2)
@@ -7052,47 +7053,47 @@ public class Micro {
 
             case -229380: // Cell (-4, -4)
 
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -229379: // Cell (-4, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 return;
 
             case -229378: // Cell (-4, -2)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -229377: // Cell (-4, -1)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -229376: // Cell (-4, 0)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -229375: // Cell (-4, 1)
 
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case -229374: // Cell (-4, 2)
@@ -7109,75 +7110,75 @@ public class Micro {
 
             case -163845: // Cell (-3, -5)
 
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -163844: // Cell (-3, -4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 return;
 
             case -163843: // Cell (-3, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[5] += 26; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163842: // Cell (-3, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                        scoresDanger[6] += 26; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[5] += 26; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163841: // Cell (-3, -1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[5] += 26; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163840: // Cell (-3, 0)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
+                        scoresDanger[6] += 26; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163839: // Cell (-3, 1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case -163838: // Cell (-3, 2)
@@ -7198,145 +7199,145 @@ public class Micro {
 
             case -98309: // Cell (-2, -5)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 return;
 
             case -98308: // Cell (-2, -4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -98307: // Cell (-2, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[4] += 26; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -98306: // Cell (-2, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                        scoresDanger[6] += 26; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 5;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                        scoresDanger[4] += 26; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -98305: // Cell (-2, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 5;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 6;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                        scoresDanger[4] += 26; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -98304: // Cell (-2, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 6;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 5;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 7;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[5] += 19; // SOUTHWEST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -98303: // Cell (-2, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 7;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 6;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[7] += 28; // NORTHWEST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 return;
 
             case -98302: // Cell (-2, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 7;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 return;
 
             case -98301: // Cell (-2, 3)
@@ -7353,190 +7354,190 @@ public class Micro {
 
             case -32773: // Cell (-1, -5)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case -32772: // Cell (-1, -4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -32771: // Cell (-1, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[3] += 26; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -32770: // Cell (-1, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                        scoresDanger[6] += 26; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 4;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 5;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                        scoresDanger[2] += 26; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -32769: // Cell (-1, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 4;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
-                scoresDanger[5] += 1; // SOUTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 6;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 5;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case -32768: // Cell (-1, 0)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 4;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 0;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 7;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
+                        scoresDanger[2] += 26; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 5;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 6;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case -32767: // Cell (-1, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 0;
                     }
-                scoresDanger[6] += 14; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 19; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 6;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 7;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32766: // Cell (-1, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 0;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 7;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case -32765: // Cell (-1, 3)
@@ -7553,229 +7554,229 @@ public class Micro {
 
             case 32763: // Cell (0, -5)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 32764: // Cell (0, -4)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32765: // Cell (0, -3)
 
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[3] += 26; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32766: // Cell (0, -2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 3;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 4;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 5;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                        scoresDanger[2] += 26; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 32767: // Cell (0, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 3;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 2;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[5] += 19; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 6;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 5;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 4;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 32768: // Cell (0, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 2;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 3;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 1;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 0;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 7;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 6;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 5;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 4;
                     }
-                scoresDanger[0] += 16; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[0] += 28; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32769: // Cell (0, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 1;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 2;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 7;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 6;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[1] += 28; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 0;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 32770: // Cell (0, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 1;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 7;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 0;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case 32771: // Cell (0, 3)
@@ -7792,154 +7793,154 @@ public class Micro {
 
             case 98299: // Cell (1, -5)
 
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 98300: // Cell (1, -4)
 
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 return;
 
             case 98301: // Cell (1, -3)
 
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                        scoresDanger[3] += 26; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 98302: // Cell (1, -2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 3;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 4;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                        scoresDanger[2] += 26; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 98303: // Cell (1, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 2;
                     }
-                scoresDanger[4] += 14; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[4] += 19; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 4;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 3;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98304: // Cell (1, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 1;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 0;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[3] += 19; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 4;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 3;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 2;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98305: // Cell (1, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 0;
                     }
-                scoresDanger[2] += 14; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[2] += 19; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 2;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 1;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98306: // Cell (1, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 0;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 1;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case 98307: // Cell (1, 3)
@@ -7970,83 +7971,83 @@ public class Micro {
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 3;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 return;
 
             case 163839: // Cell (2, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 2;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 3;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 return;
 
             case 163840: // Cell (2, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 1;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 2;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 3;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163841: // Cell (2, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 1;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 2;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163842: // Cell (2, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 1;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163843: // Cell (2, 3)
@@ -8210,17 +8211,17 @@ public class Micro {
 
             case -229380: // Cell (-4, -4)
 
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -229379: // Cell (-4, -3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 return;
 
             case -229378: // Cell (-4, -2)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 return;
 
             case -229377: // Cell (-4, -1)
@@ -8249,37 +8250,37 @@ public class Micro {
 
             case -163845: // Cell (-3, -5)
 
-                scoresDanger[5] += 1; // SOUTHWEST
+                scoresDanger[5] += 6; // SOUTHWEST
                 return;
 
             case -163844: // Cell (-3, -4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 return;
 
             case -163843: // Cell (-3, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[5] += 26; // SOUTHWEST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -163842: // Cell (-3, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
-                scoresDanger[0] += 1; // NORTH
+                        scoresDanger[6] += 26; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case -163841: // Cell (-3, -1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 return;
 
             case -163840: // Cell (-3, 0)
@@ -8308,124 +8309,124 @@ public class Micro {
 
             case -98309: // Cell (-2, -5)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
                 return;
 
             case -98308: // Cell (-2, -4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -98307: // Cell (-2, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[4] += 26; // SOUTH
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -98306: // Cell (-2, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                        scoresDanger[6] += 26; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 5;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                scoresDanger[5] += 28; // SOUTHWEST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -98305: // Cell (-2, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 5;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 6;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 return;
 
             case -98304: // Cell (-2, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 6;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 5;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 7;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 return;
 
             case -98303: // Cell (-2, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 7;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 6;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 return;
 
             case -98302: // Cell (-2, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 7;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 return;
 
             case -98301: // Cell (-2, 3)
@@ -8442,175 +8443,175 @@ public class Micro {
 
             case -32773: // Cell (-1, -5)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case -32772: // Cell (-1, -4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -32771: // Cell (-1, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[3] += 26; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case -32770: // Cell (-1, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                        scoresDanger[6] += 26; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 4;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 5;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                        scoresDanger[2] += 26; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case -32769: // Cell (-1, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 4;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 6;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 5;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case -32768: // Cell (-1, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 4;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 0;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 7;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 5;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 6;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32767: // Cell (-1, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 0;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 6;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 7;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case -32766: // Cell (-1, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 0;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 7;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case -32765: // Cell (-1, 3)
@@ -8627,238 +8628,238 @@ public class Micro {
 
             case 32763: // Cell (0, -5)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 32764: // Cell (0, -4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32765: // Cell (0, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[3] += 26; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 32766: // Cell (0, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                        scoresDanger[6] += 26; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 10){ // Max because we can attack only once
-                        scoresAttack[5] = 10;
+                    if(scoresAttack[5] < 14){ // Max because we can attack only once
+                        scoresAttack[5] = 14;
                         attackDirection[5] = 3;
                     }
-                scoresDanger[5] += 16; // SOUTHWEST
+                scoresDanger[5] += 28; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 4;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 5;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                        scoresDanger[2] += 26; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 32767: // Cell (0, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 10){ // Max because we can attack only once
-                        scoresAttack[6] = 10;
+                    if(scoresAttack[6] < 14){ // Max because we can attack only once
+                        scoresAttack[6] = 14;
                         attackDirection[6] = 3;
                     }
-                scoresDanger[6] += 16; // WEST
+                scoresDanger[6] += 28; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 2;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 6;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 5;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 4;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 32768: // Cell (0, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 2;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 10){ // Max because we can attack only once
-                        scoresAttack[7] = 10;
+                    if(scoresAttack[7] < 14){ // Max because we can attack only once
+                        scoresAttack[7] = 14;
                         attackDirection[7] = 3;
                     }
-                scoresDanger[7] += 16; // NORTHWEST
+                scoresDanger[7] += 28; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[5] < 20){ // Max because we can attack only once
-                        scoresAttack[5] = 20;
+                    if(scoresAttack[5] < 24){ // Max because we can attack only once
+                        scoresAttack[5] = 24;
                         attackDirection[5] = 1;
                     }
-                scoresDanger[5] += 14; // SOUTHWEST
+                scoresDanger[5] += 19; // SOUTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 0;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 7;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 6;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 5;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 4;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 return;
 
             case 32769: // Cell (0, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[6] < 20){ // Max because we can attack only once
-                        scoresAttack[6] = 20;
+                    if(scoresAttack[6] < 24){ // Max because we can attack only once
+                        scoresAttack[6] = 24;
                         attackDirection[6] = 1;
                     }
-                scoresDanger[6] += 14; // WEST
+                scoresDanger[6] += 19; // WEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 2;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 7;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 6;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 0;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 32770: // Cell (0, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[7] < 20){ // Max because we can attack only once
-                        scoresAttack[7] = 20;
+                    if(scoresAttack[7] < 24){ // Max because we can attack only once
+                        scoresAttack[7] = 24;
                         attackDirection[7] = 1;
                     }
-                scoresDanger[7] += 14; // NORTHWEST
+                scoresDanger[7] += 19; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 7;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 0;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case 32771: // Cell (0, 3)
@@ -8875,175 +8876,175 @@ public class Micro {
 
             case 98299: // Cell (1, -5)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 98300: // Cell (1, -4)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 98301: // Cell (1, -3)
 
-                scoresDanger[6] += 1; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[6] += 6; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[5] += 16; // SOUTHWEST
+                        scoresDanger[5] += 26; // SOUTHWEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[3] += 26; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 98302: // Cell (1, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[6] += 16; // WEST
-                scoresDanger[7] += 1; // NORTHWEST
+                        scoresDanger[6] += 26; // WEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 10){ // Max because we can attack only once
-                        scoresAttack[4] = 10;
+                    if(scoresAttack[4] < 14){ // Max because we can attack only once
+                        scoresAttack[4] = 14;
                         attackDirection[4] = 3;
                     }
-                scoresDanger[4] += 16; // SOUTH
+                scoresDanger[4] += 28; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 4;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                        scoresDanger[2] += 26; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 98303: // Cell (1, -1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[7] += 16; // NORTHWEST
+                        scoresDanger[7] += 26; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 2;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 4;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 10){ // Max because we can attack only once
-                        scoresAttack[8] = 10;
+                    if(scoresAttack[8] < 17){ // Max because we can attack only once
+                        scoresAttack[8] = 17;
                         attackDirection[8] = 3;
                     }
-                scoresDanger[8] += 16; // CENTER
+                scoresDanger[8] += 28; // CENTER
                 return;
 
             case 98304: // Cell (1, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[4] < 20){ // Max because we can attack only once
-                        scoresAttack[4] = 20;
+                    if(scoresAttack[4] < 24){ // Max because we can attack only once
+                        scoresAttack[4] = 24;
                         attackDirection[4] = 1;
                     }
-                scoresDanger[4] += 14; // SOUTH
+                scoresDanger[4] += 19; // SOUTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 0;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 4;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 10){ // Max because we can attack only once
-                        scoresAttack[0] = 10;
+                    if(scoresAttack[0] < 14){ // Max because we can attack only once
+                        scoresAttack[0] = 14;
                         attackDirection[0] = 3;
                     }
-                scoresDanger[0] += 16; // NORTH
+                scoresDanger[0] += 28; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 2;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98305: // Cell (1, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 0;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 2;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[8] < 20){ // Max because we can attack only once
-                        scoresAttack[8] = 20;
+                    if(scoresAttack[8] < 27){ // Max because we can attack only once
+                        scoresAttack[8] = 27;
                         attackDirection[8] = 1;
                     }
-                scoresDanger[8] += 14; // CENTER
+                scoresDanger[8] += 19; // CENTER
                 return;
 
             case 98306: // Cell (1, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 0;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[0] < 20){ // Max because we can attack only once
-                        scoresAttack[0] = 20;
+                    if(scoresAttack[0] < 24){ // Max because we can attack only once
+                        scoresAttack[0] = 24;
                         attackDirection[0] = 1;
                     }
-                scoresDanger[0] += 14; // NORTH
+                scoresDanger[0] += 19; // NORTH
                 return;
 
             case 98307: // Cell (1, 3)
@@ -9060,124 +9061,124 @@ public class Micro {
 
             case 163835: // Cell (2, -5)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 163836: // Cell (2, -4)
 
-                scoresDanger[5] += 1; // SOUTHWEST
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[8] += 1; // CENTER
+                scoresDanger[5] += 6; // SOUTHWEST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 163837: // Cell (2, -3)
 
-                scoresDanger[6] += 1; // WEST
+                scoresDanger[6] += 6; // WEST
                 // chebyshevDistance = 2
-                        scoresDanger[4] += 16; // SOUTH
+                        scoresDanger[4] += 26; // SOUTH
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[3] += 26; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 163838: // Cell (2, -2)
 
-                scoresDanger[7] += 1; // NORTHWEST
+                scoresDanger[7] += 6; // NORTHWEST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 10){ // Max because we can attack only once
-                        scoresAttack[3] = 10;
+                    if(scoresAttack[3] < 14){ // Max because we can attack only once
+                        scoresAttack[3] = 14;
                         attackDirection[3] = 3;
                     }
-                scoresDanger[3] += 16; // SOUTHEAST
+                scoresDanger[3] += 28; // SOUTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                        scoresDanger[2] += 26; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 // chebyshevDistance = 2
-                        scoresDanger[8] += 16; // CENTER
+                        scoresDanger[8] += 26; // CENTER
                 return;
 
             case 163839: // Cell (2, -1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 2;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 10){ // Max because we can attack only once
-                        scoresAttack[2] = 10;
+                    if(scoresAttack[2] < 14){ // Max because we can attack only once
+                        scoresAttack[2] = 14;
                         attackDirection[2] = 3;
                     }
-                scoresDanger[2] += 16; // EAST
+                scoresDanger[2] += 28; // EAST
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 // chebyshevDistance = 2
-                        scoresDanger[0] += 16; // NORTH
+                        scoresDanger[0] += 26; // NORTH
                 return;
 
             case 163840: // Cell (2, 0)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[3] < 20){ // Max because we can attack only once
-                        scoresAttack[3] = 20;
+                    if(scoresAttack[3] < 24){ // Max because we can attack only once
+                        scoresAttack[3] = 24;
                         attackDirection[3] = 1;
                     }
-                scoresDanger[3] += 14; // SOUTHEAST
+                scoresDanger[3] += 19; // SOUTHEAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 2;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 10){ // Max because we can attack only once
-                        scoresAttack[1] = 10;
+                    if(scoresAttack[1] < 14){ // Max because we can attack only once
+                        scoresAttack[1] = 14;
                         attackDirection[1] = 3;
                     }
-                scoresDanger[1] += 16; // NORTHEAST
+                scoresDanger[1] += 28; // NORTHEAST
                 return;
 
             case 163841: // Cell (2, 1)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[2] < 20){ // Max because we can attack only once
-                        scoresAttack[2] = 20;
+                    if(scoresAttack[2] < 24){ // Max because we can attack only once
+                        scoresAttack[2] = 24;
                         attackDirection[2] = 1;
                     }
-                scoresDanger[2] += 14; // EAST
+                scoresDanger[2] += 19; // EAST
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 2;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163842: // Cell (2, 2)
 
                 // chebyshevDistance = 1
                                                                 
-                    if(scoresAttack[1] < 20){ // Max because we can attack only once
-                        scoresAttack[1] = 20;
+                    if(scoresAttack[1] < 24){ // Max because we can attack only once
+                        scoresAttack[1] = 24;
                         attackDirection[1] = 1;
                     }
-                scoresDanger[1] += 14; // NORTHEAST
+                scoresDanger[1] += 19; // NORTHEAST
                 return;
 
             case 163843: // Cell (2, 3)
@@ -9194,37 +9195,37 @@ public class Micro {
 
             case 229371: // Cell (3, -5)
 
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 229372: // Cell (3, -4)
 
-                scoresDanger[4] += 1; // SOUTH
-                scoresDanger[3] += 1; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[4] += 6; // SOUTH
+                scoresDanger[3] += 6; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
                 return;
 
             case 229373: // Cell (3, -3)
 
                 // chebyshevDistance = 2
-                        scoresDanger[3] += 16; // SOUTHEAST
-                scoresDanger[2] += 1; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[8] += 1; // CENTER
+                        scoresDanger[3] += 26; // SOUTHEAST
+                scoresDanger[2] += 6; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[8] += 6; // CENTER
                 return;
 
             case 229374: // Cell (3, -2)
 
                 // chebyshevDistance = 2
-                        scoresDanger[2] += 16; // EAST
-                scoresDanger[1] += 1; // NORTHEAST
-                scoresDanger[0] += 1; // NORTH
+                        scoresDanger[2] += 26; // EAST
+                scoresDanger[1] += 6; // NORTHEAST
+                scoresDanger[0] += 6; // NORTH
                 return;
 
             case 229375: // Cell (3, -1)
 
                 // chebyshevDistance = 2
-                        scoresDanger[1] += 16; // NORTHEAST
+                        scoresDanger[1] += 26; // NORTHEAST
                 return;
 
             case 229376: // Cell (3, 0)
@@ -9253,17 +9254,17 @@ public class Micro {
 
             case 294908: // Cell (4, -4)
 
-                scoresDanger[3] += 1; // SOUTHEAST
+                scoresDanger[3] += 6; // SOUTHEAST
                 return;
 
             case 294909: // Cell (4, -3)
 
-                scoresDanger[2] += 1; // EAST
+                scoresDanger[2] += 6; // EAST
                 return;
 
             case 294910: // Cell (4, -2)
 
-                scoresDanger[1] += 1; // NORTHEAST
+                scoresDanger[1] += 6; // NORTHEAST
                 return;
 
             case 294911: // Cell (4, -1)

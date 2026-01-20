@@ -34,10 +34,15 @@ public class AvoidCat extends State {
             if (distance < safetyDist) {
 
                 long level = 4 - (distance * 4) / safetyDist; // Level 4 is when very cloose of cat
-                scores[dir.ordinal()] = - level * 100_000; // High score when close to cat
+                scores[dir.ordinal()] = - level; // High score when close to cat
             }
         }
-        PathFinding.addScoresWithoutNormalization(scores);
+
+        int coefBase = rc.isCooperation() ? 10 : 50;
+        if(isKing){
+            coefBase *= 2;
+        }
+        PathFinding.addScoresWithNormalization(scores, coefBase);
         
         return new Result(OK, "Add scores to avoid cat");
     }

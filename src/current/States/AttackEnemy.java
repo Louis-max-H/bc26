@@ -1,6 +1,7 @@
 package current.States;
 
 import battlecode.common.*;
+import current.Params;
 import current.Robots.Robot;
 import current.Utils.*;
 
@@ -52,7 +53,7 @@ public class AttackEnemy extends State {
         long mixedScore[] = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0}; // Mix of attack and danger
 
         // Calculate scores : Score = attack * coefAttack - danger
-        int coefAttack = 10;
+        int coefAttack = Params.aggresivity[gamePhase];
         if(rc.isActionReady()) {
 
             // Compute score only if can move
@@ -93,7 +94,7 @@ public class AttackEnemy extends State {
         Direction bestDir = Tools.bestDirOfLong9(mixedScore);
 
         if(mixedScore[bestDir.ordinal()] == 0){
-            PathFinding.moveDir(bestDir);
+            PathFinding.smartMoveTo(nearestEnemyRat);
             return new Result(LOCK, "Mixed attack score is zero, I am too far or can't move");
             // TODO: Add cooldown, if can"t attack 5 turn, exit mode
         }

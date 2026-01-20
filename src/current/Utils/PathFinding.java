@@ -4,15 +4,19 @@ import battlecode.common.*;
 import current.Robots.Robot;
 import current.States.Result;
 
+import java.util.Random;
+
 import static current.States.Code.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class PathFinding {
-    static long scores[]; // Contain score for each direction
-
+    public static long scores[]; // Contain score for each direction
+    public static long SCORE_BASIS = 100_000;
     //////////////////////////////////// public functions //////////////////////////////////////////////////////////////
     /// All functions you may need
+
+    public static int numberMove = 0;
 
     public static void resetScores(){
         // Default score of 1 everywhere
@@ -24,27 +28,33 @@ public class PathFinding {
         RobotController rc = Robot.rc;
         MapLocation myLoc = Robot.rc.getLocation();
 
+        // TODO: Consider we can always dig
         // Check if we can dig
-        if(rc.getActionCooldownTurns() > 0 || rc.getAllCheese() < GameConstants.DIG_DIRT_CHEESE_COST){
-            digEnable = false;
-        }
+        // if(rc.getGlobalCheese() < GameConstants.DIG_DIRT_CHEESE_COST){
+        //    digEnable = false;
+        // }
 
-        // Without dig : King, no action, or not enough cheese to mine
-        if(Robot.isKing || !digEnable){
-            for(Direction dir: Direction.values()){
-                if(!rc.canMove(dir)){
+
+        // Check all direction
+        for(Direction dir : Direction.values()){
+            MapLocation loc = myLoc.add(dir);
+
+            if(!rc.canMove(dir)) {
+
+                // If we have a wall, can't dig
+                if (BugNavLmx.mapCosts[loc.x + loc.y * 60] == BugNavLmx.SCORE_CELL_WALL) {
+                    scores[dir.ordinal()] = 0;
+
+                // Dirt
+                } else if (BugNavLmx.mapCosts[loc.x + loc.y * 60] == BugNavLmx.SCORE_CELL_IF_DIG) {
+                    if(!digEnable) {
+                        scores[dir.ordinal()] = 0;
+                    }
+
+                // Other (units)
+                } else {
                     scores[dir.ordinal()] = 0;
                 }
-            }
-            return;
-        }
-
-        // Check if we can move or dig
-        for(Direction dir : Direction.values()){
-            // If we have a wall, can't dig
-            MapLocation loc = myLoc.add(dir);
-            if(BugNavLmx.mapCosts[loc.x + loc.y * 60] == BugNavLmx.SCORE_CELL_WALL) {
-                scores[dir.ordinal()] = 0;
             }
         }
     }
@@ -91,11 +101,13 @@ public class PathFinding {
             max(1000, min(Clock.getBytecodesLeft() - 1000, 6000)) // Number bytecode used
         );
 
+        // Fallback to Chenyx512 if failed
         if(bugNavDir == null || bugNavDir == Direction.CENTER){
             System.out.println("BugNavLmx return null or center, trying BugNavChenyx512");
             bugNavDir = BugNavChenyx512.bugNavGetMoveDir(loc);
         }
 
+        // Fallback to direction if still fail
         if (bugNavDir == null) {
             System.out.println("BugNavChenyx512 return null, taking direct direction");
             bugNavDir = Robot.myLoc.directionTo(loc);
@@ -120,12 +132,16 @@ public class PathFinding {
 
         // If dirt, turn to the direction and remove dirt
         int xy = locMove.x + 60 * locMove.y;
-        if(VisionUtils.scores[xy] == BugNavLmx.SCORE_CELL_IF_DIG){
-            if(rc.canTurn()){
-                rc.turn(dir);
+        Robot.print("Score at loc is " + (int)BugNavLmx.mapCosts[xy]);
+        if(BugNavLmx.mapCosts[xy] == BugNavLmx.SCORE_CELL_IF_DIG){
+            Robot.print("Try diging dirt at " + locMove);
+
+            VisionUtils.smartLookAt(locMove);
+            if(rc.canRemoveDirt(locMove)){
+                Robot.print("Dirt removed ! ");
                 rc.removeDirt(locMove);
             }else{
-                return new Result(WARN, "Need to see " + dir + " to remove dirt and move to this cell");
+                Robot.print("Can't :'( ");
             }
         }
 
@@ -133,6 +149,13 @@ public class PathFinding {
     }
 
     public static Result move(Direction dir) throws GameActionException {
+        numberMove++;
+        if(Robot.moveRandom && numberMove % 15 == 0){
+            // use math random to get a random direction
+            int randomDir = (int) (Math.random() * 8);
+            dir = Direction.values()[randomDir];
+        }
+
         if(Robot.rc.canMove(dir)){
             Robot.lastLocation = Robot.myLoc;
             Robot.lastDirection = dir;
