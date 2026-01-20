@@ -34,7 +34,6 @@ public class Robot {
     public static MapLocation nearestEnemyKing;
     public static MapLocation nearestMine;
     public static MapLocation nearestDirt;
-    public static MapLocation nearestWater;
     public static MapLocation nearestCheese;
 
     // Nearest ID, ID are mod 4096
