@@ -23,7 +23,20 @@ public class Params {
     public static int PARAMS_MAX_RATS_MAP_LARGE = 15; // [15, 60]
     public static int maxRats;
 
+    // Not tested since we haven't prefix P A R A M S
+    public static int MAX_CHEESE_MAP_SMALL = 35; // [15, 40]
+    public static int MAX_CHEESE_MAP_MEDIUM = 40; // [15, 60]
+    public static int MAX_CHEESE_MAP_LARGE = 45; // [15, 60]
+    public static int maxCheese;
+
     public static void init(){
+        maxCheese = switch (Robot.mapType){
+            case 0 -> MAX_CHEESE_MAP_SMALL;
+            case 1 -> MAX_CHEESE_MAP_MEDIUM;
+            case 2 -> MAX_CHEESE_MAP_LARGE;
+            default -> throw new IllegalStateException("Unexpected value: MAP_type " + Robot.mapType);
+        };
+
         maxRats = switch (Robot.mapType){
             case 0 -> PARAMS_MAX_RATS_MAP_SMALL;
             case 1 -> PARAMS_MAX_RATS_MAP_MEDIUM;

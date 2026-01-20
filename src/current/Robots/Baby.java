@@ -2,6 +2,7 @@ package current.Robots;
 
 import battlecode.common.GameActionException;
 import battlecode.common.*;
+import current.Params;
 import current.States.*;
 
 public class Baby extends Robot {
@@ -28,7 +29,7 @@ public class Baby extends Robot {
         currentState = switch (currentState.name) {
             case "Init" -> avoidCat;
             case "AvoidCat" -> {
-                if(rc.getRawCheese() > 30) {
+                if(rc.getRawCheese() > Params.maxCheese) {
                     yield cheeseToKing;
                 }else {
                     yield attackEnemy;
