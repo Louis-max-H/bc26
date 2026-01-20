@@ -29,45 +29,6 @@ git clone https://github.com/FreGeh/battlecode-26 src
 
 ## Configure java
 
-**Sur Arch Linux (local) :**
-```bash
-sudo pacman -Sy java-21-openjdk
-sudo archlinux-java set java-21-openjdk
-```
-
-**Sur un serveur SLURM :**
-
-1. Rechercher les modules Java disponibles :
-```bash
-module avail java
-module avail openjdk
-```
-
-2. Charger Java 21 (choisir selon les modules disponibles) :
-```bash
-# Option 1 (la plus commune)
-module load openjdk/21
-
-# Option 2 (selon le cluster)
-module load java/21
-
-# Option 3 (si openjdk charge automatiquement la version 21)
-module load openjdk
-```
-
-3. Vérifier la version :
-```bash
-java -version  # devrait afficher "openjdk version "21.x.x"
-```
-
-4. Rendre permanent (ajouter à votre `~/.bashrc` ou `~/.zshrc`) :
-```bash
-echo "module load openjdk/21" >> ~/.bashrc
-source ~/.bashrc
-```
-
-**Note :** Le nom exact du module dépend de votre cluster. Utilisez `module avail` pour voir les options disponibles.
-
 
 ## Utils
 **Copy bot**
@@ -107,13 +68,44 @@ Options:
 - `--output-dir DIR`: Output directory for results (default: BC26/grasp)
 - `--maps MAP1,MAP2`: Comma-separated list of maps to test (if not specified, uses all maps from maps/ folder)
 
-## GRASP Optimization
+## Parameter Optimization
+
+### Simple Coordinate Descent (Recommended for beginners)
+
+Optimize parameters one at a time - simple and easy to understand:
+
+```bash
+python3 src/simple_optimizer.py \
+    --template example_configs/template_example.json \
+    --base-config example_configs/base_example.json \
+    --maps DefaultSmall,DefaultMedium
+```
+
+**How it works:**
+1. For each parameter:
+   - Test 3 values (lower, current, higher)
+   - Compare these 3 bots
+   - Keep the best one
+2. Repeat until convergence
+
+**Features:**
+- ✅ Simple and easy to understand
+- 📊 Clear progress tracking
+- 💾 JSON results (easy to parse and reuse)
+- 🎯 Automatic convergence detection
+- 📈 Full history of all evaluations
+
+**Results:** Best configuration saved in `BC26/simple_optimizer/best_config.json`
+
+**See `SIMPLE_OPTIMIZER.md` for detailed documentation.**
+
+### GRASP Optimization (Advanced)
 
 Optimize bot parameters using GRASP (Greedy Randomized Adaptive Search Procedure).
 
 **Local execution:**
 ```bash
-python3 src/grasp_parallel.py --template example_config.json --base-config example_config.json --iterations 5 --batch-size 2 --maps DefaultSmall,DefaultMedium
+python3 src/grasp_parallel.py --template example_config.json --base-config example_config.json --iterations 15 --batch-size 2 --maps DefaultSmall,DefaultMedium
 ```
 
 Template : Domaine que l'on veut tester
