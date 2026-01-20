@@ -39,7 +39,7 @@ class DiscordNotifier:
     """Send notifications to Discord webhook."""
     
     def __init__(self, webhook_url: str):
-        self.webhook_url = "https://discord.com/api/webhooks/1463193559975985427/ZlEjhoDOyo54etCf5J_DfwXg7JbfcuuBjpmsu5lLuwPi0u9veO3M-vivujSI2GW-JZO6"
+        self.webhook_url = webhook_url
         self.last_message_time = time.time()
         self.min_time_between_messages = 600  # 10 minutes
     
@@ -890,6 +890,30 @@ def main():
     
     with open(base_config_path, 'r') as f:
         base_config = json.load(f)
+    
+    # Send webhook notification that script has started
+    if args.discord_webhook:
+        try:
+            webhook_url = "https://discord.com/api/webhooks/1463193559975985427/ZlEjhoDOyo54etCf5J_DfwXg7JbfcuuBjpmsu5lLuwPi0u9veO3M-vivujSI2GW-JZO6"
+            message = {
+                "content": (
+                    f"🚀 **Script démarré**\n"
+                    f"**Source:** {args.source}\n"
+                    f"**Threads:** {args.threads}\n"
+                    f"**Max iterations:** {args.max_iterations}\n"
+                    f"**Maps:** {args.maps or 'all'}\n"
+                    f"**Paramètres:** {len(template_config)}\n"
+                    f"**Skip eval:** {args.skip_eval}"
+                ),
+                "username": "BC26 Optimizer"
+            }
+            response = requests.post(webhook_url, json=message)
+            if response.status_code in [200, 204]:
+                print("📨 Notification Discord envoyée : script démarré\n")
+            else:
+                print(f"⚠️  Échec de l'envoi Discord : {response.status_code}\n")
+        except Exception as e:
+            print(f"⚠️  Erreur Discord : {e}\n")
     
     # Find project root
     script_dir = Path(__file__).parent

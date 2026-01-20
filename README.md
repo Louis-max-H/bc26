@@ -71,13 +71,14 @@ Options:
 ## Parameter Optimization
 
 ```bash
-python3 simple_optimizer.py \
+python3 simple_optimizer.py 
   --template configs/template_config.json \
   --base-config configs/base_config.json \
   --source current \
   --max-iterations 10 \
-  --threads 1 \
-  --skip-eval
+  --threads 8 \
+  --skip-eval --discord-webhook https://discord.com/api/webhooks/1463193559975985427/ZlEjhoDOyo54etCf5J_DfwXg7JbfcuuBjpmsu5lLuwPi0u9veO3M-vivujSI2GW-JZO6
+
 ```
 Template: Espace de recherche
 base config: Meilleur config
