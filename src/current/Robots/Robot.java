@@ -1,7 +1,6 @@
 package current.Robots;
 
 import battlecode.common.*;
-import current.Params;
 import current.States.*;
 import current.Utils.MapLocations;
 import current.Utils.MapLocationsWithId;
@@ -24,8 +23,8 @@ public class Robot {
     public static int round;
 
     // Meta variables
-    public static boolean moveRandom = true; // Move random direction each 10 moves
-    public static boolean competitiveMode = false;
+    public static boolean moveRandom = false; // Move random direction each 10 moves
+    public static boolean competitiveMode = true;
 
     // Nearest locations
     public static MapLocation nearestCat;
@@ -120,7 +119,7 @@ public class Robot {
 
         // Playing
         while (true) {
-            if(!competitiveMode && round > 300) {
+            if(!competitiveMode && round > 400) {
                 rc.resign();
             }
 
