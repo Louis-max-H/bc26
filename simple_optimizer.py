@@ -10,6 +10,14 @@ This optimizer:
 5. Repeats until convergence or max iterations
 """
 
+map_by_size = {
+  "MAP_SMALL": [ "DefaultSmall", "arrows", "cheesefarm", "dirtfulcat", "evileye", "starvation"],
+  "MAP_MEDIUM": [ "DefaultMedium", "Meow", "ZeroDay", "pipes", "popthecork", "rift", "sittingducks", "thunderdome"],
+  "MAP_LARGE": [ "DefaultLarge", "Nofreecheese", "cheeseguardians", "dirtpassageway", "keepout", "trapped", "wallsofparadis"],
+  "ALL": [ "DefaultLarge", "DefaultMedium", "DefaultSmall", "Meow", "Nofreecheese", "ZeroDay", "arrows", "cheesefarm", "cheeseguardians", "dirtfulcat", "dirtpassageway", "evileye", "keepout", "pipes", "popthecork", "rift", "sittingducks", "starvation", "thunderdome", "trapped", "wallsofparadis"]
+}
+
+
 import argparse
 import json
 import subprocess
@@ -21,6 +29,7 @@ from datetime import datetime
 from typing import Dict, List, Tuple, Any
 from tqdm import tqdm
 from multiprocessing.pool import ThreadPool
+import threading
 
 
 class ProgressTracker:
@@ -100,6 +109,9 @@ class ProgressTracker:
 class SimpleOptimizer:
     """Simple coordinate descent optimizer."""
     
+    # Verrou global pour sérialiser les appels Gradle
+    _gradle_lock = threading.Lock()
+    
     def __init__(
         self,
         template_config: Dict,
@@ -108,7 +120,8 @@ class SimpleOptimizer:
         output_dir: Path,
         source: str = "current",
         maps: str = None,
-        threads: int = 1
+        threads: int = 1,
+        skip_eval: bool = False
     ):
         self.template_config = template_config
         self.base_config = base_config
@@ -117,18 +130,37 @@ class SimpleOptimizer:
         self.source = source
         self.maps = maps
         self.threads = threads
+        self.skip_eval = skip_eval
         
         self.tracker = ProgressTracker(output_dir)
         
-        # Initialize current config with middle values
-        self.current_config = {}
-        for param_name, param_data in template_config.items():
-            mid_value = (param_data['min'] + param_data['max']) // 2
-            self.current_config[param_name] = {
-                'value': mid_value,
-                'min': param_data['min'],
-                'max': param_data['max']
-            }
+        # Initialize current config
+        if skip_eval:
+            # Use base_config values directly
+            self.current_config = {}
+            for param_name, param_data in template_config.items():
+                if param_name in base_config:
+                    # Use value from base_config if available
+                    base_value = base_config[param_name]['value']
+                else:
+                    # Fallback to middle value if not in base_config
+                    base_value = (param_data['min'] + param_data['max']) // 2
+                
+                self.current_config[param_name] = {
+                    'value': base_value,
+                    'min': param_data['min'],
+                    'max': param_data['max']
+                }
+        else:
+            # Initialize with middle values
+            self.current_config = {}
+            for param_name, param_data in template_config.items():
+                mid_value = (param_data['min'] + param_data['max']) // 2
+                self.current_config[param_name] = {
+                    'value': mid_value,
+                    'min': param_data['min'],
+                    'max': param_data['max']
+                }
     
     def create_bot_with_config(self, config: Dict) -> Tuple[str, Path]:
         """
@@ -191,36 +223,144 @@ class SimpleOptimizer:
         if config_path.exists():
             config_path.unlink()
     
-    def compare_bots(self, bot_a: str, bot_b: str) -> float:
+    def get_maps_for_config(self, config: Dict) -> List[str]:
         """
-        Compare two bots and return win rate for bot_a.
-        Returns win rate as percentage (0-100).
+        Determine which maps to use based on the configuration parameters.
+        If MAP_SMALL, MAP_MEDIUM, or MAP_LARGE are in the config, use only those maps.
+        Otherwise, use all maps or the maps specified in self.maps.
         """
-        cmd = [
-            "python3",
-            str(self.project_root / "src" / "compare_bots.py"),
-            bot_a,
-            bot_b,
-            "--json"
-        ]
-        
         if self.maps:
-            cmd.extend(["--maps", self.maps])
+            # User explicitly specified maps
+            return [m.strip() for m in self.maps.split(',')]
         
-        result = subprocess.run(
-            cmd,
-            cwd=str(self.project_root),
-            capture_output=True,
-            text=True,
-            timeout=3600
-        )
+        # Check if config contains map size parameters
+        map_types = []
+        for param_name in config.keys():
+            if "MAP_SMALL" in param_name:
+                map_types.append("MAP_SMALL")
+            if "MAP_MEDIUM" in param_name:
+                map_types.append("MAP_MEDIUM")
+            if "MAP_LARGE" in param_name:
+                map_types.append("MAP_LARGE")
+        
+        # Remove duplicates
+        map_types = list(set(map_types))
+        
+        if map_types:
+            # Use only the maps corresponding to the types found
+            maps = []
+            for map_type in map_types:
+                maps.extend(map_by_size[map_type])
+            return list(set(maps))  # Remove duplicates
+        else:
+            # Use all maps
+            return map_by_size["ALL"]
+    
+    def run_single_match(self, bot_a: str, bot_b: str, map_name: str, reverse: bool) -> bool:
+        """
+        Run a single match between two bots on a specific map.
+        Returns True if bot_a wins, False otherwise.
+        """
+        player1 = bot_a if not reverse else bot_b
+        player2 = bot_b if not reverse else bot_a
+        
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        replay_name = f"matches/opt-{timestamp}-{player1}-vs-{player2}-on-{map_name}.bc26"
+        
+        direction = "reverse" if reverse else "normal"
+        print(f"      🎮 Démarrage match: {map_name} ({direction}) - {player1} vs {player2}", flush=True)
+        
+        # Utiliser le verrou pour sérialiser les appels Gradle et éviter les conflits de build
+        with self._gradle_lock:
+            result = subprocess.run(
+                [
+                    str(self.project_root / "gradlew"),
+                    "run",
+                    f"-PteamA={player1}",
+                    f"-PteamB={player2}",
+                    f"-Pmaps={map_name}",
+                    "-PlanguageA=java",
+                    "-PlanguageB=java",
+                    f"-Preplay={replay_name}",
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                cwd=str(self.project_root)
+            )
         
         if result.returncode != 0:
-            raise RuntimeError(f"Failed to compare bots: {result.stderr}")
+            stdout = result.stdout.decode("utf-8")
+            raise RuntimeError(f"Match failed: {player1} vs {player2} on {map_name}\n{stdout}")
         
-        # Parse JSON output
-        data = json.loads(result.stdout)
-        return data['player1_stats']['win_rate']
+        stdout = result.stdout.decode("utf-8")
+        lines = stdout.splitlines()
+        
+        # Find winner
+        winner_line = next((line for line in lines if ") wins (" in line), None)
+        if not winner_line:
+            raise RuntimeError(f"Could not find winner in match output")
+        
+        player1_wins = "(A)" in winner_line
+        
+        # Find win condition
+        win_condition_line = next((line for line in lines if line.startswith("[server] Reason: ")), None)
+        win_condition = "Unknown"
+        if win_condition_line:
+            win_condition = win_condition_line.split(": ", 1)[1]
+            # Shorten win condition
+            win_condition = {
+                "The winning team destroyed all of the enemy team's rat kings.": "Kings",
+                "The winning team won arbitrarily (coin flip).": "Coin",
+                "Other team has resigned. ": "Resignation",
+            }.get(win_condition, win_condition)
+        
+        winner = player1 if player1_wins else player2
+        print(f"      ✅ Match terminé: {map_name} ({direction}) - Vainqueur: {winner} ({win_condition})", flush=True)
+        
+        # Return True if bot_a won (taking into account reverse)
+        if not reverse:
+            return player1_wins
+        else:
+            return not player1_wins
+    
+    def compare_bots(self, bot_a: str, bot_b: str, config: Dict) -> float:
+        """
+        Compare two bots and return win rate for bot_a.
+        Runs matches in both directions (A vs B and B vs A) for each map.
+        Returns win rate as percentage (0-100).
+        """
+        maps = self.get_maps_for_config(config)
+        
+        print(f"   📍 Comparaison sur {len(maps)} carte(s): {', '.join(maps[:3])}{' ...' if len(maps) > 3 else ''}")
+        
+        # Generate all match triplets (map, bot_a, bot_b) with both directions
+        match_tasks = []
+        for map_name in maps:
+            for reverse in [False, True]:
+                match_tasks.append((bot_a, bot_b, map_name, reverse))
+        
+        total_matches = len(match_tasks)
+        wins = 0
+        
+        # Run matches in parallel using thread pool
+        if self.threads > 1:
+            with ThreadPool(self.threads) as pool:
+                # Use imap_unordered to get results as soon as they're ready
+                results_iter = pool.starmap(self.run_single_match, match_tasks)
+                for bot_a_wins in results_iter:
+                    if bot_a_wins:
+                        wins += 1
+        else:
+            # Sequential execution
+            for bot_a, bot_b, map_name, reverse in match_tasks:
+                bot_a_wins = self.run_single_match(bot_a, bot_b, map_name, reverse)
+                if bot_a_wins:
+                    wins += 1
+        
+        win_rate = (wins / total_matches * 100) if total_matches > 0 else 0
+        print(f"   📊 Résultat: {wins}/{total_matches} victoires ({win_rate:.2f}%)")
+        
+        return win_rate
     
     def evaluate_config(self, config: Dict) -> float:
         """
@@ -239,7 +379,7 @@ class SimpleOptimizer:
             
             try:
                 # Compare bots
-                score = self.compare_bots(bot_id, base_bot_id)
+                score = self.compare_bots(bot_id, base_bot_id, config)
                 return score
             finally:
                 # Clean up base bot
@@ -303,48 +443,88 @@ class SimpleOptimizer:
         print(f"   Testing values: {test_values}")
         print(f"   Using {self.threads} thread(s)")
         
-        # Function to evaluate a single value
-        def evaluate_value(value):
-            # Create test config
-            test_config = self.current_config.copy()
-            test_config[param_name] = {
-                'value': value,
-                'min': param_min,
-                'max': param_max
-            }
-            
-            # Evaluate
-            score = self.evaluate_config(test_config)
-            return (value, score, test_config)
+        # Step 1: Create all bot variations for testing
+        print(f"   🔧 Création de {len(test_values)} variations de bot...")
+        bot_variations = []  # List of (value, bot_id, config_path, test_config)
         
-        # Evaluate each value (parallel or sequential based on threads)
-        results = []
-        if self.threads > 1:
-            # Parallel evaluation
-            with ThreadPool(self.threads) as pool:
-                pbar = tqdm(total=len(test_values), desc=f"   Testing {param_name}", unit="value", leave=False)
-                for result in pool.imap(evaluate_value, test_values):
-                    value, score, test_config = result
-                    results.append(result)
-                    pbar.set_postfix_str(f"value={value}, score={score:.2f}%")
-                    pbar.update(1)
-                    
-                    # Log evaluation
-                    self.tracker.log_evaluation(param_name, value, score, test_config)
+        try:
+            for value in test_values:
+                # Create test config
+                test_config = self.current_config.copy()
+                test_config[param_name] = {
+                    'value': value,
+                    'min': param_min,
+                    'max': param_max
+                }
+                
+                # Create bot with this config
+                bot_id, config_path = self.create_bot_with_config(test_config)
+                bot_variations.append((value, bot_id, config_path, test_config))
+                print(f"      ✅ Bot créé pour {param_name}={value}: {bot_id}")
+            
+            # Create base bot (opponent)
+            base_bot_id, base_config_path = self.create_bot_with_config(self.base_config)
+            print(f"      ✅ Bot de référence créé: {base_bot_id}")
+            
+            # Step 2: Generate all match triplets (map, bot_variation, base_bot)
+            maps = self.get_maps_for_config(self.current_config)
+            print(f"   🗺️  Génération des triplets pour {len(maps)} carte(s)...")
+            
+            match_tasks = []  # List of (value, bot_id, base_bot_id, map_name, reverse)
+            for value, bot_id, _, _ in bot_variations:
+                for map_name in maps:
+                    for reverse in [False, True]:
+                        match_tasks.append((value, bot_id, base_bot_id, map_name, reverse))
+            
+            total_matches = len(match_tasks)
+            print(f"   🎮 Total de {total_matches} matchs à lancer reverse * nMaps *nBots = 2 * {len(maps)} * {len(bot_variations)} = {total_matches}")
+            
+            # Step 3: Run all matches in parallel using thread pool
+            # Function to run a single match and return result with value
+            def run_match_with_value(args):
+                value, bot_id, base_bot_id, map_name, reverse = args
+                bot_wins = self.run_single_match(bot_id, base_bot_id, map_name, reverse)
+                return (value, bot_wins)
+            
+            # Results dictionary: value -> list of wins (True/False)
+            results_by_value = {value: [] for value, _, _, _ in bot_variations}
+            
+            if self.threads > 1:
+                # Parallel execution
+                with ThreadPool(self.threads) as pool:
+                    pbar = tqdm(total=total_matches, desc=f"   Matchs en cours", unit="match", leave=False)
+                    for value, bot_wins in pool.imap_unordered(run_match_with_value, match_tasks):
+                        results_by_value[value].append(bot_wins)
+                        pbar.update(1)
+                    pbar.close()
+            else:
+                # Sequential execution
+                pbar = tqdm(match_tasks, desc=f"   Matchs en cours", unit="match", leave=False)
+                for args in pbar:
+                    value, bot_wins = run_match_with_value(args)
+                    results_by_value[value].append(bot_wins)
                 pbar.close()
-        else:
-            # Sequential evaluation (original behavior)
-            pbar = tqdm(test_values, desc=f"   Testing {param_name}", unit="value", leave=False)
-            for value in pbar:
-                pbar.set_postfix_str(f"value={value}")
-                result = evaluate_value(value)
-                value, score, test_config = result
-                results.append(result)
-                pbar.set_postfix_str(f"value={value}, score={score:.2f}%")
+            
+            # Step 4: Aggregate results for each variation
+            print(f"   📊 Agrégation des résultats...")
+            results = []
+            for value, bot_id, config_path, test_config in bot_variations:
+                wins = sum(results_by_value[value])
+                total = len(results_by_value[value])
+                score = (wins / total * 100) if total > 0 else 0
+                results.append((value, score, test_config))
+                print(f"      {param_name}={value}: {wins}/{total} victoires ({score:.2f}%)")
                 
                 # Log evaluation
                 self.tracker.log_evaluation(param_name, value, score, test_config)
-            pbar.close()
+            
+        finally:
+            # Cleanup all bots
+            print(f"   🧹 Nettoyage des bots temporaires...")
+            for value, bot_id, config_path, _ in bot_variations:
+                self.cleanup_bot(bot_id, config_path)
+            if 'base_bot_id' in locals():
+                self.cleanup_bot(base_bot_id, base_config_path)
         
         # Find best result
         best_value, best_score, best_config = max(results, key=lambda x: x[1])
@@ -380,13 +560,19 @@ class SimpleOptimizer:
         print(f"Source: {self.source}")
         print(f"Maps: {self.maps or 'all'}")
         print(f"Threads: {self.threads}")
+        print(f"Skip initial evaluation: {self.skip_eval}")
         print(f"Output directory: {self.output_dir}")
         print(f"{'='*80}\n")
         
         # Evaluate initial configuration
-        print("📊 Evaluating initial configuration...")
-        initial_score = self.evaluate_config(self.current_config)
-        print(f"Initial score: {initial_score:.2f}%\n")
+        if self.skip_eval:
+            print("⏩ Skipping initial evaluation (using base-config values)...")
+            print(f"Starting configuration: {self.current_config}\n")
+            initial_score = 50.0  # Neutral score
+        else:
+            print("📊 Evaluating initial configuration...")
+            initial_score = self.evaluate_config(self.current_config)
+            print(f"Initial score: {initial_score:.2f}%\n")
         
         self.tracker.best_score = initial_score
         self.tracker.best_config = self.current_config.copy()
@@ -496,6 +682,12 @@ def main():
         help="Number of threads to use for parallel evaluation (default: 1)"
     )
     
+    parser.add_argument(
+        "--skip-eval",
+        action="store_true",
+        help="Skip initial configuration evaluation and use base-config values directly"
+    )
+    
     args = parser.parse_args()
     
     # Load configurations
@@ -530,7 +722,8 @@ def main():
         output_dir=output_dir,
         source=args.source,
         maps=args.maps,
-        threads=args.threads
+        threads=args.threads,
+        skip_eval=args.skip_eval
     )
     
     optimizer.run(max_iterations=args.max_iterations)

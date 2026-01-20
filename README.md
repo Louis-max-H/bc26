@@ -24,7 +24,7 @@ sudo archlinux-java set java-21-openjdk
 You may now want to use our bots
 ```bash
 git clone https://github.com/FreGeh/battlecode-26 src
-./gradlew run -Pmaps=DefaultMedium -PteamA=v00_demo -PteamB=v00_demo -PlanguageA=java -PlanguageB=java
+./gradlew run -Pmaps=DefaultMedium -PteamA=current -PteamB=current -PlanguageA=java -PlanguageB=java
 ```
 
 ## Configure java
@@ -48,7 +48,7 @@ python3 src/params.py current --import params.json     # Load params.json into P
 python3 src/jinja.py src/current --prod --params params.json     # Use params for configuration of jinja
 ```
 
-## Compare bots
+## Compare configs
 ```bash
 python3 src/compare_configs.py --paramsTeamA config_a.json --paramsTeamB config_b.json --maps DefaultSmall,DefaultMedium
 ```
@@ -70,19 +70,27 @@ Options:
 
 ## Parameter Optimization
 
-### Simple Coordinate Descent (Recommended for beginners)
-
-Optimize parameters one at a time - simple and easy to understand:
-
 ```bash
 python3 simple_optimizer.py \
-    --template configs/template_config.json \
-    --base-config configs/base_config.json \
-    --source current \
-    --output-dir logs/my_optimization \
-    --max-iterations 50 \
-    --threads 3
+  --template configs/template_config.json \
+  --base-config configs/base_config.json \
+  --source current \
+  --max-iterations 10 \
+  --threads 1 \
+  --skip-eval
 ```
+Template: Espace de recherche
+base config: Meilleur config
+
+**Options:**
+- `--template`: Fichier JSON définissant l'espace de recherche (min/max pour chaque paramètre)
+- `--base-config`: Fichier JSON avec la meilleure configuration connue (utilisée comme adversaire et point de départ avec --skip-eval)
+- `--source`: Dossier du bot source à copier (défaut: current)
+- `--max-iterations`: Nombre maximum d'itérations (défaut: 100)
+- `--threads`: Nombre de threads pour évaluation parallèle (défaut: 1)
+- `--skip-eval`: Ignore l'évaluation de la configuration initiale et utilise directement les valeurs de base-config.json
+- `--maps`: Liste de cartes séparées par des virgules (optionnel)
+- `--output-dir`: Répertoire de sortie pour les résultats (défaut: BC26/simple_optimizer)
 
 **How it works:**
 1. For each parameter:
