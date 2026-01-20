@@ -7,6 +7,7 @@ import current.Utils.*;
 
 import static current.States.Code.*;
 import static current.Utils.Micro.addMicroScore;
+import static java.lang.Math.min;
 
 /**
  * State to attack enemy rats with improved micro
@@ -95,7 +96,7 @@ public class AttackEnemy extends State {
 
         if(mixedScore[bestDir.ordinal()] == 0){
             PathFinding.smartMoveTo(nearestEnemyRat);
-            return new Result(LOCK, "Mixed attack score is zero, I am too far or can't move");
+            return new Result(END_OF_TURN, "Mixed attack score is zero, I am too far or can't move");
             // TODO: Add cooldown, if can"t attack 5 turn, exit mode
         }
 
@@ -110,7 +111,7 @@ public class AttackEnemy extends State {
             if(rc.canAttack(target)){
                 rc.setIndicatorLine(myLoc, target, 255, 0, 0);
                 print("Attacking " + target + " " + atteckDirection);
-                rc.attack(target);
+                rc.attack(target, min(3, rc.getRawCheese()));
             }else{
                 print("Warn: Can't attack " + target + " " + atteckDirection);
             }
@@ -121,7 +122,7 @@ public class AttackEnemy extends State {
             PathFinding.move(bestDir);
         }else{
             print("Can't move, try to look in the direction : " + VisionUtils.smartLookAt(myLoc.add(bestDir)));
-            return new Result(LOCK, "Can't move to " + bestDir);
+            return new Result(END_OF_TURN, "Can't move to " + bestDir);
         }
 
         // Then, attack from new cell
@@ -135,12 +136,12 @@ public class AttackEnemy extends State {
             if(rc.canAttack(target)){
                 rc.setIndicatorLine(myLoc, target, 255, 0, 0);
                 print("Attacking " + target + " " + atteckDirection);
-                rc.attack(target);
+                rc.attack(target, min(3, rc.getRawCheese()));
             }else{
                 print("Warn: Can't attack " + target + " " + atteckDirection);
             }
         }
 
-        return new Result(LOCK, "Stay in micro state");
+        return new Result(END_OF_TURN, "Stay in micro state");
     }
 }
