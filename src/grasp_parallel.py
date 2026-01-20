@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-GRASP Parallélisé pour optimisation de paramètres Battlecode.
+Parallelized GRASP for Battlecode parameter optimization.
 
-Cette version exploite pleinement le multithread en évaluant plusieurs
-configurations en parallèle à chaque itération.
+This version fully exploits multithreading by evaluating multiple
+configurations in parallel at each iteration.
 """
 
 import argparse
@@ -27,11 +27,11 @@ try:
     TQDM_AVAILABLE = True
 except ImportError:
     TQDM_AVAILABLE = False
-    print("⚠️  tqdm non disponible. Installer avec: pip install tqdm")
+    print("⚠️  tqdm not available. Install with: pip install tqdm")
 
 
 class SharedMemory:
-    """Mémoire partagée thread-safe pour GRASP parallélisé."""
+    """Thread-safe shared memory for parallelized GRASP."""
     
     def __init__(self, manager):
         self.lock = manager.Lock()
@@ -42,15 +42,15 @@ class SharedMemory:
         self.best_config = manager.dict()
     
     def add_solution(self, config: Dict, score: float):
-        """Ajoute une solution de manière thread-safe."""
+        """Add a solution in a thread-safe manner."""
         with self.lock:
             self.best_solutions.append((copy.deepcopy(config), score))
             
-            # Garder seulement les 100 meilleures
+            # Keep only the top 100
             sorted_solutions = sorted(list(self.best_solutions), key=lambda x: x[1], reverse=True)
             self.best_solutions[:] = sorted_solutions[:100]
             
-            # Mettre à jour param_values
+            # Update param_values
             for param_name, param_data in config.items():
                 value = param_data['value']
                 if param_name not in self.param_values:
@@ -59,18 +59,18 @@ class SharedMemory:
                 param_list = self.param_values[param_name]
                 param_list.append((value, score))
                 
-                # Garder seulement les 200 dernières
+                # Keep only the last 200
                 if len(param_list) > 200:
                     self.param_values[param_name] = manager.list(list(param_list)[-200:])
             
-            # Mettre à jour le meilleur global
+            # Update global best
             if score > self.best_score.value:
                 self.best_score.value = score
                 self.best_config.clear()
                 self.best_config.update(copy.deepcopy(config))
     
     def get_good_value(self, param_name: str, param_min: int, param_max: int, alpha: float = 0.3) -> int:
-        """Retourne une valeur guidée par la mémoire (thread-safe)."""
+        """Return a value guided by memory (thread-safe)."""
         with self.lock:
             if param_name not in self.param_values or len(self.param_values[param_name]) == 0:
                 return random.randint(param_min, param_max)
@@ -80,7 +80,7 @@ class SharedMemory:
             
             values_scores = list(self.param_values[param_name])
             
-            # Calculer les poids
+            # Calculate weights
             scores = np.array([s for _, s in values_scores])
             if scores.max() > scores.min():
                 weights = (scores - scores.min()) / (scores.max() - scores.min())
@@ -88,18 +88,18 @@ class SharedMemory:
             else:
                 weights = np.ones(len(scores)) / len(scores)
             
-            # Choisir une valeur selon les poids
+            # Choose a value according to weights
             idx = np.random.choice(len(values_scores), p=weights)
             base_value = values_scores[idx][0]
             
-            # Ajouter une petite perturbation
+            # Add a small perturbation
             perturbation = int(np.random.normal(0, (param_max - param_min) * 0.1))
             value = base_value + perturbation
             
             return max(param_min, min(param_max, value))
     
     def get_stats(self) -> Dict:
-        """Retourne les statistiques actuelles."""
+        """Return current statistics."""
         with self.lock:
             return {
                 'best_score': self.best_score.value,
@@ -110,12 +110,12 @@ class SharedMemory:
 
 def worker_evaluate(args):
     """
-    Fonction worker pour évaluer une configuration.
-    Conçue pour être exécutée en parallèle.
+    Worker function to evaluate a configuration.
+    Designed to be executed in parallel.
     """
     (config_id, config_a, config_b, project_root, source, maps, output_dir) = args
     
-    # Sauvegarder les configs temporaires
+    # Save temporary configs
     configs_dir = output_dir / "configs"
     configs_dir.mkdir(parents=True, exist_ok=True)
     
@@ -130,7 +130,7 @@ def worker_evaluate(args):
         json.dump(config_b, f, indent=2)
     
     try:
-        # Construire la commande
+        # Build command
         cmd = [
             "python3",
             str(project_root / "src" / "compare_configs.py"),
@@ -143,7 +143,7 @@ def worker_evaluate(args):
         if maps:
             cmd.extend(["--maps", maps])
         
-        # Exécuter la comparaison
+        # Execute comparison
         result = subprocess.run(
             cmd,
             cwd=str(project_root),
@@ -155,7 +155,7 @@ def worker_evaluate(args):
         if result.returncode != 0:
             return (config_id, config_a, 0.0, f"Error: {result.stderr[:100]}")
         
-        # Parser le résultat
+        # Parse result
         score = parse_comparison_result(result.stdout)
         return (config_id, config_a, score, "Success")
         
@@ -164,13 +164,13 @@ def worker_evaluate(args):
     except Exception as e:
         return (config_id, config_a, 0.0, f"Exception: {str(e)}")
     finally:
-        # Nettoyer
+        # Cleanup
         config_a_path.unlink(missing_ok=True)
         config_b_path.unlink(missing_ok=True)
 
 
 def parse_comparison_result(output: str) -> float:
-    """Parse la sortie de compare_bots.py pour extraire le win rate."""
+    """Parse compare_bots.py output to extract win rate."""
     for line in output.split('\n'):
         if 'Win rate' in line and '%' in line:
             try:
@@ -182,7 +182,7 @@ def parse_comparison_result(output: str) -> float:
 
 
 def generate_config(template_config: Dict, shared_memory: SharedMemory, alpha: float) -> Dict:
-    """Génère une configuration guidée par la mémoire partagée."""
+    """Generate a configuration guided by shared memory."""
     config = {}
     for param_name, param_data in template_config.items():
         param_min = param_data['min']
@@ -205,7 +205,7 @@ def save_checkpoint(
     output_dir: Path,
     template_config: Dict
 ):
-    """Sauvegarde un checkpoint."""
+    """Save a checkpoint."""
     stats = shared_memory.get_stats()
     
     checkpoint = {
@@ -220,7 +220,7 @@ def save_checkpoint(
     with open(checkpoint_path, 'w') as f:
         json.dump(checkpoint, f, indent=2)
     
-    # Sauvegarder aussi la meilleure config
+    # Also save the best config
     if shared_memory.best_config:
         best_config_path = output_dir / "best_config.json"
         with open(best_config_path, 'w') as f:
@@ -244,49 +244,49 @@ def run_parallel_grasp(
     alpha_end: float
 ):
     """
-    Exécute GRASP avec évaluations parallèles.
+    Execute GRASP with parallel evaluations.
     
     Args:
-        template_config: Configuration template
-        base_config: Configuration de base (adversaire)
-        project_root: Racine du projet
-        output_dir: Dossier de sortie
-        source: Dossier source du bot
-        maps: Maps à tester
-        max_iterations: Nombre d'itérations
-        n_workers: Nombre de workers parallèles
-        batch_size: Nombre de configs à évaluer par itération
-        save_every: Fréquence de sauvegarde
-        alpha_start: Alpha initial
-        alpha_end: Alpha final
+        template_config: Template configuration
+        base_config: Base configuration (opponent)
+        project_root: Project root
+        output_dir: Output directory
+        source: Bot source directory
+        maps: Maps to test
+        max_iterations: Number of iterations
+        n_workers: Number of parallel workers
+        batch_size: Number of configs to evaluate per iteration
+        save_every: Save frequency
+        alpha_start: Initial alpha
+        alpha_end: Final alpha
     """
-    # Auto-detect workers si nécessaire
+    # Auto-detect workers if needed
     if n_workers <= 0:
         n_workers = cpu_count()
-        print(f"🔍 Auto-détection: {n_workers} CPUs disponibles")
+        print(f"🔍 Auto-detection: {n_workers} CPUs available")
     
     print(f"\n{'='*80}")
-    print(f"🚀 Démarrage de GRASP Parallélisé")
+    print(f"🚀 Starting Parallelized GRASP")
     print(f"{'='*80}")
-    print(f"Itérations: {max_iterations}")
-    print(f"Workers: {n_workers} (CPUs disponibles: {cpu_count()})")
-    print(f"Batch size: {batch_size} configs/itération")
-    print(f"Évaluations totales prévues: {max_iterations * batch_size}")
+    print(f"Iterations: {max_iterations}")
+    print(f"Workers: {n_workers} (CPUs available: {cpu_count()})")
+    print(f"Batch size: {batch_size} configs/iteration")
+    print(f"Total evaluations planned: {max_iterations * batch_size}")
     print(f"Source: {source}")
-    print(f"Maps: {maps or 'toutes'}")
-    print(f"Sauvegarde tous les {save_every} itérations")
+    print(f"Maps: {maps or 'all'}")
+    print(f"Saving every {save_every} iterations")
     print(f"{'='*80}\n")
     
-    # Initialiser la mémoire partagée
+    # Initialize shared memory
     manager = Manager()
     shared_memory = SharedMemory(manager)
     
     start_time = time.time()
     total_evaluations = 0
     
-    # Pool de workers
+    # Worker pool
     with Pool(processes=n_workers) as pool:
-        # Barre de progression principale si tqdm disponible
+        # Main progress bar if tqdm available
         if TQDM_AVAILABLE:
             iteration_bar = tqdm(
                 range(max_iterations),
@@ -301,15 +301,15 @@ def run_parallel_grasp(
         for iteration in iteration_bar:
             iter_start_time = time.time()
             
-            # Calcul de alpha
+            # Calculate alpha
             alpha = alpha_start + (alpha_end - alpha_start) * (iteration / max_iterations)
             
             if not TQDM_AVAILABLE:
                 print(f"\n{'─'*80}")
-                print(f"🔄 Itération {iteration + 1}/{max_iterations} (α={alpha:.3f})")
+                print(f"🔄 Iteration {iteration + 1}/{max_iterations} (α={alpha:.3f})")
                 print(f"{'─'*80}")
             
-            # Phase de construction : générer batch_size configurations
+            # Construction phase: generate batch_size configurations
             configs_to_evaluate = []
             for i in range(batch_size):
                 config = generate_config(template_config, shared_memory, alpha)
@@ -318,7 +318,7 @@ def run_parallel_grasp(
                      project_root, source, maps, output_dir)
                 )
             
-            # Phase d'évaluation parallèle avec barre de progression
+            # Parallel evaluation phase with progress bar
             if TQDM_AVAILABLE:
                 eval_bar = tqdm(
                     total=batch_size,
@@ -332,17 +332,17 @@ def run_parallel_grasp(
                 for result in pool.imap_unordered(worker_evaluate, configs_to_evaluate):
                     results.append(result)
                     eval_bar.update(1)
-                    # Mettre à jour avec le score
+                    # Update with score
                     if result[2] > 0:
                         eval_bar.set_postfix({'last_score': f'{result[2]:.1f}%'})
                 eval_bar.close()
             else:
-                print(f"  ⚡ Évaluation parallèle avec {n_workers} workers...")
+                print(f"  ⚡ Parallel evaluation with {n_workers} workers...")
                 results = pool.map(worker_evaluate, configs_to_evaluate)
             
             total_evaluations += len(results)
             
-            # Traiter les résultats
+            # Process results
             scores_this_iter = []
             success_count = 0
             for config_id, config, score, status in results:
@@ -356,12 +356,12 @@ def run_parallel_grasp(
                     if not TQDM_AVAILABLE:
                         print(f"     {config_id}: ❌ {status}")
             
-            # Statistiques de l'itération
+            # Iteration statistics
             stats = shared_memory.get_stats()
             iter_time = time.time() - iter_start_time
             avg_score_iter = np.mean(scores_this_iter) if scores_this_iter else 0.0
             
-            # Mise à jour de la barre de progression principale
+            # Update main progress bar
             if TQDM_AVAILABLE:
                 iteration_bar.set_postfix({
                     'best': f'{stats["best_score"]:.1f}%',
@@ -370,38 +370,38 @@ def run_parallel_grasp(
                     'eval/s': f'{batch_size/iter_time:.2f}'
                 })
             else:
-                print(f"  📊 Moyenne de l'itération: {avg_score_iter:.2f}%")
-                print(f"  ✨ Meilleur global: {stats['best_score']:.2f}%")
+                print(f"  📊 Iteration average: {avg_score_iter:.2f}%")
+                print(f"  ✨ Global best: {stats['best_score']:.2f}%")
                 print(f"  ⚡ Performance: {batch_size/iter_time:.2f} eval/s")
             
-            # Sauvegarde périodique
+            # Periodic save
             if (iteration + 1) % save_every == 0 or iteration == max_iterations - 1:
                 save_checkpoint(iteration + 1, shared_memory, output_dir, template_config)
             
-            # Estimation du temps
+            # Time estimation
             elapsed = time.time() - start_time
             avg_time_per_iter = elapsed / (iteration + 1)
             remaining_time = avg_time_per_iter * (max_iterations - iteration - 1)
             
             if not TQDM_AVAILABLE:
-                print(f"  ⏱️  Temps: {elapsed/60:.1f}min | Restant: ~{remaining_time/60:.1f}min")
-                print(f"  📈 Évaluations totales: {total_evaluations}")
+                print(f"  ⏱️  Time: {elapsed/60:.1f}min | Remaining: ~{remaining_time/60:.1f}min")
+                print(f"  📈 Total evaluations: {total_evaluations}")
         
         if TQDM_AVAILABLE:
             iteration_bar.close()
     
-    # Résumé final
+    # Final summary
     total_time = time.time() - start_time
     stats = shared_memory.get_stats()
     
     print(f"\n{'='*80}")
-    print(f"✅ Optimisation terminée!")
+    print(f"✅ Optimization completed!")
     print(f"{'='*80}")
-    print(f"Meilleur score: {stats['best_score']:.2f}%")
-    print(f"Évaluations totales: {total_evaluations}")
-    print(f"Temps total: {total_time/60:.1f} minutes")
-    print(f"Temps moyen/évaluation: {total_time/total_evaluations:.1f}s")
-    print(f"Meilleure config: {output_dir}/best_config.json")
+    print(f"Best score: {stats['best_score']:.2f}%")
+    print(f"Total evaluations: {total_evaluations}")
+    print(f"Total time: {total_time/60:.1f} minutes")
+    print(f"Average time/evaluation: {total_time/total_evaluations:.1f}s")
+    print(f"Best config: {output_dir}/best_config.json")
     print(f"{'='*80}\n")
 
 

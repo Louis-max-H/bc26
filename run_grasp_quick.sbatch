@@ -45,14 +45,38 @@ echo "  Batch size: $BATCH_SIZE"
 echo "  Maps: $MAPS (only one for speed)"
 echo ""
 
-python3 src/grasp_parallel.py \
-    --template "$TEMPLATE" \
-    --base-config "$BASE_CONFIG" \
-    --iterations $ITERATIONS \
-    --batch-size $BATCH_SIZE \
-    --maps "$MAPS" \
-    --output-dir "$OUTPUT_DIR" \
-    --save-every 2
+# Utilisation de Docker avec Java 21 et Python
+# Image contenant Python 3.11 et compatible avec Java 21
+DOCKER_IMAGE="python:3.11-slim"
+WORK_DIR="/workspace"
+
+echo "Pulling Docker image..."
+docker pull "$DOCKER_IMAGE"
+
+echo "Running GRASP with Docker (Java 21 + Python)..."
+docker run --rm \
+    -v "$(pwd):$WORK_DIR" \
+    -w "$WORK_DIR" \
+    -e OMP_NUM_THREADS="$OMP_NUM_THREADS" \
+    -e MKL_NUM_THREADS="$MKL_NUM_THREADS" \
+    -e SLURM_CPUS_PER_TASK="$SLURM_CPUS_PER_TASK" \
+    --cpus="$SLURM_CPUS_PER_TASK" \
+    --memory="16g" \
+    "$DOCKER_IMAGE" \
+    bash -c "\
+        apt-get update && \
+        apt-get install -y openjdk-21-jdk-headless && \
+        export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 && \
+        export PATH=\$JAVA_HOME/bin:\$PATH && \
+        java -version && \
+        python3 src/grasp_parallel.py \
+            --template '$TEMPLATE' \
+            --base-config '$BASE_CONFIG' \
+            --iterations $ITERATIONS \
+            --batch-size $BATCH_SIZE \
+            --maps '$MAPS' \
+            --output-dir '$OUTPUT_DIR' \
+            --save-every 2"
 
 echo "Quick test completed!"
 

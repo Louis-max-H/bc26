@@ -27,6 +27,48 @@ git clone https://github.com/FreGeh/battlecode-26 src
 ./gradlew run -Pmaps=DefaultMedium -PteamA=v00_demo -PteamB=v00_demo -PlanguageA=java -PlanguageB=java
 ```
 
+## Configure java
+
+**Sur Arch Linux (local) :**
+```bash
+sudo pacman -Sy java-21-openjdk
+sudo archlinux-java set java-21-openjdk
+```
+
+**Sur un serveur SLURM :**
+
+1. Rechercher les modules Java disponibles :
+```bash
+module avail java
+module avail openjdk
+```
+
+2. Charger Java 21 (choisir selon les modules disponibles) :
+```bash
+# Option 1 (la plus commune)
+module load openjdk/21
+
+# Option 2 (selon le cluster)
+module load java/21
+
+# Option 3 (si openjdk charge automatiquement la version 21)
+module load openjdk
+```
+
+3. Vérifier la version :
+```bash
+java -version  # devrait afficher "openjdk version "21.x.x"
+```
+
+4. Rendre permanent (ajouter à votre `~/.bashrc` ou `~/.zshrc`) :
+```bash
+echo "module load openjdk/21" >> ~/.bashrc
+source ~/.bashrc
+```
+
+**Note :** Le nom exact du module dépend de votre cluster. Utilisez `module avail` pour voir les options disponibles.
+
+
 ## Utils
 **Copy bot**
 ```python
