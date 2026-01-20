@@ -1,0 +1,52 @@
+{
+  "MAP_SMALL": [
+    "DefaultSmall",
+    "arrows",
+    "cheesefarm",
+    "dirtfulcat",
+    "evileye",
+    "starvation"
+  ],
+  "MAP_MEDIUM": [
+    "DefaultMedium",
+    "Meow",
+    "ZeroDay",
+    "pipes",
+    "popthecork",
+    "rift",
+    "sittingducks",
+    "thunderdome"
+  ],
+  "MAP_LARGE": [
+    "DefaultLarge",
+    "Nofreecheese",
+    "cheeseguardians",
+    "dirtpassageway",
+    "keepout",
+    "trapped",
+    "wallsofparadis"
+  ],
+  "ALL": [
+    "DefaultLarge",
+    "DefaultMedium",
+    "DefaultSmall",
+    "Meow",
+    "Nofreecheese",
+    "ZeroDay",
+    "arrows",
+    "cheesefarm",
+    "cheeseguardians",
+    "dirtfulcat",
+    "dirtpassageway",
+    "evileye",
+    "keepout",
+    "pipes",
+    "popthecork",
+    "rift",
+    "sittingducks",
+    "starvation",
+    "thunderdome",
+    "trapped",
+    "wallsofparadis"
+  ]
+}
