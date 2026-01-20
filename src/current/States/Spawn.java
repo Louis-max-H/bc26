@@ -2,6 +2,7 @@ package current.States;
 
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
+import current.Params;
 
 import static current.States.Code.*;
 
@@ -12,7 +13,6 @@ public class Spawn extends State {
     public Spawn(){
         this.name = "Spawn";
     }
-    public int MAX_RATS = 30;
 
     @Override
     public Result run() throws GameActionException {
@@ -42,7 +42,7 @@ public class Spawn extends State {
         }
 
         // Don't spawn if costs is too high
-        int maxAcceptableCost = 10 + (MAX_RATS / 4)*10 ; // 10 cheese per 4 rats
+        int maxAcceptableCost = 10 + (Params.maxRats / 4)*10 ; // 10 cheese per 4 rats
         if(currentSpawnCost >= maxAcceptableCost){
             return new Result(OK, "Cost too high: " + currentSpawnCost + " (max: " + maxAcceptableCost + ")");
         }
