@@ -13,6 +13,7 @@ import static current.Communication.Communication.TYPE_KING;
 import static current.Robots.Robot.rats;
 import static current.States.Code.*;
 import static current.Communication.Communication.TYPE_CAT;
+import current.Communication.Communication;
 
 public class Init extends State {
     public Init() throws GameActionException {
@@ -32,6 +33,30 @@ public class Init extends State {
         // Init utils
         VisionUtils.initScore(rc.getMapWidth(), rc.getMapHeight());
         BugNavLmx.init(rc.getMapWidth(), rc.getMapHeight());
+
+        // For kings: Place 3-4 cat traps around spawn location at game start
+        // Use spawnRound to check if it's early game (round is not initialized in constructor)
+        if(isKing && Robot.spawnRound == rc.getRoundNum() && rc.isActionReady()){
+            int trapsPlaced = 0;
+            int maxTraps = 4;
+            MapLocation spawn = Robot.spawnLoc;
+            
+            // Place cat traps in a pattern around spawn (only during cooperation)
+            if(rc.isCooperation()){
+                for(int dx = -2; dx <= 2 && trapsPlaced < maxTraps; dx++){
+                    for(int dy = -2; dy <= 2 && trapsPlaced < maxTraps; dy++){
+                        if(dx == 0 && dy == 0) continue; // Skip center
+                        if(Math.abs(dx) + Math.abs(dy) > 2) continue; // Only within distance 2
+                        
+                        MapLocation trapLoc = new MapLocation(spawn.x + dx, spawn.y + dy);
+                        if(rc.canSenseLocation(trapLoc) && rc.canPlaceCatTrap(trapLoc) && rc.getAllCheese() >= 10){
+                            rc.placeCatTrap(trapLoc);
+                            trapsPlaced++;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public boolean isInformationCorrect(MapLocation loc, int shortId) throws GameActionException {
@@ -56,6 +81,32 @@ public class Init extends State {
         lastInitRound = round;
         isKing = rc.getType().isRatKingType();
         myLoc = rc.getLocation();
+
+        // Track health changes to detect attacks from behind
+        int currentHealth = rc.getHealth();
+        if(currentHealth < Robot.lastHealth && !isKing){
+            // We took damage - check if we can see any enemy that could have attacked
+            boolean canSeeAttacker = false;
+            for(RobotInfo enemy : rc.senseNearbyRobots(-1, rc.getTeam().opponent())){
+                if(enemy.getType() != UnitType.RAT_KING && myLoc.distanceSquaredTo(enemy.getLocation()) <= 2){
+                    canSeeAttacker = true;
+                    break;
+                }
+            }
+            // Also check for cats
+            if(!canSeeAttacker){
+                for(RobotInfo cat : rc.senseNearbyRobots(-1, Team.NEUTRAL)){
+                    if(myLoc.distanceSquaredTo(cat.getLocation()) <= 2){
+                        canSeeAttacker = true;
+                        break;
+                    }
+                }
+            }
+            Robot.wasAttackedFromBehind = !canSeeAttacker;
+        } else {
+            Robot.wasAttackedFromBehind = false;
+        }
+        Robot.lastHealth = currentHealth;
 
         // Utils
         PathFinding.resetScores();
@@ -201,6 +252,30 @@ public class Init extends State {
             nearestMine = null;
         }else{
             nearestMine = cheeseMines.locs[i];
+        }
+
+        // Track king count to detect new king creation
+        if(isKing){
+            int currentKingCount = 0;
+            MapLocation newKingLoc = null;
+            for(RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam())){
+                if(info.getType() == UnitType.RAT_KING){
+                    currentKingCount++;
+                    // If this is a new king (not our own location), record it
+                    if(!info.getLocation().equals(myLoc) && !info.getLocation().equals(nearestKing)){
+                        newKingLoc = info.getLocation();
+                    }
+                }
+            }
+            // If we see more kings than before, a new king was created
+            if(currentKingCount > Robot.lastKingCount && newKingLoc != null){
+                // Send message about new king creation
+                Communication.addMessageKing(newKingLoc, 0); // ID 0 indicates new king
+                Robot.lastKingCount = currentKingCount;
+                print("New king detected at " + newKingLoc + ", sending message");
+            } else if(currentKingCount != Robot.lastKingCount){
+                Robot.lastKingCount = currentKingCount;
+            }
         }
 
 

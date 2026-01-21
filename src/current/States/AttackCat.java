@@ -29,6 +29,23 @@ public class AttackCat extends State {
             return new Result(OK, "No cat");
         }
 
+        // Do damage to cats if game still cooperative after round 1500
+        if(rc.isCooperation() && round >= 1500){
+            // More aggressive cat attacking in late game cooperation
+            int catDistance = myLoc.distanceSquaredTo(nearestCat);
+            if(catDistance <= 8){ // Within 2-3 tiles
+                // Try to get closer and attack
+                if(catDistance > 2 && rc.isMovementReady()){
+                    PathFinding.smartMoveTo(nearestCat);
+                }
+                if(rc.canAttack(nearestCat)){
+                    int cheeseToSpend = Math.min(Math.max(rc.getRawCheese(), rc.getGlobalCheese()), 50);
+                    rc.attack(nearestCat, cheeseToSpend);
+                    return new Result(OK, "Late game cat attack with " + cheeseToSpend + " cheese");
+                }
+            }
+        }
+
         int catDistance = myLoc.distanceSquaredTo(nearestCat);
         if (catDistance > ATTACK_DISTANCE_SQUARED) {
             return new Result(OK, "No cat to attack");

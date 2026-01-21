@@ -1,6 +1,7 @@
 package current.States;
 
 import battlecode.common.*;
+import current.Robots.Robot;
 import current.Utils.PathFinding;
 
 import static current.States.Code.*;
@@ -22,7 +23,20 @@ public class MoveKing extends State {
             return new Result(CANT, "Can't move");
         }
 
-        // Add a score to move to rats with cheese
+        // King move to nearest mine, if finds cat move back to spawn location
+        if(nearestCat != null && myLoc.distanceSquaredTo(nearestCat) <= 25){
+            // Cat nearby - retreat to spawn
+            PathFinding.smartMoveTo(Robot.spawnLoc);
+            return new Result(OK, "Retreating to spawn due to cat");
+        }
+
+        // Otherwise, move toward nearest mine if available
+        if(nearestMine != null){
+            PathFinding.smartMoveTo(nearestMine);
+            return new Result(OK, "Moving to nearest mine");
+        }
+
+        // Fallback: Add a score to move to rats with cheese
         long[] scores = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
         for(RobotInfo info: rc.senseNearbyRobots(-1, rc.getTeam())){
             scores[myLoc.directionTo(info.location).ordinal()] += info.cheeseAmount;

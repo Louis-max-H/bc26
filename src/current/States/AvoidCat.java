@@ -1,7 +1,9 @@
 package current.States;
 
 import battlecode.common.*;
+import current.Robots.Robot;
 import current.Utils.PathFinding;
+import current.Utils.VisionUtils;
 
 import static current.States.Code.*;
 
@@ -43,6 +45,30 @@ public class AvoidCat extends State {
             coefBase *= 2;
         }
         PathFinding.addScoresWithNormalization(scores, coefBase);
+
+        // If attacked from behind without seeing enemy, add vision scores behind us
+        if(Robot.wasAttackedFromBehind){
+            Direction currentDir = rc.getDirection();
+            Direction behind = currentDir.opposite();
+            Direction behindLeft = behind.rotateLeft();
+            Direction behindRight = behind.rotateRight();
+            
+            // Add high scores for directions that let us look behind
+            long[] backVisionScores = new long[9];
+            backVisionScores[behind.ordinal()] = 1000;
+            backVisionScores[behindLeft.ordinal()] = 800;
+            backVisionScores[behindRight.ordinal()] = 800;
+            
+            // Also add to PathFinding scores for movement
+            PathFinding.addScoresWithNormalization(backVisionScores, 20);
+            
+            // Try to turn to look behind
+            if(rc.isTurningReady()){
+                VisionUtils.smartLookAt(myLoc.add(behind));
+            }
+            
+            Robot.wasAttackedFromBehind = false; // Reset flag
+        }
         
         return new Result(OK, "Add scores to avoid cat");
     }

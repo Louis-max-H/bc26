@@ -36,6 +36,13 @@ public class Robot {
     public static MapLocation nearestDirt;
     public static MapLocation nearestCheese;
 
+    // Health tracking for detecting attacks from behind
+    public static int lastHealth = 100;
+    public static boolean wasAttackedFromBehind = false;
+
+    // King creation tracking
+    public static int lastKingCount = 1;
+
     // Nearest ID, ID are mod 4096
     public static int nearestEnemyRatID;
     public static int nearestCatID;

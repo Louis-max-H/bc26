@@ -1,6 +1,7 @@
 package current.States;
 
 import battlecode.common.*;
+import current.Robots.Robot;
 import current.Utils.PathFinding;
 import current.Utils.VisionUtils;
 
@@ -39,11 +40,17 @@ public class Explore extends State {
         MapLocation mapCenter = new MapLocation(rc.getMapWidth() / 2, rc.getMapHeight() / 2);
         Direction dirToCenter = myLoc.directionTo(mapCenter);
 
-        // Add bias to center
-        int centerBias = 50; // Small bias to encourage exploration toward center
+        // Add stronger bias to center (increased from 50 to 150)
+        int centerBias = 150; // Stronger bias to encourage exploration toward center
         scores[dirToCenter.ordinal()] += centerBias;
-        scores[dirToCenter.rotateLeft().ordinal()] += centerBias;
-        scores[dirToCenter.rotateRight().ordinal()] += centerBias;
+        scores[dirToCenter.rotateLeft().ordinal()] += centerBias * 2 / 3;
+        scores[dirToCenter.rotateRight().ordinal()] += centerBias * 2 / 3;
+        
+        // Also add some random exploration: pick a random direction occasionally
+        if(Robot.rng.nextInt(10) < 2){ // 20% chance
+            Direction randomDir = Robot.directions[Robot.rng.nextInt(8)];
+            scores[randomDir.ordinal()] += 100; // Add random exploration bonus
+        }
 
         // Add scores and move to best dir
         PathFinding.addScoresWithNormalization(scores, 1);

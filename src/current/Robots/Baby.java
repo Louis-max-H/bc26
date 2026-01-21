@@ -12,6 +12,7 @@ public class Baby extends Robot {
     State attackCat;
     State attackEnemy;
     State placeTrap;
+    State formNewKing;
 
 
     @Override
@@ -22,6 +23,7 @@ public class Baby extends Robot {
         this.collectCheese = new CollectCheese();
         this.explore = new Explore();
         this.placeTrap = new PlaceTrap();
+        this.formNewKing = new FormNewKing();
     }
 
     @Override
@@ -29,6 +31,10 @@ public class Baby extends Robot {
         currentState = switch (currentState.name) {
             case "Init" -> avoidCat;
             case "AvoidCat" -> {
+                // Check if low health - prioritize forming new king
+                if(rc.getHealth() < 30 && rc.getAllCheese() >= 50){
+                    yield formNewKing;
+                }
                 if(rc.getRawCheese() > Params.maxCheese) {
                     yield cheeseToKing;
                 }else {
@@ -39,6 +45,14 @@ public class Baby extends Robot {
             // Only if low on cheese
             case "AttackEnemy" -> attackCat;
             case "AttackCat" -> cheeseToKing;
+            case "FormNewKing" -> {
+                // After trying to form king, continue normal flow
+                if(rc.getRawCheese() > Params.maxCheese) {
+                    yield cheeseToKing;
+                }else {
+                    yield attackEnemy;
+                }
+            }
 
             // Go back to normal mode
             case "CheeseToKing" -> placeTrap;

@@ -39,14 +39,26 @@ public class PathFinding {
         for(Direction dir : Direction.values()){
             MapLocation loc = myLoc.add(dir);
 
+            // Check if location is on map before accessing array
+            if(!rc.onTheMap(loc)){
+                scores[dir.ordinal()] = 0;
+                continue;
+            }
+
             if(!rc.canMove(dir)) {
+                int arrayIndex = loc.x + loc.y * 60;
+                // Bounds check for array access
+                if(arrayIndex < 0 || arrayIndex >= BugNavLmx.mapCosts.length){
+                    scores[dir.ordinal()] = 0;
+                    continue;
+                }
 
                 // If we have a wall, can't dig
-                if (BugNavLmx.mapCosts[loc.x + loc.y * 60] == BugNavLmx.SCORE_CELL_WALL) {
+                if (BugNavLmx.mapCosts[arrayIndex] == BugNavLmx.SCORE_CELL_WALL) {
                     scores[dir.ordinal()] = 0;
 
                 // Dirt
-                } else if (BugNavLmx.mapCosts[loc.x + loc.y * 60] == BugNavLmx.SCORE_CELL_IF_DIG) {
+                } else if (BugNavLmx.mapCosts[arrayIndex] == BugNavLmx.SCORE_CELL_IF_DIG) {
                     if(!digEnable) {
                         scores[dir.ordinal()] = 0;
                     }
@@ -131,7 +143,14 @@ public class PathFinding {
         }
 
         // If dirt, turn to the direction and remove dirt
+        // Check if location is on map and array index is valid
+        if(!rc.onTheMap(locMove)){
+            return new Result(WARN, "Location off map");
+        }
         int xy = locMove.x + 60 * locMove.y;
+        if(xy < 0 || xy >= BugNavLmx.mapCosts.length){
+            return new Result(WARN, "Invalid array index");
+        }
         Robot.print("Score at loc is " + (int)BugNavLmx.mapCosts[xy]);
         if(BugNavLmx.mapCosts[xy] == BugNavLmx.SCORE_CELL_IF_DIG){
             Robot.print("Try diging dirt at " + locMove);
