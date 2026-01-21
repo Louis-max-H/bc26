@@ -1,12 +1,12 @@
-package current.Utils;
+package v008_saketh.Utils;
 
 import battlecode.common.*;
-import current.Robots.Robot;
-import current.States.Result;
+import v008_saketh.Robots.Robot;
+import v008_saketh.States.Result;
 
 import java.util.Random;
 
-import static current.States.Code.*;
+import static v008_saketh.States.Code.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 

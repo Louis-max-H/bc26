@@ -1,9 +1,9 @@
-package current.Robots;
+package v008_saketh.Robots;
 
 import battlecode.common.GameActionException;
 import battlecode.common.*;
-import current.Params;
-import current.States.*;
+import v008_saketh.Params;
+import v008_saketh.States.*;
 
 public class Baby extends Robot {
     State cheeseToKing;

@@ -1,11 +1,11 @@
-package current.Communication;
+package v008_saketh.Communication;
 
 import battlecode.common.GameActionException;
 import battlecode.common.MapInfo;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
 import battlecode.common.UnitType;
-import current.Robots.Robot;
+import v008_saketh.Robots.Robot;
 
 public class SenseForComs extends Robot {
     public static void senseForComs() throws GameActionException {

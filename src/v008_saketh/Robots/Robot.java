@@ -1,10 +1,10 @@
-package current.Robots;
+package v008_saketh.Robots;
 
 import battlecode.common.*;
-import current.States.*;
-import current.Utils.MapLocations;
-import current.Utils.MapLocationsWithId;
-import current.Utils.Tools;
+import v008_saketh.States.*;
+import v008_saketh.Utils.MapLocations;
+import v008_saketh.Utils.MapLocationsWithId;
+import v008_saketh.Utils.Tools;
 
 import java.util.Random;
 

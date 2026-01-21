@@ -1,19 +1,19 @@
-package current.States;
+package v008_saketh.States;
 
 import battlecode.common.*;
-import current.Communication.SenseForComs;
-import current.Params;
-import current.Robots.Robot;
-import current.Utils.BugNavLmx;
-import current.Utils.PathFinding;
-import current.Utils.VisionUtils;
-import current.Communication.Communication;
+import v008_saketh.Communication.SenseForComs;
+import v008_saketh.Params;
+import v008_saketh.Robots.Robot;
+import v008_saketh.Utils.BugNavLmx;
+import v008_saketh.Utils.PathFinding;
+import v008_saketh.Utils.VisionUtils;
+import v008_saketh.Communication.Communication;
 
-import static current.Communication.Communication.TYPE_KING;
-import static current.Robots.Robot.rats;
-import static current.States.Code.*;
-import static current.Communication.Communication.TYPE_CAT;
-import current.Communication.Communication;
+import static v008_saketh.Communication.Communication.TYPE_KING;
+import static v008_saketh.Robots.Robot.rats;
+import static v008_saketh.States.Code.*;
+import static v008_saketh.Communication.Communication.TYPE_CAT;
+import v008_saketh.Communication.Communication;
 
 public class Init extends State {
     public Init() throws GameActionException {

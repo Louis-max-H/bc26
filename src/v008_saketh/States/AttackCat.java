@@ -1,9 +1,9 @@
-package current.States;
+package v008_saketh.States;
 
 import battlecode.common.*;
-import current.Utils.PathFinding;
+import v008_saketh.Utils.PathFinding;
 
-import static current.States.Code.*;
+import static v008_saketh.States.Code.*;
 
 /**
  * State to attack cats with improved micro
