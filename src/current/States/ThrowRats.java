@@ -1,0 +1,27 @@
+package current.States;
+
+import battlecode.common.*;
+import current.Utils.PathFinding;
+
+import static current.States.Code.*;
+
+public class ThrowRats extends State {
+
+    public ThrowRats(){
+        this.name = "ThrowRats";
+    }
+
+    @Override
+    public Result run() throws GameActionException {
+        // Check if we can move and turn
+        if(rc.getCarrying() == null){
+            return new Result(OK, "No Robot carried");
+        }
+
+        // If we are not called in the AttackRat mode, it mean we haven't any enemie rat to throw against
+        // We just look for walls
+
+
+        return new Result(OK, "Done updating scores");
+    };
+}
