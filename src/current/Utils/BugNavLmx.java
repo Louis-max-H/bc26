@@ -3442,7 +3442,7 @@ public class BugNavLmx {
         }
 
         // Debug message
-        RobotController rc = Robot.rc;if( rc.getRoundNum() < 150){
+        RobotController rc = Robot.rc;if( rc.getRoundNum() < 200){
             System.out.println("Start Pathfinding from " + startLoc + " to " + endLoc);
         }
         
@@ -3455,7 +3455,7 @@ public class BugNavLmx {
         // Check if we can reuse previous path
         if(timeBeforeRefresh > 0 && lastDestination.equals(endLoc)){
             if(dir != Direction.CENTER){
-                if(rc.getRoundNum() < 150){System.out.println("Pathfinding: Reuse previous path -> " + dir);}
+                if(rc.getRoundNum() < 200){System.out.println("Pathfinding: Reuse previous path -> " + dir);}
                 timeBeforeRefresh -= 3;
                 return dir;
             }
@@ -3466,13 +3466,13 @@ public class BugNavLmx {
         
         // Check result validity
         if(resultCode < 0){
-            if(rc.getRoundNum() < 150){
+            if(rc.getRoundNum() < 200){
                 System.out.println("Pathfinding: Warning return code : " + resultCode + " : " + dir);
             }    
             timeBeforeRefresh = 0; // Don't save query result
             
         }else{
-            if(rc.getRoundNum() < 150){
+            if(rc.getRoundNum() < 200){
                 System.out.println("Pathfinding: SUCCESS -> " + dir);
             }
             timeBeforeRefresh = 3; // Save query result for 3 rounds
@@ -6960,7 +6960,7 @@ public class BugNavLmx {
         } // End mainLoopLabel
 
         if(!withReturn){
-            if( rc.getRoundNum() < 150){
+            if( rc.getRoundNum() < 200){
                 System.out.println("===Pathfinding report : REVERSEtracking===");
                 System.out.println("Iterations normal : " + iterationsNormal);
                 System.out.println("Iterations split  : " + iterationsSplit);
@@ -7099,7 +7099,7 @@ public class BugNavLmx {
             xyReturn += dirsShift7Bxy[returnDirection];
         }// End ReverseLoop
 
-        if( rc.getRoundNum() < 150){
+        if( rc.getRoundNum() < 200){
             System.out.println("===Pathfinding report : Normal===");
             System.out.println("Iterations normal : " + iterationsNormal);
             System.out.println("Iterations split  : " + iterationsSplit);

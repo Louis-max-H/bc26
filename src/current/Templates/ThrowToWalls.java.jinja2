@@ -101,7 +101,7 @@ public class {{className}} extends State {
         MapLocation loc = myLoc.add(dir);
         char[] mapCosts = BugNavLmx.mapCosts;
         int xy = {{encodeCellPathfinding("myLoc.x", "myLoc.y")}};
-        int PASSABLE = BugNavLmx.SCORE_CELL_PASSABLE;
+        int SCORE_CELL_WALL = BugNavLmx.SCORE_CELL_WALL;
 
         switch(dir){
             {% for dir in dirsWhitoutCenter -%}
