@@ -186,11 +186,11 @@ public class Communication extends Robot {
                 // TODO: Add bonus if come bacl with cheese, rather than divided
                 VisionUtils.divideScoreBy2InRatVision(msg.getSource(), senderDirection);
                 lastSeenSender[msg.getSenderID() % 4096] = (char) min_round;
+                alliesRats.add(msg.getSource(), msg.getSenderID());
 
                 // Decoding MICRO message
                 if((raw & MASK_TYPE) == TYPE_MICRO){
                     // Store sender information
-                    allyRats.add(msg.getSource(), msg.getSenderID());
                     directionAllyRats[msg.getSenderID() % 4096] = (char)((raw & MASK_DIR_SENDER) >> SHIFT_DIR_TARGET);
 
                     // Extract target information
@@ -212,7 +212,6 @@ public class Communication extends Robot {
 
                 // Decoding standard message
                 }else {
-                    allyRats.add(msg.getSource(), msg.getSenderID());
                     decodeMessage(raw, false);
                 }
 

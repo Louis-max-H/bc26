@@ -56,7 +56,44 @@ public class Tools {
             bestDir = Direction.WEST;
         }
         if (array[7] > max) {
-            max = array[7];
+            bestDir = Direction.NORTHWEST;
+        }
+        return bestDir;
+    }
+
+    public static Direction lowerDirOfLong9(long[] array){
+        long min = array[8]; // Center
+        Direction bestDir = Direction.CENTER;
+        //dirsOrds = {"NORTH":0, "NORTHEAST":1, "EAST":2, "SOUTHEAST":3, "SOUTH":4, "SOUTHWEST":5, "WEST":6, "NORTHWEST":7, "CENTER":8}
+        if (array[0] < min) {
+            min = array[0];
+            bestDir = Direction.NORTH;
+        }
+        if (array[1] < min) {
+            min = array[1];
+            bestDir = Direction.NORTHEAST;
+        }
+        if (array[2] < min) {
+            min = array[2];
+            bestDir = Direction.EAST;
+        }
+        if (array[3] < min) {
+            min = array[3];
+            bestDir = Direction.SOUTHEAST;
+        }
+        if (array[4] < min) {
+            min = array[4];
+            bestDir = Direction.SOUTH;
+        }
+        if (array[5] < min) {
+            min = array[5];
+            bestDir = Direction.SOUTHWEST;
+        }
+        if (array[6] < min) {
+            min = array[6];
+            bestDir = Direction.WEST;
+        }
+        if (array[7] < min) {
             bestDir = Direction.NORTHWEST;
         }
         return bestDir;

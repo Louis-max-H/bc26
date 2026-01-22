@@ -12,6 +12,7 @@ public class Baby extends Robot {
     State attackCat;
     State attackEnemy;
     State placeTrap;
+    State throwToWalls;
 
 
     @Override
@@ -20,6 +21,7 @@ public class Baby extends Robot {
         this.attackEnemy = new AttackEnemy();
         this.cheeseToKing = new CheeseToKing();
         this.collectCheese = new CollectCheese();
+        this.throwToWalls = new ThrowToWalls();
         this.explore = new Explore();
         this.placeTrap = new PlaceTrap();
     }
@@ -37,7 +39,8 @@ public class Baby extends Robot {
             }
 
             // Only if low on cheese
-            case "AttackEnemy" -> attackCat;
+            case "AttackEnemy" -> throwToWalls;
+            case "ThrowToWalls" -> attackCat;
             case "AttackCat" -> cheeseToKing;
 
             // Go back to normal mode
@@ -47,7 +50,8 @@ public class Baby extends Robot {
             case "Explore" -> endTurn;
             case "EndTurn" -> init;
             default -> {
-                Robot.err(currentState.name + " don't match any states. Fallback to endTurn");
+                Robot.err(currentState.name + " don't match any states. Resign to force dev to fix me");
+                rc.resign();
                 yield endTurn;
             }
         };

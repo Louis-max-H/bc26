@@ -92,8 +92,11 @@ public class MapLocationsWithId {
                 continue;
             }
 
-            // Delete it if we can sense location and (no unit here of wrong id)
+            // Just for Battlecode 2026, not a SOLID principle x)
             MapLocation loc = locs[i];
+            Micro.setUnitAt(loc);
+
+            // Delete it if we can sense location and (no unit here of wrong id)
             if (rc.canSenseLocation(loc) && (!rc.canSenseRobotAtLocation(loc) || rc.senseRobotAtLocation(loc).getID() % 4096 != ids[i])){
                 removeIndex(i);
                 continue;

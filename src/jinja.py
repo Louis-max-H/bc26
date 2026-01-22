@@ -14,9 +14,9 @@ import numpy as np
 
 ############################### Variables ###############################
 
-dirsWithoutCenter = ["WEST", "NORTHWEST", "SOUTHWEST", "SOUTH", "SOUTHEAST", "EAST", "NORTHEAST", "NORTH"]
-directions = ["WEST", "NORTHWEST", "SOUTHWEST", "SOUTH", "SOUTHEAST", "EAST", "NORTHEAST", "NORTH", "CENTER"]
-directionsShort = ["W", "NW", "SW", "S", "SE", "E", "NE", "N", "C"]
+directions = ["NORTH", "NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST", "WEST", "NORTHWEST", "CENTER"]
+directionsWhitoutCenter = ["NORTH", "NORTHEAST", "EAST", "SOUTHEAST", "SOUTH", "SOUTHWEST", "WEST", "NORTHWEST"]
+directionsShort = ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "C"]
 dirsOrds = {"NORTH":0, "NORTHEAST":1, "EAST":2, "SOUTHEAST":3, "SOUTH":4, "SOUTHWEST":5, "WEST":6, "NORTHWEST":7, "CENTER":8}
 dirsOrdsOpposite = {"NORTH":4, "NORTHEAST":5, "EAST":6, "SOUTHEAST":7, "SOUTH":0, "SOUTHWEST":1, "WEST":2, "NORTHWEST":3, "CENTER":8}
 ordsDirsOpposite = {0:"NORTH", 1:"NORTHEAST", 2:"EAST", 3:"SOUTHEAST", 4:"SOUTH", 5:"SOUTHWEST", 6:"WEST", 7:"NORTHWEST", 8:"CENTER"}
@@ -41,8 +41,8 @@ directionsLong = [
     "Direction.EAST",
     "Direction.NORTHEAST",
     "Direction.NORTH",
-    "Direction.CENTER"]
-directionsWhitoutCenter = ["WEST", "NORTHWEST", "SOUTHWEST", "SOUTH", "SOUTHEAST", "EAST", "NORTHEAST", "NORTH"]
+    "Direction.CENTER"
+]
 
 anglesToDirections = {
     180 : "WEST",
@@ -88,6 +88,12 @@ dirsShift60xy = {}
 for dir, coo in dirsDelta.items():
     dirsShift60xy[dir] = coo[0] + 60 * coo[1]
 
+dirsShift7Bxy = {}
+for dir, coo in dirsDelta.items():
+    dirsShift7Bxy[dir] = coo[0] + (coo[1] << 7)
+
+dirsShift7BxyArray = [dirsShift7Bxy[dir] for dir in directions]
+
 def rotate(direction, indicator, amount):
     if indicator.upper() == "RIGHT":
         shift = 45
@@ -98,9 +104,136 @@ def rotate(direction, indicator, amount):
 
     return anglesToDirections[(directionsToAngle[direction] + shift * amount) % 360]
 
+def encodeCellPathfinding(x, y):
+    if type(x) == int and type(y) == int:
+        return (x + 1) + ((y + 1) << 7)
+    if(type(x) == str and type(y) == str):
+        return f"{x} + ({y}<<7) + {1 + (1<<7)}"
+    return "INVALID_XY"
+
 def dirsToNeirbyCell(cellFrom, cellTo):
     return reverseDirsDelta[(cellTo[0] - cellFrom[0], cellTo[1] - cellFrom[1])]
 
+def addDelimiter(xy):
+    if type(xy) == int:
+        #   32109876543210
+        # 0b10000001000000
+        return xy | 0b10000001000000
+    if type(xy) == str:
+        return f"({xy}) | {0b10000001000000}"
+    return "INVALID_XY"
+
+# Direction from start to end
+# DirectionArray[ 0b10000001000000 + end  - start]
+# DirectionArray[(0b10000001000000 + end) - start]
+# DiractionArray[ addDelimiter(encodeCellPathfinding(start)) - encodeCellPathfinding(end) ]
+
+def direction_to(from_loc, to_loc):
+    """
+    Returns the closest approximate direction from from_loc (x, y) to to_loc (x, y).
+    If to_loc is None, returns None.
+    If to_loc == from_loc, returns "CENTER".
+    Otherwise returns one of: "NORTH", "SOUTH", "EAST", "WEST", "NORTHEAST", "NORTHWEST", "SOUTHEAST", "SOUTHWEST".
+    """
+    if to_loc is None:
+        return None
+    x1, y1 = from_loc
+    x2, y2 = to_loc
+
+    dx = x2 - x1
+    dy = y2 - y1
+
+    absdx = abs(dx)
+    absdy = abs(dy)
+
+    if absdx >= 2.414 * absdy:
+        if dx > 0:
+            return "EAST"
+        elif dx < 0:
+            return "WEST"
+        else:
+            return "CENTER"
+    elif absdy >= 2.414 * absdx:
+        if dy > 0:
+            return "NORTH"
+        else:
+            return "SOUTH"
+    else:
+        if dy > 0:
+            if dx > 0:
+                return "NORTHEAST"
+            else:
+                return "NORTHWEST"
+        else:
+            if dx > 0:
+                return "SOUTHEAST"
+            else:
+                return "SOUTHWEST"
+
+
+
+def getCells():
+    for x in range(60):
+        for y in range(60):
+            yield (x, y)
+
+def getDirectionChar(dir):
+    return str(dirsOrds[dir])
+
+# Lets take max index of 0b10000001000000 + (62 << 7) + 62
+maxIndex7B = 0b10000001000000 + (62 << 7) + 62
+
+
+def genDirectionCharArray():
+    # DirectionArray[ addDelimiter(encodeCellPathfinding(start)) - encodeCellPathfinding(end) ]
+    results = {}
+    resultsBy = {}
+    for start in getCells():
+        for end in getCells():
+            direction = dirsOrds[direction_to(start, end)]
+            hash = addDelimiter(encodeCellPathfinding(*end)) - encodeCellPathfinding(*start)
+            
+            # Check for collisions
+            if(hash in results and results[hash] != direction):
+                print(f"Warning: Direction from {start} to {end} is {dir} (hash: {hash}) but is already defined defined has {results[hash]}")
+                print(f"Collision: Previous value if {resultsBy[hash]}, new one for {start} to {end}")
+                print("Encoded          start {:<10} : {:016b}".format(str(start), encodeCellPathfinding(*start)))
+                print("Encoded path dir start {:<10} : {:016b}".format(str(start), addDelimiter(encodeCellPathfinding(*start))))
+                print("Encoded          end {:<10} : {:016b}".format(str(end), encodeCellPathfinding(*end)))
+                print("result                 {:<10} : {:016b}".format("", hash))
+                print()
+
+                cell3, cell4 = resultsBy[hash]
+                print("Encoded          cell3 {:<10} : {:016b}".format(str(cell3), encodeCellPathfinding(*cell3)))
+                print("Encoded path dir cell3 {:<10} : {:016b}".format(str(cell3), addDelimiter(encodeCellPathfinding(*cell3))))
+                print("Encoded          cell4 {:<10} : {:016b}".format(str(cell4), encodeCellPathfinding(*cell4)))
+                print("result                 {:<10} : {:016b}".format("", hash))
+                exit(1)
+            
+            results[hash] = direction
+            resultsBy[hash] = (start, end)
+    # Now, we convert the results to a char array
+    return "\"" + "".join([intToChar(results.get(i, 9)) for i in range(maxIndex7B)]) + "\".toCharArray()"
+
+def xyToMapLocation(xy):
+    if type(xy) == int:
+        return f"new MapLocation({(xy & 0b111111) - 1}, {(xy >> 7) - 1})"
+    if type(xy) == str:
+        return f"new MapLocation(({xy} & 0b111111) - 1, ({xy} >> 7) - 1)"
+    return "INVALID_XY"
+
+def generateEmptyMapCosts7B(passableValue, mod2value, borderValue, invalidValue):
+    costs = [invalidValue for _ in range(62 + (62 << 7))]
+    for x in range(62):
+        for y in range(62):
+            # Valid cells are between 1 and 60
+            if x == 0 or x == 61 or y == 0 or y == 61:
+                costs[x + (y << 7)] = borderValue
+            elif x % 2 == 0 and y % 2 == 0:
+                costs[x + (y << 7)] = mod2value
+            else:
+                costs[x + (y << 7)] = passableValue
+    return "\"" + "".join([intToChar(cost) for cost in costs]) + "\".toCharArray()"
 
 ############################### Utils ###############################
 
@@ -110,6 +243,11 @@ def sanitizeOperation(string):
 def shiftCells(cells, direction):
     dx, dy = dirsDelta[direction]
     return [(x + dx, y + dy) for x, y in cells]
+
+def shiftCell(cell, direction):
+    x, y = cell
+    dx, dy = dirsDelta[direction]
+    return (x + dx, y + dy)
 
 def reverseRange(n):
     return reversed(list(range(n)))
@@ -284,6 +422,16 @@ def genScoreInView(unit, direction, movement, gap=8):
         result += f" + scores[xy + { encodeShift(cell, gap) }]"
 
     return sanitizeOperation(result)
+def genMemoryCharArray(defaultValue, gapValue, gap):
+    # Convert gapValue to hex \u0000
+    gapValue = "\\u"+hex(gapValue)[2:].zfill(4)
+    defaultValue = "\\u"+hex(defaultValue)[2:].zfill(4)
+
+    array = [gapValue for _ in range((60 + gap*2) * (60 + gap*2))]
+    for x in range(60):
+        for y in range(60):
+            array[encodeXY((x, y), gap)] = defaultValue
+    return  '"' + "".join(array) + '".toCharArray()'
 
 def genMemoryIntArray(defaultValue, gapValue, gap):
     array = [gapValue for _ in range((60 + gap*2) * (60 + gap*2))]
@@ -312,9 +460,24 @@ def extract_destination(template_path):
                 return match.group(1).strip()
     return None
 
-def process_template(template_path, base_dir, is_prod, params_dict=None):
+def should_ignore_template(template_path):
+    """Check if a template should be ignored based on an Ignore tag."""
+    with open(template_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            # Look for line starting with // Ignore: true
+            match = re.match(r'//\s*Ignore:\s*(true|yes|1)\s*$', line, re.IGNORECASE)
+            if match:
+                return True
+    return False
+
+def process_template(template_path, base_dir, is_prod, params_dict=None, force_process=False):
     """Process a single .jinja2 template file."""
     print(f"Processing: {template_path}")
+
+    # Check if template should be ignored
+    if not force_process and should_ignore_template(template_path):
+        print(f"  ⏭️  Skipped: Template marked with 'Ignore' tag")
+        return {'success': True, 'skipped': True}
 
     # Extract destination from template
     destination = extract_destination(template_path)
@@ -348,45 +511,57 @@ def process_template(template_path, base_dir, is_prod, params_dict=None):
     template_name = os.path.basename(template_path)
     template = env.get_template(template_name)
 
-    # Prepare render context
+    # Render template
     render_context = dict(
-        ratsUnits=["BABY_RAT", "RAT_KING"],
-        directions=directions,
-        dirsDelta=dirsDelta,
-        unitsOrdinal=unitsOrdinal,
-        reverseRange=reverseRange,
-        directionsLong=directionsLong,
-        directionsShort=directionsShort,
+        addDelimiter=addDelimiter,
         anglesToDirections=anglesToDirections,
-        dirsWithoutCenter=dirsWithoutCenter,
-        unitsVisionAngle=unitsVisionAngle,
-        unitsVisionRadius=unitsVisionRadius,
-        directionsOrdinal=directionsOrdinal,
-        directionsWhitoutCenter=directionsWhitoutCenter,
-        encodeXY=encodeXY,
-        encodeShift=encodeShift,
-        dirs=directions,
-        dirsShift60xy=dirsShift60xy,
-        rotate=rotate,
-        dirsToNeirbyCell=dirsToNeirbyCell,
-        cellInVisionFrom=cellInVisionFrom,
         battleCodehash=battleCodehash,
+        cellInVision=cellInVision,
+        cellInVisionFrom=cellInVisionFrom,
         cellsInRadius=cellsInRadius,
         cellsSquareRadius=cellsSquareRadius,
+        chebyshevDistance=chebyshevDistance,
+        direction_to=direction_to,
+        directions=directions,
+        directionsLong=directionsLong,
+        directionsShort=directionsShort,
+        directionsWhitoutCenter=directionsWhitoutCenter,
+        dirs=directions,
+        dirsDelta=dirsDelta,
+        dirsOrds=dirsOrds,
+        dirsWithoutCenter=directionsWhitoutCenter,
+        dirsOrdsOpposite=dirsOrdsOpposite,
+        genMemoryIntArray=genMemoryIntArray,
+        dirsShift60xy=dirsShift60xy,
+        dirsShift7Bxy=dirsShift7Bxy,
+        dirsShift7BxyArray=dirsShift7BxyArray,
+        dirsToNeirbyCell=dirsToNeirbyCell,
+        dirsWhitoutCenter=directionsWhitoutCenter,
+        encodeCellPathfinding=encodeCellPathfinding,
+        encodeForMicro=encodeForMicro,
+        encodeShift=encodeShift,
+        encodeXY=encodeXY,
         encodeXYLoc=encodeXYLoc,
         encodeXYString=encodeXYString,
-        cellInVision=cellInVision,
-        genVisionCell=genVisionCell,
-        visionCellsXY=visionCellsXY,
-        encodeForMicro=encodeForMicro,
+        shiftCell=shiftCell,
+        dirsOpposite=dirsOpposite,
+        genDirectionCharArray=genDirectionCharArray,
+        genMemoryCharArray=genMemoryCharArray,
         genScoreInView=genScoreInView,
-        chebyshevDistance=chebyshevDistance,
-        dirsOrds=dirsOrds,
+        genVisionCell=genVisionCell,
+        generateEmptyMapCosts7B=generateEmptyMapCosts7B,
+        getCells=getCells,
+        getDirectionChar=getDirectionChar,
         intToChar=intToChar,
-        dirsOrdsOpposite=dirsOrdsOpposite,
-        ordsDirsOpposite=ordsDirsOpposite,
-        genMemoryIntArray=genMemoryIntArray,
         prod=is_prod,
+        ratsUnits=["BABY_RAT", "RAT_KING"],
+        reverseRange=reverseRange,
+        rotate=rotate,
+        unitsOrdinal=unitsOrdinal,
+        unitsVisionAngle=unitsVisionAngle,
+        unitsVisionRadius=unitsVisionRadius,
+        visionCellsXY=visionCellsXY,
+        xyToMapLocation=xyToMapLocation,
         className=class_name
     )
     
@@ -425,6 +600,7 @@ def process_template(template_path, base_dir, is_prod, params_dict=None):
         
         return {
             'success': True,
+            'skipped': False,
             'output_path': output_path,
             'line_count': line_count,
             'file_size': file_size
@@ -442,6 +618,7 @@ def process_template(template_path, base_dir, is_prod, params_dict=None):
         
         return {
             'success': True,
+            'skipped': False,
             'output_path': output_path,
             'line_count': line_count,
             'file_size': file_size
@@ -474,6 +651,11 @@ def main():
         "--report",
         action="store_true",
         help="Display statistics report (number of lines and file size) at the end"
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force processing of templates even if they have an 'Ignore' tag"
     )
     parser.add_argument(
         "--params",
@@ -557,16 +739,22 @@ def main():
     
     # Process each template
     success_count = 0
+    skipped_count = 0
     stats_list = []
     for template_path in templates_to_process:
-        result = process_template(template_path, base_dir, is_prod, params_dict)
+        result = process_template(template_path, base_dir, is_prod, params_dict, force_process=args.force)
         if result and result.get('success'):
-            success_count += 1
-            if args.report:
-                stats_list.append(result)
+            if result.get('skipped'):
+                skipped_count += 1
+            else:
+                success_count += 1
+                if args.report:
+                    stats_list.append(result)
         print()
     
     print(f"✅ {success_count}/{len(templates_to_process)} template(s) processed successfully")
+    if skipped_count > 0:
+        print(f"⏭️  {skipped_count} template(s) skipped (marked with 'Ignore' tag)")
     
     # Display statistics only if --report is passed
     if args.report and stats_list:

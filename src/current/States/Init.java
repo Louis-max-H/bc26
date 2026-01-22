@@ -5,12 +5,12 @@ import current.Communication.SenseForComs;
 import current.Params;
 import current.Robots.Robot;
 import current.Utils.BugNavLmx;
+import current.Utils.Micro;
 import current.Utils.PathFinding;
 import current.Utils.VisionUtils;
 import current.Communication.Communication;
 
 import static current.Communication.Communication.TYPE_KING;
-import static current.Robots.Robot.rats;
 import static current.States.Code.*;
 import static current.Communication.Communication.TYPE_CAT;
 
@@ -32,6 +32,7 @@ public class Init extends State {
         // Init utils
         VisionUtils.initScore(rc.getMapWidth(), rc.getMapHeight());
         BugNavLmx.init(rc.getMapWidth(), rc.getMapHeight());
+        Micro.init(rc);
     }
 
     public boolean isInformationCorrect(MapLocation loc, int shortId) throws GameActionException {
@@ -106,9 +107,9 @@ public class Init extends State {
         for(RobotInfo info : rc.senseNearbyRobots(-1, rc.getTeam())){
             if(info.type == UnitType.RAT_KING) {
                 kings.add(info.location, info.getID());
-            } else {
-                rats.add(info.location);
             }
+
+            // Baby rats are added using squeaks
         }
 
         // Sensing enemy
@@ -184,6 +185,15 @@ public class Init extends State {
         }else{
             nearestCat = cats.locs[i];
             nearestCatID = cats.ids[i];
+        }
+
+        // debug("Nearest: rat");
+        i = alliesRats.nearestAndClear(myLoc, 100);
+        if(i == -1){
+            nearestAllyRat = null;
+        }else{
+            nearestAllyRat = enemiesRats.locs[i];
+            nearestAllyRatID = enemiesRats.ids[i];
         }
 
         // debug("Nearest: enemy rat");

@@ -15,53 +15,119 @@ public class {{ className }} {
     public static long scoresAttack[]; // Sum of danger of enemy units
     public static long scoresDanger[]; // Max amount of damage I can deal
     public static char attackDirection[]; // Direction of the best attack
+    public static boolean isThrowAction[];     // If we can throw to the target from this point
+    public static char mapInfos[] = "{%for i in range(3600)-%}\u0000{%endfor-%}".toCharArray();
+    public static RobotController rc;
 
     // Adding safegards if params not defined
-    {% set PARAMS_DANGER_OUT_OF_ENEMY_VIEW      = PARAMS_DANGER_OUT_OF_ENEMY_VIEW or -1 -%}
+    {% set PARAMS_ATTACK_RATNAT      = PARAMS_ATTACK_RATNAT or -1 -%}
     {% set PARAMS_DANGER_IN_ENEMY_VIEW          = PARAMS_DANGER_IN_ENEMY_VIEW or  1 -%}
     {% set PARAMS_DANGER_IN_REACH               = PARAMS_DANGER_IN_REACH or 15 -%}
     {% set PARAMS_DANGER_IN_REACH_WITH_MOVEMENT = PARAMS_DANGER_IN_REACH_WITH_MOVEMENT or 15 -%}
-    {% set PARAMS_ATTACK_BONUS_FIRSTMOVE = PARAMS_ATTACK_BONUS_FIRSTMOVE or  10 -%}
-    {% set PARAMS_ATTACK_BONUS_DONT_MOVE = PARAMS_ATTACK_BONUS_DONT_MOVE or  10 -%}
-    {% set PARAMS_ATTACK_BONUS_CANT_SEE  = PARAMS_ATTACK_BONUS_CANT_SEE or  10 -%}
+    {% set PARAMS_ATTACK_RATNAP                 = PARAMS_ATTACK_RATNAP or  100 -%}
+    {% set PARAMS_ATTACK_BONUS_FIRSTMOVE        = PARAMS_ATTACK_BONUS_FIRSTMOVE or  10 -%}
+    {% set PARAMS_ATTACK_BONUS_DONT_MOVE        = PARAMS_ATTACK_BONUS_DONT_MOVE or  10 -%}
+    {% set PARAMS_ATTACK_BONUS_CANT_SEE         = PARAMS_ATTACK_BONUS_CANT_SEE or  10 -%}
+
+    {% set SCORE_CELL_PASSABLE = 200 -%} {# Score of BugNavLmx.SCORE_CELL_PASSABLE #}
 
 
-    public static long DANGER_OUT_OF_ENEMY_VIEW = {{ PARAMS_DANGER_OUT_OF_ENEMY_VIEW }}; // Get less danger if out of enemy view
     public static long DANGER_IN_ENEMY_VIEW = {{ PARAMS_DANGER_IN_ENEMY_VIEW }}; // Danger if in enemy view
     public static long DANGER_IN_REACH = {{ PARAMS_DANGER_IN_REACH }}; // Danger if enemy can attack us without moving
     public static long DANGER_IN_REACH_WITH_MOVEMENT = {{ PARAMS_DANGER_IN_REACH_WITH_MOVEMENT }}; // Danger if enemy can attack us but need to moving
 
+    public static long ATTACK_THROW = 10000;
+    public static long ATTACK_RATNAT          = {{ PARAMS_ATTACK_RATNAT }}; // If can ratnap (out of enemy view)
     public static long ATTACK_BONUS_MOVEMENT  = {{ PARAMS_ATTACK_BONUS_FIRSTMOVE }}; // Bonus to attack score if need move to attack unit
     public static long ATTACK_BONUS_DONT_MOVE = {{ PARAMS_ATTACK_BONUS_DONT_MOVE }}; // Bonus to attack score if I dont need to move
     public static long ATTACK_BONUS_CANT_SEE  = {{ PARAMS_ATTACK_BONUS_CANT_SEE }}; // Bonus to attack score if the target can't see us
 
     public static void reset(){
-        scoresAttack    = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-        scoresDanger    = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
-        attackDirection = new char[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+        scoresAttack     = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+        scoresDanger     = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+        attackDirection  = new char[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+        isThrowAction = new boolean[]{false, false, false, false, false, false, false, false, false};
     }
 
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////// THROW ///////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static void addThrowMicroScore(
+        MapLocation myLoc, MapLocation targetLoc, long scoreThrow
+    ){
+        long scoreAttack;
+        int xy;
+        int xyMapCosts;
+        MapLocation enemyRelativeLoc = targetLoc.translate(-myLoc.x, -myLoc.y);
+        switch(enemyRelativeLoc.hashCode()){
+            {% for cellEnemy in cellsInRadius(34) -%}
+            case {{ battleCodehash(cellEnemy) }}: // Cell {{cellEnemy}}
+
+                {# iterate on my neighbors cells -#}
+                {% for dir in dirs -%}
+                {% set cell = dirsDelta[dir] -%}
+
+                {# ########### Throw action ########### -#}
+                xy = myLoc.x + 60 * myLoc.y;
+                xyMapCosts = {{ encodeCellPathfinding("myLoc.x", "myLoc.y") }};
+                
+                {% for reverseAttackVector in dirs -%} {# Reverse attack vector: Enemy -> Empty cell -> Me -#}
+                    {% set attackVector = dirsOpposite[reverseAttackVector] -%} {# Attack vector: Me -> Empty cell -> Enemy -#}
+                    {% set cellThrow = shiftCell(shiftCell(cellEnemy, reverseAttackVector), reverseAttackVector) -%}
+                    {% if cellThrow == cell -%}
+                        if(
+                            scoresAttack[{{dirsOrds[dir]}}] < scoreThrow
+                        {#  BugNavLmx.mapCosts[xyMapCosts + {{dirsShift7Bxy[dir]                              }}] == {{SCORE_CELL_PASSABLE}} -#}
+                        &&  BugNavLmx.mapCosts[xyMapCosts + {{dirsShift7Bxy[dir] + dirsShift7Bxy[attackVector]}}] == {{SCORE_CELL_PASSABLE}}
+                        {#  mapInfos[xy +                   {{dirsShift60xy[dir]                              }}] < rc.getRoundNum() -#}
+                        &&  mapInfos[xy +                   {{dirsShift60xy[dir] + dirsShift60xy[attackVector]}}] < rc.getRoundNum()
+                        ){
+                            isThrowAction[{{dirsOrds[dir]}}] = true;
+                            attackDirection[{{dirsOrds[dir]}}] = {{dirsOrds[attackVector]}};
+                            scoresAttack[{{dirsOrds[dir]}}] = scoreThrow;
+                        }
+                    {% endif -%}
+                {% endfor -%}
+
+                {% endfor -%}{# Nearby cell -#}
+                return;
+
+            {% endfor -%} {# enemy cell -#}
+            default:
+                // lmx: Should be okay !
+                // System.out.println("Warn: enemy location out of range " + enemyRelativeLoc);
+                return;
+
+        }// switch(enemyRelativeLoc.hashCode())
+    }
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////// ATTACK //////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public static void addMicroScore(
-        MapLocation myLoc, MapLocation targetLoc, char targetDir, long attackScore
+        MapLocation myLoc, MapLocation targetLoc, char targetDir, long attackScore, long attackBonusRatnap
     ){
         switch(targetDir){
             {% for targetDir in dirsWithoutCenter -%}
             case {{ dirsOrds[targetDir] }}:
-                addMicroScore{{targetDir}}(myLoc, targetLoc, attackScore);
+                addMicroScore{{targetDir}}(myLoc, targetLoc, attackScore, attackBonusRatnap);
                 break;
             {% endfor -%} {# Enemy dirs -#}
 
             default:
                 System.out.println("Err: target dir unsupported " + targetDir);
                 return;
-        };  // switch(targetDir)
+        };
     }
-
 
     {% for targetDir in dirsWithoutCenter -%}
     public static void addMicroScore{{targetDir}}(
-        MapLocation myLoc, MapLocation targetLoc, long attackScore
+        MapLocation myLoc, MapLocation targetLoc, long attackScore, long attackBonusRatnap
     ){
+        long scoreAttack;
         MapLocation enemyRelativeLoc = targetLoc.translate(-myLoc.x, -myLoc.y);
         switch(enemyRelativeLoc.hashCode()){
             {% for cellEnemy in cellsInRadius(34) -%}
@@ -82,7 +148,7 @@ public class {{ className }} {
                         {% set scoreDanger = scoreDanger + PARAMS_DANGER_IN_REACH_WITH_MOVEMENT -%}
                     {% endif -%}
                 {% else -%}
-                    {% set scoreDanger = scoreDanger + PARAMS_DANGER_OUT_OF_ENEMY_VIEW -%}
+                    {% set scoreDanger = scoreDanger + PARAMS_ATTACK_RATNAT -%}
                 {% endif -%}
 
                 {% if chebyshevDistance(cellEnemy, cell) == 1-%}
@@ -93,24 +159,29 @@ public class {{ className }} {
                 {# ########### Add attack score ########### -#}
                 {% set scoreAttack = 0 -%}
                 {% set canAttack = false -%}
+                {% set canRatnap = false -%}
                 {% if chebyshevDistance(cellEnemy, cell) == 1-%}
                     {% set canAttack = true -%}
                 {% endif -%}
 
                 {% if not cellInVisionFrom(cellEnemy, targetDir, cell)-%}
                     {% set scoreAttack = scoreAttack + PARAMS_ATTACK_BONUS_CANT_SEE -%}
+                    {% set canRatnap = true -%}
                 {% endif -%}
+
 
                 {# ########### Write result ########### -#}
                 {% if canAttack -%}
-                    {% if dir != "CENTER" %}
-                        {% set scoreAttack = scoreAttack + PARAMS_ATTACK_BONUS_FIRSTMOVE %}
-                    {% else %}
-                        {% set scoreAttack = scoreAttack + PARAMS_ATTACK_BONUS_DONT_MOVE %}
-                    {% endif %}
+                    {% if dir != "CENTER" -%}
+                        {% set scoreAttack = scoreAttack + PARAMS_ATTACK_BONUS_FIRSTMOVE -%}
+                    {% else -%}
+                        {% set scoreAttack = scoreAttack + PARAMS_ATTACK_BONUS_DONT_MOVE -%}
+                    {% endif -%}
 
-                    if(scoresAttack[{{dirsOrds[dir]}}] < {{scoreAttack}}){ // Max because we can attack only once
-                        scoresAttack[{{dirsOrds[dir]}}] = {{scoreAttack}};
+                    scoreAttack = {{scoreAttack}} {{ " + attackBonusRatnap" if canRatnap else "" }};
+                    if(scoresAttack[{{dirsOrds[dir]}}] < scoreAttack){ // Max because we can attack only once
+                        isThrowAction[{{dirsOrds[dir]}}] = false;
+                        scoresAttack[{{dirsOrds[dir]}}] = scoreAttack;
                         attackDirection[{{dirsOrds[dir]}}] = {{dirsOrds[dirsToNeirbyCell(cell, cellEnemy)]}};
                     }
                 {% endif -%}
@@ -129,4 +200,17 @@ public class {{ className }} {
         }// switch(enemyRelativeLoc.hashCode())
     }
     {% endfor -%} {# targetDir methods generation -#}
+
+    public static void setUnitAt(MapLocation loc){
+        mapInfos[loc.x + 60 * loc.y] = (char) rc.getRoundNum();
+    }
+
+    public static boolean checkIfUnitAt(MapLocation loc){
+        return mapInfos[loc.x + 60 * loc.y] < rc.getRoundNum();
+    }
+
+    public static void init(RobotController rc){
+        {{ className }}.rc = rc;
+    }
+
 }
