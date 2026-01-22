@@ -30,15 +30,18 @@ public class ThrowToWalls extends State {
 
         int score = checkDirectionThrow(rc.getDirection());
         Direction bestDir = rc.getDirection();
+        System.out.println("CheckDirectionThrow " + rc.getDirection() + ":" + score);
 
         int s = checkDirectionThrow(rc.getDirection().rotateRight());
-        if(score < s){
+        System.out.println("CheckDirectionThrow " + rc.getDirection().rotateRight() + ":" + s);
+        if(s < score){
             score = s;
             bestDir = rc.getDirection().rotateRight();
         }
 
         s = checkDirectionThrow(rc.getDirection().rotateLeft());
-        if(score < s){
+        System.out.println("CheckDirectionThrow " + rc.getDirection().rotateLeft() + ":" + s);
+        if(s < score){
             score = s;
             bestDir = rc.getDirection().rotateLeft();
         }
@@ -47,7 +50,8 @@ public class ThrowToWalls extends State {
         for(int i = 0; i < 5; i++){
             d = d.rotateRight();
             s = checkDirectionThrow(d);
-            if(score < s){
+            System.out.println("CheckDirectionThrow " + d + ":" + s);
+            if(s < score){
                 score = s;
                 bestDir = d;
             }
@@ -125,32 +129,32 @@ public class ThrowToWalls extends State {
 
                     loc = loc.add(Direction.NORTH);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 15;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 0;
                     }
 
                     loc = loc.add(Direction.NORTH);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 2;
                     }
 
                     loc = loc.add(Direction.NORTH);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 3;
                     }
 
-                    return -1;
+                    return 17;
                 }else{
                     if(mapCosts[xy + 128] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.SOUTH)){
                             return 1;
                         }else{
-                            return -1;
+                            return 17;
                         }
                     }
 
@@ -183,32 +187,32 @@ public class ThrowToWalls extends State {
 
                     loc = loc.add(Direction.NORTHEAST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 15;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 0;
                     }
 
                     loc = loc.add(Direction.NORTHEAST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 2;
                     }
 
                     loc = loc.add(Direction.NORTHEAST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 3;
                     }
 
-                    return -1;
+                    return 17;
                 }else{
                     if(mapCosts[xy + 129] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.SOUTHWEST)){
                             return 1;
                         }else{
-                            return -1;
+                            return 17;
                         }
                     }
 
@@ -241,32 +245,32 @@ public class ThrowToWalls extends State {
 
                     loc = loc.add(Direction.EAST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 15;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 0;
                     }
 
                     loc = loc.add(Direction.EAST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 2;
                     }
 
                     loc = loc.add(Direction.EAST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 3;
                     }
 
-                    return -1;
+                    return 17;
                 }else{
                     if(mapCosts[xy + 1] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.WEST)){
                             return 1;
                         }else{
-                            return -1;
+                            return 17;
                         }
                     }
 
@@ -299,32 +303,32 @@ public class ThrowToWalls extends State {
 
                     loc = loc.add(Direction.SOUTHEAST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 15;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 0;
                     }
 
                     loc = loc.add(Direction.SOUTHEAST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 2;
                     }
 
                     loc = loc.add(Direction.SOUTHEAST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 3;
                     }
 
-                    return -1;
+                    return 17;
                 }else{
                     if(mapCosts[xy - 127] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.NORTHWEST)){
                             return 1;
                         }else{
-                            return -1;
+                            return 17;
                         }
                     }
 
@@ -357,32 +361,32 @@ public class ThrowToWalls extends State {
 
                     loc = loc.add(Direction.SOUTH);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 15;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 0;
                     }
 
                     loc = loc.add(Direction.SOUTH);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 2;
                     }
 
                     loc = loc.add(Direction.SOUTH);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 3;
                     }
 
-                    return -1;
+                    return 17;
                 }else{
                     if(mapCosts[xy - 128] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.NORTH)){
                             return 1;
                         }else{
-                            return -1;
+                            return 17;
                         }
                     }
 
@@ -415,32 +419,32 @@ public class ThrowToWalls extends State {
 
                     loc = loc.add(Direction.SOUTHWEST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 15;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 0;
                     }
 
                     loc = loc.add(Direction.SOUTHWEST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 2;
                     }
 
                     loc = loc.add(Direction.SOUTHWEST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 3;
                     }
 
-                    return -1;
+                    return 17;
                 }else{
                     if(mapCosts[xy - 129] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.NORTHEAST)){
                             return 1;
                         }else{
-                            return -1;
+                            return 17;
                         }
                     }
 
@@ -473,32 +477,32 @@ public class ThrowToWalls extends State {
 
                     loc = loc.add(Direction.WEST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 15;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 0;
                     }
 
                     loc = loc.add(Direction.WEST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 2;
                     }
 
                     loc = loc.add(Direction.WEST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 3;
                     }
 
-                    return -1;
+                    return 17;
                 }else{
                     if(mapCosts[xy - 1] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.EAST)){
                             return 1;
                         }else{
-                            return -1;
+                            return 17;
                         }
                     }
 
@@ -531,32 +535,32 @@ public class ThrowToWalls extends State {
 
                     loc = loc.add(Direction.NORTHWEST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 15;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 0;
                     }
 
                     loc = loc.add(Direction.NORTHWEST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 2;
                     }
 
                     loc = loc.add(Direction.NORTHWEST);
                     if(!rc.canSenseLocation(loc)){return 13;}
-                    if(rc.canSenseRobotAtLocation(loc)){return -1;} // Ally
+                    if(rc.canSenseRobotAtLocation(loc)){return 17;} // Ally
                     if(!rc.senseMapInfo(loc).isPassable()){
                         return 3;
                     }
 
-                    return -1;
+                    return 17;
                 }else{
                     if(mapCosts[xy + 127] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.SOUTHEAST)){
                             return 1;
                         }else{
-                            return -1;
+                            return 17;
                         }
                     }
 

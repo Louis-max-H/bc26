@@ -35,7 +35,7 @@ public class EndTurn extends State {
         // End turn
         if(lastInitRound != round){
             // Clock.yield() - We are one round behind ! Not skipping it.
-            return new Result(WARN, "Turn start at round " + lastInitRound + " end at " + round);
+            return new Result(WARN, "Turn start at round " + lastInitRound + " end at " + round + " " + rc.getLocation());
         }
 
         // Debug scores
@@ -65,6 +65,6 @@ public class EndTurn extends State {
         }*/
 
         Clock.yield();
-        return new Result(OK, "Ending turn gracefully.");
+        return new Result(OK, "Ending turn gracefully at cell " + rc.getLocation());
     };
 }
