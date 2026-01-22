@@ -13,8 +13,8 @@ public class Explore extends State {
      * */
     private MapLocation target;
 
-    private static final int TARGET_REACHED_DIST_SQ = 9;
-    private static final int CORNER_BAND_DIVISOR = 2;
+    private static final int TARGET_REACHED_DIST_SQ = 9; // Re-pick once close to the target.
+    private static final int CORNER_BAND_DIVISOR = 2; // Lower = tighter to border, higher = wider band.
 
     private static final int CORNER_BOTTOM_LEFT = 0;
     private static final int CORNER_BOTTOM_RIGHT = 1;
@@ -36,12 +36,15 @@ public class Explore extends State {
             return new Result(CANT, "Can't turn");
         }
 
+        // Pick a new destination when we don't have one or we've arrived.
         if(target == null || myLoc.distanceSquaredTo(target) <= TARGET_REACHED_DIST_SQ){
             target = pickRandomDestination();
         }
 
+        // Use pathfinding to move toward the destination.
         Result result = PathFinding.smartMoveTo(target);
         Result resultTurn = VisionUtils.smartLook();
+        // Debug line shows where this baby is heading.
         rc.setIndicatorLine(myLoc, target, 0, 200, 200);
         return new Result(OK, "Exploring toward " + target + " move: " + result.msg + " turn: " + resultTurn.msg);
 
@@ -54,10 +57,13 @@ public class Explore extends State {
     private MapLocation pickRandomDestination(){
         int width = rc.getMapWidth();
         int height = rc.getMapHeight();
+        // Pick a corner for this baby and choose a random cell near that corner.
         int corner = pickCorner(width, height);
+        // Band size defines how far from the border we can pick the target.
         int bandX = Math.max(1, (width + CORNER_BAND_DIVISOR - 1) / CORNER_BAND_DIVISOR);
         int bandY = Math.max(1, (height + CORNER_BAND_DIVISOR - 1) / CORNER_BAND_DIVISOR);
 
+        // Decide which edges we bias toward based on the chosen corner.
         boolean towardMaxX = corner == CORNER_BOTTOM_RIGHT || corner == CORNER_TOP_RIGHT;
         boolean towardMaxY = corner == CORNER_TOP_LEFT || corner == CORNER_TOP_RIGHT;
 
@@ -74,8 +80,9 @@ public class Explore extends State {
 
     private int pickCorner(int width, int height){
         int currentCorner = quadrantOf(myLoc, width, height);
-        int corner = (rc.getID() + (round / 200)) & 3;
+        int corner = (rc.getID() + (round / 200)) & 3; // ID spreads babies; time rotates to re-balance.
         if(corner == currentCorner){
+            // Avoid sending the baby deeper into its current corner.
             corner = (corner + 2) & 3;
         }
         return corner;
@@ -87,6 +94,7 @@ public class Explore extends State {
         boolean onLeft = loc.x < midX;
         boolean onBottom = loc.y < midY;
 
+        // Map the location to one of the four corners/quadrants.
         if(onLeft && onBottom){
             return CORNER_BOTTOM_LEFT;
         }
@@ -108,6 +116,7 @@ public class Explore extends State {
         int pick = rng.nextInt(span + 1);
         pick = (pick + rc.getID()) % (span + 1);
         int biased = (pick * pick) / (span + 1);
+        // For max-edge, invert; for min-edge, keep as-is.
         return towardMax ? max - biased : min + biased;
     }
 }
