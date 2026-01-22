@@ -32,7 +32,7 @@ public class Communication extends Robot {
     private static int lastMessageIndex = 0;
 
     // Don't send message if we have recently seen a similar message
-    public static char COOLDOWN_SEND_AGAIN_SQUEAK = 4;
+    public static char COOLDOWN_SEND_AGAIN_SQUEAK = 2;
     public static char COOLDOWN_SEND_AGAIN_ARRAY = 0;
 
     // Latest turn where sender have been detected
@@ -96,7 +96,6 @@ public class Communication extends Robot {
 
             case TYPE_MINE:
                 debug("###Decoding mine position : at x: " + x + " y: " + y);
-                rc.setIndicatorLine(rc.getLocation(), new MapLocation(x, y), 255, 228, 181);
                 cheeseMines.add(new MapLocation(x, y));
                 if(isFromArray){
                     cheeseMinesFromArray.add(new MapLocation(x, y));
@@ -235,28 +234,28 @@ public class Communication extends Robot {
     /////////////////////////////////////// Add messages to buffer ///////////////////////////////////////
     // Add message to the buffer if we haven't seen it recently'
     public static void addMessage(String debugMsg, int encodedMsg, int priority){
-        if(lastTimeSeenMessage[encodedMsg & MASK_14BITS] <= round){
+        // if(lastTimeSeenMessage[encodedMsg & MASK_14BITS] <= round){
             debug(debugMsg + ": " + encodedMsg + " (" + priority + ")");
             MessageLIFO.add(encodedMsg, priority);
-        }else{
-            debug("addMessage: Skipping " + debugMsg + " " + encodedMsg + " because it was seen recently");
-        }
+        // }else{
+        //     debug("addMessage: Skipping " + debugMsg + " " + encodedMsg + " because it was seen recently");
+        // }
     }
 
-    public static void addMessageMine(MapLocation loc) {
-        addMessage("addMessageMine", (char) (TYPE_MINE + loc.x + (loc.y << 6)), PRIORITY_HIGH);
+    public static void addMessageMine(MapLocation loc, int priority) {
+        addMessage("addMessageMine", (TYPE_MINE | loc.x | (loc.y << 6)), priority);
     }
-    public static void addMessageEnemyRat(MapLocation loc, int id) {
-        addMessage("addMessageEnemyRat", (char) (TYPE_ENEMY_RAT | ((id % 4096) << 12) | loc.x | (loc.y << 6)), PRIORITY_HIGH);
+    public static void addMessageEnemyRat(MapLocation loc, int id, int priority) {
+        addMessage("addMessageEnemyRat", (TYPE_ENEMY_RAT | ((id % 4096) << 12) | loc.x | (loc.y << 6)), priority);
     }
-    public static void addMessageEnemyKing(MapLocation loc, int id) {
-        addMessage("addMessageEnemyKing", TYPE_ENEMY_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
+    public static void addMessageEnemyKing(MapLocation loc, int id, int priority) {
+        addMessage("addMessageEnemyKing", TYPE_ENEMY_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), priority);
     }
-    public static void addMessageCat(MapLocation loc, int id) {
-        addMessage("addMessageCat", TYPE_CAT | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_NORMAL);
+    public static void addMessageCat(MapLocation loc, int id, int priority) {
+        addMessage("addMessageCat", TYPE_CAT | ((id % 4096) << 12) | loc.x + (loc.y << 6), priority);
     }
-    public static void addMessageKing(MapLocation loc, int id) {
-        addMessage("addMessageKing", TYPE_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), PRIORITY_HIGH);
+    public static void addMessageKing(MapLocation loc, int id, int priority) {
+        addMessage("addMessageKing", TYPE_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), priority);
     }
 
     /////////////////////////////////////// Send messages from MessageLIFO ///////////////////////////////////////
@@ -269,8 +268,9 @@ public class Communication extends Robot {
             if(msg == 0){return 0;}
 
             // Not seen recently
-            if(lastTimeSeenMessage[msg & MASK_14BITS] <= round){
-                lastTimeSeenMessage[msg & MASK_14BITS] = (char) (round + cooldown);
+            print(" Cooldown : " + (int) lastTimeSeenMessage[msg & MASK_14BITS] + " compare to " + rc.getRoundNum());
+            if(lastTimeSeenMessage[msg & MASK_14BITS] <= rc.getRoundNum()){
+                lastTimeSeenMessage[msg & MASK_14BITS] = (char) (rc.getRoundNum() + cooldown);
                 return msg;
             }else{
                 debug("getMessage: Discarding message " + msg + " because it was seen recently");
@@ -287,7 +287,36 @@ public class Communication extends Robot {
     }
 
     public static void sendSqueak() throws GameActionException {
-        int msg = getMessage(COOLDOWN_SEND_AGAIN_SQUEAK) + (rc.getDirection().ordinal() << SHIFT_DIR_SENDER);
+        int msg = getMessage(COOLDOWN_SEND_AGAIN_SQUEAK);
+        /*
+        switch (msg & MASK_TYPE) {
+            case TYPE_CAT:
+                rc.setIndicatorDot(rc.getLocation(), 255, 0, 255);
+                break;
+
+            case TYPE_KING:
+                rc.setIndicatorDot(rc.getLocation(), 0, 255, 0);
+                break;
+
+            case TYPE_ENEMY_KING:
+                rc.setIndicatorDot(rc.getLocation(), 255, 0, 200);
+                break;
+
+            case TYPE_MINE:
+                rc.setIndicatorDot(rc.getLocation(), 0, 0, 255);
+                break;
+
+            case TYPE_ENEMY_RAT:
+                rc.setIndicatorDot(rc.getLocation(), 255, 0, 125);
+                break;
+
+            default:
+                print("Unknow message type : " + msg);
+                rc.setIndicatorDot(rc.getLocation(), 255, 0, 0);
+        }*/
+
+        // Encode direction of sender
+        msg = msg | (rc.getDirection().ordinal() << SHIFT_DIR_SENDER);
         rc.squeak(msg);
     }
 

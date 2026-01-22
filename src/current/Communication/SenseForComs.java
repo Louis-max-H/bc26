@@ -13,29 +13,34 @@ public class SenseForComs extends Robot {
 
         // Give position of our king
         if(isKing){
-            Communication.addMessageKing(myLoc, rc.getID());
+            Communication.addMessageKing(myLoc, rc.getID(), PRIORITY_HIGH);
         }
 
-        // Give position of cats
-        if(nearestCat != null){
-            Communication.addMessageCat(nearestCat, nearestCatID);
-        }
+        // MessageLIFO.buffer2 PRIORITY_CRIT   = 3; // King being attacked, rush order
+        // MessageLIFO.buffer1 PRIORITY_HIGH   = 2; // Enemy in view, cat position
+        // MessageLIFO.buffer0 PRIORITY_NORMAL = 1; // King position, cheese mine
 
-        // Give position of nearest enemy king
-        if(nearestEnemyKing != null){
-            Communication.addMessageEnemyKing(nearestEnemyKing, nearestEnemyKingID);
-        }
+        // If no messages, create news ones
+        if(MessageLIFO.buffer1.size == 0 && MessageLIFO.buffer2.size == 0) {
+            // Give position of cats
+            if(nearestCat != null){
+                Communication.addMessageCat(nearestCat, nearestCatID, PRIORITY_HIGH);
+            }
 
-        // Give position of enemy rat
-        if(nearestEnemyRat != null){
-            Communication.addMessageEnemyRat(nearestEnemyRat, nearestEnemyRatID);
-        }
+            // Give position of nearest enemy king
+            if (nearestEnemyKing != null) {
+                Communication.addMessageEnemyKing(nearestEnemyKing, nearestEnemyKingID, PRIORITY_HIGH);
+            }
 
-        // Send mines infos
-        if(MessageLIFO.buffer2.size == 0){ // Wait for MessageFIFO to be empty before repopulate it
+            // Give position of enemy rat
+            if (nearestEnemyRat != null) {
+                Communication.addMessageEnemyRat(nearestEnemyRat, nearestEnemyRatID, PRIORITY_HIGH);
+            }
+
+            // Send mines infos
             for (char i = 0; i < cheeseMines.size; i++) {
-                if(!cheeseMinesFromArray.contains(cheeseMines.locs[i])) {
-                    Communication.addMessageMine(cheeseMines.locs[i]);
+                if (!cheeseMinesFromArray.contains(cheeseMines.locs[i])) {
+                    Communication.addMessageMine(cheeseMines.locs[i], PRIORITY_HIGH);
                 }
             }
         }

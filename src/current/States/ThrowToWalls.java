@@ -28,19 +28,23 @@ public class ThrowToWalls extends State {
             return new Result(OK, "Not action ready");
         }
 
+        if(rc.getRoundNum() - roundRatnap <= 5){
+            return new Result(OK, "Too soon to throw");
+        }
+
         int score = checkDirectionThrow(rc.getDirection());
         Direction bestDir = rc.getDirection();
-        System.out.println("CheckDirectionThrow " + rc.getDirection() + ":" + score);
+        // System.out.println("CheckDirectionThrow " + rc.getDirection() + ":" + score);
 
         int s = checkDirectionThrow(rc.getDirection().rotateRight());
-        System.out.println("CheckDirectionThrow " + rc.getDirection().rotateRight() + ":" + s);
+        // System.out.println("CheckDirectionThrow " + rc.getDirection().rotateRight() + ":" + s);
         if(s < score){
             score = s;
             bestDir = rc.getDirection().rotateRight();
         }
 
         s = checkDirectionThrow(rc.getDirection().rotateLeft());
-        System.out.println("CheckDirectionThrow " + rc.getDirection().rotateLeft() + ":" + s);
+        // System.out.println("CheckDirectionThrow " + rc.getDirection().rotateLeft() + ":" + s);
         if(s < score){
             score = s;
             bestDir = rc.getDirection().rotateLeft();
@@ -50,7 +54,7 @@ public class ThrowToWalls extends State {
         for(int i = 0; i < 5; i++){
             d = d.rotateRight();
             s = checkDirectionThrow(d);
-            System.out.println("CheckDirectionThrow " + d + ":" + s);
+            // System.out.println("CheckDirectionThrow " + d + ":" + s);
             if(s < score){
                 score = s;
                 bestDir = d;
@@ -60,6 +64,7 @@ public class ThrowToWalls extends State {
         if(score < 10){
             return playThrow(bestDir);
         }
+
         return new Result(OK, "Can't throw to walls s=" + score);
     };
 
@@ -93,6 +98,12 @@ public class ThrowToWalls extends State {
         if(!rc.canThrowRat()){
             return new Result(ERR, "Can't throw ???!!!");
         }
+
+        // Add enemies rats back to the list of enemies on the map (especialy the one we are throwing)
+        MapLocation enemyLoc = rc.getLocation().add(dir);
+        if(score >= 2){enemyLoc = enemyLoc.add(dir);}
+        if(score >= 3){enemyLoc = enemyLoc.add(dir);}
+        enemiesRats.add(enemyLoc, rc.getCarrying().getID());
 
         rc.throwRat();
         return new Result(OK, "Enemy throw !");

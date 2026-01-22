@@ -11,7 +11,8 @@ public class IntLIFO {
     }
 
     public int pop(){
-        return content[--size];
+        size--;
+        return content[size];
     }
 
     public void reset(){

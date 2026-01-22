@@ -21,6 +21,7 @@ public class Robot {
     public static boolean isKing;
     public static MapLocation myLoc;
     public static int round;
+    public static int roundRatnap; // The round number we have ratnaped enemy
 
     // Meta variables
     public static boolean moveRandom = false; // Move random direction each 10 moves

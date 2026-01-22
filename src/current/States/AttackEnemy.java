@@ -153,7 +153,7 @@ public class AttackEnemy extends State {
         // If too much danger on one cell, try place trap
         Direction bestDanger = Tools.bestDirOfLong9(scoresDanger);
         MapLocation bestDangerLoc = myLoc.add(bestDanger);
-        if(scoresDanger[bestDanger.ordinal()] >= Micro.DANGER_IN_REACH * 2 && (scoresAttack[bestDir.ordinal()] + scoresDanger[bestDir.ordinal()] < Micro.ATTACK_THROW) ){
+        if(scoresDanger[bestDanger.ordinal()] >= Micro.DANGER_IN_REACH * 4 && (scoresAttack[bestDir.ordinal()] + scoresDanger[bestDir.ordinal()] < Micro.ATTACK_THROW) ){
             if(rc.canPlaceRatTrap(bestDangerLoc)) {
                 print("Too much danger, placing trap at " + bestDangerLoc);
                 rc.canPlaceRatTrap(bestDangerLoc);
@@ -235,6 +235,7 @@ public class AttackEnemy extends State {
         // Try to ratnap
         if (rc.canCarryRat(target)) {
             rc.carryRat(target);
+            roundRatnap = rc.getRoundNum();
             return new Result(OK, "Ratnaped " + target);
         }
 

@@ -3,15 +3,15 @@ package current.Communication;
 import current.Utils.IntLIFO;
 
 public class MessageLIFO {
-    public static IntLIFO buffer0 = new IntLIFO(); // Common
-    public static IntLIFO buffer1 = new IntLIFO(); // Important
     public static IntLIFO buffer2 = new IntLIFO(); // Emergency
+    public static IntLIFO buffer1 = new IntLIFO(); // Important
+    public static IntLIFO buffer0 = new IntLIFO(); // Common
 
     public static void add(int msg, int priority){
         switch (priority){
-            case 0: buffer0.add(msg); return;
-            case 1: buffer1.add(msg); return;
             case 2: buffer2.add(msg); return;
+            case 1: buffer1.add(msg); return;
+            case 0: buffer0.add(msg); return;
             default:
                 System.out.println("ERR: Message priority should be in [0, 3] 0 is LOW, 3 is CRIT");
         }

@@ -35,20 +35,6 @@ public class Init extends State {
         Micro.init(rc);
     }
 
-    public boolean isInformationCorrect(MapLocation loc, int shortId) throws GameActionException {
-        // If null loc
-        if (loc == null){
-            return false;
-        }
-
-        // If we can sense, trust the information
-        if (!rc.canSenseRobotAtLocation(loc)){
-            return true;
-        }
-
-        return rc.senseRobotAtLocation(loc).getID() % 4096 == shortId;
-    }
-
     @Override
     public Result run() throws GameActionException {
         // Called on new turns
@@ -229,8 +215,15 @@ public class Init extends State {
         /*if(nearestMine != null){
             rc.setIndicatorLine(rc.getLocation(), nearestMine, 0, 255, 0);
         }*/
+        /*
         if(nearestEnemyRat != null){
             rc.setIndicatorLine(rc.getLocation(), nearestEnemyRat, 255, 0, 0);
+        }*/
+
+        if(isKing){
+            for (int j = 0; j < cheeseMines.size; j++) {
+                rc.setIndicatorLine(rc.getLocation(), cheeseMines.locs[j], 0, 0, 255);
+            }
         }
 
 

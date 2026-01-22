@@ -9,11 +9,11 @@
 {# Parametres pour la génération du code -#}
 {% set DEBUG = false %}
 {% set BATTLECODE = true %}
-{% set MAX_DEBUG_ROUND = 200 %}
+{% set MAX_DEBUG_ROUND = 2000 %}
 {% set DOT_DEBUG_LEVEL = 1%} {# Level of debug for battlecode0: None, 1: Only reverse path, 2: All -#}
 {% set colorLeft = "173, 216, 230" %}
 {% set colorRight = "255, 228, 181" %}
-{% set getBytecodeRemaining = "Clock.getBytecodesLeft()" if BATTLECODE and false else "1000000000" %}
+{% set getBytecodeRemaining = "Clock.getBytecodesLeft()" if BATTLECODE else "1" %}
 
 {# Fonctions utilitaires -#}
 {% set getRound = "rc.getRoundNum()" if BATTLECODE else "0" %}

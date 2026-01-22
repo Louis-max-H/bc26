@@ -40,13 +40,14 @@ public class PathFinding {
             MapLocation loc = myLoc.add(dir);
 
             if(!rc.canMove(dir)) {
+                int cellType = BugNavLmx.mapCosts[loc.x + (loc.y<<7) + 128];
 
                 // If we have a wall, can't dig
-                if (BugNavLmx.mapCosts[loc.x + loc.y * 60] == BugNavLmx.SCORE_CELL_WALL) {
+                if (cellType == BugNavLmx.SCORE_CELL_WALL) {
                     scores[dir.ordinal()] = 0;
 
                 // Dirt
-                } else if (BugNavLmx.mapCosts[loc.x + loc.y * 60] == BugNavLmx.SCORE_CELL_IF_DIG) {
+                } else if (cellType == BugNavLmx.SCORE_CELL_IF_DIG) {
                     if(!digEnable) {
                         scores[dir.ordinal()] = 0;
                     }
