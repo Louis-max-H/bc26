@@ -3455,7 +3455,7 @@ public class BugNavLmx {
         // Check if we can reuse previous path
         if(timeBeforeRefresh > 0 && lastDestination.equals(endLoc)){
             if(dir != Direction.CENTER){
-                System.out.println("Pathfinding: Reuse previous path -> " + dir);
+                if(rc.getRoundNum() < 150){System.out.println("Pathfinding: Reuse previous path -> " + dir);}
                 timeBeforeRefresh -= 3;
                 return dir;
             }

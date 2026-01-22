@@ -142,7 +142,7 @@ public class {{ className }} {
         // Check if we can reuse previous path
         if(timeBeforeRefresh > 0 && lastDestination.equals(endLoc)){
             if(dir != Direction.CENTER){
-                System.out.println("Pathfinding: Reuse previous path -> " + dir);
+                if({{getRound}} < {{MAX_DEBUG_ROUND}}){System.out.println("Pathfinding: Reuse previous path -> " + dir);}
                 timeBeforeRefresh -= 3;
                 return dir;
             }

@@ -103,6 +103,7 @@ public class PathFinding {
         // Fallback to Chenyx512 if failed
         if(bugNavDir == null || bugNavDir == Direction.CENTER){
             System.out.println("BugNavLmx return null or center, trying BugNavChenyx512");
+            Robot.rc.setIndicatorLine(Robot.rc.getLocation(), loc, 255, 0, 255);
             bugNavDir = BugNavChenyx512.bugNavGetMoveDir(loc);
         }
 

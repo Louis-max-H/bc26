@@ -4164,7 +4164,8 @@ public class Micro {
                 return;
 
             default:
-                System.out.println("Warn: enemy location out of range " + enemyRelativeLoc);
+                // lmx: Should be okay !
+                // System.out.println("Warn: enemy location out of range " + enemyRelativeLoc);
                 return;
 
         }// switch(enemyRelativeLoc.hashCode())

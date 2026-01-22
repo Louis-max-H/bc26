@@ -78,12 +78,15 @@ public class AttackEnemy extends State {
         }
 
         // For nearest cat
+        /*
         if(nearestCat != null && myLoc.distanceSquaredTo(nearestCat) <= 20){
             for(MapLocation loc: rc.getAllLocationsWithinRadiusSquared(nearestCat, 2)){
                 addThrowMicroScore(myLoc, loc, Micro.ATTACK_THROW + 10); // Slightly better score for cats
             }
         }
+        */
     }
+
 
     /// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// /////////////////////////////////// Update scores //////////////////////////////////////////////////////////////
@@ -156,7 +159,6 @@ public class AttackEnemy extends State {
                 rc.canPlaceRatTrap(bestDangerLoc);
             }
         }
-
 
         // Check if we have action available
         if (scoresAttack[bestDir.ordinal()] == 0 && scoresDanger[bestDir.ordinal()] == 0) {
