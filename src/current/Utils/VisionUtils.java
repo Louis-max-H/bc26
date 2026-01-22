@@ -291,6 +291,9 @@ public class VisionUtils {
         
         if(bestDir != Direction.CENTER){
             rc.turn(bestDir);
+        }else{
+            //TODO: Explore function ? 
+            rc.turn(rc.getDirection().rotateRight().rotateRight());
         }
         Robot.print(String.format("Smart look best dir is %10s with score %d", bestDir, bestScore));
         return new Result(OK, "Looked at " + bestDir + " with score " + bestScore);

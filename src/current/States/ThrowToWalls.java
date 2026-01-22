@@ -106,7 +106,7 @@ public class ThrowToWalls extends State {
         MapLocation loc = myLoc.add(dir);
         char[] mapCosts = BugNavLmx.mapCosts;
         int xy = myLoc.x + (myLoc.y<<7) + 129;
-        int PASSABLE = BugNavLmx.SCORE_CELL_PASSABLE;
+        int SCORE_CELL_WALL = BugNavLmx.SCORE_CELL_WALL;
 
         switch(dir){
             case Direction.NORTH:
@@ -146,7 +146,7 @@ public class ThrowToWalls extends State {
 
                     return -1;
                 }else{
-                    if(mapCosts[xy + 128] != PASSABLE){
+                    if(mapCosts[xy + 128] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.SOUTH)){
                             return 1;
                         }else{
@@ -154,15 +154,15 @@ public class ThrowToWalls extends State {
                         }
                     }
 
-                    if(mapCosts[xy + 256] != PASSABLE){
+                    if(mapCosts[xy + 256] >= SCORE_CELL_WALL){
                         return 0;
                     }
 
-                    if(mapCosts[xy + 384] != PASSABLE){
+                    if(mapCosts[xy + 384] >= SCORE_CELL_WALL){
                         return 2;
                     }
 
-                    if(mapCosts[xy + 512] != PASSABLE){
+                    if(mapCosts[xy + 512] >= SCORE_CELL_WALL){
                         return 3;
                     }
                     return 12;
@@ -204,7 +204,7 @@ public class ThrowToWalls extends State {
 
                     return -1;
                 }else{
-                    if(mapCosts[xy + 129] != PASSABLE){
+                    if(mapCosts[xy + 129] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.SOUTHWEST)){
                             return 1;
                         }else{
@@ -212,15 +212,15 @@ public class ThrowToWalls extends State {
                         }
                     }
 
-                    if(mapCosts[xy + 258] != PASSABLE){
+                    if(mapCosts[xy + 258] >= SCORE_CELL_WALL){
                         return 0;
                     }
 
-                    if(mapCosts[xy + 387] != PASSABLE){
+                    if(mapCosts[xy + 387] >= SCORE_CELL_WALL){
                         return 2;
                     }
 
-                    if(mapCosts[xy + 516] != PASSABLE){
+                    if(mapCosts[xy + 516] >= SCORE_CELL_WALL){
                         return 3;
                     }
                     return 12;
@@ -262,7 +262,7 @@ public class ThrowToWalls extends State {
 
                     return -1;
                 }else{
-                    if(mapCosts[xy + 1] != PASSABLE){
+                    if(mapCosts[xy + 1] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.WEST)){
                             return 1;
                         }else{
@@ -270,15 +270,15 @@ public class ThrowToWalls extends State {
                         }
                     }
 
-                    if(mapCosts[xy + 2] != PASSABLE){
+                    if(mapCosts[xy + 2] >= SCORE_CELL_WALL){
                         return 0;
                     }
 
-                    if(mapCosts[xy + 3] != PASSABLE){
+                    if(mapCosts[xy + 3] >= SCORE_CELL_WALL){
                         return 2;
                     }
 
-                    if(mapCosts[xy + 4] != PASSABLE){
+                    if(mapCosts[xy + 4] >= SCORE_CELL_WALL){
                         return 3;
                     }
                     return 12;
@@ -320,7 +320,7 @@ public class ThrowToWalls extends State {
 
                     return -1;
                 }else{
-                    if(mapCosts[xy - 127] != PASSABLE){
+                    if(mapCosts[xy - 127] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.NORTHWEST)){
                             return 1;
                         }else{
@@ -328,15 +328,15 @@ public class ThrowToWalls extends State {
                         }
                     }
 
-                    if(mapCosts[xy - 254] != PASSABLE){
+                    if(mapCosts[xy - 254] >= SCORE_CELL_WALL){
                         return 0;
                     }
 
-                    if(mapCosts[xy - 381] != PASSABLE){
+                    if(mapCosts[xy - 381] >= SCORE_CELL_WALL){
                         return 2;
                     }
 
-                    if(mapCosts[xy - 508] != PASSABLE){
+                    if(mapCosts[xy - 508] >= SCORE_CELL_WALL){
                         return 3;
                     }
                     return 12;
@@ -378,7 +378,7 @@ public class ThrowToWalls extends State {
 
                     return -1;
                 }else{
-                    if(mapCosts[xy - 128] != PASSABLE){
+                    if(mapCosts[xy - 128] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.NORTH)){
                             return 1;
                         }else{
@@ -386,15 +386,15 @@ public class ThrowToWalls extends State {
                         }
                     }
 
-                    if(mapCosts[xy - 256] != PASSABLE){
+                    if(mapCosts[xy - 256] >= SCORE_CELL_WALL){
                         return 0;
                     }
 
-                    if(mapCosts[xy - 384] != PASSABLE){
+                    if(mapCosts[xy - 384] >= SCORE_CELL_WALL){
                         return 2;
                     }
 
-                    if(mapCosts[xy - 512] != PASSABLE){
+                    if(mapCosts[xy - 512] >= SCORE_CELL_WALL){
                         return 3;
                     }
                     return 12;
@@ -436,7 +436,7 @@ public class ThrowToWalls extends State {
 
                     return -1;
                 }else{
-                    if(mapCosts[xy - 129] != PASSABLE){
+                    if(mapCosts[xy - 129] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.NORTHEAST)){
                             return 1;
                         }else{
@@ -444,15 +444,15 @@ public class ThrowToWalls extends State {
                         }
                     }
 
-                    if(mapCosts[xy - 258] != PASSABLE){
+                    if(mapCosts[xy - 258] >= SCORE_CELL_WALL){
                         return 0;
                     }
 
-                    if(mapCosts[xy - 387] != PASSABLE){
+                    if(mapCosts[xy - 387] >= SCORE_CELL_WALL){
                         return 2;
                     }
 
-                    if(mapCosts[xy - 516] != PASSABLE){
+                    if(mapCosts[xy - 516] >= SCORE_CELL_WALL){
                         return 3;
                     }
                     return 12;
@@ -494,7 +494,7 @@ public class ThrowToWalls extends State {
 
                     return -1;
                 }else{
-                    if(mapCosts[xy - 1] != PASSABLE){
+                    if(mapCosts[xy - 1] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.EAST)){
                             return 1;
                         }else{
@@ -502,15 +502,15 @@ public class ThrowToWalls extends State {
                         }
                     }
 
-                    if(mapCosts[xy - 2] != PASSABLE){
+                    if(mapCosts[xy - 2] >= SCORE_CELL_WALL){
                         return 0;
                     }
 
-                    if(mapCosts[xy - 3] != PASSABLE){
+                    if(mapCosts[xy - 3] >= SCORE_CELL_WALL){
                         return 2;
                     }
 
-                    if(mapCosts[xy - 4] != PASSABLE){
+                    if(mapCosts[xy - 4] >= SCORE_CELL_WALL){
                         return 3;
                     }
                     return 12;
@@ -552,7 +552,7 @@ public class ThrowToWalls extends State {
 
                     return -1;
                 }else{
-                    if(mapCosts[xy + 127] != PASSABLE){
+                    if(mapCosts[xy + 127] >= SCORE_CELL_WALL){
                         if(rc.canMove(Direction.SOUTHEAST)){
                             return 1;
                         }else{
@@ -560,15 +560,15 @@ public class ThrowToWalls extends State {
                         }
                     }
 
-                    if(mapCosts[xy + 254] != PASSABLE){
+                    if(mapCosts[xy + 254] >= SCORE_CELL_WALL){
                         return 0;
                     }
 
-                    if(mapCosts[xy + 381] != PASSABLE){
+                    if(mapCosts[xy + 381] >= SCORE_CELL_WALL){
                         return 2;
                     }
 
-                    if(mapCosts[xy + 508] != PASSABLE){
+                    if(mapCosts[xy + 508] >= SCORE_CELL_WALL){
                         return 3;
                     }
                     return 12;

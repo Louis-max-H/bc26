@@ -8,7 +8,6 @@
 
  
 
-
 package current.Utils;
 import battlecode.common.*;
 import current.Robots.Robot;
@@ -3442,7 +3441,7 @@ public class BugNavLmx {
         }
 
         // Debug message
-        RobotController rc = Robot.rc;if( rc.getRoundNum() < 150){
+        RobotController rc = Robot.rc;if( rc.getRoundNum() < 200){
             System.out.println("Start Pathfinding from " + startLoc + " to " + endLoc);
         }
         
@@ -3455,7 +3454,7 @@ public class BugNavLmx {
         // Check if we can reuse previous path
         if(timeBeforeRefresh > 0 && lastDestination.equals(endLoc)){
             if(dir != Direction.CENTER){
-                if(rc.getRoundNum() < 150){System.out.println("Pathfinding: Reuse previous path -> " + dir);}
+                if(rc.getRoundNum() < 200){System.out.println("Pathfinding: Reuse previous path -> " + dir);}
                 timeBeforeRefresh -= 3;
                 return dir;
             }
@@ -3463,16 +3462,16 @@ public class BugNavLmx {
 
         // Generate path
         resultCode = generatePathTo(startXY, endLoc.x + (endLoc.y<<7) + 129, MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
-        
+        dir = DIRECTIONS[mapResult[startXY]];
         // Check result validity
         if(resultCode < 0){
-            if(rc.getRoundNum() < 150){
+            if(rc.getRoundNum() < 200){
                 System.out.println("Pathfinding: Warning return code : " + resultCode + " : " + dir);
             }    
             timeBeforeRefresh = 0; // Don't save query result
             
         }else{
-            if(rc.getRoundNum() < 150){
+            if(rc.getRoundNum() < 200){
                 System.out.println("Pathfinding: SUCCESS -> " + dir);
             }
             timeBeforeRefresh = 3; // Save query result for 3 rounds
@@ -3528,7 +3527,7 @@ public class BugNavLmx {
         }else{
             stopBellowBytecodeRemaining =  Clock.getBytecodesLeft() - maxBytecodeUsed ;
         }
-        
+
 
 
         mainLoop: // We exit the loop when direction to target is Direction.CENTER
@@ -3540,7 +3539,7 @@ public class BugNavLmx {
             for (;;) {
                 iterationsNormal++;
 
-                if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
+                if(1000000000 < stopBellowBytecodeRemaining){
                     break mainLoop;
                 }
 
@@ -4734,7 +4733,7 @@ public class BugNavLmx {
             modeSplit:
             for (;;) {
                 iterationsSplit++;
-                if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
+                if(1000000000 < stopBellowBytecodeRemaining){
                     break mainLoop;
                 }
 
@@ -6960,11 +6959,11 @@ public class BugNavLmx {
         } // End mainLoopLabel
 
         if(!withReturn){
-            if( rc.getRoundNum() < 150){
-                System.out.println("===Pathfinding report : REVERSEtracking===");
+            if( rc.getRoundNum() < 200){
+                System.out.println("===Pathfinding report : REVERSE ===");
                 System.out.println("Iterations normal : " + iterationsNormal);
                 System.out.println("Iterations split  : " + iterationsSplit);
-                System.out.println("Bytecode used     : " + (startRemainingBytecode - Clock.getBytecodesLeft()));
+                System.out.println("Bytecode used     : " + (startRemainingBytecode - 1000000000));
             }
 
             BugNavLmx.mapResult = mapResult;
@@ -7022,7 +7021,7 @@ public class BugNavLmx {
             iterationsReturn++;
 
             // Check bytecode limits
-            if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
+            if(1000000000 < stopBellowBytecodeRemaining){
                 break ReverseLoop;
             }
 
@@ -7089,22 +7088,26 @@ public class BugNavLmx {
                     break;
                 
                 case 8: // Center
+                    if(rc.getRoundNum() < 200){System.out.println("MSG=Destination reached directly by reverse path");}
+                    xyReturn += dirsShift7Bxy[returnDirection];
+                    mapResult[xyReturn] = dirsOrdsOpposite[returnDirection];
                     return 1;
 
                 default:
                     throw new java.lang.Error("ERR Pathfinding: REVERSE mode: Invalid direction to start. : " + (int)mapDirections[xyStartDir - xyReturn] + " ");
             }
 
-            mapResult[xyReturn] = dirsOrdsOpposite[returnDirection];
+            // TODO: Check this good ?
             xyReturn += dirsShift7Bxy[returnDirection];
+            mapResult[xyReturn] = dirsOrdsOpposite[returnDirection];
         }// End ReverseLoop
 
-        if( rc.getRoundNum() < 150){
+        if( rc.getRoundNum() < 200){
             System.out.println("===Pathfinding report : Normal===");
             System.out.println("Iterations normal : " + iterationsNormal);
             System.out.println("Iterations split  : " + iterationsSplit);
             System.out.println("Iterations return : " + iterationsReturn);
-            System.out.println("Bytecode used     : " + (startRemainingBytecode - Clock.getBytecodesLeft()));
+            System.out.println("Bytecode used     : " + (startRemainingBytecode - 1000000000));
             System.out.println("");
         }
 

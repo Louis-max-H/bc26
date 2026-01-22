@@ -38,10 +38,6 @@ public class PathFinding {
         // Check all direction
         for(Direction dir : Direction.values()){
             MapLocation loc = myLoc.add(dir);
-            if(!rc.onTheMap(loc)){
-                scores[dir.ordinal()] = 0;
-                continue;
-            }
 
             if(!rc.canMove(dir)) {
 
@@ -135,9 +131,6 @@ public class PathFinding {
         }
 
         // If dirt, turn to the direction and remove dirt
-        if(!rc.onTheMap(locMove)){
-            return new Result(CANT, "Can't move off map");
-        }
         int xy = locMove.x + 60 * locMove.y;
         Robot.print("Score at loc is " + (int)BugNavLmx.mapCosts[xy]);
         if(BugNavLmx.mapCosts[xy] == BugNavLmx.SCORE_CELL_IF_DIG){

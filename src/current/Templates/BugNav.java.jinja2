@@ -9,11 +9,11 @@
 {# Parametres pour la génération du code -#}
 {% set DEBUG = false %}
 {% set BATTLECODE = true %}
-{% set MAX_DEBUG_ROUND = 150 %}
+{% set MAX_DEBUG_ROUND = 200 %}
 {% set DOT_DEBUG_LEVEL = 1%} {# Level of debug for battlecode0: None, 1: Only reverse path, 2: All -#}
 {% set colorLeft = "173, 216, 230" %}
 {% set colorRight = "255, 228, 181" %}
-
+{% set getBytecodeRemaining = "Clock.getBytecodesLeft()" if BATTLECODE and false else "1000000000" %}
 
 {# Fonctions utilitaires -#}
 {% set getRound = "rc.getRoundNum()" if BATTLECODE else "0" %}
@@ -150,7 +150,9 @@ public class {{ className }} {
 
         // Generate path
         resultCode = generatePathTo(startXY, {{ encodeCellPathfinding("endLoc.x", "endLoc.y") }}, MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
-        
+        dir = DIRECTIONS[mapResult[startXY]];
+        {% if DEBUG -%}System.out.println("Get result of pathfinding: DIRECTIONS[mapResult[startXY]]=DIRECTIONS[" + (int)mapResult[startXY] + "] with startXY=" + startXY);{% endif -%}
+
         // Check result validity
         if(resultCode < 0){
             if({{ getRound }} < {{ MAX_DEBUG_ROUND }}){
@@ -198,7 +200,7 @@ public class {{ className }} {
         xyLastWallHit = -1;
         xyLastWallLeave = -1;
         mapResult = getMap7B();
-        mapResult[xy] = {{dirsOrdsOpposite["CENTER"]}};
+        mapResult[xy] = {{dirsOrds["CENTER"]}};
 
 
         // Reduce bytecode by moving variables in local scope
@@ -217,7 +219,6 @@ public class {{ className }} {
         }else{
             stopBellowBytecodeRemaining = {% if BATTLECODE %} Clock.getBytecodesLeft() - maxBytecodeUsed {% else %} 0 {% endif -%};
         }
-        {% set getBytecodeRemaining = "Clock.getBytecodesLeft()" if BATTLECODE else "1" %}
 
 
 
@@ -236,8 +237,8 @@ public class {{ className }} {
                     if(withReturn){System.out.println("SCORE=" + score);}
                 {% endif -%}
                 {% if BATTLECODE and DOT_DEBUG_LEVEL >= 2 -%}
-                    if(withReturn){  rc.setIndicatorDot({{xyToMapLocation(xy)}}, 0, 10, 10); // Blue
-                    }else{           rc.setIndicatorDot({{xyToMapLocation(xy)}}, 206, 174, 243); // Violet
+                    if(withReturn){  rc.setIndicatorDot({{xyToMapLocation("xy")}}, 0, 10, 10); // Blue
+                    }else{           rc.setIndicatorDot({{xyToMapLocation("xy")}}, 206, 174, 243); // Violet
                     }
                 {% endif -%}
 
@@ -269,7 +270,9 @@ public class {{ className }} {
                         }
 
                         {# Move to this direction -#}
-                        {% if DEBUG -%}System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=OK score: " + (int)mapCosts[xyTmp]);
+                        {% if DEBUG -%}
+                        System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=OK score: " + (int)mapCosts[xyTmp]);
+                        System.out.println("Writte " + {{dirsOrdsOpposite[dir]}} + "dursOrdsOpposite[{{dir}}] = {{dirsOpposite[dir]}} at " + (int)xyTmp);
                         {% endif -%}
                         xy = xyTmp;
                         mapResult[xyTmp] = {{dirsOrdsOpposite[dir]}};
@@ -278,7 +281,7 @@ public class {{ className }} {
 
                     {# If direction to target is center, we have reached our destination -#}
                     case 8: // CENTER
-                        {% if DEBUG -%}System.out.println("MSG=CENTER");
+                        {% if DEBUG -%}System.out.println("MSG=CENTER from mainLopp");
                         {% endif -%}
                         break mainLoop;
 
@@ -504,7 +507,7 @@ public class {{ className }} {
 
         if(!withReturn){
             if( {{ getRound }} < {{ MAX_DEBUG_ROUND }}){
-                System.out.println("===Pathfinding report : REVERSEtracking===");
+                System.out.println("===Pathfinding report : REVERSE ===");
                 System.out.println("Iterations normal : " + iterationsNormal);
                 System.out.println("Iterations split  : " + iterationsSplit);
                 System.out.println("Bytecode used     : " + (startRemainingBytecode - {{getBytecodeRemaining}}));
@@ -623,17 +626,19 @@ public class {{ className }} {
                 {% endfor %}
 
                 case 8: // Center
-                    {% if DEBUG -%}System.out.println("MSG=Destination reached");
-                    {% endif -%}
+                    if({{getRound}} < {{MAX_DEBUG_ROUND}}){System.out.println("MSG=Destination reached directly by reverse path");}
+                    xyReturn += dirsShift7Bxy[returnDirection];
+                    mapResult[xyReturn] = dirsOrdsOpposite[returnDirection];
                     return 1;
 
                 default:
                     {{ impossible(MSG="REVERSE mode: Invalid direction to start. : \" + (int)mapDirections[xyStartDir - xyReturn] + \" ") }}
             }
 
-            {# Go up one move -#}
-            mapResult[xyReturn] = dirsOrdsOpposite[returnDirection];
+            {# Go up one move and writte direction -#}
+            // TODO: Check this good ?
             xyReturn += dirsShift7Bxy[returnDirection];
+            mapResult[xyReturn] = dirsOrdsOpposite[returnDirection];
         }// End ReverseLoop
 
         if( {{ getRound }} < {{ MAX_DEBUG_ROUND }}){

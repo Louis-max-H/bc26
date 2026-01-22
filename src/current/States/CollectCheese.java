@@ -13,7 +13,6 @@ public class CollectCheese extends State {
     public MapLocation cheeseLoc;
     public MapLocation targetMine; // Target cheese mine to stay near
     private static final int MINE_STAY_RADIUS_SQUARED = 9; // Stay within 3 tiles of mine
-    private static final int CHEESE_CHASE_DIST_SQUARED = 8; // Only detour for close cheese
 
     @Override
     public Result run() throws GameActionException {
@@ -22,13 +21,9 @@ public class CollectCheese extends State {
         if(nearestCheese == null){
             return new Result(OK, "No cheese nearby");
         }
-        int cheeseDist = myLoc.distanceSquaredTo(nearestCheese);
-        if(cheeseDist > CHEESE_CHASE_DIST_SQUARED){
-            return new Result(OK, "Cheese too far, keep exploring");
-        }
 
         // Try pickup
-        if(cheeseDist <= 2){
+        if(rc.getLocation().distanceSquaredTo(nearestCheese) <= 2){
             Result r = VisionUtils.smartLookAt(nearestCheese);
             if(r.notOk()){
                 return new Result(r.code, "Looking at cheese : " + r.msg);
