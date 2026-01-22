@@ -95,7 +95,6 @@ public class PathFinding {
         // First try, bugnav of Louis-Max
         Direction bugNavDir = BugNavLmx.pathTo(
             Robot.rc.getLocation(), loc,
-            null, // mapScore = null to use memory
             BugNavLmx.SCORE_CELL_PASSABLE * 30, // Max 30 cells
                 (digEnable) ? BugNavLmx.SCORE_CELL_IF_DIG : BugNavLmx.SCORE_CELL_PASSABLE, // Allow digging
             max(1000, min(Clock.getBytecodesLeft() - 1000, 6000)) // Number bytecode used

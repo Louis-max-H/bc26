@@ -70,7 +70,7 @@ public class {{ className }} {
     // Used for pathfinding
     public static char[] mapResult = getMap7B();
     public static char[] mapCosts = generateEmptyMapCosts7B();
-    public static char[] mapDirections = MapDirections.mapDirections;
+    public static char[] mapDirections = Bugnav.MapDirections.mapDirections;
 
     // Utils 
     public static int[] dirsShift7Bxy =  new int[]{ {%for dir in dirs%}{{dirsShift7Bxy[dir]}}, {%endfor%} };

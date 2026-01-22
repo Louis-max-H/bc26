@@ -41,8 +41,8 @@ directionsLong = [
     "Direction.EAST",
     "Direction.NORTHEAST",
     "Direction.NORTH",
-    "Direction.CENTER"]
-directionsWhitoutCenter = ["WEST", "NORTHWEST", "SOUTHWEST", "SOUTH", "SOUTHEAST", "EAST", "NORTHEAST", "NORTH"]
+    "Direction.CENTER"
+]
 
 anglesToDirections = {
     180 : "WEST",
@@ -217,9 +217,9 @@ def genDirectionCharArray():
 
 def xyToMapLocation(xy):
     if type(xy) == int:
-        return f"new MapLocation({xy & 0b111111}, {xy >> 7})"
+        return f"new MapLocation({(xy & 0b111111) - 1}, {(xy >> 7) - 1})"
     if type(xy) == str:
-        return f"new MapLocation({xy} & 0b111111, {xy} >> 7)"
+        return f"new MapLocation(({xy} & 0b111111) - 1, ({xy} >> 7) - 1)"
     return "INVALID_XY"
 
 def generateEmptyMapCosts7B(passableValue, mod2value, borderValue, invalidValue):
@@ -243,6 +243,11 @@ def sanitizeOperation(string):
 def shiftCells(cells, direction):
     dx, dy = dirsDelta[direction]
     return [(x + dx, y + dy) for x, y in cells]
+
+def shiftCell(cell, direction):
+    x, y = cell
+    dx, dy = dirsDelta[direction]
+    return (x + dx, y + dy)
 
 def reverseRange(n):
     return reversed(list(range(n)))
@@ -465,7 +470,7 @@ def should_ignore_template(template_path):
                 return True
     return False
 
-def process_template(template_path, base_dir, is_prod, force_process=False):
+def process_template(template_path, base_dir, is_prod, params_dict=None, force_process=False):
     """Process a single .jinja2 template file."""
     print(f"Processing: {template_path}")
 
@@ -507,7 +512,7 @@ def process_template(template_path, base_dir, is_prod, force_process=False):
     template = env.get_template(template_name)
 
     # Render template
-    rendered_content = template.render(
+    render_context = dict(
         addDelimiter=addDelimiter,
         anglesToDirections=anglesToDirections,
         battleCodehash=battleCodehash,
@@ -524,7 +529,9 @@ def process_template(template_path, base_dir, is_prod, force_process=False):
         dirs=directions,
         dirsDelta=dirsDelta,
         dirsOrds=dirsOrds,
+        dirsWithoutCenter=directionsWhitoutCenter,
         dirsOrdsOpposite=dirsOrdsOpposite,
+        genMemoryIntArray=genMemoryIntArray,
         dirsShift60xy=dirsShift60xy,
         dirsShift7Bxy=dirsShift7Bxy,
         dirsShift7BxyArray=dirsShift7BxyArray,
@@ -536,6 +543,8 @@ def process_template(template_path, base_dir, is_prod, force_process=False):
         encodeXY=encodeXY,
         encodeXYLoc=encodeXYLoc,
         encodeXYString=encodeXYString,
+        shiftCell=shiftCell,
+        dirsOpposite=dirsOpposite,
         genDirectionCharArray=genDirectionCharArray,
         genMemoryCharArray=genMemoryCharArray,
         genScoreInView=genScoreInView,
@@ -648,6 +657,11 @@ def main():
         action="store_true",
         help="Force processing of templates even if they have an 'Ignore' tag"
     )
+    parser.add_argument(
+        "--params",
+        metavar="FILE",
+        help="Path to JSON file containing parameters to load in templates"
+    )
     args = parser.parse_args()
     
     # Valider que target est fourni pour les autres modes
@@ -728,7 +742,7 @@ def main():
     skipped_count = 0
     stats_list = []
     for template_path in templates_to_process:
-        result = process_template(template_path, base_dir, is_prod, force_process=args.force)
+        result = process_template(template_path, base_dir, is_prod, params_dict, force_process=args.force)
         if result and result.get('success'):
             if result.get('skipped'):
                 skipped_count += 1

@@ -3,10 +3,11 @@
 // !!!! Dont edit it manually, check in template folder !!!!
 // #########################################################
 
-//  Destination: Utils/BugNavLmx.java
+// Destination: Utils/BugNavLmx.java
 
 
  
+
 
 package current.Utils;
 import battlecode.common.*;
@@ -17,83 +18,3442 @@ import current.Robots.Robot;
 
 
 
-
 public class BugNavLmx {
-    public static int width = 60;
-    public static int height = 60;
+    // Constants
     public static int SCORE_CELL_WALL = 32000; // Should not exceed 8 bits int (If added to anything else, to not overflow)
     public static int SCORE_CELL_IF_DIG = 220;
     public static int SCORE_CELL_PASSABLE = 200;
-
-    public static void init(int width, int height){
-        BugNavLmx.width = width;
-        BugNavLmx.height = height;
-    }
-
-    public static boolean onTheMap(MapLocation loc){
-        return loc.x >= 0 && loc.x < width && loc.y >= 0 && loc.y < height;
-    }
+    public static int SCORE_CELL_BORDER = 32001;
 
     // Attributs for caching
     public static int timeBeforeRefresh = 0;
     public static MapLocation lastDestination;
 
-    // Used for backtracking
+    // Used for REVERSEtracking
     public static int resultCode = 0; // 1 : Ok, -1: Not enought bytecode
     public static String mode = "DEFAULT";
     public static int xyLastWallHit = -1;
     public static int xyLastWallLeave = -1;
 
     // Used for pathfinding
-    public static char[] mapResult;
-    public static char[] mapCosts = generateEmptyMapCosts();
+    public static char[] mapResult = getMap7B();
+    public static char[] mapCosts = generateEmptyMapCosts7B();
+    public static char[] mapDirections = Bugnav.MapDirections.mapDirections;
 
+    // Utils 
+    public static int[] dirsShift7Bxy =  new int[]{ 128, 129, 1, -127, -128, -129, -1, 127,  };
+    public static char[] dirsOrdsOpposite = "\u0004\u0005\u0006\u0007\u0000\u0001\u0002\u0003".toCharArray();
 
-    // Convert direction (char value) at index startXY to Direction enum
-    public static Direction getResult(int startXY){
-        return switch(mapResult[startXY]){
-                        case 0 -> Direction.NORTH;
-                        case 1 -> Direction.NORTHEAST;
-                        case 2 -> Direction.EAST;
-                        case 3 -> Direction.SOUTHEAST;
-                        case 4 -> Direction.SOUTH;
-                        case 5 -> Direction.SOUTHWEST;
-                        case 6 -> Direction.WEST;
-                        case 7 -> Direction.NORTHWEST;
-            
-            default -> {
-               RobotController rc = Robot.rc;if( rc.getRoundNum() < 150){
-                    System.out.println("Unknow direction return from Pathfinding : " + (int)mapResult[startXY]);
-                }
-                yield Direction.CENTER;
-            }
-        };
+    // Directions
+    public static final Direction[] DIRECTIONS = {
+            Direction.NORTH,
+            Direction.NORTHEAST,
+            Direction.EAST,
+            Direction.SOUTHEAST,
+            Direction.SOUTH,
+            Direction.SOUTHWEST,
+            Direction.WEST,
+            Direction.NORTHWEST,
+            Direction.CENTER
+    };
+
+    // Add border to mapCosts
+    public static void init(int width, int height){
+        switch(width){
+                        case 20:
+                                mapCosts[2709] = 32001;
+                                mapCosts[2837] = 32001;
+                                mapCosts[2965] = 32001;
+                                mapCosts[3093] = 32001;
+                                mapCosts[3221] = 32001;
+                                mapCosts[3349] = 32001;
+                                mapCosts[3477] = 32001;
+                                mapCosts[3605] = 32001;
+                                mapCosts[3733] = 32001;
+                                mapCosts[3861] = 32001;
+                                mapCosts[3989] = 32001;
+                                mapCosts[4117] = 32001;
+                                mapCosts[4245] = 32001;
+                                mapCosts[4373] = 32001;
+                                mapCosts[4501] = 32001;
+                                mapCosts[4629] = 32001;
+                                mapCosts[4757] = 32001;
+                                mapCosts[4885] = 32001;
+                                mapCosts[5013] = 32001;
+                                mapCosts[5141] = 32001;
+                                mapCosts[5269] = 32001;
+                                mapCosts[5397] = 32001;
+                                mapCosts[5525] = 32001;
+                                mapCosts[5653] = 32001;
+                                mapCosts[5781] = 32001;
+                                mapCosts[5909] = 32001;
+                                mapCosts[6037] = 32001;
+                                mapCosts[6165] = 32001;
+                                mapCosts[6293] = 32001;
+                                mapCosts[6421] = 32001;
+                                mapCosts[6549] = 32001;
+                                mapCosts[6677] = 32001;
+                                mapCosts[6805] = 32001;
+                                mapCosts[6933] = 32001;
+                                mapCosts[7061] = 32001;
+                                mapCosts[7189] = 32001;
+                                mapCosts[7317] = 32001;
+                                mapCosts[7445] = 32001;
+                                mapCosts[7573] = 32001;
+                                mapCosts[7701] = 32001;
+                                break;
+                        case 21:
+                                mapCosts[2710] = 32001;
+                                mapCosts[2838] = 32001;
+                                mapCosts[2966] = 32001;
+                                mapCosts[3094] = 32001;
+                                mapCosts[3222] = 32001;
+                                mapCosts[3350] = 32001;
+                                mapCosts[3478] = 32001;
+                                mapCosts[3606] = 32001;
+                                mapCosts[3734] = 32001;
+                                mapCosts[3862] = 32001;
+                                mapCosts[3990] = 32001;
+                                mapCosts[4118] = 32001;
+                                mapCosts[4246] = 32001;
+                                mapCosts[4374] = 32001;
+                                mapCosts[4502] = 32001;
+                                mapCosts[4630] = 32001;
+                                mapCosts[4758] = 32001;
+                                mapCosts[4886] = 32001;
+                                mapCosts[5014] = 32001;
+                                mapCosts[5142] = 32001;
+                                mapCosts[5270] = 32001;
+                                mapCosts[5398] = 32001;
+                                mapCosts[5526] = 32001;
+                                mapCosts[5654] = 32001;
+                                mapCosts[5782] = 32001;
+                                mapCosts[5910] = 32001;
+                                mapCosts[6038] = 32001;
+                                mapCosts[6166] = 32001;
+                                mapCosts[6294] = 32001;
+                                mapCosts[6422] = 32001;
+                                mapCosts[6550] = 32001;
+                                mapCosts[6678] = 32001;
+                                mapCosts[6806] = 32001;
+                                mapCosts[6934] = 32001;
+                                mapCosts[7062] = 32001;
+                                mapCosts[7190] = 32001;
+                                mapCosts[7318] = 32001;
+                                mapCosts[7446] = 32001;
+                                mapCosts[7574] = 32001;
+                                mapCosts[7702] = 32001;
+                                break;
+                        case 22:
+                                mapCosts[2711] = 32001;
+                                mapCosts[2839] = 32001;
+                                mapCosts[2967] = 32001;
+                                mapCosts[3095] = 32001;
+                                mapCosts[3223] = 32001;
+                                mapCosts[3351] = 32001;
+                                mapCosts[3479] = 32001;
+                                mapCosts[3607] = 32001;
+                                mapCosts[3735] = 32001;
+                                mapCosts[3863] = 32001;
+                                mapCosts[3991] = 32001;
+                                mapCosts[4119] = 32001;
+                                mapCosts[4247] = 32001;
+                                mapCosts[4375] = 32001;
+                                mapCosts[4503] = 32001;
+                                mapCosts[4631] = 32001;
+                                mapCosts[4759] = 32001;
+                                mapCosts[4887] = 32001;
+                                mapCosts[5015] = 32001;
+                                mapCosts[5143] = 32001;
+                                mapCosts[5271] = 32001;
+                                mapCosts[5399] = 32001;
+                                mapCosts[5527] = 32001;
+                                mapCosts[5655] = 32001;
+                                mapCosts[5783] = 32001;
+                                mapCosts[5911] = 32001;
+                                mapCosts[6039] = 32001;
+                                mapCosts[6167] = 32001;
+                                mapCosts[6295] = 32001;
+                                mapCosts[6423] = 32001;
+                                mapCosts[6551] = 32001;
+                                mapCosts[6679] = 32001;
+                                mapCosts[6807] = 32001;
+                                mapCosts[6935] = 32001;
+                                mapCosts[7063] = 32001;
+                                mapCosts[7191] = 32001;
+                                mapCosts[7319] = 32001;
+                                mapCosts[7447] = 32001;
+                                mapCosts[7575] = 32001;
+                                mapCosts[7703] = 32001;
+                                break;
+                        case 23:
+                                mapCosts[2712] = 32001;
+                                mapCosts[2840] = 32001;
+                                mapCosts[2968] = 32001;
+                                mapCosts[3096] = 32001;
+                                mapCosts[3224] = 32001;
+                                mapCosts[3352] = 32001;
+                                mapCosts[3480] = 32001;
+                                mapCosts[3608] = 32001;
+                                mapCosts[3736] = 32001;
+                                mapCosts[3864] = 32001;
+                                mapCosts[3992] = 32001;
+                                mapCosts[4120] = 32001;
+                                mapCosts[4248] = 32001;
+                                mapCosts[4376] = 32001;
+                                mapCosts[4504] = 32001;
+                                mapCosts[4632] = 32001;
+                                mapCosts[4760] = 32001;
+                                mapCosts[4888] = 32001;
+                                mapCosts[5016] = 32001;
+                                mapCosts[5144] = 32001;
+                                mapCosts[5272] = 32001;
+                                mapCosts[5400] = 32001;
+                                mapCosts[5528] = 32001;
+                                mapCosts[5656] = 32001;
+                                mapCosts[5784] = 32001;
+                                mapCosts[5912] = 32001;
+                                mapCosts[6040] = 32001;
+                                mapCosts[6168] = 32001;
+                                mapCosts[6296] = 32001;
+                                mapCosts[6424] = 32001;
+                                mapCosts[6552] = 32001;
+                                mapCosts[6680] = 32001;
+                                mapCosts[6808] = 32001;
+                                mapCosts[6936] = 32001;
+                                mapCosts[7064] = 32001;
+                                mapCosts[7192] = 32001;
+                                mapCosts[7320] = 32001;
+                                mapCosts[7448] = 32001;
+                                mapCosts[7576] = 32001;
+                                mapCosts[7704] = 32001;
+                                break;
+                        case 24:
+                                mapCosts[2713] = 32001;
+                                mapCosts[2841] = 32001;
+                                mapCosts[2969] = 32001;
+                                mapCosts[3097] = 32001;
+                                mapCosts[3225] = 32001;
+                                mapCosts[3353] = 32001;
+                                mapCosts[3481] = 32001;
+                                mapCosts[3609] = 32001;
+                                mapCosts[3737] = 32001;
+                                mapCosts[3865] = 32001;
+                                mapCosts[3993] = 32001;
+                                mapCosts[4121] = 32001;
+                                mapCosts[4249] = 32001;
+                                mapCosts[4377] = 32001;
+                                mapCosts[4505] = 32001;
+                                mapCosts[4633] = 32001;
+                                mapCosts[4761] = 32001;
+                                mapCosts[4889] = 32001;
+                                mapCosts[5017] = 32001;
+                                mapCosts[5145] = 32001;
+                                mapCosts[5273] = 32001;
+                                mapCosts[5401] = 32001;
+                                mapCosts[5529] = 32001;
+                                mapCosts[5657] = 32001;
+                                mapCosts[5785] = 32001;
+                                mapCosts[5913] = 32001;
+                                mapCosts[6041] = 32001;
+                                mapCosts[6169] = 32001;
+                                mapCosts[6297] = 32001;
+                                mapCosts[6425] = 32001;
+                                mapCosts[6553] = 32001;
+                                mapCosts[6681] = 32001;
+                                mapCosts[6809] = 32001;
+                                mapCosts[6937] = 32001;
+                                mapCosts[7065] = 32001;
+                                mapCosts[7193] = 32001;
+                                mapCosts[7321] = 32001;
+                                mapCosts[7449] = 32001;
+                                mapCosts[7577] = 32001;
+                                mapCosts[7705] = 32001;
+                                break;
+                        case 25:
+                                mapCosts[2714] = 32001;
+                                mapCosts[2842] = 32001;
+                                mapCosts[2970] = 32001;
+                                mapCosts[3098] = 32001;
+                                mapCosts[3226] = 32001;
+                                mapCosts[3354] = 32001;
+                                mapCosts[3482] = 32001;
+                                mapCosts[3610] = 32001;
+                                mapCosts[3738] = 32001;
+                                mapCosts[3866] = 32001;
+                                mapCosts[3994] = 32001;
+                                mapCosts[4122] = 32001;
+                                mapCosts[4250] = 32001;
+                                mapCosts[4378] = 32001;
+                                mapCosts[4506] = 32001;
+                                mapCosts[4634] = 32001;
+                                mapCosts[4762] = 32001;
+                                mapCosts[4890] = 32001;
+                                mapCosts[5018] = 32001;
+                                mapCosts[5146] = 32001;
+                                mapCosts[5274] = 32001;
+                                mapCosts[5402] = 32001;
+                                mapCosts[5530] = 32001;
+                                mapCosts[5658] = 32001;
+                                mapCosts[5786] = 32001;
+                                mapCosts[5914] = 32001;
+                                mapCosts[6042] = 32001;
+                                mapCosts[6170] = 32001;
+                                mapCosts[6298] = 32001;
+                                mapCosts[6426] = 32001;
+                                mapCosts[6554] = 32001;
+                                mapCosts[6682] = 32001;
+                                mapCosts[6810] = 32001;
+                                mapCosts[6938] = 32001;
+                                mapCosts[7066] = 32001;
+                                mapCosts[7194] = 32001;
+                                mapCosts[7322] = 32001;
+                                mapCosts[7450] = 32001;
+                                mapCosts[7578] = 32001;
+                                mapCosts[7706] = 32001;
+                                break;
+                        case 26:
+                                mapCosts[2715] = 32001;
+                                mapCosts[2843] = 32001;
+                                mapCosts[2971] = 32001;
+                                mapCosts[3099] = 32001;
+                                mapCosts[3227] = 32001;
+                                mapCosts[3355] = 32001;
+                                mapCosts[3483] = 32001;
+                                mapCosts[3611] = 32001;
+                                mapCosts[3739] = 32001;
+                                mapCosts[3867] = 32001;
+                                mapCosts[3995] = 32001;
+                                mapCosts[4123] = 32001;
+                                mapCosts[4251] = 32001;
+                                mapCosts[4379] = 32001;
+                                mapCosts[4507] = 32001;
+                                mapCosts[4635] = 32001;
+                                mapCosts[4763] = 32001;
+                                mapCosts[4891] = 32001;
+                                mapCosts[5019] = 32001;
+                                mapCosts[5147] = 32001;
+                                mapCosts[5275] = 32001;
+                                mapCosts[5403] = 32001;
+                                mapCosts[5531] = 32001;
+                                mapCosts[5659] = 32001;
+                                mapCosts[5787] = 32001;
+                                mapCosts[5915] = 32001;
+                                mapCosts[6043] = 32001;
+                                mapCosts[6171] = 32001;
+                                mapCosts[6299] = 32001;
+                                mapCosts[6427] = 32001;
+                                mapCosts[6555] = 32001;
+                                mapCosts[6683] = 32001;
+                                mapCosts[6811] = 32001;
+                                mapCosts[6939] = 32001;
+                                mapCosts[7067] = 32001;
+                                mapCosts[7195] = 32001;
+                                mapCosts[7323] = 32001;
+                                mapCosts[7451] = 32001;
+                                mapCosts[7579] = 32001;
+                                mapCosts[7707] = 32001;
+                                break;
+                        case 27:
+                                mapCosts[2716] = 32001;
+                                mapCosts[2844] = 32001;
+                                mapCosts[2972] = 32001;
+                                mapCosts[3100] = 32001;
+                                mapCosts[3228] = 32001;
+                                mapCosts[3356] = 32001;
+                                mapCosts[3484] = 32001;
+                                mapCosts[3612] = 32001;
+                                mapCosts[3740] = 32001;
+                                mapCosts[3868] = 32001;
+                                mapCosts[3996] = 32001;
+                                mapCosts[4124] = 32001;
+                                mapCosts[4252] = 32001;
+                                mapCosts[4380] = 32001;
+                                mapCosts[4508] = 32001;
+                                mapCosts[4636] = 32001;
+                                mapCosts[4764] = 32001;
+                                mapCosts[4892] = 32001;
+                                mapCosts[5020] = 32001;
+                                mapCosts[5148] = 32001;
+                                mapCosts[5276] = 32001;
+                                mapCosts[5404] = 32001;
+                                mapCosts[5532] = 32001;
+                                mapCosts[5660] = 32001;
+                                mapCosts[5788] = 32001;
+                                mapCosts[5916] = 32001;
+                                mapCosts[6044] = 32001;
+                                mapCosts[6172] = 32001;
+                                mapCosts[6300] = 32001;
+                                mapCosts[6428] = 32001;
+                                mapCosts[6556] = 32001;
+                                mapCosts[6684] = 32001;
+                                mapCosts[6812] = 32001;
+                                mapCosts[6940] = 32001;
+                                mapCosts[7068] = 32001;
+                                mapCosts[7196] = 32001;
+                                mapCosts[7324] = 32001;
+                                mapCosts[7452] = 32001;
+                                mapCosts[7580] = 32001;
+                                mapCosts[7708] = 32001;
+                                break;
+                        case 28:
+                                mapCosts[2717] = 32001;
+                                mapCosts[2845] = 32001;
+                                mapCosts[2973] = 32001;
+                                mapCosts[3101] = 32001;
+                                mapCosts[3229] = 32001;
+                                mapCosts[3357] = 32001;
+                                mapCosts[3485] = 32001;
+                                mapCosts[3613] = 32001;
+                                mapCosts[3741] = 32001;
+                                mapCosts[3869] = 32001;
+                                mapCosts[3997] = 32001;
+                                mapCosts[4125] = 32001;
+                                mapCosts[4253] = 32001;
+                                mapCosts[4381] = 32001;
+                                mapCosts[4509] = 32001;
+                                mapCosts[4637] = 32001;
+                                mapCosts[4765] = 32001;
+                                mapCosts[4893] = 32001;
+                                mapCosts[5021] = 32001;
+                                mapCosts[5149] = 32001;
+                                mapCosts[5277] = 32001;
+                                mapCosts[5405] = 32001;
+                                mapCosts[5533] = 32001;
+                                mapCosts[5661] = 32001;
+                                mapCosts[5789] = 32001;
+                                mapCosts[5917] = 32001;
+                                mapCosts[6045] = 32001;
+                                mapCosts[6173] = 32001;
+                                mapCosts[6301] = 32001;
+                                mapCosts[6429] = 32001;
+                                mapCosts[6557] = 32001;
+                                mapCosts[6685] = 32001;
+                                mapCosts[6813] = 32001;
+                                mapCosts[6941] = 32001;
+                                mapCosts[7069] = 32001;
+                                mapCosts[7197] = 32001;
+                                mapCosts[7325] = 32001;
+                                mapCosts[7453] = 32001;
+                                mapCosts[7581] = 32001;
+                                mapCosts[7709] = 32001;
+                                break;
+                        case 29:
+                                mapCosts[2718] = 32001;
+                                mapCosts[2846] = 32001;
+                                mapCosts[2974] = 32001;
+                                mapCosts[3102] = 32001;
+                                mapCosts[3230] = 32001;
+                                mapCosts[3358] = 32001;
+                                mapCosts[3486] = 32001;
+                                mapCosts[3614] = 32001;
+                                mapCosts[3742] = 32001;
+                                mapCosts[3870] = 32001;
+                                mapCosts[3998] = 32001;
+                                mapCosts[4126] = 32001;
+                                mapCosts[4254] = 32001;
+                                mapCosts[4382] = 32001;
+                                mapCosts[4510] = 32001;
+                                mapCosts[4638] = 32001;
+                                mapCosts[4766] = 32001;
+                                mapCosts[4894] = 32001;
+                                mapCosts[5022] = 32001;
+                                mapCosts[5150] = 32001;
+                                mapCosts[5278] = 32001;
+                                mapCosts[5406] = 32001;
+                                mapCosts[5534] = 32001;
+                                mapCosts[5662] = 32001;
+                                mapCosts[5790] = 32001;
+                                mapCosts[5918] = 32001;
+                                mapCosts[6046] = 32001;
+                                mapCosts[6174] = 32001;
+                                mapCosts[6302] = 32001;
+                                mapCosts[6430] = 32001;
+                                mapCosts[6558] = 32001;
+                                mapCosts[6686] = 32001;
+                                mapCosts[6814] = 32001;
+                                mapCosts[6942] = 32001;
+                                mapCosts[7070] = 32001;
+                                mapCosts[7198] = 32001;
+                                mapCosts[7326] = 32001;
+                                mapCosts[7454] = 32001;
+                                mapCosts[7582] = 32001;
+                                mapCosts[7710] = 32001;
+                                break;
+                        case 30:
+                                mapCosts[2719] = 32001;
+                                mapCosts[2847] = 32001;
+                                mapCosts[2975] = 32001;
+                                mapCosts[3103] = 32001;
+                                mapCosts[3231] = 32001;
+                                mapCosts[3359] = 32001;
+                                mapCosts[3487] = 32001;
+                                mapCosts[3615] = 32001;
+                                mapCosts[3743] = 32001;
+                                mapCosts[3871] = 32001;
+                                mapCosts[3999] = 32001;
+                                mapCosts[4127] = 32001;
+                                mapCosts[4255] = 32001;
+                                mapCosts[4383] = 32001;
+                                mapCosts[4511] = 32001;
+                                mapCosts[4639] = 32001;
+                                mapCosts[4767] = 32001;
+                                mapCosts[4895] = 32001;
+                                mapCosts[5023] = 32001;
+                                mapCosts[5151] = 32001;
+                                mapCosts[5279] = 32001;
+                                mapCosts[5407] = 32001;
+                                mapCosts[5535] = 32001;
+                                mapCosts[5663] = 32001;
+                                mapCosts[5791] = 32001;
+                                mapCosts[5919] = 32001;
+                                mapCosts[6047] = 32001;
+                                mapCosts[6175] = 32001;
+                                mapCosts[6303] = 32001;
+                                mapCosts[6431] = 32001;
+                                mapCosts[6559] = 32001;
+                                mapCosts[6687] = 32001;
+                                mapCosts[6815] = 32001;
+                                mapCosts[6943] = 32001;
+                                mapCosts[7071] = 32001;
+                                mapCosts[7199] = 32001;
+                                mapCosts[7327] = 32001;
+                                mapCosts[7455] = 32001;
+                                mapCosts[7583] = 32001;
+                                mapCosts[7711] = 32001;
+                                break;
+                        case 31:
+                                mapCosts[2720] = 32001;
+                                mapCosts[2848] = 32001;
+                                mapCosts[2976] = 32001;
+                                mapCosts[3104] = 32001;
+                                mapCosts[3232] = 32001;
+                                mapCosts[3360] = 32001;
+                                mapCosts[3488] = 32001;
+                                mapCosts[3616] = 32001;
+                                mapCosts[3744] = 32001;
+                                mapCosts[3872] = 32001;
+                                mapCosts[4000] = 32001;
+                                mapCosts[4128] = 32001;
+                                mapCosts[4256] = 32001;
+                                mapCosts[4384] = 32001;
+                                mapCosts[4512] = 32001;
+                                mapCosts[4640] = 32001;
+                                mapCosts[4768] = 32001;
+                                mapCosts[4896] = 32001;
+                                mapCosts[5024] = 32001;
+                                mapCosts[5152] = 32001;
+                                mapCosts[5280] = 32001;
+                                mapCosts[5408] = 32001;
+                                mapCosts[5536] = 32001;
+                                mapCosts[5664] = 32001;
+                                mapCosts[5792] = 32001;
+                                mapCosts[5920] = 32001;
+                                mapCosts[6048] = 32001;
+                                mapCosts[6176] = 32001;
+                                mapCosts[6304] = 32001;
+                                mapCosts[6432] = 32001;
+                                mapCosts[6560] = 32001;
+                                mapCosts[6688] = 32001;
+                                mapCosts[6816] = 32001;
+                                mapCosts[6944] = 32001;
+                                mapCosts[7072] = 32001;
+                                mapCosts[7200] = 32001;
+                                mapCosts[7328] = 32001;
+                                mapCosts[7456] = 32001;
+                                mapCosts[7584] = 32001;
+                                mapCosts[7712] = 32001;
+                                break;
+                        case 32:
+                                mapCosts[2721] = 32001;
+                                mapCosts[2849] = 32001;
+                                mapCosts[2977] = 32001;
+                                mapCosts[3105] = 32001;
+                                mapCosts[3233] = 32001;
+                                mapCosts[3361] = 32001;
+                                mapCosts[3489] = 32001;
+                                mapCosts[3617] = 32001;
+                                mapCosts[3745] = 32001;
+                                mapCosts[3873] = 32001;
+                                mapCosts[4001] = 32001;
+                                mapCosts[4129] = 32001;
+                                mapCosts[4257] = 32001;
+                                mapCosts[4385] = 32001;
+                                mapCosts[4513] = 32001;
+                                mapCosts[4641] = 32001;
+                                mapCosts[4769] = 32001;
+                                mapCosts[4897] = 32001;
+                                mapCosts[5025] = 32001;
+                                mapCosts[5153] = 32001;
+                                mapCosts[5281] = 32001;
+                                mapCosts[5409] = 32001;
+                                mapCosts[5537] = 32001;
+                                mapCosts[5665] = 32001;
+                                mapCosts[5793] = 32001;
+                                mapCosts[5921] = 32001;
+                                mapCosts[6049] = 32001;
+                                mapCosts[6177] = 32001;
+                                mapCosts[6305] = 32001;
+                                mapCosts[6433] = 32001;
+                                mapCosts[6561] = 32001;
+                                mapCosts[6689] = 32001;
+                                mapCosts[6817] = 32001;
+                                mapCosts[6945] = 32001;
+                                mapCosts[7073] = 32001;
+                                mapCosts[7201] = 32001;
+                                mapCosts[7329] = 32001;
+                                mapCosts[7457] = 32001;
+                                mapCosts[7585] = 32001;
+                                mapCosts[7713] = 32001;
+                                break;
+                        case 33:
+                                mapCosts[2722] = 32001;
+                                mapCosts[2850] = 32001;
+                                mapCosts[2978] = 32001;
+                                mapCosts[3106] = 32001;
+                                mapCosts[3234] = 32001;
+                                mapCosts[3362] = 32001;
+                                mapCosts[3490] = 32001;
+                                mapCosts[3618] = 32001;
+                                mapCosts[3746] = 32001;
+                                mapCosts[3874] = 32001;
+                                mapCosts[4002] = 32001;
+                                mapCosts[4130] = 32001;
+                                mapCosts[4258] = 32001;
+                                mapCosts[4386] = 32001;
+                                mapCosts[4514] = 32001;
+                                mapCosts[4642] = 32001;
+                                mapCosts[4770] = 32001;
+                                mapCosts[4898] = 32001;
+                                mapCosts[5026] = 32001;
+                                mapCosts[5154] = 32001;
+                                mapCosts[5282] = 32001;
+                                mapCosts[5410] = 32001;
+                                mapCosts[5538] = 32001;
+                                mapCosts[5666] = 32001;
+                                mapCosts[5794] = 32001;
+                                mapCosts[5922] = 32001;
+                                mapCosts[6050] = 32001;
+                                mapCosts[6178] = 32001;
+                                mapCosts[6306] = 32001;
+                                mapCosts[6434] = 32001;
+                                mapCosts[6562] = 32001;
+                                mapCosts[6690] = 32001;
+                                mapCosts[6818] = 32001;
+                                mapCosts[6946] = 32001;
+                                mapCosts[7074] = 32001;
+                                mapCosts[7202] = 32001;
+                                mapCosts[7330] = 32001;
+                                mapCosts[7458] = 32001;
+                                mapCosts[7586] = 32001;
+                                mapCosts[7714] = 32001;
+                                break;
+                        case 34:
+                                mapCosts[2723] = 32001;
+                                mapCosts[2851] = 32001;
+                                mapCosts[2979] = 32001;
+                                mapCosts[3107] = 32001;
+                                mapCosts[3235] = 32001;
+                                mapCosts[3363] = 32001;
+                                mapCosts[3491] = 32001;
+                                mapCosts[3619] = 32001;
+                                mapCosts[3747] = 32001;
+                                mapCosts[3875] = 32001;
+                                mapCosts[4003] = 32001;
+                                mapCosts[4131] = 32001;
+                                mapCosts[4259] = 32001;
+                                mapCosts[4387] = 32001;
+                                mapCosts[4515] = 32001;
+                                mapCosts[4643] = 32001;
+                                mapCosts[4771] = 32001;
+                                mapCosts[4899] = 32001;
+                                mapCosts[5027] = 32001;
+                                mapCosts[5155] = 32001;
+                                mapCosts[5283] = 32001;
+                                mapCosts[5411] = 32001;
+                                mapCosts[5539] = 32001;
+                                mapCosts[5667] = 32001;
+                                mapCosts[5795] = 32001;
+                                mapCosts[5923] = 32001;
+                                mapCosts[6051] = 32001;
+                                mapCosts[6179] = 32001;
+                                mapCosts[6307] = 32001;
+                                mapCosts[6435] = 32001;
+                                mapCosts[6563] = 32001;
+                                mapCosts[6691] = 32001;
+                                mapCosts[6819] = 32001;
+                                mapCosts[6947] = 32001;
+                                mapCosts[7075] = 32001;
+                                mapCosts[7203] = 32001;
+                                mapCosts[7331] = 32001;
+                                mapCosts[7459] = 32001;
+                                mapCosts[7587] = 32001;
+                                mapCosts[7715] = 32001;
+                                break;
+                        case 35:
+                                mapCosts[2724] = 32001;
+                                mapCosts[2852] = 32001;
+                                mapCosts[2980] = 32001;
+                                mapCosts[3108] = 32001;
+                                mapCosts[3236] = 32001;
+                                mapCosts[3364] = 32001;
+                                mapCosts[3492] = 32001;
+                                mapCosts[3620] = 32001;
+                                mapCosts[3748] = 32001;
+                                mapCosts[3876] = 32001;
+                                mapCosts[4004] = 32001;
+                                mapCosts[4132] = 32001;
+                                mapCosts[4260] = 32001;
+                                mapCosts[4388] = 32001;
+                                mapCosts[4516] = 32001;
+                                mapCosts[4644] = 32001;
+                                mapCosts[4772] = 32001;
+                                mapCosts[4900] = 32001;
+                                mapCosts[5028] = 32001;
+                                mapCosts[5156] = 32001;
+                                mapCosts[5284] = 32001;
+                                mapCosts[5412] = 32001;
+                                mapCosts[5540] = 32001;
+                                mapCosts[5668] = 32001;
+                                mapCosts[5796] = 32001;
+                                mapCosts[5924] = 32001;
+                                mapCosts[6052] = 32001;
+                                mapCosts[6180] = 32001;
+                                mapCosts[6308] = 32001;
+                                mapCosts[6436] = 32001;
+                                mapCosts[6564] = 32001;
+                                mapCosts[6692] = 32001;
+                                mapCosts[6820] = 32001;
+                                mapCosts[6948] = 32001;
+                                mapCosts[7076] = 32001;
+                                mapCosts[7204] = 32001;
+                                mapCosts[7332] = 32001;
+                                mapCosts[7460] = 32001;
+                                mapCosts[7588] = 32001;
+                                mapCosts[7716] = 32001;
+                                break;
+                        case 36:
+                                mapCosts[2725] = 32001;
+                                mapCosts[2853] = 32001;
+                                mapCosts[2981] = 32001;
+                                mapCosts[3109] = 32001;
+                                mapCosts[3237] = 32001;
+                                mapCosts[3365] = 32001;
+                                mapCosts[3493] = 32001;
+                                mapCosts[3621] = 32001;
+                                mapCosts[3749] = 32001;
+                                mapCosts[3877] = 32001;
+                                mapCosts[4005] = 32001;
+                                mapCosts[4133] = 32001;
+                                mapCosts[4261] = 32001;
+                                mapCosts[4389] = 32001;
+                                mapCosts[4517] = 32001;
+                                mapCosts[4645] = 32001;
+                                mapCosts[4773] = 32001;
+                                mapCosts[4901] = 32001;
+                                mapCosts[5029] = 32001;
+                                mapCosts[5157] = 32001;
+                                mapCosts[5285] = 32001;
+                                mapCosts[5413] = 32001;
+                                mapCosts[5541] = 32001;
+                                mapCosts[5669] = 32001;
+                                mapCosts[5797] = 32001;
+                                mapCosts[5925] = 32001;
+                                mapCosts[6053] = 32001;
+                                mapCosts[6181] = 32001;
+                                mapCosts[6309] = 32001;
+                                mapCosts[6437] = 32001;
+                                mapCosts[6565] = 32001;
+                                mapCosts[6693] = 32001;
+                                mapCosts[6821] = 32001;
+                                mapCosts[6949] = 32001;
+                                mapCosts[7077] = 32001;
+                                mapCosts[7205] = 32001;
+                                mapCosts[7333] = 32001;
+                                mapCosts[7461] = 32001;
+                                mapCosts[7589] = 32001;
+                                mapCosts[7717] = 32001;
+                                break;
+                        case 37:
+                                mapCosts[2726] = 32001;
+                                mapCosts[2854] = 32001;
+                                mapCosts[2982] = 32001;
+                                mapCosts[3110] = 32001;
+                                mapCosts[3238] = 32001;
+                                mapCosts[3366] = 32001;
+                                mapCosts[3494] = 32001;
+                                mapCosts[3622] = 32001;
+                                mapCosts[3750] = 32001;
+                                mapCosts[3878] = 32001;
+                                mapCosts[4006] = 32001;
+                                mapCosts[4134] = 32001;
+                                mapCosts[4262] = 32001;
+                                mapCosts[4390] = 32001;
+                                mapCosts[4518] = 32001;
+                                mapCosts[4646] = 32001;
+                                mapCosts[4774] = 32001;
+                                mapCosts[4902] = 32001;
+                                mapCosts[5030] = 32001;
+                                mapCosts[5158] = 32001;
+                                mapCosts[5286] = 32001;
+                                mapCosts[5414] = 32001;
+                                mapCosts[5542] = 32001;
+                                mapCosts[5670] = 32001;
+                                mapCosts[5798] = 32001;
+                                mapCosts[5926] = 32001;
+                                mapCosts[6054] = 32001;
+                                mapCosts[6182] = 32001;
+                                mapCosts[6310] = 32001;
+                                mapCosts[6438] = 32001;
+                                mapCosts[6566] = 32001;
+                                mapCosts[6694] = 32001;
+                                mapCosts[6822] = 32001;
+                                mapCosts[6950] = 32001;
+                                mapCosts[7078] = 32001;
+                                mapCosts[7206] = 32001;
+                                mapCosts[7334] = 32001;
+                                mapCosts[7462] = 32001;
+                                mapCosts[7590] = 32001;
+                                mapCosts[7718] = 32001;
+                                break;
+                        case 38:
+                                mapCosts[2727] = 32001;
+                                mapCosts[2855] = 32001;
+                                mapCosts[2983] = 32001;
+                                mapCosts[3111] = 32001;
+                                mapCosts[3239] = 32001;
+                                mapCosts[3367] = 32001;
+                                mapCosts[3495] = 32001;
+                                mapCosts[3623] = 32001;
+                                mapCosts[3751] = 32001;
+                                mapCosts[3879] = 32001;
+                                mapCosts[4007] = 32001;
+                                mapCosts[4135] = 32001;
+                                mapCosts[4263] = 32001;
+                                mapCosts[4391] = 32001;
+                                mapCosts[4519] = 32001;
+                                mapCosts[4647] = 32001;
+                                mapCosts[4775] = 32001;
+                                mapCosts[4903] = 32001;
+                                mapCosts[5031] = 32001;
+                                mapCosts[5159] = 32001;
+                                mapCosts[5287] = 32001;
+                                mapCosts[5415] = 32001;
+                                mapCosts[5543] = 32001;
+                                mapCosts[5671] = 32001;
+                                mapCosts[5799] = 32001;
+                                mapCosts[5927] = 32001;
+                                mapCosts[6055] = 32001;
+                                mapCosts[6183] = 32001;
+                                mapCosts[6311] = 32001;
+                                mapCosts[6439] = 32001;
+                                mapCosts[6567] = 32001;
+                                mapCosts[6695] = 32001;
+                                mapCosts[6823] = 32001;
+                                mapCosts[6951] = 32001;
+                                mapCosts[7079] = 32001;
+                                mapCosts[7207] = 32001;
+                                mapCosts[7335] = 32001;
+                                mapCosts[7463] = 32001;
+                                mapCosts[7591] = 32001;
+                                mapCosts[7719] = 32001;
+                                break;
+                        case 39:
+                                mapCosts[2728] = 32001;
+                                mapCosts[2856] = 32001;
+                                mapCosts[2984] = 32001;
+                                mapCosts[3112] = 32001;
+                                mapCosts[3240] = 32001;
+                                mapCosts[3368] = 32001;
+                                mapCosts[3496] = 32001;
+                                mapCosts[3624] = 32001;
+                                mapCosts[3752] = 32001;
+                                mapCosts[3880] = 32001;
+                                mapCosts[4008] = 32001;
+                                mapCosts[4136] = 32001;
+                                mapCosts[4264] = 32001;
+                                mapCosts[4392] = 32001;
+                                mapCosts[4520] = 32001;
+                                mapCosts[4648] = 32001;
+                                mapCosts[4776] = 32001;
+                                mapCosts[4904] = 32001;
+                                mapCosts[5032] = 32001;
+                                mapCosts[5160] = 32001;
+                                mapCosts[5288] = 32001;
+                                mapCosts[5416] = 32001;
+                                mapCosts[5544] = 32001;
+                                mapCosts[5672] = 32001;
+                                mapCosts[5800] = 32001;
+                                mapCosts[5928] = 32001;
+                                mapCosts[6056] = 32001;
+                                mapCosts[6184] = 32001;
+                                mapCosts[6312] = 32001;
+                                mapCosts[6440] = 32001;
+                                mapCosts[6568] = 32001;
+                                mapCosts[6696] = 32001;
+                                mapCosts[6824] = 32001;
+                                mapCosts[6952] = 32001;
+                                mapCosts[7080] = 32001;
+                                mapCosts[7208] = 32001;
+                                mapCosts[7336] = 32001;
+                                mapCosts[7464] = 32001;
+                                mapCosts[7592] = 32001;
+                                mapCosts[7720] = 32001;
+                                break;
+                        case 40:
+                                mapCosts[2729] = 32001;
+                                mapCosts[2857] = 32001;
+                                mapCosts[2985] = 32001;
+                                mapCosts[3113] = 32001;
+                                mapCosts[3241] = 32001;
+                                mapCosts[3369] = 32001;
+                                mapCosts[3497] = 32001;
+                                mapCosts[3625] = 32001;
+                                mapCosts[3753] = 32001;
+                                mapCosts[3881] = 32001;
+                                mapCosts[4009] = 32001;
+                                mapCosts[4137] = 32001;
+                                mapCosts[4265] = 32001;
+                                mapCosts[4393] = 32001;
+                                mapCosts[4521] = 32001;
+                                mapCosts[4649] = 32001;
+                                mapCosts[4777] = 32001;
+                                mapCosts[4905] = 32001;
+                                mapCosts[5033] = 32001;
+                                mapCosts[5161] = 32001;
+                                mapCosts[5289] = 32001;
+                                mapCosts[5417] = 32001;
+                                mapCosts[5545] = 32001;
+                                mapCosts[5673] = 32001;
+                                mapCosts[5801] = 32001;
+                                mapCosts[5929] = 32001;
+                                mapCosts[6057] = 32001;
+                                mapCosts[6185] = 32001;
+                                mapCosts[6313] = 32001;
+                                mapCosts[6441] = 32001;
+                                mapCosts[6569] = 32001;
+                                mapCosts[6697] = 32001;
+                                mapCosts[6825] = 32001;
+                                mapCosts[6953] = 32001;
+                                mapCosts[7081] = 32001;
+                                mapCosts[7209] = 32001;
+                                mapCosts[7337] = 32001;
+                                mapCosts[7465] = 32001;
+                                mapCosts[7593] = 32001;
+                                mapCosts[7721] = 32001;
+                                break;
+                        case 41:
+                                mapCosts[2730] = 32001;
+                                mapCosts[2858] = 32001;
+                                mapCosts[2986] = 32001;
+                                mapCosts[3114] = 32001;
+                                mapCosts[3242] = 32001;
+                                mapCosts[3370] = 32001;
+                                mapCosts[3498] = 32001;
+                                mapCosts[3626] = 32001;
+                                mapCosts[3754] = 32001;
+                                mapCosts[3882] = 32001;
+                                mapCosts[4010] = 32001;
+                                mapCosts[4138] = 32001;
+                                mapCosts[4266] = 32001;
+                                mapCosts[4394] = 32001;
+                                mapCosts[4522] = 32001;
+                                mapCosts[4650] = 32001;
+                                mapCosts[4778] = 32001;
+                                mapCosts[4906] = 32001;
+                                mapCosts[5034] = 32001;
+                                mapCosts[5162] = 32001;
+                                mapCosts[5290] = 32001;
+                                mapCosts[5418] = 32001;
+                                mapCosts[5546] = 32001;
+                                mapCosts[5674] = 32001;
+                                mapCosts[5802] = 32001;
+                                mapCosts[5930] = 32001;
+                                mapCosts[6058] = 32001;
+                                mapCosts[6186] = 32001;
+                                mapCosts[6314] = 32001;
+                                mapCosts[6442] = 32001;
+                                mapCosts[6570] = 32001;
+                                mapCosts[6698] = 32001;
+                                mapCosts[6826] = 32001;
+                                mapCosts[6954] = 32001;
+                                mapCosts[7082] = 32001;
+                                mapCosts[7210] = 32001;
+                                mapCosts[7338] = 32001;
+                                mapCosts[7466] = 32001;
+                                mapCosts[7594] = 32001;
+                                mapCosts[7722] = 32001;
+                                break;
+                        case 42:
+                                mapCosts[2731] = 32001;
+                                mapCosts[2859] = 32001;
+                                mapCosts[2987] = 32001;
+                                mapCosts[3115] = 32001;
+                                mapCosts[3243] = 32001;
+                                mapCosts[3371] = 32001;
+                                mapCosts[3499] = 32001;
+                                mapCosts[3627] = 32001;
+                                mapCosts[3755] = 32001;
+                                mapCosts[3883] = 32001;
+                                mapCosts[4011] = 32001;
+                                mapCosts[4139] = 32001;
+                                mapCosts[4267] = 32001;
+                                mapCosts[4395] = 32001;
+                                mapCosts[4523] = 32001;
+                                mapCosts[4651] = 32001;
+                                mapCosts[4779] = 32001;
+                                mapCosts[4907] = 32001;
+                                mapCosts[5035] = 32001;
+                                mapCosts[5163] = 32001;
+                                mapCosts[5291] = 32001;
+                                mapCosts[5419] = 32001;
+                                mapCosts[5547] = 32001;
+                                mapCosts[5675] = 32001;
+                                mapCosts[5803] = 32001;
+                                mapCosts[5931] = 32001;
+                                mapCosts[6059] = 32001;
+                                mapCosts[6187] = 32001;
+                                mapCosts[6315] = 32001;
+                                mapCosts[6443] = 32001;
+                                mapCosts[6571] = 32001;
+                                mapCosts[6699] = 32001;
+                                mapCosts[6827] = 32001;
+                                mapCosts[6955] = 32001;
+                                mapCosts[7083] = 32001;
+                                mapCosts[7211] = 32001;
+                                mapCosts[7339] = 32001;
+                                mapCosts[7467] = 32001;
+                                mapCosts[7595] = 32001;
+                                mapCosts[7723] = 32001;
+                                break;
+                        case 43:
+                                mapCosts[2732] = 32001;
+                                mapCosts[2860] = 32001;
+                                mapCosts[2988] = 32001;
+                                mapCosts[3116] = 32001;
+                                mapCosts[3244] = 32001;
+                                mapCosts[3372] = 32001;
+                                mapCosts[3500] = 32001;
+                                mapCosts[3628] = 32001;
+                                mapCosts[3756] = 32001;
+                                mapCosts[3884] = 32001;
+                                mapCosts[4012] = 32001;
+                                mapCosts[4140] = 32001;
+                                mapCosts[4268] = 32001;
+                                mapCosts[4396] = 32001;
+                                mapCosts[4524] = 32001;
+                                mapCosts[4652] = 32001;
+                                mapCosts[4780] = 32001;
+                                mapCosts[4908] = 32001;
+                                mapCosts[5036] = 32001;
+                                mapCosts[5164] = 32001;
+                                mapCosts[5292] = 32001;
+                                mapCosts[5420] = 32001;
+                                mapCosts[5548] = 32001;
+                                mapCosts[5676] = 32001;
+                                mapCosts[5804] = 32001;
+                                mapCosts[5932] = 32001;
+                                mapCosts[6060] = 32001;
+                                mapCosts[6188] = 32001;
+                                mapCosts[6316] = 32001;
+                                mapCosts[6444] = 32001;
+                                mapCosts[6572] = 32001;
+                                mapCosts[6700] = 32001;
+                                mapCosts[6828] = 32001;
+                                mapCosts[6956] = 32001;
+                                mapCosts[7084] = 32001;
+                                mapCosts[7212] = 32001;
+                                mapCosts[7340] = 32001;
+                                mapCosts[7468] = 32001;
+                                mapCosts[7596] = 32001;
+                                mapCosts[7724] = 32001;
+                                break;
+                        case 44:
+                                mapCosts[2733] = 32001;
+                                mapCosts[2861] = 32001;
+                                mapCosts[2989] = 32001;
+                                mapCosts[3117] = 32001;
+                                mapCosts[3245] = 32001;
+                                mapCosts[3373] = 32001;
+                                mapCosts[3501] = 32001;
+                                mapCosts[3629] = 32001;
+                                mapCosts[3757] = 32001;
+                                mapCosts[3885] = 32001;
+                                mapCosts[4013] = 32001;
+                                mapCosts[4141] = 32001;
+                                mapCosts[4269] = 32001;
+                                mapCosts[4397] = 32001;
+                                mapCosts[4525] = 32001;
+                                mapCosts[4653] = 32001;
+                                mapCosts[4781] = 32001;
+                                mapCosts[4909] = 32001;
+                                mapCosts[5037] = 32001;
+                                mapCosts[5165] = 32001;
+                                mapCosts[5293] = 32001;
+                                mapCosts[5421] = 32001;
+                                mapCosts[5549] = 32001;
+                                mapCosts[5677] = 32001;
+                                mapCosts[5805] = 32001;
+                                mapCosts[5933] = 32001;
+                                mapCosts[6061] = 32001;
+                                mapCosts[6189] = 32001;
+                                mapCosts[6317] = 32001;
+                                mapCosts[6445] = 32001;
+                                mapCosts[6573] = 32001;
+                                mapCosts[6701] = 32001;
+                                mapCosts[6829] = 32001;
+                                mapCosts[6957] = 32001;
+                                mapCosts[7085] = 32001;
+                                mapCosts[7213] = 32001;
+                                mapCosts[7341] = 32001;
+                                mapCosts[7469] = 32001;
+                                mapCosts[7597] = 32001;
+                                mapCosts[7725] = 32001;
+                                break;
+                        case 45:
+                                mapCosts[2734] = 32001;
+                                mapCosts[2862] = 32001;
+                                mapCosts[2990] = 32001;
+                                mapCosts[3118] = 32001;
+                                mapCosts[3246] = 32001;
+                                mapCosts[3374] = 32001;
+                                mapCosts[3502] = 32001;
+                                mapCosts[3630] = 32001;
+                                mapCosts[3758] = 32001;
+                                mapCosts[3886] = 32001;
+                                mapCosts[4014] = 32001;
+                                mapCosts[4142] = 32001;
+                                mapCosts[4270] = 32001;
+                                mapCosts[4398] = 32001;
+                                mapCosts[4526] = 32001;
+                                mapCosts[4654] = 32001;
+                                mapCosts[4782] = 32001;
+                                mapCosts[4910] = 32001;
+                                mapCosts[5038] = 32001;
+                                mapCosts[5166] = 32001;
+                                mapCosts[5294] = 32001;
+                                mapCosts[5422] = 32001;
+                                mapCosts[5550] = 32001;
+                                mapCosts[5678] = 32001;
+                                mapCosts[5806] = 32001;
+                                mapCosts[5934] = 32001;
+                                mapCosts[6062] = 32001;
+                                mapCosts[6190] = 32001;
+                                mapCosts[6318] = 32001;
+                                mapCosts[6446] = 32001;
+                                mapCosts[6574] = 32001;
+                                mapCosts[6702] = 32001;
+                                mapCosts[6830] = 32001;
+                                mapCosts[6958] = 32001;
+                                mapCosts[7086] = 32001;
+                                mapCosts[7214] = 32001;
+                                mapCosts[7342] = 32001;
+                                mapCosts[7470] = 32001;
+                                mapCosts[7598] = 32001;
+                                mapCosts[7726] = 32001;
+                                break;
+                        case 46:
+                                mapCosts[2735] = 32001;
+                                mapCosts[2863] = 32001;
+                                mapCosts[2991] = 32001;
+                                mapCosts[3119] = 32001;
+                                mapCosts[3247] = 32001;
+                                mapCosts[3375] = 32001;
+                                mapCosts[3503] = 32001;
+                                mapCosts[3631] = 32001;
+                                mapCosts[3759] = 32001;
+                                mapCosts[3887] = 32001;
+                                mapCosts[4015] = 32001;
+                                mapCosts[4143] = 32001;
+                                mapCosts[4271] = 32001;
+                                mapCosts[4399] = 32001;
+                                mapCosts[4527] = 32001;
+                                mapCosts[4655] = 32001;
+                                mapCosts[4783] = 32001;
+                                mapCosts[4911] = 32001;
+                                mapCosts[5039] = 32001;
+                                mapCosts[5167] = 32001;
+                                mapCosts[5295] = 32001;
+                                mapCosts[5423] = 32001;
+                                mapCosts[5551] = 32001;
+                                mapCosts[5679] = 32001;
+                                mapCosts[5807] = 32001;
+                                mapCosts[5935] = 32001;
+                                mapCosts[6063] = 32001;
+                                mapCosts[6191] = 32001;
+                                mapCosts[6319] = 32001;
+                                mapCosts[6447] = 32001;
+                                mapCosts[6575] = 32001;
+                                mapCosts[6703] = 32001;
+                                mapCosts[6831] = 32001;
+                                mapCosts[6959] = 32001;
+                                mapCosts[7087] = 32001;
+                                mapCosts[7215] = 32001;
+                                mapCosts[7343] = 32001;
+                                mapCosts[7471] = 32001;
+                                mapCosts[7599] = 32001;
+                                mapCosts[7727] = 32001;
+                                break;
+                        case 47:
+                                mapCosts[2736] = 32001;
+                                mapCosts[2864] = 32001;
+                                mapCosts[2992] = 32001;
+                                mapCosts[3120] = 32001;
+                                mapCosts[3248] = 32001;
+                                mapCosts[3376] = 32001;
+                                mapCosts[3504] = 32001;
+                                mapCosts[3632] = 32001;
+                                mapCosts[3760] = 32001;
+                                mapCosts[3888] = 32001;
+                                mapCosts[4016] = 32001;
+                                mapCosts[4144] = 32001;
+                                mapCosts[4272] = 32001;
+                                mapCosts[4400] = 32001;
+                                mapCosts[4528] = 32001;
+                                mapCosts[4656] = 32001;
+                                mapCosts[4784] = 32001;
+                                mapCosts[4912] = 32001;
+                                mapCosts[5040] = 32001;
+                                mapCosts[5168] = 32001;
+                                mapCosts[5296] = 32001;
+                                mapCosts[5424] = 32001;
+                                mapCosts[5552] = 32001;
+                                mapCosts[5680] = 32001;
+                                mapCosts[5808] = 32001;
+                                mapCosts[5936] = 32001;
+                                mapCosts[6064] = 32001;
+                                mapCosts[6192] = 32001;
+                                mapCosts[6320] = 32001;
+                                mapCosts[6448] = 32001;
+                                mapCosts[6576] = 32001;
+                                mapCosts[6704] = 32001;
+                                mapCosts[6832] = 32001;
+                                mapCosts[6960] = 32001;
+                                mapCosts[7088] = 32001;
+                                mapCosts[7216] = 32001;
+                                mapCosts[7344] = 32001;
+                                mapCosts[7472] = 32001;
+                                mapCosts[7600] = 32001;
+                                mapCosts[7728] = 32001;
+                                break;
+                        case 48:
+                                mapCosts[2737] = 32001;
+                                mapCosts[2865] = 32001;
+                                mapCosts[2993] = 32001;
+                                mapCosts[3121] = 32001;
+                                mapCosts[3249] = 32001;
+                                mapCosts[3377] = 32001;
+                                mapCosts[3505] = 32001;
+                                mapCosts[3633] = 32001;
+                                mapCosts[3761] = 32001;
+                                mapCosts[3889] = 32001;
+                                mapCosts[4017] = 32001;
+                                mapCosts[4145] = 32001;
+                                mapCosts[4273] = 32001;
+                                mapCosts[4401] = 32001;
+                                mapCosts[4529] = 32001;
+                                mapCosts[4657] = 32001;
+                                mapCosts[4785] = 32001;
+                                mapCosts[4913] = 32001;
+                                mapCosts[5041] = 32001;
+                                mapCosts[5169] = 32001;
+                                mapCosts[5297] = 32001;
+                                mapCosts[5425] = 32001;
+                                mapCosts[5553] = 32001;
+                                mapCosts[5681] = 32001;
+                                mapCosts[5809] = 32001;
+                                mapCosts[5937] = 32001;
+                                mapCosts[6065] = 32001;
+                                mapCosts[6193] = 32001;
+                                mapCosts[6321] = 32001;
+                                mapCosts[6449] = 32001;
+                                mapCosts[6577] = 32001;
+                                mapCosts[6705] = 32001;
+                                mapCosts[6833] = 32001;
+                                mapCosts[6961] = 32001;
+                                mapCosts[7089] = 32001;
+                                mapCosts[7217] = 32001;
+                                mapCosts[7345] = 32001;
+                                mapCosts[7473] = 32001;
+                                mapCosts[7601] = 32001;
+                                mapCosts[7729] = 32001;
+                                break;
+                        case 49:
+                                mapCosts[2738] = 32001;
+                                mapCosts[2866] = 32001;
+                                mapCosts[2994] = 32001;
+                                mapCosts[3122] = 32001;
+                                mapCosts[3250] = 32001;
+                                mapCosts[3378] = 32001;
+                                mapCosts[3506] = 32001;
+                                mapCosts[3634] = 32001;
+                                mapCosts[3762] = 32001;
+                                mapCosts[3890] = 32001;
+                                mapCosts[4018] = 32001;
+                                mapCosts[4146] = 32001;
+                                mapCosts[4274] = 32001;
+                                mapCosts[4402] = 32001;
+                                mapCosts[4530] = 32001;
+                                mapCosts[4658] = 32001;
+                                mapCosts[4786] = 32001;
+                                mapCosts[4914] = 32001;
+                                mapCosts[5042] = 32001;
+                                mapCosts[5170] = 32001;
+                                mapCosts[5298] = 32001;
+                                mapCosts[5426] = 32001;
+                                mapCosts[5554] = 32001;
+                                mapCosts[5682] = 32001;
+                                mapCosts[5810] = 32001;
+                                mapCosts[5938] = 32001;
+                                mapCosts[6066] = 32001;
+                                mapCosts[6194] = 32001;
+                                mapCosts[6322] = 32001;
+                                mapCosts[6450] = 32001;
+                                mapCosts[6578] = 32001;
+                                mapCosts[6706] = 32001;
+                                mapCosts[6834] = 32001;
+                                mapCosts[6962] = 32001;
+                                mapCosts[7090] = 32001;
+                                mapCosts[7218] = 32001;
+                                mapCosts[7346] = 32001;
+                                mapCosts[7474] = 32001;
+                                mapCosts[7602] = 32001;
+                                mapCosts[7730] = 32001;
+                                break;
+                        case 50:
+                                mapCosts[2739] = 32001;
+                                mapCosts[2867] = 32001;
+                                mapCosts[2995] = 32001;
+                                mapCosts[3123] = 32001;
+                                mapCosts[3251] = 32001;
+                                mapCosts[3379] = 32001;
+                                mapCosts[3507] = 32001;
+                                mapCosts[3635] = 32001;
+                                mapCosts[3763] = 32001;
+                                mapCosts[3891] = 32001;
+                                mapCosts[4019] = 32001;
+                                mapCosts[4147] = 32001;
+                                mapCosts[4275] = 32001;
+                                mapCosts[4403] = 32001;
+                                mapCosts[4531] = 32001;
+                                mapCosts[4659] = 32001;
+                                mapCosts[4787] = 32001;
+                                mapCosts[4915] = 32001;
+                                mapCosts[5043] = 32001;
+                                mapCosts[5171] = 32001;
+                                mapCosts[5299] = 32001;
+                                mapCosts[5427] = 32001;
+                                mapCosts[5555] = 32001;
+                                mapCosts[5683] = 32001;
+                                mapCosts[5811] = 32001;
+                                mapCosts[5939] = 32001;
+                                mapCosts[6067] = 32001;
+                                mapCosts[6195] = 32001;
+                                mapCosts[6323] = 32001;
+                                mapCosts[6451] = 32001;
+                                mapCosts[6579] = 32001;
+                                mapCosts[6707] = 32001;
+                                mapCosts[6835] = 32001;
+                                mapCosts[6963] = 32001;
+                                mapCosts[7091] = 32001;
+                                mapCosts[7219] = 32001;
+                                mapCosts[7347] = 32001;
+                                mapCosts[7475] = 32001;
+                                mapCosts[7603] = 32001;
+                                mapCosts[7731] = 32001;
+                                break;
+                        case 51:
+                                mapCosts[2740] = 32001;
+                                mapCosts[2868] = 32001;
+                                mapCosts[2996] = 32001;
+                                mapCosts[3124] = 32001;
+                                mapCosts[3252] = 32001;
+                                mapCosts[3380] = 32001;
+                                mapCosts[3508] = 32001;
+                                mapCosts[3636] = 32001;
+                                mapCosts[3764] = 32001;
+                                mapCosts[3892] = 32001;
+                                mapCosts[4020] = 32001;
+                                mapCosts[4148] = 32001;
+                                mapCosts[4276] = 32001;
+                                mapCosts[4404] = 32001;
+                                mapCosts[4532] = 32001;
+                                mapCosts[4660] = 32001;
+                                mapCosts[4788] = 32001;
+                                mapCosts[4916] = 32001;
+                                mapCosts[5044] = 32001;
+                                mapCosts[5172] = 32001;
+                                mapCosts[5300] = 32001;
+                                mapCosts[5428] = 32001;
+                                mapCosts[5556] = 32001;
+                                mapCosts[5684] = 32001;
+                                mapCosts[5812] = 32001;
+                                mapCosts[5940] = 32001;
+                                mapCosts[6068] = 32001;
+                                mapCosts[6196] = 32001;
+                                mapCosts[6324] = 32001;
+                                mapCosts[6452] = 32001;
+                                mapCosts[6580] = 32001;
+                                mapCosts[6708] = 32001;
+                                mapCosts[6836] = 32001;
+                                mapCosts[6964] = 32001;
+                                mapCosts[7092] = 32001;
+                                mapCosts[7220] = 32001;
+                                mapCosts[7348] = 32001;
+                                mapCosts[7476] = 32001;
+                                mapCosts[7604] = 32001;
+                                mapCosts[7732] = 32001;
+                                break;
+                        case 52:
+                                mapCosts[2741] = 32001;
+                                mapCosts[2869] = 32001;
+                                mapCosts[2997] = 32001;
+                                mapCosts[3125] = 32001;
+                                mapCosts[3253] = 32001;
+                                mapCosts[3381] = 32001;
+                                mapCosts[3509] = 32001;
+                                mapCosts[3637] = 32001;
+                                mapCosts[3765] = 32001;
+                                mapCosts[3893] = 32001;
+                                mapCosts[4021] = 32001;
+                                mapCosts[4149] = 32001;
+                                mapCosts[4277] = 32001;
+                                mapCosts[4405] = 32001;
+                                mapCosts[4533] = 32001;
+                                mapCosts[4661] = 32001;
+                                mapCosts[4789] = 32001;
+                                mapCosts[4917] = 32001;
+                                mapCosts[5045] = 32001;
+                                mapCosts[5173] = 32001;
+                                mapCosts[5301] = 32001;
+                                mapCosts[5429] = 32001;
+                                mapCosts[5557] = 32001;
+                                mapCosts[5685] = 32001;
+                                mapCosts[5813] = 32001;
+                                mapCosts[5941] = 32001;
+                                mapCosts[6069] = 32001;
+                                mapCosts[6197] = 32001;
+                                mapCosts[6325] = 32001;
+                                mapCosts[6453] = 32001;
+                                mapCosts[6581] = 32001;
+                                mapCosts[6709] = 32001;
+                                mapCosts[6837] = 32001;
+                                mapCosts[6965] = 32001;
+                                mapCosts[7093] = 32001;
+                                mapCosts[7221] = 32001;
+                                mapCosts[7349] = 32001;
+                                mapCosts[7477] = 32001;
+                                mapCosts[7605] = 32001;
+                                mapCosts[7733] = 32001;
+                                break;
+                        case 53:
+                                mapCosts[2742] = 32001;
+                                mapCosts[2870] = 32001;
+                                mapCosts[2998] = 32001;
+                                mapCosts[3126] = 32001;
+                                mapCosts[3254] = 32001;
+                                mapCosts[3382] = 32001;
+                                mapCosts[3510] = 32001;
+                                mapCosts[3638] = 32001;
+                                mapCosts[3766] = 32001;
+                                mapCosts[3894] = 32001;
+                                mapCosts[4022] = 32001;
+                                mapCosts[4150] = 32001;
+                                mapCosts[4278] = 32001;
+                                mapCosts[4406] = 32001;
+                                mapCosts[4534] = 32001;
+                                mapCosts[4662] = 32001;
+                                mapCosts[4790] = 32001;
+                                mapCosts[4918] = 32001;
+                                mapCosts[5046] = 32001;
+                                mapCosts[5174] = 32001;
+                                mapCosts[5302] = 32001;
+                                mapCosts[5430] = 32001;
+                                mapCosts[5558] = 32001;
+                                mapCosts[5686] = 32001;
+                                mapCosts[5814] = 32001;
+                                mapCosts[5942] = 32001;
+                                mapCosts[6070] = 32001;
+                                mapCosts[6198] = 32001;
+                                mapCosts[6326] = 32001;
+                                mapCosts[6454] = 32001;
+                                mapCosts[6582] = 32001;
+                                mapCosts[6710] = 32001;
+                                mapCosts[6838] = 32001;
+                                mapCosts[6966] = 32001;
+                                mapCosts[7094] = 32001;
+                                mapCosts[7222] = 32001;
+                                mapCosts[7350] = 32001;
+                                mapCosts[7478] = 32001;
+                                mapCosts[7606] = 32001;
+                                mapCosts[7734] = 32001;
+                                break;
+                        case 54:
+                                mapCosts[2743] = 32001;
+                                mapCosts[2871] = 32001;
+                                mapCosts[2999] = 32001;
+                                mapCosts[3127] = 32001;
+                                mapCosts[3255] = 32001;
+                                mapCosts[3383] = 32001;
+                                mapCosts[3511] = 32001;
+                                mapCosts[3639] = 32001;
+                                mapCosts[3767] = 32001;
+                                mapCosts[3895] = 32001;
+                                mapCosts[4023] = 32001;
+                                mapCosts[4151] = 32001;
+                                mapCosts[4279] = 32001;
+                                mapCosts[4407] = 32001;
+                                mapCosts[4535] = 32001;
+                                mapCosts[4663] = 32001;
+                                mapCosts[4791] = 32001;
+                                mapCosts[4919] = 32001;
+                                mapCosts[5047] = 32001;
+                                mapCosts[5175] = 32001;
+                                mapCosts[5303] = 32001;
+                                mapCosts[5431] = 32001;
+                                mapCosts[5559] = 32001;
+                                mapCosts[5687] = 32001;
+                                mapCosts[5815] = 32001;
+                                mapCosts[5943] = 32001;
+                                mapCosts[6071] = 32001;
+                                mapCosts[6199] = 32001;
+                                mapCosts[6327] = 32001;
+                                mapCosts[6455] = 32001;
+                                mapCosts[6583] = 32001;
+                                mapCosts[6711] = 32001;
+                                mapCosts[6839] = 32001;
+                                mapCosts[6967] = 32001;
+                                mapCosts[7095] = 32001;
+                                mapCosts[7223] = 32001;
+                                mapCosts[7351] = 32001;
+                                mapCosts[7479] = 32001;
+                                mapCosts[7607] = 32001;
+                                mapCosts[7735] = 32001;
+                                break;
+                        case 55:
+                                mapCosts[2744] = 32001;
+                                mapCosts[2872] = 32001;
+                                mapCosts[3000] = 32001;
+                                mapCosts[3128] = 32001;
+                                mapCosts[3256] = 32001;
+                                mapCosts[3384] = 32001;
+                                mapCosts[3512] = 32001;
+                                mapCosts[3640] = 32001;
+                                mapCosts[3768] = 32001;
+                                mapCosts[3896] = 32001;
+                                mapCosts[4024] = 32001;
+                                mapCosts[4152] = 32001;
+                                mapCosts[4280] = 32001;
+                                mapCosts[4408] = 32001;
+                                mapCosts[4536] = 32001;
+                                mapCosts[4664] = 32001;
+                                mapCosts[4792] = 32001;
+                                mapCosts[4920] = 32001;
+                                mapCosts[5048] = 32001;
+                                mapCosts[5176] = 32001;
+                                mapCosts[5304] = 32001;
+                                mapCosts[5432] = 32001;
+                                mapCosts[5560] = 32001;
+                                mapCosts[5688] = 32001;
+                                mapCosts[5816] = 32001;
+                                mapCosts[5944] = 32001;
+                                mapCosts[6072] = 32001;
+                                mapCosts[6200] = 32001;
+                                mapCosts[6328] = 32001;
+                                mapCosts[6456] = 32001;
+                                mapCosts[6584] = 32001;
+                                mapCosts[6712] = 32001;
+                                mapCosts[6840] = 32001;
+                                mapCosts[6968] = 32001;
+                                mapCosts[7096] = 32001;
+                                mapCosts[7224] = 32001;
+                                mapCosts[7352] = 32001;
+                                mapCosts[7480] = 32001;
+                                mapCosts[7608] = 32001;
+                                mapCosts[7736] = 32001;
+                                break;
+                        case 56:
+                                mapCosts[2745] = 32001;
+                                mapCosts[2873] = 32001;
+                                mapCosts[3001] = 32001;
+                                mapCosts[3129] = 32001;
+                                mapCosts[3257] = 32001;
+                                mapCosts[3385] = 32001;
+                                mapCosts[3513] = 32001;
+                                mapCosts[3641] = 32001;
+                                mapCosts[3769] = 32001;
+                                mapCosts[3897] = 32001;
+                                mapCosts[4025] = 32001;
+                                mapCosts[4153] = 32001;
+                                mapCosts[4281] = 32001;
+                                mapCosts[4409] = 32001;
+                                mapCosts[4537] = 32001;
+                                mapCosts[4665] = 32001;
+                                mapCosts[4793] = 32001;
+                                mapCosts[4921] = 32001;
+                                mapCosts[5049] = 32001;
+                                mapCosts[5177] = 32001;
+                                mapCosts[5305] = 32001;
+                                mapCosts[5433] = 32001;
+                                mapCosts[5561] = 32001;
+                                mapCosts[5689] = 32001;
+                                mapCosts[5817] = 32001;
+                                mapCosts[5945] = 32001;
+                                mapCosts[6073] = 32001;
+                                mapCosts[6201] = 32001;
+                                mapCosts[6329] = 32001;
+                                mapCosts[6457] = 32001;
+                                mapCosts[6585] = 32001;
+                                mapCosts[6713] = 32001;
+                                mapCosts[6841] = 32001;
+                                mapCosts[6969] = 32001;
+                                mapCosts[7097] = 32001;
+                                mapCosts[7225] = 32001;
+                                mapCosts[7353] = 32001;
+                                mapCosts[7481] = 32001;
+                                mapCosts[7609] = 32001;
+                                mapCosts[7737] = 32001;
+                                break;
+                        case 57:
+                                mapCosts[2746] = 32001;
+                                mapCosts[2874] = 32001;
+                                mapCosts[3002] = 32001;
+                                mapCosts[3130] = 32001;
+                                mapCosts[3258] = 32001;
+                                mapCosts[3386] = 32001;
+                                mapCosts[3514] = 32001;
+                                mapCosts[3642] = 32001;
+                                mapCosts[3770] = 32001;
+                                mapCosts[3898] = 32001;
+                                mapCosts[4026] = 32001;
+                                mapCosts[4154] = 32001;
+                                mapCosts[4282] = 32001;
+                                mapCosts[4410] = 32001;
+                                mapCosts[4538] = 32001;
+                                mapCosts[4666] = 32001;
+                                mapCosts[4794] = 32001;
+                                mapCosts[4922] = 32001;
+                                mapCosts[5050] = 32001;
+                                mapCosts[5178] = 32001;
+                                mapCosts[5306] = 32001;
+                                mapCosts[5434] = 32001;
+                                mapCosts[5562] = 32001;
+                                mapCosts[5690] = 32001;
+                                mapCosts[5818] = 32001;
+                                mapCosts[5946] = 32001;
+                                mapCosts[6074] = 32001;
+                                mapCosts[6202] = 32001;
+                                mapCosts[6330] = 32001;
+                                mapCosts[6458] = 32001;
+                                mapCosts[6586] = 32001;
+                                mapCosts[6714] = 32001;
+                                mapCosts[6842] = 32001;
+                                mapCosts[6970] = 32001;
+                                mapCosts[7098] = 32001;
+                                mapCosts[7226] = 32001;
+                                mapCosts[7354] = 32001;
+                                mapCosts[7482] = 32001;
+                                mapCosts[7610] = 32001;
+                                mapCosts[7738] = 32001;
+                                break;
+                        case 58:
+                                mapCosts[2747] = 32001;
+                                mapCosts[2875] = 32001;
+                                mapCosts[3003] = 32001;
+                                mapCosts[3131] = 32001;
+                                mapCosts[3259] = 32001;
+                                mapCosts[3387] = 32001;
+                                mapCosts[3515] = 32001;
+                                mapCosts[3643] = 32001;
+                                mapCosts[3771] = 32001;
+                                mapCosts[3899] = 32001;
+                                mapCosts[4027] = 32001;
+                                mapCosts[4155] = 32001;
+                                mapCosts[4283] = 32001;
+                                mapCosts[4411] = 32001;
+                                mapCosts[4539] = 32001;
+                                mapCosts[4667] = 32001;
+                                mapCosts[4795] = 32001;
+                                mapCosts[4923] = 32001;
+                                mapCosts[5051] = 32001;
+                                mapCosts[5179] = 32001;
+                                mapCosts[5307] = 32001;
+                                mapCosts[5435] = 32001;
+                                mapCosts[5563] = 32001;
+                                mapCosts[5691] = 32001;
+                                mapCosts[5819] = 32001;
+                                mapCosts[5947] = 32001;
+                                mapCosts[6075] = 32001;
+                                mapCosts[6203] = 32001;
+                                mapCosts[6331] = 32001;
+                                mapCosts[6459] = 32001;
+                                mapCosts[6587] = 32001;
+                                mapCosts[6715] = 32001;
+                                mapCosts[6843] = 32001;
+                                mapCosts[6971] = 32001;
+                                mapCosts[7099] = 32001;
+                                mapCosts[7227] = 32001;
+                                mapCosts[7355] = 32001;
+                                mapCosts[7483] = 32001;
+                                mapCosts[7611] = 32001;
+                                mapCosts[7739] = 32001;
+                                break;
+                        case 59:
+                                mapCosts[2748] = 32001;
+                                mapCosts[2876] = 32001;
+                                mapCosts[3004] = 32001;
+                                mapCosts[3132] = 32001;
+                                mapCosts[3260] = 32001;
+                                mapCosts[3388] = 32001;
+                                mapCosts[3516] = 32001;
+                                mapCosts[3644] = 32001;
+                                mapCosts[3772] = 32001;
+                                mapCosts[3900] = 32001;
+                                mapCosts[4028] = 32001;
+                                mapCosts[4156] = 32001;
+                                mapCosts[4284] = 32001;
+                                mapCosts[4412] = 32001;
+                                mapCosts[4540] = 32001;
+                                mapCosts[4668] = 32001;
+                                mapCosts[4796] = 32001;
+                                mapCosts[4924] = 32001;
+                                mapCosts[5052] = 32001;
+                                mapCosts[5180] = 32001;
+                                mapCosts[5308] = 32001;
+                                mapCosts[5436] = 32001;
+                                mapCosts[5564] = 32001;
+                                mapCosts[5692] = 32001;
+                                mapCosts[5820] = 32001;
+                                mapCosts[5948] = 32001;
+                                mapCosts[6076] = 32001;
+                                mapCosts[6204] = 32001;
+                                mapCosts[6332] = 32001;
+                                mapCosts[6460] = 32001;
+                                mapCosts[6588] = 32001;
+                                mapCosts[6716] = 32001;
+                                mapCosts[6844] = 32001;
+                                mapCosts[6972] = 32001;
+                                mapCosts[7100] = 32001;
+                                mapCosts[7228] = 32001;
+                                mapCosts[7356] = 32001;
+                                mapCosts[7484] = 32001;
+                                mapCosts[7612] = 32001;
+                                mapCosts[7740] = 32001;
+                                break;
+                        default:
+                throw new IllegalArgumentException("Width " + width + " is not supported, should be between 20 and 60");
+        }
+
+        switch(height){
+                        case 20:
+                                mapCosts[2709] = 32001;
+                                mapCosts[2710] = 32001;
+                                mapCosts[2711] = 32001;
+                                mapCosts[2712] = 32001;
+                                mapCosts[2713] = 32001;
+                                mapCosts[2714] = 32001;
+                                mapCosts[2715] = 32001;
+                                mapCosts[2716] = 32001;
+                                mapCosts[2717] = 32001;
+                                mapCosts[2718] = 32001;
+                                mapCosts[2719] = 32001;
+                                mapCosts[2720] = 32001;
+                                mapCosts[2721] = 32001;
+                                mapCosts[2722] = 32001;
+                                mapCosts[2723] = 32001;
+                                mapCosts[2724] = 32001;
+                                mapCosts[2725] = 32001;
+                                mapCosts[2726] = 32001;
+                                mapCosts[2727] = 32001;
+                                mapCosts[2728] = 32001;
+                                mapCosts[2729] = 32001;
+                                mapCosts[2730] = 32001;
+                                mapCosts[2731] = 32001;
+                                mapCosts[2732] = 32001;
+                                mapCosts[2733] = 32001;
+                                mapCosts[2734] = 32001;
+                                mapCosts[2735] = 32001;
+                                mapCosts[2736] = 32001;
+                                mapCosts[2737] = 32001;
+                                mapCosts[2738] = 32001;
+                                mapCosts[2739] = 32001;
+                                mapCosts[2740] = 32001;
+                                mapCosts[2741] = 32001;
+                                mapCosts[2742] = 32001;
+                                mapCosts[2743] = 32001;
+                                mapCosts[2744] = 32001;
+                                mapCosts[2745] = 32001;
+                                mapCosts[2746] = 32001;
+                                mapCosts[2747] = 32001;
+                                mapCosts[2748] = 32001;
+                                break;
+                        case 21:
+                                mapCosts[2837] = 32001;
+                                mapCosts[2838] = 32001;
+                                mapCosts[2839] = 32001;
+                                mapCosts[2840] = 32001;
+                                mapCosts[2841] = 32001;
+                                mapCosts[2842] = 32001;
+                                mapCosts[2843] = 32001;
+                                mapCosts[2844] = 32001;
+                                mapCosts[2845] = 32001;
+                                mapCosts[2846] = 32001;
+                                mapCosts[2847] = 32001;
+                                mapCosts[2848] = 32001;
+                                mapCosts[2849] = 32001;
+                                mapCosts[2850] = 32001;
+                                mapCosts[2851] = 32001;
+                                mapCosts[2852] = 32001;
+                                mapCosts[2853] = 32001;
+                                mapCosts[2854] = 32001;
+                                mapCosts[2855] = 32001;
+                                mapCosts[2856] = 32001;
+                                mapCosts[2857] = 32001;
+                                mapCosts[2858] = 32001;
+                                mapCosts[2859] = 32001;
+                                mapCosts[2860] = 32001;
+                                mapCosts[2861] = 32001;
+                                mapCosts[2862] = 32001;
+                                mapCosts[2863] = 32001;
+                                mapCosts[2864] = 32001;
+                                mapCosts[2865] = 32001;
+                                mapCosts[2866] = 32001;
+                                mapCosts[2867] = 32001;
+                                mapCosts[2868] = 32001;
+                                mapCosts[2869] = 32001;
+                                mapCosts[2870] = 32001;
+                                mapCosts[2871] = 32001;
+                                mapCosts[2872] = 32001;
+                                mapCosts[2873] = 32001;
+                                mapCosts[2874] = 32001;
+                                mapCosts[2875] = 32001;
+                                mapCosts[2876] = 32001;
+                                break;
+                        case 22:
+                                mapCosts[2965] = 32001;
+                                mapCosts[2966] = 32001;
+                                mapCosts[2967] = 32001;
+                                mapCosts[2968] = 32001;
+                                mapCosts[2969] = 32001;
+                                mapCosts[2970] = 32001;
+                                mapCosts[2971] = 32001;
+                                mapCosts[2972] = 32001;
+                                mapCosts[2973] = 32001;
+                                mapCosts[2974] = 32001;
+                                mapCosts[2975] = 32001;
+                                mapCosts[2976] = 32001;
+                                mapCosts[2977] = 32001;
+                                mapCosts[2978] = 32001;
+                                mapCosts[2979] = 32001;
+                                mapCosts[2980] = 32001;
+                                mapCosts[2981] = 32001;
+                                mapCosts[2982] = 32001;
+                                mapCosts[2983] = 32001;
+                                mapCosts[2984] = 32001;
+                                mapCosts[2985] = 32001;
+                                mapCosts[2986] = 32001;
+                                mapCosts[2987] = 32001;
+                                mapCosts[2988] = 32001;
+                                mapCosts[2989] = 32001;
+                                mapCosts[2990] = 32001;
+                                mapCosts[2991] = 32001;
+                                mapCosts[2992] = 32001;
+                                mapCosts[2993] = 32001;
+                                mapCosts[2994] = 32001;
+                                mapCosts[2995] = 32001;
+                                mapCosts[2996] = 32001;
+                                mapCosts[2997] = 32001;
+                                mapCosts[2998] = 32001;
+                                mapCosts[2999] = 32001;
+                                mapCosts[3000] = 32001;
+                                mapCosts[3001] = 32001;
+                                mapCosts[3002] = 32001;
+                                mapCosts[3003] = 32001;
+                                mapCosts[3004] = 32001;
+                                break;
+                        case 23:
+                                mapCosts[3093] = 32001;
+                                mapCosts[3094] = 32001;
+                                mapCosts[3095] = 32001;
+                                mapCosts[3096] = 32001;
+                                mapCosts[3097] = 32001;
+                                mapCosts[3098] = 32001;
+                                mapCosts[3099] = 32001;
+                                mapCosts[3100] = 32001;
+                                mapCosts[3101] = 32001;
+                                mapCosts[3102] = 32001;
+                                mapCosts[3103] = 32001;
+                                mapCosts[3104] = 32001;
+                                mapCosts[3105] = 32001;
+                                mapCosts[3106] = 32001;
+                                mapCosts[3107] = 32001;
+                                mapCosts[3108] = 32001;
+                                mapCosts[3109] = 32001;
+                                mapCosts[3110] = 32001;
+                                mapCosts[3111] = 32001;
+                                mapCosts[3112] = 32001;
+                                mapCosts[3113] = 32001;
+                                mapCosts[3114] = 32001;
+                                mapCosts[3115] = 32001;
+                                mapCosts[3116] = 32001;
+                                mapCosts[3117] = 32001;
+                                mapCosts[3118] = 32001;
+                                mapCosts[3119] = 32001;
+                                mapCosts[3120] = 32001;
+                                mapCosts[3121] = 32001;
+                                mapCosts[3122] = 32001;
+                                mapCosts[3123] = 32001;
+                                mapCosts[3124] = 32001;
+                                mapCosts[3125] = 32001;
+                                mapCosts[3126] = 32001;
+                                mapCosts[3127] = 32001;
+                                mapCosts[3128] = 32001;
+                                mapCosts[3129] = 32001;
+                                mapCosts[3130] = 32001;
+                                mapCosts[3131] = 32001;
+                                mapCosts[3132] = 32001;
+                                break;
+                        case 24:
+                                mapCosts[3221] = 32001;
+                                mapCosts[3222] = 32001;
+                                mapCosts[3223] = 32001;
+                                mapCosts[3224] = 32001;
+                                mapCosts[3225] = 32001;
+                                mapCosts[3226] = 32001;
+                                mapCosts[3227] = 32001;
+                                mapCosts[3228] = 32001;
+                                mapCosts[3229] = 32001;
+                                mapCosts[3230] = 32001;
+                                mapCosts[3231] = 32001;
+                                mapCosts[3232] = 32001;
+                                mapCosts[3233] = 32001;
+                                mapCosts[3234] = 32001;
+                                mapCosts[3235] = 32001;
+                                mapCosts[3236] = 32001;
+                                mapCosts[3237] = 32001;
+                                mapCosts[3238] = 32001;
+                                mapCosts[3239] = 32001;
+                                mapCosts[3240] = 32001;
+                                mapCosts[3241] = 32001;
+                                mapCosts[3242] = 32001;
+                                mapCosts[3243] = 32001;
+                                mapCosts[3244] = 32001;
+                                mapCosts[3245] = 32001;
+                                mapCosts[3246] = 32001;
+                                mapCosts[3247] = 32001;
+                                mapCosts[3248] = 32001;
+                                mapCosts[3249] = 32001;
+                                mapCosts[3250] = 32001;
+                                mapCosts[3251] = 32001;
+                                mapCosts[3252] = 32001;
+                                mapCosts[3253] = 32001;
+                                mapCosts[3254] = 32001;
+                                mapCosts[3255] = 32001;
+                                mapCosts[3256] = 32001;
+                                mapCosts[3257] = 32001;
+                                mapCosts[3258] = 32001;
+                                mapCosts[3259] = 32001;
+                                mapCosts[3260] = 32001;
+                                break;
+                        case 25:
+                                mapCosts[3349] = 32001;
+                                mapCosts[3350] = 32001;
+                                mapCosts[3351] = 32001;
+                                mapCosts[3352] = 32001;
+                                mapCosts[3353] = 32001;
+                                mapCosts[3354] = 32001;
+                                mapCosts[3355] = 32001;
+                                mapCosts[3356] = 32001;
+                                mapCosts[3357] = 32001;
+                                mapCosts[3358] = 32001;
+                                mapCosts[3359] = 32001;
+                                mapCosts[3360] = 32001;
+                                mapCosts[3361] = 32001;
+                                mapCosts[3362] = 32001;
+                                mapCosts[3363] = 32001;
+                                mapCosts[3364] = 32001;
+                                mapCosts[3365] = 32001;
+                                mapCosts[3366] = 32001;
+                                mapCosts[3367] = 32001;
+                                mapCosts[3368] = 32001;
+                                mapCosts[3369] = 32001;
+                                mapCosts[3370] = 32001;
+                                mapCosts[3371] = 32001;
+                                mapCosts[3372] = 32001;
+                                mapCosts[3373] = 32001;
+                                mapCosts[3374] = 32001;
+                                mapCosts[3375] = 32001;
+                                mapCosts[3376] = 32001;
+                                mapCosts[3377] = 32001;
+                                mapCosts[3378] = 32001;
+                                mapCosts[3379] = 32001;
+                                mapCosts[3380] = 32001;
+                                mapCosts[3381] = 32001;
+                                mapCosts[3382] = 32001;
+                                mapCosts[3383] = 32001;
+                                mapCosts[3384] = 32001;
+                                mapCosts[3385] = 32001;
+                                mapCosts[3386] = 32001;
+                                mapCosts[3387] = 32001;
+                                mapCosts[3388] = 32001;
+                                break;
+                        case 26:
+                                mapCosts[3477] = 32001;
+                                mapCosts[3478] = 32001;
+                                mapCosts[3479] = 32001;
+                                mapCosts[3480] = 32001;
+                                mapCosts[3481] = 32001;
+                                mapCosts[3482] = 32001;
+                                mapCosts[3483] = 32001;
+                                mapCosts[3484] = 32001;
+                                mapCosts[3485] = 32001;
+                                mapCosts[3486] = 32001;
+                                mapCosts[3487] = 32001;
+                                mapCosts[3488] = 32001;
+                                mapCosts[3489] = 32001;
+                                mapCosts[3490] = 32001;
+                                mapCosts[3491] = 32001;
+                                mapCosts[3492] = 32001;
+                                mapCosts[3493] = 32001;
+                                mapCosts[3494] = 32001;
+                                mapCosts[3495] = 32001;
+                                mapCosts[3496] = 32001;
+                                mapCosts[3497] = 32001;
+                                mapCosts[3498] = 32001;
+                                mapCosts[3499] = 32001;
+                                mapCosts[3500] = 32001;
+                                mapCosts[3501] = 32001;
+                                mapCosts[3502] = 32001;
+                                mapCosts[3503] = 32001;
+                                mapCosts[3504] = 32001;
+                                mapCosts[3505] = 32001;
+                                mapCosts[3506] = 32001;
+                                mapCosts[3507] = 32001;
+                                mapCosts[3508] = 32001;
+                                mapCosts[3509] = 32001;
+                                mapCosts[3510] = 32001;
+                                mapCosts[3511] = 32001;
+                                mapCosts[3512] = 32001;
+                                mapCosts[3513] = 32001;
+                                mapCosts[3514] = 32001;
+                                mapCosts[3515] = 32001;
+                                mapCosts[3516] = 32001;
+                                break;
+                        case 27:
+                                mapCosts[3605] = 32001;
+                                mapCosts[3606] = 32001;
+                                mapCosts[3607] = 32001;
+                                mapCosts[3608] = 32001;
+                                mapCosts[3609] = 32001;
+                                mapCosts[3610] = 32001;
+                                mapCosts[3611] = 32001;
+                                mapCosts[3612] = 32001;
+                                mapCosts[3613] = 32001;
+                                mapCosts[3614] = 32001;
+                                mapCosts[3615] = 32001;
+                                mapCosts[3616] = 32001;
+                                mapCosts[3617] = 32001;
+                                mapCosts[3618] = 32001;
+                                mapCosts[3619] = 32001;
+                                mapCosts[3620] = 32001;
+                                mapCosts[3621] = 32001;
+                                mapCosts[3622] = 32001;
+                                mapCosts[3623] = 32001;
+                                mapCosts[3624] = 32001;
+                                mapCosts[3625] = 32001;
+                                mapCosts[3626] = 32001;
+                                mapCosts[3627] = 32001;
+                                mapCosts[3628] = 32001;
+                                mapCosts[3629] = 32001;
+                                mapCosts[3630] = 32001;
+                                mapCosts[3631] = 32001;
+                                mapCosts[3632] = 32001;
+                                mapCosts[3633] = 32001;
+                                mapCosts[3634] = 32001;
+                                mapCosts[3635] = 32001;
+                                mapCosts[3636] = 32001;
+                                mapCosts[3637] = 32001;
+                                mapCosts[3638] = 32001;
+                                mapCosts[3639] = 32001;
+                                mapCosts[3640] = 32001;
+                                mapCosts[3641] = 32001;
+                                mapCosts[3642] = 32001;
+                                mapCosts[3643] = 32001;
+                                mapCosts[3644] = 32001;
+                                break;
+                        case 28:
+                                mapCosts[3733] = 32001;
+                                mapCosts[3734] = 32001;
+                                mapCosts[3735] = 32001;
+                                mapCosts[3736] = 32001;
+                                mapCosts[3737] = 32001;
+                                mapCosts[3738] = 32001;
+                                mapCosts[3739] = 32001;
+                                mapCosts[3740] = 32001;
+                                mapCosts[3741] = 32001;
+                                mapCosts[3742] = 32001;
+                                mapCosts[3743] = 32001;
+                                mapCosts[3744] = 32001;
+                                mapCosts[3745] = 32001;
+                                mapCosts[3746] = 32001;
+                                mapCosts[3747] = 32001;
+                                mapCosts[3748] = 32001;
+                                mapCosts[3749] = 32001;
+                                mapCosts[3750] = 32001;
+                                mapCosts[3751] = 32001;
+                                mapCosts[3752] = 32001;
+                                mapCosts[3753] = 32001;
+                                mapCosts[3754] = 32001;
+                                mapCosts[3755] = 32001;
+                                mapCosts[3756] = 32001;
+                                mapCosts[3757] = 32001;
+                                mapCosts[3758] = 32001;
+                                mapCosts[3759] = 32001;
+                                mapCosts[3760] = 32001;
+                                mapCosts[3761] = 32001;
+                                mapCosts[3762] = 32001;
+                                mapCosts[3763] = 32001;
+                                mapCosts[3764] = 32001;
+                                mapCosts[3765] = 32001;
+                                mapCosts[3766] = 32001;
+                                mapCosts[3767] = 32001;
+                                mapCosts[3768] = 32001;
+                                mapCosts[3769] = 32001;
+                                mapCosts[3770] = 32001;
+                                mapCosts[3771] = 32001;
+                                mapCosts[3772] = 32001;
+                                break;
+                        case 29:
+                                mapCosts[3861] = 32001;
+                                mapCosts[3862] = 32001;
+                                mapCosts[3863] = 32001;
+                                mapCosts[3864] = 32001;
+                                mapCosts[3865] = 32001;
+                                mapCosts[3866] = 32001;
+                                mapCosts[3867] = 32001;
+                                mapCosts[3868] = 32001;
+                                mapCosts[3869] = 32001;
+                                mapCosts[3870] = 32001;
+                                mapCosts[3871] = 32001;
+                                mapCosts[3872] = 32001;
+                                mapCosts[3873] = 32001;
+                                mapCosts[3874] = 32001;
+                                mapCosts[3875] = 32001;
+                                mapCosts[3876] = 32001;
+                                mapCosts[3877] = 32001;
+                                mapCosts[3878] = 32001;
+                                mapCosts[3879] = 32001;
+                                mapCosts[3880] = 32001;
+                                mapCosts[3881] = 32001;
+                                mapCosts[3882] = 32001;
+                                mapCosts[3883] = 32001;
+                                mapCosts[3884] = 32001;
+                                mapCosts[3885] = 32001;
+                                mapCosts[3886] = 32001;
+                                mapCosts[3887] = 32001;
+                                mapCosts[3888] = 32001;
+                                mapCosts[3889] = 32001;
+                                mapCosts[3890] = 32001;
+                                mapCosts[3891] = 32001;
+                                mapCosts[3892] = 32001;
+                                mapCosts[3893] = 32001;
+                                mapCosts[3894] = 32001;
+                                mapCosts[3895] = 32001;
+                                mapCosts[3896] = 32001;
+                                mapCosts[3897] = 32001;
+                                mapCosts[3898] = 32001;
+                                mapCosts[3899] = 32001;
+                                mapCosts[3900] = 32001;
+                                break;
+                        case 30:
+                                mapCosts[3989] = 32001;
+                                mapCosts[3990] = 32001;
+                                mapCosts[3991] = 32001;
+                                mapCosts[3992] = 32001;
+                                mapCosts[3993] = 32001;
+                                mapCosts[3994] = 32001;
+                                mapCosts[3995] = 32001;
+                                mapCosts[3996] = 32001;
+                                mapCosts[3997] = 32001;
+                                mapCosts[3998] = 32001;
+                                mapCosts[3999] = 32001;
+                                mapCosts[4000] = 32001;
+                                mapCosts[4001] = 32001;
+                                mapCosts[4002] = 32001;
+                                mapCosts[4003] = 32001;
+                                mapCosts[4004] = 32001;
+                                mapCosts[4005] = 32001;
+                                mapCosts[4006] = 32001;
+                                mapCosts[4007] = 32001;
+                                mapCosts[4008] = 32001;
+                                mapCosts[4009] = 32001;
+                                mapCosts[4010] = 32001;
+                                mapCosts[4011] = 32001;
+                                mapCosts[4012] = 32001;
+                                mapCosts[4013] = 32001;
+                                mapCosts[4014] = 32001;
+                                mapCosts[4015] = 32001;
+                                mapCosts[4016] = 32001;
+                                mapCosts[4017] = 32001;
+                                mapCosts[4018] = 32001;
+                                mapCosts[4019] = 32001;
+                                mapCosts[4020] = 32001;
+                                mapCosts[4021] = 32001;
+                                mapCosts[4022] = 32001;
+                                mapCosts[4023] = 32001;
+                                mapCosts[4024] = 32001;
+                                mapCosts[4025] = 32001;
+                                mapCosts[4026] = 32001;
+                                mapCosts[4027] = 32001;
+                                mapCosts[4028] = 32001;
+                                break;
+                        case 31:
+                                mapCosts[4117] = 32001;
+                                mapCosts[4118] = 32001;
+                                mapCosts[4119] = 32001;
+                                mapCosts[4120] = 32001;
+                                mapCosts[4121] = 32001;
+                                mapCosts[4122] = 32001;
+                                mapCosts[4123] = 32001;
+                                mapCosts[4124] = 32001;
+                                mapCosts[4125] = 32001;
+                                mapCosts[4126] = 32001;
+                                mapCosts[4127] = 32001;
+                                mapCosts[4128] = 32001;
+                                mapCosts[4129] = 32001;
+                                mapCosts[4130] = 32001;
+                                mapCosts[4131] = 32001;
+                                mapCosts[4132] = 32001;
+                                mapCosts[4133] = 32001;
+                                mapCosts[4134] = 32001;
+                                mapCosts[4135] = 32001;
+                                mapCosts[4136] = 32001;
+                                mapCosts[4137] = 32001;
+                                mapCosts[4138] = 32001;
+                                mapCosts[4139] = 32001;
+                                mapCosts[4140] = 32001;
+                                mapCosts[4141] = 32001;
+                                mapCosts[4142] = 32001;
+                                mapCosts[4143] = 32001;
+                                mapCosts[4144] = 32001;
+                                mapCosts[4145] = 32001;
+                                mapCosts[4146] = 32001;
+                                mapCosts[4147] = 32001;
+                                mapCosts[4148] = 32001;
+                                mapCosts[4149] = 32001;
+                                mapCosts[4150] = 32001;
+                                mapCosts[4151] = 32001;
+                                mapCosts[4152] = 32001;
+                                mapCosts[4153] = 32001;
+                                mapCosts[4154] = 32001;
+                                mapCosts[4155] = 32001;
+                                mapCosts[4156] = 32001;
+                                break;
+                        case 32:
+                                mapCosts[4245] = 32001;
+                                mapCosts[4246] = 32001;
+                                mapCosts[4247] = 32001;
+                                mapCosts[4248] = 32001;
+                                mapCosts[4249] = 32001;
+                                mapCosts[4250] = 32001;
+                                mapCosts[4251] = 32001;
+                                mapCosts[4252] = 32001;
+                                mapCosts[4253] = 32001;
+                                mapCosts[4254] = 32001;
+                                mapCosts[4255] = 32001;
+                                mapCosts[4256] = 32001;
+                                mapCosts[4257] = 32001;
+                                mapCosts[4258] = 32001;
+                                mapCosts[4259] = 32001;
+                                mapCosts[4260] = 32001;
+                                mapCosts[4261] = 32001;
+                                mapCosts[4262] = 32001;
+                                mapCosts[4263] = 32001;
+                                mapCosts[4264] = 32001;
+                                mapCosts[4265] = 32001;
+                                mapCosts[4266] = 32001;
+                                mapCosts[4267] = 32001;
+                                mapCosts[4268] = 32001;
+                                mapCosts[4269] = 32001;
+                                mapCosts[4270] = 32001;
+                                mapCosts[4271] = 32001;
+                                mapCosts[4272] = 32001;
+                                mapCosts[4273] = 32001;
+                                mapCosts[4274] = 32001;
+                                mapCosts[4275] = 32001;
+                                mapCosts[4276] = 32001;
+                                mapCosts[4277] = 32001;
+                                mapCosts[4278] = 32001;
+                                mapCosts[4279] = 32001;
+                                mapCosts[4280] = 32001;
+                                mapCosts[4281] = 32001;
+                                mapCosts[4282] = 32001;
+                                mapCosts[4283] = 32001;
+                                mapCosts[4284] = 32001;
+                                break;
+                        case 33:
+                                mapCosts[4373] = 32001;
+                                mapCosts[4374] = 32001;
+                                mapCosts[4375] = 32001;
+                                mapCosts[4376] = 32001;
+                                mapCosts[4377] = 32001;
+                                mapCosts[4378] = 32001;
+                                mapCosts[4379] = 32001;
+                                mapCosts[4380] = 32001;
+                                mapCosts[4381] = 32001;
+                                mapCosts[4382] = 32001;
+                                mapCosts[4383] = 32001;
+                                mapCosts[4384] = 32001;
+                                mapCosts[4385] = 32001;
+                                mapCosts[4386] = 32001;
+                                mapCosts[4387] = 32001;
+                                mapCosts[4388] = 32001;
+                                mapCosts[4389] = 32001;
+                                mapCosts[4390] = 32001;
+                                mapCosts[4391] = 32001;
+                                mapCosts[4392] = 32001;
+                                mapCosts[4393] = 32001;
+                                mapCosts[4394] = 32001;
+                                mapCosts[4395] = 32001;
+                                mapCosts[4396] = 32001;
+                                mapCosts[4397] = 32001;
+                                mapCosts[4398] = 32001;
+                                mapCosts[4399] = 32001;
+                                mapCosts[4400] = 32001;
+                                mapCosts[4401] = 32001;
+                                mapCosts[4402] = 32001;
+                                mapCosts[4403] = 32001;
+                                mapCosts[4404] = 32001;
+                                mapCosts[4405] = 32001;
+                                mapCosts[4406] = 32001;
+                                mapCosts[4407] = 32001;
+                                mapCosts[4408] = 32001;
+                                mapCosts[4409] = 32001;
+                                mapCosts[4410] = 32001;
+                                mapCosts[4411] = 32001;
+                                mapCosts[4412] = 32001;
+                                break;
+                        case 34:
+                                mapCosts[4501] = 32001;
+                                mapCosts[4502] = 32001;
+                                mapCosts[4503] = 32001;
+                                mapCosts[4504] = 32001;
+                                mapCosts[4505] = 32001;
+                                mapCosts[4506] = 32001;
+                                mapCosts[4507] = 32001;
+                                mapCosts[4508] = 32001;
+                                mapCosts[4509] = 32001;
+                                mapCosts[4510] = 32001;
+                                mapCosts[4511] = 32001;
+                                mapCosts[4512] = 32001;
+                                mapCosts[4513] = 32001;
+                                mapCosts[4514] = 32001;
+                                mapCosts[4515] = 32001;
+                                mapCosts[4516] = 32001;
+                                mapCosts[4517] = 32001;
+                                mapCosts[4518] = 32001;
+                                mapCosts[4519] = 32001;
+                                mapCosts[4520] = 32001;
+                                mapCosts[4521] = 32001;
+                                mapCosts[4522] = 32001;
+                                mapCosts[4523] = 32001;
+                                mapCosts[4524] = 32001;
+                                mapCosts[4525] = 32001;
+                                mapCosts[4526] = 32001;
+                                mapCosts[4527] = 32001;
+                                mapCosts[4528] = 32001;
+                                mapCosts[4529] = 32001;
+                                mapCosts[4530] = 32001;
+                                mapCosts[4531] = 32001;
+                                mapCosts[4532] = 32001;
+                                mapCosts[4533] = 32001;
+                                mapCosts[4534] = 32001;
+                                mapCosts[4535] = 32001;
+                                mapCosts[4536] = 32001;
+                                mapCosts[4537] = 32001;
+                                mapCosts[4538] = 32001;
+                                mapCosts[4539] = 32001;
+                                mapCosts[4540] = 32001;
+                                break;
+                        case 35:
+                                mapCosts[4629] = 32001;
+                                mapCosts[4630] = 32001;
+                                mapCosts[4631] = 32001;
+                                mapCosts[4632] = 32001;
+                                mapCosts[4633] = 32001;
+                                mapCosts[4634] = 32001;
+                                mapCosts[4635] = 32001;
+                                mapCosts[4636] = 32001;
+                                mapCosts[4637] = 32001;
+                                mapCosts[4638] = 32001;
+                                mapCosts[4639] = 32001;
+                                mapCosts[4640] = 32001;
+                                mapCosts[4641] = 32001;
+                                mapCosts[4642] = 32001;
+                                mapCosts[4643] = 32001;
+                                mapCosts[4644] = 32001;
+                                mapCosts[4645] = 32001;
+                                mapCosts[4646] = 32001;
+                                mapCosts[4647] = 32001;
+                                mapCosts[4648] = 32001;
+                                mapCosts[4649] = 32001;
+                                mapCosts[4650] = 32001;
+                                mapCosts[4651] = 32001;
+                                mapCosts[4652] = 32001;
+                                mapCosts[4653] = 32001;
+                                mapCosts[4654] = 32001;
+                                mapCosts[4655] = 32001;
+                                mapCosts[4656] = 32001;
+                                mapCosts[4657] = 32001;
+                                mapCosts[4658] = 32001;
+                                mapCosts[4659] = 32001;
+                                mapCosts[4660] = 32001;
+                                mapCosts[4661] = 32001;
+                                mapCosts[4662] = 32001;
+                                mapCosts[4663] = 32001;
+                                mapCosts[4664] = 32001;
+                                mapCosts[4665] = 32001;
+                                mapCosts[4666] = 32001;
+                                mapCosts[4667] = 32001;
+                                mapCosts[4668] = 32001;
+                                break;
+                        case 36:
+                                mapCosts[4757] = 32001;
+                                mapCosts[4758] = 32001;
+                                mapCosts[4759] = 32001;
+                                mapCosts[4760] = 32001;
+                                mapCosts[4761] = 32001;
+                                mapCosts[4762] = 32001;
+                                mapCosts[4763] = 32001;
+                                mapCosts[4764] = 32001;
+                                mapCosts[4765] = 32001;
+                                mapCosts[4766] = 32001;
+                                mapCosts[4767] = 32001;
+                                mapCosts[4768] = 32001;
+                                mapCosts[4769] = 32001;
+                                mapCosts[4770] = 32001;
+                                mapCosts[4771] = 32001;
+                                mapCosts[4772] = 32001;
+                                mapCosts[4773] = 32001;
+                                mapCosts[4774] = 32001;
+                                mapCosts[4775] = 32001;
+                                mapCosts[4776] = 32001;
+                                mapCosts[4777] = 32001;
+                                mapCosts[4778] = 32001;
+                                mapCosts[4779] = 32001;
+                                mapCosts[4780] = 32001;
+                                mapCosts[4781] = 32001;
+                                mapCosts[4782] = 32001;
+                                mapCosts[4783] = 32001;
+                                mapCosts[4784] = 32001;
+                                mapCosts[4785] = 32001;
+                                mapCosts[4786] = 32001;
+                                mapCosts[4787] = 32001;
+                                mapCosts[4788] = 32001;
+                                mapCosts[4789] = 32001;
+                                mapCosts[4790] = 32001;
+                                mapCosts[4791] = 32001;
+                                mapCosts[4792] = 32001;
+                                mapCosts[4793] = 32001;
+                                mapCosts[4794] = 32001;
+                                mapCosts[4795] = 32001;
+                                mapCosts[4796] = 32001;
+                                break;
+                        case 37:
+                                mapCosts[4885] = 32001;
+                                mapCosts[4886] = 32001;
+                                mapCosts[4887] = 32001;
+                                mapCosts[4888] = 32001;
+                                mapCosts[4889] = 32001;
+                                mapCosts[4890] = 32001;
+                                mapCosts[4891] = 32001;
+                                mapCosts[4892] = 32001;
+                                mapCosts[4893] = 32001;
+                                mapCosts[4894] = 32001;
+                                mapCosts[4895] = 32001;
+                                mapCosts[4896] = 32001;
+                                mapCosts[4897] = 32001;
+                                mapCosts[4898] = 32001;
+                                mapCosts[4899] = 32001;
+                                mapCosts[4900] = 32001;
+                                mapCosts[4901] = 32001;
+                                mapCosts[4902] = 32001;
+                                mapCosts[4903] = 32001;
+                                mapCosts[4904] = 32001;
+                                mapCosts[4905] = 32001;
+                                mapCosts[4906] = 32001;
+                                mapCosts[4907] = 32001;
+                                mapCosts[4908] = 32001;
+                                mapCosts[4909] = 32001;
+                                mapCosts[4910] = 32001;
+                                mapCosts[4911] = 32001;
+                                mapCosts[4912] = 32001;
+                                mapCosts[4913] = 32001;
+                                mapCosts[4914] = 32001;
+                                mapCosts[4915] = 32001;
+                                mapCosts[4916] = 32001;
+                                mapCosts[4917] = 32001;
+                                mapCosts[4918] = 32001;
+                                mapCosts[4919] = 32001;
+                                mapCosts[4920] = 32001;
+                                mapCosts[4921] = 32001;
+                                mapCosts[4922] = 32001;
+                                mapCosts[4923] = 32001;
+                                mapCosts[4924] = 32001;
+                                break;
+                        case 38:
+                                mapCosts[5013] = 32001;
+                                mapCosts[5014] = 32001;
+                                mapCosts[5015] = 32001;
+                                mapCosts[5016] = 32001;
+                                mapCosts[5017] = 32001;
+                                mapCosts[5018] = 32001;
+                                mapCosts[5019] = 32001;
+                                mapCosts[5020] = 32001;
+                                mapCosts[5021] = 32001;
+                                mapCosts[5022] = 32001;
+                                mapCosts[5023] = 32001;
+                                mapCosts[5024] = 32001;
+                                mapCosts[5025] = 32001;
+                                mapCosts[5026] = 32001;
+                                mapCosts[5027] = 32001;
+                                mapCosts[5028] = 32001;
+                                mapCosts[5029] = 32001;
+                                mapCosts[5030] = 32001;
+                                mapCosts[5031] = 32001;
+                                mapCosts[5032] = 32001;
+                                mapCosts[5033] = 32001;
+                                mapCosts[5034] = 32001;
+                                mapCosts[5035] = 32001;
+                                mapCosts[5036] = 32001;
+                                mapCosts[5037] = 32001;
+                                mapCosts[5038] = 32001;
+                                mapCosts[5039] = 32001;
+                                mapCosts[5040] = 32001;
+                                mapCosts[5041] = 32001;
+                                mapCosts[5042] = 32001;
+                                mapCosts[5043] = 32001;
+                                mapCosts[5044] = 32001;
+                                mapCosts[5045] = 32001;
+                                mapCosts[5046] = 32001;
+                                mapCosts[5047] = 32001;
+                                mapCosts[5048] = 32001;
+                                mapCosts[5049] = 32001;
+                                mapCosts[5050] = 32001;
+                                mapCosts[5051] = 32001;
+                                mapCosts[5052] = 32001;
+                                break;
+                        case 39:
+                                mapCosts[5141] = 32001;
+                                mapCosts[5142] = 32001;
+                                mapCosts[5143] = 32001;
+                                mapCosts[5144] = 32001;
+                                mapCosts[5145] = 32001;
+                                mapCosts[5146] = 32001;
+                                mapCosts[5147] = 32001;
+                                mapCosts[5148] = 32001;
+                                mapCosts[5149] = 32001;
+                                mapCosts[5150] = 32001;
+                                mapCosts[5151] = 32001;
+                                mapCosts[5152] = 32001;
+                                mapCosts[5153] = 32001;
+                                mapCosts[5154] = 32001;
+                                mapCosts[5155] = 32001;
+                                mapCosts[5156] = 32001;
+                                mapCosts[5157] = 32001;
+                                mapCosts[5158] = 32001;
+                                mapCosts[5159] = 32001;
+                                mapCosts[5160] = 32001;
+                                mapCosts[5161] = 32001;
+                                mapCosts[5162] = 32001;
+                                mapCosts[5163] = 32001;
+                                mapCosts[5164] = 32001;
+                                mapCosts[5165] = 32001;
+                                mapCosts[5166] = 32001;
+                                mapCosts[5167] = 32001;
+                                mapCosts[5168] = 32001;
+                                mapCosts[5169] = 32001;
+                                mapCosts[5170] = 32001;
+                                mapCosts[5171] = 32001;
+                                mapCosts[5172] = 32001;
+                                mapCosts[5173] = 32001;
+                                mapCosts[5174] = 32001;
+                                mapCosts[5175] = 32001;
+                                mapCosts[5176] = 32001;
+                                mapCosts[5177] = 32001;
+                                mapCosts[5178] = 32001;
+                                mapCosts[5179] = 32001;
+                                mapCosts[5180] = 32001;
+                                break;
+                        case 40:
+                                mapCosts[5269] = 32001;
+                                mapCosts[5270] = 32001;
+                                mapCosts[5271] = 32001;
+                                mapCosts[5272] = 32001;
+                                mapCosts[5273] = 32001;
+                                mapCosts[5274] = 32001;
+                                mapCosts[5275] = 32001;
+                                mapCosts[5276] = 32001;
+                                mapCosts[5277] = 32001;
+                                mapCosts[5278] = 32001;
+                                mapCosts[5279] = 32001;
+                                mapCosts[5280] = 32001;
+                                mapCosts[5281] = 32001;
+                                mapCosts[5282] = 32001;
+                                mapCosts[5283] = 32001;
+                                mapCosts[5284] = 32001;
+                                mapCosts[5285] = 32001;
+                                mapCosts[5286] = 32001;
+                                mapCosts[5287] = 32001;
+                                mapCosts[5288] = 32001;
+                                mapCosts[5289] = 32001;
+                                mapCosts[5290] = 32001;
+                                mapCosts[5291] = 32001;
+                                mapCosts[5292] = 32001;
+                                mapCosts[5293] = 32001;
+                                mapCosts[5294] = 32001;
+                                mapCosts[5295] = 32001;
+                                mapCosts[5296] = 32001;
+                                mapCosts[5297] = 32001;
+                                mapCosts[5298] = 32001;
+                                mapCosts[5299] = 32001;
+                                mapCosts[5300] = 32001;
+                                mapCosts[5301] = 32001;
+                                mapCosts[5302] = 32001;
+                                mapCosts[5303] = 32001;
+                                mapCosts[5304] = 32001;
+                                mapCosts[5305] = 32001;
+                                mapCosts[5306] = 32001;
+                                mapCosts[5307] = 32001;
+                                mapCosts[5308] = 32001;
+                                break;
+                        case 41:
+                                mapCosts[5397] = 32001;
+                                mapCosts[5398] = 32001;
+                                mapCosts[5399] = 32001;
+                                mapCosts[5400] = 32001;
+                                mapCosts[5401] = 32001;
+                                mapCosts[5402] = 32001;
+                                mapCosts[5403] = 32001;
+                                mapCosts[5404] = 32001;
+                                mapCosts[5405] = 32001;
+                                mapCosts[5406] = 32001;
+                                mapCosts[5407] = 32001;
+                                mapCosts[5408] = 32001;
+                                mapCosts[5409] = 32001;
+                                mapCosts[5410] = 32001;
+                                mapCosts[5411] = 32001;
+                                mapCosts[5412] = 32001;
+                                mapCosts[5413] = 32001;
+                                mapCosts[5414] = 32001;
+                                mapCosts[5415] = 32001;
+                                mapCosts[5416] = 32001;
+                                mapCosts[5417] = 32001;
+                                mapCosts[5418] = 32001;
+                                mapCosts[5419] = 32001;
+                                mapCosts[5420] = 32001;
+                                mapCosts[5421] = 32001;
+                                mapCosts[5422] = 32001;
+                                mapCosts[5423] = 32001;
+                                mapCosts[5424] = 32001;
+                                mapCosts[5425] = 32001;
+                                mapCosts[5426] = 32001;
+                                mapCosts[5427] = 32001;
+                                mapCosts[5428] = 32001;
+                                mapCosts[5429] = 32001;
+                                mapCosts[5430] = 32001;
+                                mapCosts[5431] = 32001;
+                                mapCosts[5432] = 32001;
+                                mapCosts[5433] = 32001;
+                                mapCosts[5434] = 32001;
+                                mapCosts[5435] = 32001;
+                                mapCosts[5436] = 32001;
+                                break;
+                        case 42:
+                                mapCosts[5525] = 32001;
+                                mapCosts[5526] = 32001;
+                                mapCosts[5527] = 32001;
+                                mapCosts[5528] = 32001;
+                                mapCosts[5529] = 32001;
+                                mapCosts[5530] = 32001;
+                                mapCosts[5531] = 32001;
+                                mapCosts[5532] = 32001;
+                                mapCosts[5533] = 32001;
+                                mapCosts[5534] = 32001;
+                                mapCosts[5535] = 32001;
+                                mapCosts[5536] = 32001;
+                                mapCosts[5537] = 32001;
+                                mapCosts[5538] = 32001;
+                                mapCosts[5539] = 32001;
+                                mapCosts[5540] = 32001;
+                                mapCosts[5541] = 32001;
+                                mapCosts[5542] = 32001;
+                                mapCosts[5543] = 32001;
+                                mapCosts[5544] = 32001;
+                                mapCosts[5545] = 32001;
+                                mapCosts[5546] = 32001;
+                                mapCosts[5547] = 32001;
+                                mapCosts[5548] = 32001;
+                                mapCosts[5549] = 32001;
+                                mapCosts[5550] = 32001;
+                                mapCosts[5551] = 32001;
+                                mapCosts[5552] = 32001;
+                                mapCosts[5553] = 32001;
+                                mapCosts[5554] = 32001;
+                                mapCosts[5555] = 32001;
+                                mapCosts[5556] = 32001;
+                                mapCosts[5557] = 32001;
+                                mapCosts[5558] = 32001;
+                                mapCosts[5559] = 32001;
+                                mapCosts[5560] = 32001;
+                                mapCosts[5561] = 32001;
+                                mapCosts[5562] = 32001;
+                                mapCosts[5563] = 32001;
+                                mapCosts[5564] = 32001;
+                                break;
+                        case 43:
+                                mapCosts[5653] = 32001;
+                                mapCosts[5654] = 32001;
+                                mapCosts[5655] = 32001;
+                                mapCosts[5656] = 32001;
+                                mapCosts[5657] = 32001;
+                                mapCosts[5658] = 32001;
+                                mapCosts[5659] = 32001;
+                                mapCosts[5660] = 32001;
+                                mapCosts[5661] = 32001;
+                                mapCosts[5662] = 32001;
+                                mapCosts[5663] = 32001;
+                                mapCosts[5664] = 32001;
+                                mapCosts[5665] = 32001;
+                                mapCosts[5666] = 32001;
+                                mapCosts[5667] = 32001;
+                                mapCosts[5668] = 32001;
+                                mapCosts[5669] = 32001;
+                                mapCosts[5670] = 32001;
+                                mapCosts[5671] = 32001;
+                                mapCosts[5672] = 32001;
+                                mapCosts[5673] = 32001;
+                                mapCosts[5674] = 32001;
+                                mapCosts[5675] = 32001;
+                                mapCosts[5676] = 32001;
+                                mapCosts[5677] = 32001;
+                                mapCosts[5678] = 32001;
+                                mapCosts[5679] = 32001;
+                                mapCosts[5680] = 32001;
+                                mapCosts[5681] = 32001;
+                                mapCosts[5682] = 32001;
+                                mapCosts[5683] = 32001;
+                                mapCosts[5684] = 32001;
+                                mapCosts[5685] = 32001;
+                                mapCosts[5686] = 32001;
+                                mapCosts[5687] = 32001;
+                                mapCosts[5688] = 32001;
+                                mapCosts[5689] = 32001;
+                                mapCosts[5690] = 32001;
+                                mapCosts[5691] = 32001;
+                                mapCosts[5692] = 32001;
+                                break;
+                        case 44:
+                                mapCosts[5781] = 32001;
+                                mapCosts[5782] = 32001;
+                                mapCosts[5783] = 32001;
+                                mapCosts[5784] = 32001;
+                                mapCosts[5785] = 32001;
+                                mapCosts[5786] = 32001;
+                                mapCosts[5787] = 32001;
+                                mapCosts[5788] = 32001;
+                                mapCosts[5789] = 32001;
+                                mapCosts[5790] = 32001;
+                                mapCosts[5791] = 32001;
+                                mapCosts[5792] = 32001;
+                                mapCosts[5793] = 32001;
+                                mapCosts[5794] = 32001;
+                                mapCosts[5795] = 32001;
+                                mapCosts[5796] = 32001;
+                                mapCosts[5797] = 32001;
+                                mapCosts[5798] = 32001;
+                                mapCosts[5799] = 32001;
+                                mapCosts[5800] = 32001;
+                                mapCosts[5801] = 32001;
+                                mapCosts[5802] = 32001;
+                                mapCosts[5803] = 32001;
+                                mapCosts[5804] = 32001;
+                                mapCosts[5805] = 32001;
+                                mapCosts[5806] = 32001;
+                                mapCosts[5807] = 32001;
+                                mapCosts[5808] = 32001;
+                                mapCosts[5809] = 32001;
+                                mapCosts[5810] = 32001;
+                                mapCosts[5811] = 32001;
+                                mapCosts[5812] = 32001;
+                                mapCosts[5813] = 32001;
+                                mapCosts[5814] = 32001;
+                                mapCosts[5815] = 32001;
+                                mapCosts[5816] = 32001;
+                                mapCosts[5817] = 32001;
+                                mapCosts[5818] = 32001;
+                                mapCosts[5819] = 32001;
+                                mapCosts[5820] = 32001;
+                                break;
+                        case 45:
+                                mapCosts[5909] = 32001;
+                                mapCosts[5910] = 32001;
+                                mapCosts[5911] = 32001;
+                                mapCosts[5912] = 32001;
+                                mapCosts[5913] = 32001;
+                                mapCosts[5914] = 32001;
+                                mapCosts[5915] = 32001;
+                                mapCosts[5916] = 32001;
+                                mapCosts[5917] = 32001;
+                                mapCosts[5918] = 32001;
+                                mapCosts[5919] = 32001;
+                                mapCosts[5920] = 32001;
+                                mapCosts[5921] = 32001;
+                                mapCosts[5922] = 32001;
+                                mapCosts[5923] = 32001;
+                                mapCosts[5924] = 32001;
+                                mapCosts[5925] = 32001;
+                                mapCosts[5926] = 32001;
+                                mapCosts[5927] = 32001;
+                                mapCosts[5928] = 32001;
+                                mapCosts[5929] = 32001;
+                                mapCosts[5930] = 32001;
+                                mapCosts[5931] = 32001;
+                                mapCosts[5932] = 32001;
+                                mapCosts[5933] = 32001;
+                                mapCosts[5934] = 32001;
+                                mapCosts[5935] = 32001;
+                                mapCosts[5936] = 32001;
+                                mapCosts[5937] = 32001;
+                                mapCosts[5938] = 32001;
+                                mapCosts[5939] = 32001;
+                                mapCosts[5940] = 32001;
+                                mapCosts[5941] = 32001;
+                                mapCosts[5942] = 32001;
+                                mapCosts[5943] = 32001;
+                                mapCosts[5944] = 32001;
+                                mapCosts[5945] = 32001;
+                                mapCosts[5946] = 32001;
+                                mapCosts[5947] = 32001;
+                                mapCosts[5948] = 32001;
+                                break;
+                        case 46:
+                                mapCosts[6037] = 32001;
+                                mapCosts[6038] = 32001;
+                                mapCosts[6039] = 32001;
+                                mapCosts[6040] = 32001;
+                                mapCosts[6041] = 32001;
+                                mapCosts[6042] = 32001;
+                                mapCosts[6043] = 32001;
+                                mapCosts[6044] = 32001;
+                                mapCosts[6045] = 32001;
+                                mapCosts[6046] = 32001;
+                                mapCosts[6047] = 32001;
+                                mapCosts[6048] = 32001;
+                                mapCosts[6049] = 32001;
+                                mapCosts[6050] = 32001;
+                                mapCosts[6051] = 32001;
+                                mapCosts[6052] = 32001;
+                                mapCosts[6053] = 32001;
+                                mapCosts[6054] = 32001;
+                                mapCosts[6055] = 32001;
+                                mapCosts[6056] = 32001;
+                                mapCosts[6057] = 32001;
+                                mapCosts[6058] = 32001;
+                                mapCosts[6059] = 32001;
+                                mapCosts[6060] = 32001;
+                                mapCosts[6061] = 32001;
+                                mapCosts[6062] = 32001;
+                                mapCosts[6063] = 32001;
+                                mapCosts[6064] = 32001;
+                                mapCosts[6065] = 32001;
+                                mapCosts[6066] = 32001;
+                                mapCosts[6067] = 32001;
+                                mapCosts[6068] = 32001;
+                                mapCosts[6069] = 32001;
+                                mapCosts[6070] = 32001;
+                                mapCosts[6071] = 32001;
+                                mapCosts[6072] = 32001;
+                                mapCosts[6073] = 32001;
+                                mapCosts[6074] = 32001;
+                                mapCosts[6075] = 32001;
+                                mapCosts[6076] = 32001;
+                                break;
+                        case 47:
+                                mapCosts[6165] = 32001;
+                                mapCosts[6166] = 32001;
+                                mapCosts[6167] = 32001;
+                                mapCosts[6168] = 32001;
+                                mapCosts[6169] = 32001;
+                                mapCosts[6170] = 32001;
+                                mapCosts[6171] = 32001;
+                                mapCosts[6172] = 32001;
+                                mapCosts[6173] = 32001;
+                                mapCosts[6174] = 32001;
+                                mapCosts[6175] = 32001;
+                                mapCosts[6176] = 32001;
+                                mapCosts[6177] = 32001;
+                                mapCosts[6178] = 32001;
+                                mapCosts[6179] = 32001;
+                                mapCosts[6180] = 32001;
+                                mapCosts[6181] = 32001;
+                                mapCosts[6182] = 32001;
+                                mapCosts[6183] = 32001;
+                                mapCosts[6184] = 32001;
+                                mapCosts[6185] = 32001;
+                                mapCosts[6186] = 32001;
+                                mapCosts[6187] = 32001;
+                                mapCosts[6188] = 32001;
+                                mapCosts[6189] = 32001;
+                                mapCosts[6190] = 32001;
+                                mapCosts[6191] = 32001;
+                                mapCosts[6192] = 32001;
+                                mapCosts[6193] = 32001;
+                                mapCosts[6194] = 32001;
+                                mapCosts[6195] = 32001;
+                                mapCosts[6196] = 32001;
+                                mapCosts[6197] = 32001;
+                                mapCosts[6198] = 32001;
+                                mapCosts[6199] = 32001;
+                                mapCosts[6200] = 32001;
+                                mapCosts[6201] = 32001;
+                                mapCosts[6202] = 32001;
+                                mapCosts[6203] = 32001;
+                                mapCosts[6204] = 32001;
+                                break;
+                        case 48:
+                                mapCosts[6293] = 32001;
+                                mapCosts[6294] = 32001;
+                                mapCosts[6295] = 32001;
+                                mapCosts[6296] = 32001;
+                                mapCosts[6297] = 32001;
+                                mapCosts[6298] = 32001;
+                                mapCosts[6299] = 32001;
+                                mapCosts[6300] = 32001;
+                                mapCosts[6301] = 32001;
+                                mapCosts[6302] = 32001;
+                                mapCosts[6303] = 32001;
+                                mapCosts[6304] = 32001;
+                                mapCosts[6305] = 32001;
+                                mapCosts[6306] = 32001;
+                                mapCosts[6307] = 32001;
+                                mapCosts[6308] = 32001;
+                                mapCosts[6309] = 32001;
+                                mapCosts[6310] = 32001;
+                                mapCosts[6311] = 32001;
+                                mapCosts[6312] = 32001;
+                                mapCosts[6313] = 32001;
+                                mapCosts[6314] = 32001;
+                                mapCosts[6315] = 32001;
+                                mapCosts[6316] = 32001;
+                                mapCosts[6317] = 32001;
+                                mapCosts[6318] = 32001;
+                                mapCosts[6319] = 32001;
+                                mapCosts[6320] = 32001;
+                                mapCosts[6321] = 32001;
+                                mapCosts[6322] = 32001;
+                                mapCosts[6323] = 32001;
+                                mapCosts[6324] = 32001;
+                                mapCosts[6325] = 32001;
+                                mapCosts[6326] = 32001;
+                                mapCosts[6327] = 32001;
+                                mapCosts[6328] = 32001;
+                                mapCosts[6329] = 32001;
+                                mapCosts[6330] = 32001;
+                                mapCosts[6331] = 32001;
+                                mapCosts[6332] = 32001;
+                                break;
+                        case 49:
+                                mapCosts[6421] = 32001;
+                                mapCosts[6422] = 32001;
+                                mapCosts[6423] = 32001;
+                                mapCosts[6424] = 32001;
+                                mapCosts[6425] = 32001;
+                                mapCosts[6426] = 32001;
+                                mapCosts[6427] = 32001;
+                                mapCosts[6428] = 32001;
+                                mapCosts[6429] = 32001;
+                                mapCosts[6430] = 32001;
+                                mapCosts[6431] = 32001;
+                                mapCosts[6432] = 32001;
+                                mapCosts[6433] = 32001;
+                                mapCosts[6434] = 32001;
+                                mapCosts[6435] = 32001;
+                                mapCosts[6436] = 32001;
+                                mapCosts[6437] = 32001;
+                                mapCosts[6438] = 32001;
+                                mapCosts[6439] = 32001;
+                                mapCosts[6440] = 32001;
+                                mapCosts[6441] = 32001;
+                                mapCosts[6442] = 32001;
+                                mapCosts[6443] = 32001;
+                                mapCosts[6444] = 32001;
+                                mapCosts[6445] = 32001;
+                                mapCosts[6446] = 32001;
+                                mapCosts[6447] = 32001;
+                                mapCosts[6448] = 32001;
+                                mapCosts[6449] = 32001;
+                                mapCosts[6450] = 32001;
+                                mapCosts[6451] = 32001;
+                                mapCosts[6452] = 32001;
+                                mapCosts[6453] = 32001;
+                                mapCosts[6454] = 32001;
+                                mapCosts[6455] = 32001;
+                                mapCosts[6456] = 32001;
+                                mapCosts[6457] = 32001;
+                                mapCosts[6458] = 32001;
+                                mapCosts[6459] = 32001;
+                                mapCosts[6460] = 32001;
+                                break;
+                        case 50:
+                                mapCosts[6549] = 32001;
+                                mapCosts[6550] = 32001;
+                                mapCosts[6551] = 32001;
+                                mapCosts[6552] = 32001;
+                                mapCosts[6553] = 32001;
+                                mapCosts[6554] = 32001;
+                                mapCosts[6555] = 32001;
+                                mapCosts[6556] = 32001;
+                                mapCosts[6557] = 32001;
+                                mapCosts[6558] = 32001;
+                                mapCosts[6559] = 32001;
+                                mapCosts[6560] = 32001;
+                                mapCosts[6561] = 32001;
+                                mapCosts[6562] = 32001;
+                                mapCosts[6563] = 32001;
+                                mapCosts[6564] = 32001;
+                                mapCosts[6565] = 32001;
+                                mapCosts[6566] = 32001;
+                                mapCosts[6567] = 32001;
+                                mapCosts[6568] = 32001;
+                                mapCosts[6569] = 32001;
+                                mapCosts[6570] = 32001;
+                                mapCosts[6571] = 32001;
+                                mapCosts[6572] = 32001;
+                                mapCosts[6573] = 32001;
+                                mapCosts[6574] = 32001;
+                                mapCosts[6575] = 32001;
+                                mapCosts[6576] = 32001;
+                                mapCosts[6577] = 32001;
+                                mapCosts[6578] = 32001;
+                                mapCosts[6579] = 32001;
+                                mapCosts[6580] = 32001;
+                                mapCosts[6581] = 32001;
+                                mapCosts[6582] = 32001;
+                                mapCosts[6583] = 32001;
+                                mapCosts[6584] = 32001;
+                                mapCosts[6585] = 32001;
+                                mapCosts[6586] = 32001;
+                                mapCosts[6587] = 32001;
+                                mapCosts[6588] = 32001;
+                                break;
+                        case 51:
+                                mapCosts[6677] = 32001;
+                                mapCosts[6678] = 32001;
+                                mapCosts[6679] = 32001;
+                                mapCosts[6680] = 32001;
+                                mapCosts[6681] = 32001;
+                                mapCosts[6682] = 32001;
+                                mapCosts[6683] = 32001;
+                                mapCosts[6684] = 32001;
+                                mapCosts[6685] = 32001;
+                                mapCosts[6686] = 32001;
+                                mapCosts[6687] = 32001;
+                                mapCosts[6688] = 32001;
+                                mapCosts[6689] = 32001;
+                                mapCosts[6690] = 32001;
+                                mapCosts[6691] = 32001;
+                                mapCosts[6692] = 32001;
+                                mapCosts[6693] = 32001;
+                                mapCosts[6694] = 32001;
+                                mapCosts[6695] = 32001;
+                                mapCosts[6696] = 32001;
+                                mapCosts[6697] = 32001;
+                                mapCosts[6698] = 32001;
+                                mapCosts[6699] = 32001;
+                                mapCosts[6700] = 32001;
+                                mapCosts[6701] = 32001;
+                                mapCosts[6702] = 32001;
+                                mapCosts[6703] = 32001;
+                                mapCosts[6704] = 32001;
+                                mapCosts[6705] = 32001;
+                                mapCosts[6706] = 32001;
+                                mapCosts[6707] = 32001;
+                                mapCosts[6708] = 32001;
+                                mapCosts[6709] = 32001;
+                                mapCosts[6710] = 32001;
+                                mapCosts[6711] = 32001;
+                                mapCosts[6712] = 32001;
+                                mapCosts[6713] = 32001;
+                                mapCosts[6714] = 32001;
+                                mapCosts[6715] = 32001;
+                                mapCosts[6716] = 32001;
+                                break;
+                        case 52:
+                                mapCosts[6805] = 32001;
+                                mapCosts[6806] = 32001;
+                                mapCosts[6807] = 32001;
+                                mapCosts[6808] = 32001;
+                                mapCosts[6809] = 32001;
+                                mapCosts[6810] = 32001;
+                                mapCosts[6811] = 32001;
+                                mapCosts[6812] = 32001;
+                                mapCosts[6813] = 32001;
+                                mapCosts[6814] = 32001;
+                                mapCosts[6815] = 32001;
+                                mapCosts[6816] = 32001;
+                                mapCosts[6817] = 32001;
+                                mapCosts[6818] = 32001;
+                                mapCosts[6819] = 32001;
+                                mapCosts[6820] = 32001;
+                                mapCosts[6821] = 32001;
+                                mapCosts[6822] = 32001;
+                                mapCosts[6823] = 32001;
+                                mapCosts[6824] = 32001;
+                                mapCosts[6825] = 32001;
+                                mapCosts[6826] = 32001;
+                                mapCosts[6827] = 32001;
+                                mapCosts[6828] = 32001;
+                                mapCosts[6829] = 32001;
+                                mapCosts[6830] = 32001;
+                                mapCosts[6831] = 32001;
+                                mapCosts[6832] = 32001;
+                                mapCosts[6833] = 32001;
+                                mapCosts[6834] = 32001;
+                                mapCosts[6835] = 32001;
+                                mapCosts[6836] = 32001;
+                                mapCosts[6837] = 32001;
+                                mapCosts[6838] = 32001;
+                                mapCosts[6839] = 32001;
+                                mapCosts[6840] = 32001;
+                                mapCosts[6841] = 32001;
+                                mapCosts[6842] = 32001;
+                                mapCosts[6843] = 32001;
+                                mapCosts[6844] = 32001;
+                                break;
+                        case 53:
+                                mapCosts[6933] = 32001;
+                                mapCosts[6934] = 32001;
+                                mapCosts[6935] = 32001;
+                                mapCosts[6936] = 32001;
+                                mapCosts[6937] = 32001;
+                                mapCosts[6938] = 32001;
+                                mapCosts[6939] = 32001;
+                                mapCosts[6940] = 32001;
+                                mapCosts[6941] = 32001;
+                                mapCosts[6942] = 32001;
+                                mapCosts[6943] = 32001;
+                                mapCosts[6944] = 32001;
+                                mapCosts[6945] = 32001;
+                                mapCosts[6946] = 32001;
+                                mapCosts[6947] = 32001;
+                                mapCosts[6948] = 32001;
+                                mapCosts[6949] = 32001;
+                                mapCosts[6950] = 32001;
+                                mapCosts[6951] = 32001;
+                                mapCosts[6952] = 32001;
+                                mapCosts[6953] = 32001;
+                                mapCosts[6954] = 32001;
+                                mapCosts[6955] = 32001;
+                                mapCosts[6956] = 32001;
+                                mapCosts[6957] = 32001;
+                                mapCosts[6958] = 32001;
+                                mapCosts[6959] = 32001;
+                                mapCosts[6960] = 32001;
+                                mapCosts[6961] = 32001;
+                                mapCosts[6962] = 32001;
+                                mapCosts[6963] = 32001;
+                                mapCosts[6964] = 32001;
+                                mapCosts[6965] = 32001;
+                                mapCosts[6966] = 32001;
+                                mapCosts[6967] = 32001;
+                                mapCosts[6968] = 32001;
+                                mapCosts[6969] = 32001;
+                                mapCosts[6970] = 32001;
+                                mapCosts[6971] = 32001;
+                                mapCosts[6972] = 32001;
+                                break;
+                        case 54:
+                                mapCosts[7061] = 32001;
+                                mapCosts[7062] = 32001;
+                                mapCosts[7063] = 32001;
+                                mapCosts[7064] = 32001;
+                                mapCosts[7065] = 32001;
+                                mapCosts[7066] = 32001;
+                                mapCosts[7067] = 32001;
+                                mapCosts[7068] = 32001;
+                                mapCosts[7069] = 32001;
+                                mapCosts[7070] = 32001;
+                                mapCosts[7071] = 32001;
+                                mapCosts[7072] = 32001;
+                                mapCosts[7073] = 32001;
+                                mapCosts[7074] = 32001;
+                                mapCosts[7075] = 32001;
+                                mapCosts[7076] = 32001;
+                                mapCosts[7077] = 32001;
+                                mapCosts[7078] = 32001;
+                                mapCosts[7079] = 32001;
+                                mapCosts[7080] = 32001;
+                                mapCosts[7081] = 32001;
+                                mapCosts[7082] = 32001;
+                                mapCosts[7083] = 32001;
+                                mapCosts[7084] = 32001;
+                                mapCosts[7085] = 32001;
+                                mapCosts[7086] = 32001;
+                                mapCosts[7087] = 32001;
+                                mapCosts[7088] = 32001;
+                                mapCosts[7089] = 32001;
+                                mapCosts[7090] = 32001;
+                                mapCosts[7091] = 32001;
+                                mapCosts[7092] = 32001;
+                                mapCosts[7093] = 32001;
+                                mapCosts[7094] = 32001;
+                                mapCosts[7095] = 32001;
+                                mapCosts[7096] = 32001;
+                                mapCosts[7097] = 32001;
+                                mapCosts[7098] = 32001;
+                                mapCosts[7099] = 32001;
+                                mapCosts[7100] = 32001;
+                                break;
+                        case 55:
+                                mapCosts[7189] = 32001;
+                                mapCosts[7190] = 32001;
+                                mapCosts[7191] = 32001;
+                                mapCosts[7192] = 32001;
+                                mapCosts[7193] = 32001;
+                                mapCosts[7194] = 32001;
+                                mapCosts[7195] = 32001;
+                                mapCosts[7196] = 32001;
+                                mapCosts[7197] = 32001;
+                                mapCosts[7198] = 32001;
+                                mapCosts[7199] = 32001;
+                                mapCosts[7200] = 32001;
+                                mapCosts[7201] = 32001;
+                                mapCosts[7202] = 32001;
+                                mapCosts[7203] = 32001;
+                                mapCosts[7204] = 32001;
+                                mapCosts[7205] = 32001;
+                                mapCosts[7206] = 32001;
+                                mapCosts[7207] = 32001;
+                                mapCosts[7208] = 32001;
+                                mapCosts[7209] = 32001;
+                                mapCosts[7210] = 32001;
+                                mapCosts[7211] = 32001;
+                                mapCosts[7212] = 32001;
+                                mapCosts[7213] = 32001;
+                                mapCosts[7214] = 32001;
+                                mapCosts[7215] = 32001;
+                                mapCosts[7216] = 32001;
+                                mapCosts[7217] = 32001;
+                                mapCosts[7218] = 32001;
+                                mapCosts[7219] = 32001;
+                                mapCosts[7220] = 32001;
+                                mapCosts[7221] = 32001;
+                                mapCosts[7222] = 32001;
+                                mapCosts[7223] = 32001;
+                                mapCosts[7224] = 32001;
+                                mapCosts[7225] = 32001;
+                                mapCosts[7226] = 32001;
+                                mapCosts[7227] = 32001;
+                                mapCosts[7228] = 32001;
+                                break;
+                        case 56:
+                                mapCosts[7317] = 32001;
+                                mapCosts[7318] = 32001;
+                                mapCosts[7319] = 32001;
+                                mapCosts[7320] = 32001;
+                                mapCosts[7321] = 32001;
+                                mapCosts[7322] = 32001;
+                                mapCosts[7323] = 32001;
+                                mapCosts[7324] = 32001;
+                                mapCosts[7325] = 32001;
+                                mapCosts[7326] = 32001;
+                                mapCosts[7327] = 32001;
+                                mapCosts[7328] = 32001;
+                                mapCosts[7329] = 32001;
+                                mapCosts[7330] = 32001;
+                                mapCosts[7331] = 32001;
+                                mapCosts[7332] = 32001;
+                                mapCosts[7333] = 32001;
+                                mapCosts[7334] = 32001;
+                                mapCosts[7335] = 32001;
+                                mapCosts[7336] = 32001;
+                                mapCosts[7337] = 32001;
+                                mapCosts[7338] = 32001;
+                                mapCosts[7339] = 32001;
+                                mapCosts[7340] = 32001;
+                                mapCosts[7341] = 32001;
+                                mapCosts[7342] = 32001;
+                                mapCosts[7343] = 32001;
+                                mapCosts[7344] = 32001;
+                                mapCosts[7345] = 32001;
+                                mapCosts[7346] = 32001;
+                                mapCosts[7347] = 32001;
+                                mapCosts[7348] = 32001;
+                                mapCosts[7349] = 32001;
+                                mapCosts[7350] = 32001;
+                                mapCosts[7351] = 32001;
+                                mapCosts[7352] = 32001;
+                                mapCosts[7353] = 32001;
+                                mapCosts[7354] = 32001;
+                                mapCosts[7355] = 32001;
+                                mapCosts[7356] = 32001;
+                                break;
+                        case 57:
+                                mapCosts[7445] = 32001;
+                                mapCosts[7446] = 32001;
+                                mapCosts[7447] = 32001;
+                                mapCosts[7448] = 32001;
+                                mapCosts[7449] = 32001;
+                                mapCosts[7450] = 32001;
+                                mapCosts[7451] = 32001;
+                                mapCosts[7452] = 32001;
+                                mapCosts[7453] = 32001;
+                                mapCosts[7454] = 32001;
+                                mapCosts[7455] = 32001;
+                                mapCosts[7456] = 32001;
+                                mapCosts[7457] = 32001;
+                                mapCosts[7458] = 32001;
+                                mapCosts[7459] = 32001;
+                                mapCosts[7460] = 32001;
+                                mapCosts[7461] = 32001;
+                                mapCosts[7462] = 32001;
+                                mapCosts[7463] = 32001;
+                                mapCosts[7464] = 32001;
+                                mapCosts[7465] = 32001;
+                                mapCosts[7466] = 32001;
+                                mapCosts[7467] = 32001;
+                                mapCosts[7468] = 32001;
+                                mapCosts[7469] = 32001;
+                                mapCosts[7470] = 32001;
+                                mapCosts[7471] = 32001;
+                                mapCosts[7472] = 32001;
+                                mapCosts[7473] = 32001;
+                                mapCosts[7474] = 32001;
+                                mapCosts[7475] = 32001;
+                                mapCosts[7476] = 32001;
+                                mapCosts[7477] = 32001;
+                                mapCosts[7478] = 32001;
+                                mapCosts[7479] = 32001;
+                                mapCosts[7480] = 32001;
+                                mapCosts[7481] = 32001;
+                                mapCosts[7482] = 32001;
+                                mapCosts[7483] = 32001;
+                                mapCosts[7484] = 32001;
+                                break;
+                        case 58:
+                                mapCosts[7573] = 32001;
+                                mapCosts[7574] = 32001;
+                                mapCosts[7575] = 32001;
+                                mapCosts[7576] = 32001;
+                                mapCosts[7577] = 32001;
+                                mapCosts[7578] = 32001;
+                                mapCosts[7579] = 32001;
+                                mapCosts[7580] = 32001;
+                                mapCosts[7581] = 32001;
+                                mapCosts[7582] = 32001;
+                                mapCosts[7583] = 32001;
+                                mapCosts[7584] = 32001;
+                                mapCosts[7585] = 32001;
+                                mapCosts[7586] = 32001;
+                                mapCosts[7587] = 32001;
+                                mapCosts[7588] = 32001;
+                                mapCosts[7589] = 32001;
+                                mapCosts[7590] = 32001;
+                                mapCosts[7591] = 32001;
+                                mapCosts[7592] = 32001;
+                                mapCosts[7593] = 32001;
+                                mapCosts[7594] = 32001;
+                                mapCosts[7595] = 32001;
+                                mapCosts[7596] = 32001;
+                                mapCosts[7597] = 32001;
+                                mapCosts[7598] = 32001;
+                                mapCosts[7599] = 32001;
+                                mapCosts[7600] = 32001;
+                                mapCosts[7601] = 32001;
+                                mapCosts[7602] = 32001;
+                                mapCosts[7603] = 32001;
+                                mapCosts[7604] = 32001;
+                                mapCosts[7605] = 32001;
+                                mapCosts[7606] = 32001;
+                                mapCosts[7607] = 32001;
+                                mapCosts[7608] = 32001;
+                                mapCosts[7609] = 32001;
+                                mapCosts[7610] = 32001;
+                                mapCosts[7611] = 32001;
+                                mapCosts[7612] = 32001;
+                                break;
+                        case 59:
+                                mapCosts[7701] = 32001;
+                                mapCosts[7702] = 32001;
+                                mapCosts[7703] = 32001;
+                                mapCosts[7704] = 32001;
+                                mapCosts[7705] = 32001;
+                                mapCosts[7706] = 32001;
+                                mapCosts[7707] = 32001;
+                                mapCosts[7708] = 32001;
+                                mapCosts[7709] = 32001;
+                                mapCosts[7710] = 32001;
+                                mapCosts[7711] = 32001;
+                                mapCosts[7712] = 32001;
+                                mapCosts[7713] = 32001;
+                                mapCosts[7714] = 32001;
+                                mapCosts[7715] = 32001;
+                                mapCosts[7716] = 32001;
+                                mapCosts[7717] = 32001;
+                                mapCosts[7718] = 32001;
+                                mapCosts[7719] = 32001;
+                                mapCosts[7720] = 32001;
+                                mapCosts[7721] = 32001;
+                                mapCosts[7722] = 32001;
+                                mapCosts[7723] = 32001;
+                                mapCosts[7724] = 32001;
+                                mapCosts[7725] = 32001;
+                                mapCosts[7726] = 32001;
+                                mapCosts[7727] = 32001;
+                                mapCosts[7728] = 32001;
+                                mapCosts[7729] = 32001;
+                                mapCosts[7730] = 32001;
+                                mapCosts[7731] = 32001;
+                                mapCosts[7732] = 32001;
+                                mapCosts[7733] = 32001;
+                                mapCosts[7734] = 32001;
+                                mapCosts[7735] = 32001;
+                                mapCosts[7736] = 32001;
+                                mapCosts[7737] = 32001;
+                                mapCosts[7738] = 32001;
+                                mapCosts[7739] = 32001;
+                                mapCosts[7740] = 32001;
+                                break;
+                        default:
+                throw new IllegalArgumentException("Width " + width + " is not supported, should be between 20 and 60");
+        }
     }
 
-
-    // Wrapper for pathfinding with less parameters
+    // Easier to use pathTo
     public static Direction pathTo(
         MapLocation startLoc, MapLocation endLoc,
-        char[] mapCosts, int MAX_SCORE, int cost_max_per_cell, int maxBytecodeUsed
+        int MAX_SCORE, int cost_max_per_cell, int maxBytecodeUsed
     ) throws GameActionException {
         
-
-        // Check if cost_max_per_cell is greater than SCORE_CELL_WALL
+        // cost_max_per_cell should be lower than SCORE_CELL_WALL
         if(cost_max_per_cell > 32000){
             throw new java.lang.Error("ERR Pathfinding: cost_max_per_cell is greater than SCORE_CELL_WALL {{SCORE_CELL_WALL}}");
         }
 
-        int startXY = startLoc.x + 60*startLoc.y;
-
+        // Debug message
         RobotController rc = Robot.rc;if( rc.getRoundNum() < 150){
             System.out.println("Start Pathfinding from " + startLoc + " to " + endLoc);
         }
         
+
+        // Initialize variables
+        mode = "DEFAULT";
+        int startXY = startLoc.x + (startLoc.y<<7) + 129;
+        Direction dir = DIRECTIONS[mapResult[startXY]];
+
         // Check if we can reuse previous path
-        Direction dir;
-        if(mapCosts == null){mapCosts = BugNavLmx.mapCosts;}
         if(timeBeforeRefresh > 0 && lastDestination.equals(endLoc)){
-            dir = getResult(startXY);
             if(dir != Direction.CENTER){
                 System.out.println("Pathfinding: Reuse previous path -> " + dir);
                 timeBeforeRefresh -= 3;
@@ -102,11 +3462,9 @@ public class BugNavLmx {
         }
 
         // Generate path
-        mode = "DEFAULT";
-        resultCode = generatePathTo(startLoc, endLoc, mapCosts, getMap3600(), MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
+        resultCode = generatePathTo(startXY, endLoc.x + (endLoc.y<<7) + 129, MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
         
         // Check result validity
-        dir = getResult(startXY);
         if(resultCode < 0){
             if(rc.getRoundNum() < 150){
                 System.out.println("Pathfinding: Warning return code : " + resultCode + " : " + dir);
@@ -120,37 +3478,44 @@ public class BugNavLmx {
             timeBeforeRefresh = 3; // Save query result for 3 rounds
             lastDestination = endLoc;
         }
+
+        // Return result
         return dir;
     }
 
 
     private static int generatePathTo(
-        MapLocation startLoc, MapLocation endLoc, 
-        char[] mapCosts, char[] mapResult,
+        int xyStart /* startloc */, int xyEnd /* endloc */, 
         int MAX_SCORE, boolean withReturn, 
         int cost_max_per_cell, int maxBytecodeUsed) throws GameActionException {
 
         RobotController rc = Robot.rc;// Initialize variables
-        int xy = startLoc.x + 60*startLoc.y;
-        int xyEnd = endLoc.x + 60*endLoc.y;
+        int xy = xyStart; // startLoc.x + (startLoc.y<<7) + 129;
+        int xyEndDir = (xyEnd) | 8256;
         int xyTmp;
+
+
+        // Initialize split mode variables
         int xyLeft = -1;
         int xyRight = -1;
-        int ctrRight = 0;
-        int ctrLeft = 0;
+        int ctrLeft;
+        int ctrRight;
         int smoothLeft;
         int smoothRight;
-        mapResult[xy] = 8;
-        MapLocation loc = new MapLocation(startLoc.x, startLoc.y);
-        MapLocation locEnd = new MapLocation(endLoc.x, endLoc.y);
 
 
         // Initialize result variables
         int score = 0;
         xyLastWallHit = -1;
         xyLastWallLeave = -1;
-        MapLocation locLeft = null;
-        MapLocation locRight = null;
+        mapResult = getMap7B();
+        mapResult[xy] = 8;
+
+
+        // Reduce bytecode by moving variables in local scope
+        char[] mapCosts = BugNavLmx.mapCosts;
+        Direction[] DIRECTIONS = BugNavLmx.DIRECTIONS;
+        char[] mapDirections = BugNavLmx.mapDirections;
 
 
         // Bytecode and benchmark variables
@@ -175,145 +3540,108 @@ public class BugNavLmx {
             for (;;) {
                 iterationsNormal++;
 
-                                                if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
+                if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
                     break mainLoop;
                 }
 
-                                switch (loc.directionTo(locEnd)) {
-                    case NORTH:
+                switch (mapDirections[xyEndDir - xy]) {
+                    case 0:
 
-                                                if(!onTheMap(loc.add(Direction.NORTH))){
-                            throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
-                        }
-
-                                                xyTmp = xy + 60;
+                        xyTmp = xy + 128;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                                                xy = xyTmp;
-                        loc = loc.add(Direction.NORTH);
+                        xy = xyTmp;
                         mapResult[xyTmp] = 4;
                         break;
-                    case NORTHEAST:
+                    case 1:
 
-                                                if(!onTheMap(loc.add(Direction.NORTHEAST))){
-                            throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
-                        }
-
-                                                xyTmp = xy + 61;
+                        xyTmp = xy + 129;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                                                xy = xyTmp;
-                        loc = loc.add(Direction.NORTHEAST);
+                        xy = xyTmp;
                         mapResult[xyTmp] = 5;
                         break;
-                    case EAST:
+                    case 2:
 
-                                                if(!onTheMap(loc.add(Direction.EAST))){
-                            throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
-                        }
-
-                                                xyTmp = xy + 1;
+                        xyTmp = xy + 1;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                                                xy = xyTmp;
-                        loc = loc.add(Direction.EAST);
+                        xy = xyTmp;
                         mapResult[xyTmp] = 6;
                         break;
-                    case SOUTHEAST:
+                    case 3:
 
-                                                if(!onTheMap(loc.add(Direction.SOUTHEAST))){
-                            throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
-                        }
-
-                                                xyTmp = xy - 59;
+                        xyTmp = xy - 127;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                                                xy = xyTmp;
-                        loc = loc.add(Direction.SOUTHEAST);
+                        xy = xyTmp;
                         mapResult[xyTmp] = 7;
                         break;
-                    case SOUTH:
+                    case 4:
 
-                                                if(!onTheMap(loc.add(Direction.SOUTH))){
-                            throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
-                        }
-
-                                                xyTmp = xy - 60;
+                        xyTmp = xy - 128;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                                                xy = xyTmp;
-                        loc = loc.add(Direction.SOUTH);
+                        xy = xyTmp;
                         mapResult[xyTmp] = 0;
                         break;
-                    case SOUTHWEST:
+                    case 5:
 
-                                                if(!onTheMap(loc.add(Direction.SOUTHWEST))){
-                            throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
-                        }
-
-                                                xyTmp = xy - 61;
+                        xyTmp = xy - 129;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                                                xy = xyTmp;
-                        loc = loc.add(Direction.SOUTHWEST);
+                        xy = xyTmp;
                         mapResult[xyTmp] = 1;
                         break;
-                    case WEST:
+                    case 6:
 
-                                                if(!onTheMap(loc.add(Direction.WEST))){
-                            throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
-                        }
-
-                                                xyTmp = xy - 1;
+                        xyTmp = xy - 1;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                                                xy = xyTmp;
-                        loc = loc.add(Direction.WEST);
+                        xy = xyTmp;
                         mapResult[xyTmp] = 2;
                         break;
-                    case NORTHWEST:
+                    case 7:
 
-                                                if(!onTheMap(loc.add(Direction.NORTHWEST))){
-                            throw new java.lang.Error("ERR Pathfinding: Reach a border when direction to cell on map");
-                        }
-
-                                                xyTmp = xy + 59;
+                        xyTmp = xy + 127;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                                                xy = xyTmp;
-                        loc = loc.add(Direction.NORTHWEST);
+                        xy = xyTmp;
                         mapResult[xyTmp] = 3;
                         break;
                     
-                                        case CENTER:
+                    case 8: // CENTER
                         break mainLoop;
+
+                    default:
+                        throw new java.lang.Error("ERR Pathfinding: Normal mode: Invalid direction : " + DIRECTIONS[mapDirections[xyEndDir - xy]] + " ");
                 }
         
-                                score += mapCosts[xy];
+                score += mapCosts[xy];
                 if(score >= MAX_SCORE){ // We haven't enough score to reach our destination
                     break mainLoop;
                 }
@@ -321,1079 +3649,1076 @@ public class BugNavLmx {
 
 
             /// ///////////////////// Init split mode /////////////////////
-                        xyLeft = xy;
+            xyLeft = xy;
             xyRight = xy;
-            locLeft = null;
-            locRight= null;
             smoothLeft = 2;
             smoothRight = 2;
             int scoreLeft = 0;
             int scoreRight = 0;
-            Direction lastDirectionLeft = Direction.CENTER;
-            Direction lastDirectionRight = Direction.CENTER;
+            char lastDirectionLeft;
+            char lastDirectionRight;
 
-            // loc.directionTo(locEnd) is an obstacle, we need to init left and right side for exploration
-            switch (loc.directionTo(locEnd)) {
+            // Direction to target is an obstacle, we need to init left and right side for exploration
+            switch (mapDirections[xyEndDir - xy]) {
 
-                case NORTH:
+                case 0:
                 
                     initSideLeft:{
-                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                                                ctrLeft = 1;
-                        locLeft = loc.add(Direction.NORTHEAST);
-                        xyLeft = xy + 61;
-                        lastDirectionLeft = Direction.NORTHEAST;
+                    if(mapCosts[xy + 129] <= cost_max_per_cell) {
+
+                        ctrLeft = 1;
+                        xyLeft = xy + 129;
+                        lastDirectionLeft = 1;
                         mapResult[xyLeft] = 5;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                                                ctrLeft = 2;
-                        locLeft = loc.add(Direction.EAST);
+
+                    if(mapCosts[xy + 1] <= cost_max_per_cell) {
+
+                        ctrLeft = 2;
                         xyLeft = xy + 1;
-                        lastDirectionLeft = Direction.EAST;
+                        lastDirectionLeft = 2;
                         mapResult[xyLeft] = 6;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                                                ctrLeft = 3;
-                        locLeft = loc.add(Direction.SOUTHEAST);
-                        xyLeft = xy - 59;
-                        lastDirectionLeft = Direction.SOUTHEAST;
+
+                    if(mapCosts[xy - 127] <= cost_max_per_cell) {
+
+                        ctrLeft = 3;
+                        xyLeft = xy - 127;
+                        lastDirectionLeft = 3;
                         mapResult[xyLeft] = 7;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                                                ctrLeft = 4;
-                        locLeft = loc.add(Direction.SOUTH);
-                        xyLeft = xy - 60;
-                        lastDirectionLeft = Direction.SOUTH;
+
+                    if(mapCosts[xy - 128] <= cost_max_per_cell) {
+
+                        ctrLeft = 4;
+                        xyLeft = xy - 128;
+                        lastDirectionLeft = 4;
                         mapResult[xyLeft] = 0;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                                                ctrLeft = 5;
-                        locLeft = loc.add(Direction.SOUTHWEST);
-                        xyLeft = xy - 61;
-                        lastDirectionLeft = Direction.SOUTHWEST;
+
+                    if(mapCosts[xy - 129] <= cost_max_per_cell) {
+
+                        ctrLeft = 5;
+                        xyLeft = xy - 129;
+                        lastDirectionLeft = 5;
                         mapResult[xyLeft] = 1;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                                                ctrLeft = 6;
-                        locLeft = loc.add(Direction.WEST);
+
+                    if(mapCosts[xy - 1] <= cost_max_per_cell) {
+
+                        ctrLeft = 6;
                         xyLeft = xy - 1;
-                        lastDirectionLeft = Direction.WEST;
+                        lastDirectionLeft = 6;
                         mapResult[xyLeft] = 2;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
+                    
                     initSideRight:{
-                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                                                ctrRight = 1;
-                        locRight = loc.add(Direction.NORTHWEST);
-                        xyRight = xy + 59;
-                        lastDirectionRight = Direction.NORTHWEST;
+                    if(mapCosts[xy + 127] <= cost_max_per_cell) {
+
+                        ctrRight = 1;
+                        xyRight = xy + 127;
+                        lastDirectionRight = 7;
                         mapResult[xyRight] = 3;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                                                ctrRight = 2;
-                        locRight = loc.add(Direction.WEST);
+
+                    if(mapCosts[xy - 1] <= cost_max_per_cell) {
+
+                        ctrRight = 2;
                         xyRight = xy - 1;
-                        lastDirectionRight = Direction.WEST;
+                        lastDirectionRight = 6;
                         mapResult[xyRight] = 2;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                                                ctrRight = 3;
-                        locRight = loc.add(Direction.SOUTHWEST);
-                        xyRight = xy - 61;
-                        lastDirectionRight = Direction.SOUTHWEST;
+
+                    if(mapCosts[xy - 129] <= cost_max_per_cell) {
+
+                        ctrRight = 3;
+                        xyRight = xy - 129;
+                        lastDirectionRight = 5;
                         mapResult[xyRight] = 1;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                                                ctrRight = 4;
-                        locRight = loc.add(Direction.SOUTH);
-                        xyRight = xy - 60;
-                        lastDirectionRight = Direction.SOUTH;
+
+                    if(mapCosts[xy - 128] <= cost_max_per_cell) {
+
+                        ctrRight = 4;
+                        xyRight = xy - 128;
+                        lastDirectionRight = 4;
                         mapResult[xyRight] = 0;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                                                ctrRight = 5;
-                        locRight = loc.add(Direction.SOUTHEAST);
-                        xyRight = xy - 59;
-                        lastDirectionRight = Direction.SOUTHEAST;
+
+                    if(mapCosts[xy - 127] <= cost_max_per_cell) {
+
+                        ctrRight = 5;
+                        xyRight = xy - 127;
+                        lastDirectionRight = 3;
                         mapResult[xyRight] = 7;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                                                ctrRight = 6;
-                        locRight = loc.add(Direction.EAST);
+
+                    if(mapCosts[xy + 1] <= cost_max_per_cell) {
+
+                        ctrRight = 6;
                         xyRight = xy + 1;
-                        lastDirectionRight = Direction.EAST;
+                        lastDirectionRight = 2;
                         mapResult[xyRight] = 6;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
-                                         break;
+                    
+                     break;
 
-                case NORTHEAST:
+                case 1:
                 
                     initSideLeft:{
-                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                                                ctrLeft = 1;
-                        locLeft = loc.add(Direction.EAST);
+                    if(mapCosts[xy + 1] <= cost_max_per_cell) {
+
+                        ctrLeft = 1;
                         xyLeft = xy + 1;
-                        lastDirectionLeft = Direction.EAST;
+                        lastDirectionLeft = 2;
                         mapResult[xyLeft] = 6;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                                                ctrLeft = 2;
-                        locLeft = loc.add(Direction.SOUTHEAST);
-                        xyLeft = xy - 59;
-                        lastDirectionLeft = Direction.SOUTHEAST;
+
+                    if(mapCosts[xy - 127] <= cost_max_per_cell) {
+
+                        ctrLeft = 2;
+                        xyLeft = xy - 127;
+                        lastDirectionLeft = 3;
                         mapResult[xyLeft] = 7;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                                                ctrLeft = 3;
-                        locLeft = loc.add(Direction.SOUTH);
-                        xyLeft = xy - 60;
-                        lastDirectionLeft = Direction.SOUTH;
+
+                    if(mapCosts[xy - 128] <= cost_max_per_cell) {
+
+                        ctrLeft = 3;
+                        xyLeft = xy - 128;
+                        lastDirectionLeft = 4;
                         mapResult[xyLeft] = 0;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                                                ctrLeft = 4;
-                        locLeft = loc.add(Direction.SOUTHWEST);
-                        xyLeft = xy - 61;
-                        lastDirectionLeft = Direction.SOUTHWEST;
+
+                    if(mapCosts[xy - 129] <= cost_max_per_cell) {
+
+                        ctrLeft = 4;
+                        xyLeft = xy - 129;
+                        lastDirectionLeft = 5;
                         mapResult[xyLeft] = 1;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                                                ctrLeft = 5;
-                        locLeft = loc.add(Direction.WEST);
+
+                    if(mapCosts[xy - 1] <= cost_max_per_cell) {
+
+                        ctrLeft = 5;
                         xyLeft = xy - 1;
-                        lastDirectionLeft = Direction.WEST;
+                        lastDirectionLeft = 6;
                         mapResult[xyLeft] = 2;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                                                ctrLeft = 6;
-                        locLeft = loc.add(Direction.NORTHWEST);
-                        xyLeft = xy + 59;
-                        lastDirectionLeft = Direction.NORTHWEST;
+
+                    if(mapCosts[xy + 127] <= cost_max_per_cell) {
+
+                        ctrLeft = 6;
+                        xyLeft = xy + 127;
+                        lastDirectionLeft = 7;
                         mapResult[xyLeft] = 3;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
+                    
                     initSideRight:{
-                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                                                ctrRight = 1;
-                        locRight = loc.add(Direction.NORTH);
-                        xyRight = xy + 60;
-                        lastDirectionRight = Direction.NORTH;
+                    if(mapCosts[xy + 128] <= cost_max_per_cell) {
+
+                        ctrRight = 1;
+                        xyRight = xy + 128;
+                        lastDirectionRight = 0;
                         mapResult[xyRight] = 4;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                                                ctrRight = 2;
-                        locRight = loc.add(Direction.NORTHWEST);
-                        xyRight = xy + 59;
-                        lastDirectionRight = Direction.NORTHWEST;
+
+                    if(mapCosts[xy + 127] <= cost_max_per_cell) {
+
+                        ctrRight = 2;
+                        xyRight = xy + 127;
+                        lastDirectionRight = 7;
                         mapResult[xyRight] = 3;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                                                ctrRight = 3;
-                        locRight = loc.add(Direction.WEST);
+
+                    if(mapCosts[xy - 1] <= cost_max_per_cell) {
+
+                        ctrRight = 3;
                         xyRight = xy - 1;
-                        lastDirectionRight = Direction.WEST;
+                        lastDirectionRight = 6;
                         mapResult[xyRight] = 2;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                                                ctrRight = 4;
-                        locRight = loc.add(Direction.SOUTHWEST);
-                        xyRight = xy - 61;
-                        lastDirectionRight = Direction.SOUTHWEST;
+
+                    if(mapCosts[xy - 129] <= cost_max_per_cell) {
+
+                        ctrRight = 4;
+                        xyRight = xy - 129;
+                        lastDirectionRight = 5;
                         mapResult[xyRight] = 1;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                                                ctrRight = 5;
-                        locRight = loc.add(Direction.SOUTH);
-                        xyRight = xy - 60;
-                        lastDirectionRight = Direction.SOUTH;
+
+                    if(mapCosts[xy - 128] <= cost_max_per_cell) {
+
+                        ctrRight = 5;
+                        xyRight = xy - 128;
+                        lastDirectionRight = 4;
                         mapResult[xyRight] = 0;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                                                ctrRight = 6;
-                        locRight = loc.add(Direction.SOUTHEAST);
-                        xyRight = xy - 59;
-                        lastDirectionRight = Direction.SOUTHEAST;
+
+                    if(mapCosts[xy - 127] <= cost_max_per_cell) {
+
+                        ctrRight = 6;
+                        xyRight = xy - 127;
+                        lastDirectionRight = 3;
                         mapResult[xyRight] = 7;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
-                                         break;
+                    
+                     break;
 
-                case EAST:
+                case 2:
                 
                     initSideLeft:{
-                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                                                ctrLeft = 1;
-                        locLeft = loc.add(Direction.SOUTHEAST);
-                        xyLeft = xy - 59;
-                        lastDirectionLeft = Direction.SOUTHEAST;
+                    if(mapCosts[xy - 127] <= cost_max_per_cell) {
+
+                        ctrLeft = 1;
+                        xyLeft = xy - 127;
+                        lastDirectionLeft = 3;
                         mapResult[xyLeft] = 7;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                                                ctrLeft = 2;
-                        locLeft = loc.add(Direction.SOUTH);
-                        xyLeft = xy - 60;
-                        lastDirectionLeft = Direction.SOUTH;
+
+                    if(mapCosts[xy - 128] <= cost_max_per_cell) {
+
+                        ctrLeft = 2;
+                        xyLeft = xy - 128;
+                        lastDirectionLeft = 4;
                         mapResult[xyLeft] = 0;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                                                ctrLeft = 3;
-                        locLeft = loc.add(Direction.SOUTHWEST);
-                        xyLeft = xy - 61;
-                        lastDirectionLeft = Direction.SOUTHWEST;
+
+                    if(mapCosts[xy - 129] <= cost_max_per_cell) {
+
+                        ctrLeft = 3;
+                        xyLeft = xy - 129;
+                        lastDirectionLeft = 5;
                         mapResult[xyLeft] = 1;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                                                ctrLeft = 4;
-                        locLeft = loc.add(Direction.WEST);
+
+                    if(mapCosts[xy - 1] <= cost_max_per_cell) {
+
+                        ctrLeft = 4;
                         xyLeft = xy - 1;
-                        lastDirectionLeft = Direction.WEST;
+                        lastDirectionLeft = 6;
                         mapResult[xyLeft] = 2;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                                                ctrLeft = 5;
-                        locLeft = loc.add(Direction.NORTHWEST);
-                        xyLeft = xy + 59;
-                        lastDirectionLeft = Direction.NORTHWEST;
+
+                    if(mapCosts[xy + 127] <= cost_max_per_cell) {
+
+                        ctrLeft = 5;
+                        xyLeft = xy + 127;
+                        lastDirectionLeft = 7;
                         mapResult[xyLeft] = 3;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                                                ctrLeft = 6;
-                        locLeft = loc.add(Direction.NORTH);
-                        xyLeft = xy + 60;
-                        lastDirectionLeft = Direction.NORTH;
+
+                    if(mapCosts[xy + 128] <= cost_max_per_cell) {
+
+                        ctrLeft = 6;
+                        xyLeft = xy + 128;
+                        lastDirectionLeft = 0;
                         mapResult[xyLeft] = 4;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
+                    
                     initSideRight:{
-                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                                                ctrRight = 1;
-                        locRight = loc.add(Direction.NORTHEAST);
-                        xyRight = xy + 61;
-                        lastDirectionRight = Direction.NORTHEAST;
+                    if(mapCosts[xy + 129] <= cost_max_per_cell) {
+
+                        ctrRight = 1;
+                        xyRight = xy + 129;
+                        lastDirectionRight = 1;
                         mapResult[xyRight] = 5;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                                                ctrRight = 2;
-                        locRight = loc.add(Direction.NORTH);
-                        xyRight = xy + 60;
-                        lastDirectionRight = Direction.NORTH;
+
+                    if(mapCosts[xy + 128] <= cost_max_per_cell) {
+
+                        ctrRight = 2;
+                        xyRight = xy + 128;
+                        lastDirectionRight = 0;
                         mapResult[xyRight] = 4;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                                                ctrRight = 3;
-                        locRight = loc.add(Direction.NORTHWEST);
-                        xyRight = xy + 59;
-                        lastDirectionRight = Direction.NORTHWEST;
+
+                    if(mapCosts[xy + 127] <= cost_max_per_cell) {
+
+                        ctrRight = 3;
+                        xyRight = xy + 127;
+                        lastDirectionRight = 7;
                         mapResult[xyRight] = 3;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                                                ctrRight = 4;
-                        locRight = loc.add(Direction.WEST);
+
+                    if(mapCosts[xy - 1] <= cost_max_per_cell) {
+
+                        ctrRight = 4;
                         xyRight = xy - 1;
-                        lastDirectionRight = Direction.WEST;
+                        lastDirectionRight = 6;
                         mapResult[xyRight] = 2;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                                                ctrRight = 5;
-                        locRight = loc.add(Direction.SOUTHWEST);
-                        xyRight = xy - 61;
-                        lastDirectionRight = Direction.SOUTHWEST;
+
+                    if(mapCosts[xy - 129] <= cost_max_per_cell) {
+
+                        ctrRight = 5;
+                        xyRight = xy - 129;
+                        lastDirectionRight = 5;
                         mapResult[xyRight] = 1;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                                                ctrRight = 6;
-                        locRight = loc.add(Direction.SOUTH);
-                        xyRight = xy - 60;
-                        lastDirectionRight = Direction.SOUTH;
+
+                    if(mapCosts[xy - 128] <= cost_max_per_cell) {
+
+                        ctrRight = 6;
+                        xyRight = xy - 128;
+                        lastDirectionRight = 4;
                         mapResult[xyRight] = 0;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
-                                         break;
+                    
+                     break;
 
-                case SOUTHEAST:
+                case 3:
                 
                     initSideLeft:{
-                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                                                ctrLeft = 1;
-                        locLeft = loc.add(Direction.SOUTH);
-                        xyLeft = xy - 60;
-                        lastDirectionLeft = Direction.SOUTH;
+                    if(mapCosts[xy - 128] <= cost_max_per_cell) {
+
+                        ctrLeft = 1;
+                        xyLeft = xy - 128;
+                        lastDirectionLeft = 4;
                         mapResult[xyLeft] = 0;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                                                ctrLeft = 2;
-                        locLeft = loc.add(Direction.SOUTHWEST);
-                        xyLeft = xy - 61;
-                        lastDirectionLeft = Direction.SOUTHWEST;
+
+                    if(mapCosts[xy - 129] <= cost_max_per_cell) {
+
+                        ctrLeft = 2;
+                        xyLeft = xy - 129;
+                        lastDirectionLeft = 5;
                         mapResult[xyLeft] = 1;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                                                ctrLeft = 3;
-                        locLeft = loc.add(Direction.WEST);
+
+                    if(mapCosts[xy - 1] <= cost_max_per_cell) {
+
+                        ctrLeft = 3;
                         xyLeft = xy - 1;
-                        lastDirectionLeft = Direction.WEST;
+                        lastDirectionLeft = 6;
                         mapResult[xyLeft] = 2;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                                                ctrLeft = 4;
-                        locLeft = loc.add(Direction.NORTHWEST);
-                        xyLeft = xy + 59;
-                        lastDirectionLeft = Direction.NORTHWEST;
+
+                    if(mapCosts[xy + 127] <= cost_max_per_cell) {
+
+                        ctrLeft = 4;
+                        xyLeft = xy + 127;
+                        lastDirectionLeft = 7;
                         mapResult[xyLeft] = 3;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                                                ctrLeft = 5;
-                        locLeft = loc.add(Direction.NORTH);
-                        xyLeft = xy + 60;
-                        lastDirectionLeft = Direction.NORTH;
+
+                    if(mapCosts[xy + 128] <= cost_max_per_cell) {
+
+                        ctrLeft = 5;
+                        xyLeft = xy + 128;
+                        lastDirectionLeft = 0;
                         mapResult[xyLeft] = 4;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                                                ctrLeft = 6;
-                        locLeft = loc.add(Direction.NORTHEAST);
-                        xyLeft = xy + 61;
-                        lastDirectionLeft = Direction.NORTHEAST;
+
+                    if(mapCosts[xy + 129] <= cost_max_per_cell) {
+
+                        ctrLeft = 6;
+                        xyLeft = xy + 129;
+                        lastDirectionLeft = 1;
                         mapResult[xyLeft] = 5;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
+                    
                     initSideRight:{
-                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                                                ctrRight = 1;
-                        locRight = loc.add(Direction.EAST);
+                    if(mapCosts[xy + 1] <= cost_max_per_cell) {
+
+                        ctrRight = 1;
                         xyRight = xy + 1;
-                        lastDirectionRight = Direction.EAST;
+                        lastDirectionRight = 2;
                         mapResult[xyRight] = 6;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                                                ctrRight = 2;
-                        locRight = loc.add(Direction.NORTHEAST);
-                        xyRight = xy + 61;
-                        lastDirectionRight = Direction.NORTHEAST;
+
+                    if(mapCosts[xy + 129] <= cost_max_per_cell) {
+
+                        ctrRight = 2;
+                        xyRight = xy + 129;
+                        lastDirectionRight = 1;
                         mapResult[xyRight] = 5;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                                                ctrRight = 3;
-                        locRight = loc.add(Direction.NORTH);
-                        xyRight = xy + 60;
-                        lastDirectionRight = Direction.NORTH;
+
+                    if(mapCosts[xy + 128] <= cost_max_per_cell) {
+
+                        ctrRight = 3;
+                        xyRight = xy + 128;
+                        lastDirectionRight = 0;
                         mapResult[xyRight] = 4;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                                                ctrRight = 4;
-                        locRight = loc.add(Direction.NORTHWEST);
-                        xyRight = xy + 59;
-                        lastDirectionRight = Direction.NORTHWEST;
+
+                    if(mapCosts[xy + 127] <= cost_max_per_cell) {
+
+                        ctrRight = 4;
+                        xyRight = xy + 127;
+                        lastDirectionRight = 7;
                         mapResult[xyRight] = 3;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                                                ctrRight = 5;
-                        locRight = loc.add(Direction.WEST);
+
+                    if(mapCosts[xy - 1] <= cost_max_per_cell) {
+
+                        ctrRight = 5;
                         xyRight = xy - 1;
-                        lastDirectionRight = Direction.WEST;
+                        lastDirectionRight = 6;
                         mapResult[xyRight] = 2;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                                                ctrRight = 6;
-                        locRight = loc.add(Direction.SOUTHWEST);
-                        xyRight = xy - 61;
-                        lastDirectionRight = Direction.SOUTHWEST;
+
+                    if(mapCosts[xy - 129] <= cost_max_per_cell) {
+
+                        ctrRight = 6;
+                        xyRight = xy - 129;
+                        lastDirectionRight = 5;
                         mapResult[xyRight] = 1;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
-                                         break;
+                    
+                     break;
 
-                case SOUTH:
+                case 4:
                 
                     initSideLeft:{
-                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                                                ctrLeft = 1;
-                        locLeft = loc.add(Direction.SOUTHWEST);
-                        xyLeft = xy - 61;
-                        lastDirectionLeft = Direction.SOUTHWEST;
+                    if(mapCosts[xy - 129] <= cost_max_per_cell) {
+
+                        ctrLeft = 1;
+                        xyLeft = xy - 129;
+                        lastDirectionLeft = 5;
                         mapResult[xyLeft] = 1;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                                                ctrLeft = 2;
-                        locLeft = loc.add(Direction.WEST);
+
+                    if(mapCosts[xy - 1] <= cost_max_per_cell) {
+
+                        ctrLeft = 2;
                         xyLeft = xy - 1;
-                        lastDirectionLeft = Direction.WEST;
+                        lastDirectionLeft = 6;
                         mapResult[xyLeft] = 2;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                                                ctrLeft = 3;
-                        locLeft = loc.add(Direction.NORTHWEST);
-                        xyLeft = xy + 59;
-                        lastDirectionLeft = Direction.NORTHWEST;
+
+                    if(mapCosts[xy + 127] <= cost_max_per_cell) {
+
+                        ctrLeft = 3;
+                        xyLeft = xy + 127;
+                        lastDirectionLeft = 7;
                         mapResult[xyLeft] = 3;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                                                ctrLeft = 4;
-                        locLeft = loc.add(Direction.NORTH);
-                        xyLeft = xy + 60;
-                        lastDirectionLeft = Direction.NORTH;
+
+                    if(mapCosts[xy + 128] <= cost_max_per_cell) {
+
+                        ctrLeft = 4;
+                        xyLeft = xy + 128;
+                        lastDirectionLeft = 0;
                         mapResult[xyLeft] = 4;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                                                ctrLeft = 5;
-                        locLeft = loc.add(Direction.NORTHEAST);
-                        xyLeft = xy + 61;
-                        lastDirectionLeft = Direction.NORTHEAST;
+
+                    if(mapCosts[xy + 129] <= cost_max_per_cell) {
+
+                        ctrLeft = 5;
+                        xyLeft = xy + 129;
+                        lastDirectionLeft = 1;
                         mapResult[xyLeft] = 5;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                                                ctrLeft = 6;
-                        locLeft = loc.add(Direction.EAST);
+
+                    if(mapCosts[xy + 1] <= cost_max_per_cell) {
+
+                        ctrLeft = 6;
                         xyLeft = xy + 1;
-                        lastDirectionLeft = Direction.EAST;
+                        lastDirectionLeft = 2;
                         mapResult[xyLeft] = 6;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
+                    
                     initSideRight:{
-                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                                                ctrRight = 1;
-                        locRight = loc.add(Direction.SOUTHEAST);
-                        xyRight = xy - 59;
-                        lastDirectionRight = Direction.SOUTHEAST;
+                    if(mapCosts[xy - 127] <= cost_max_per_cell) {
+
+                        ctrRight = 1;
+                        xyRight = xy - 127;
+                        lastDirectionRight = 3;
                         mapResult[xyRight] = 7;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                                                ctrRight = 2;
-                        locRight = loc.add(Direction.EAST);
+
+                    if(mapCosts[xy + 1] <= cost_max_per_cell) {
+
+                        ctrRight = 2;
                         xyRight = xy + 1;
-                        lastDirectionRight = Direction.EAST;
+                        lastDirectionRight = 2;
                         mapResult[xyRight] = 6;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                                                ctrRight = 3;
-                        locRight = loc.add(Direction.NORTHEAST);
-                        xyRight = xy + 61;
-                        lastDirectionRight = Direction.NORTHEAST;
+
+                    if(mapCosts[xy + 129] <= cost_max_per_cell) {
+
+                        ctrRight = 3;
+                        xyRight = xy + 129;
+                        lastDirectionRight = 1;
                         mapResult[xyRight] = 5;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                                                ctrRight = 4;
-                        locRight = loc.add(Direction.NORTH);
-                        xyRight = xy + 60;
-                        lastDirectionRight = Direction.NORTH;
+
+                    if(mapCosts[xy + 128] <= cost_max_per_cell) {
+
+                        ctrRight = 4;
+                        xyRight = xy + 128;
+                        lastDirectionRight = 0;
                         mapResult[xyRight] = 4;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                                                ctrRight = 5;
-                        locRight = loc.add(Direction.NORTHWEST);
-                        xyRight = xy + 59;
-                        lastDirectionRight = Direction.NORTHWEST;
+
+                    if(mapCosts[xy + 127] <= cost_max_per_cell) {
+
+                        ctrRight = 5;
+                        xyRight = xy + 127;
+                        lastDirectionRight = 7;
                         mapResult[xyRight] = 3;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                                                ctrRight = 6;
-                        locRight = loc.add(Direction.WEST);
+
+                    if(mapCosts[xy - 1] <= cost_max_per_cell) {
+
+                        ctrRight = 6;
                         xyRight = xy - 1;
-                        lastDirectionRight = Direction.WEST;
+                        lastDirectionRight = 6;
                         mapResult[xyRight] = 2;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
-                                         break;
+                    
+                     break;
 
-                case SOUTHWEST:
+                case 5:
                 
                     initSideLeft:{
-                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                                                ctrLeft = 1;
-                        locLeft = loc.add(Direction.WEST);
+                    if(mapCosts[xy - 1] <= cost_max_per_cell) {
+
+                        ctrLeft = 1;
                         xyLeft = xy - 1;
-                        lastDirectionLeft = Direction.WEST;
+                        lastDirectionLeft = 6;
                         mapResult[xyLeft] = 2;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                                                ctrLeft = 2;
-                        locLeft = loc.add(Direction.NORTHWEST);
-                        xyLeft = xy + 59;
-                        lastDirectionLeft = Direction.NORTHWEST;
+
+                    if(mapCosts[xy + 127] <= cost_max_per_cell) {
+
+                        ctrLeft = 2;
+                        xyLeft = xy + 127;
+                        lastDirectionLeft = 7;
                         mapResult[xyLeft] = 3;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                                                ctrLeft = 3;
-                        locLeft = loc.add(Direction.NORTH);
-                        xyLeft = xy + 60;
-                        lastDirectionLeft = Direction.NORTH;
+
+                    if(mapCosts[xy + 128] <= cost_max_per_cell) {
+
+                        ctrLeft = 3;
+                        xyLeft = xy + 128;
+                        lastDirectionLeft = 0;
                         mapResult[xyLeft] = 4;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                                                ctrLeft = 4;
-                        locLeft = loc.add(Direction.NORTHEAST);
-                        xyLeft = xy + 61;
-                        lastDirectionLeft = Direction.NORTHEAST;
+
+                    if(mapCosts[xy + 129] <= cost_max_per_cell) {
+
+                        ctrLeft = 4;
+                        xyLeft = xy + 129;
+                        lastDirectionLeft = 1;
                         mapResult[xyLeft] = 5;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                                                ctrLeft = 5;
-                        locLeft = loc.add(Direction.EAST);
+
+                    if(mapCosts[xy + 1] <= cost_max_per_cell) {
+
+                        ctrLeft = 5;
                         xyLeft = xy + 1;
-                        lastDirectionLeft = Direction.EAST;
+                        lastDirectionLeft = 2;
                         mapResult[xyLeft] = 6;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                                                ctrLeft = 6;
-                        locLeft = loc.add(Direction.SOUTHEAST);
-                        xyLeft = xy - 59;
-                        lastDirectionLeft = Direction.SOUTHEAST;
+
+                    if(mapCosts[xy - 127] <= cost_max_per_cell) {
+
+                        ctrLeft = 6;
+                        xyLeft = xy - 127;
+                        lastDirectionLeft = 3;
                         mapResult[xyLeft] = 7;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
+                    
                     initSideRight:{
-                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                                                ctrRight = 1;
-                        locRight = loc.add(Direction.SOUTH);
-                        xyRight = xy - 60;
-                        lastDirectionRight = Direction.SOUTH;
+                    if(mapCosts[xy - 128] <= cost_max_per_cell) {
+
+                        ctrRight = 1;
+                        xyRight = xy - 128;
+                        lastDirectionRight = 4;
                         mapResult[xyRight] = 0;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                                                ctrRight = 2;
-                        locRight = loc.add(Direction.SOUTHEAST);
-                        xyRight = xy - 59;
-                        lastDirectionRight = Direction.SOUTHEAST;
+
+                    if(mapCosts[xy - 127] <= cost_max_per_cell) {
+
+                        ctrRight = 2;
+                        xyRight = xy - 127;
+                        lastDirectionRight = 3;
                         mapResult[xyRight] = 7;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                                                ctrRight = 3;
-                        locRight = loc.add(Direction.EAST);
+
+                    if(mapCosts[xy + 1] <= cost_max_per_cell) {
+
+                        ctrRight = 3;
                         xyRight = xy + 1;
-                        lastDirectionRight = Direction.EAST;
+                        lastDirectionRight = 2;
                         mapResult[xyRight] = 6;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                                                ctrRight = 4;
-                        locRight = loc.add(Direction.NORTHEAST);
-                        xyRight = xy + 61;
-                        lastDirectionRight = Direction.NORTHEAST;
+
+                    if(mapCosts[xy + 129] <= cost_max_per_cell) {
+
+                        ctrRight = 4;
+                        xyRight = xy + 129;
+                        lastDirectionRight = 1;
                         mapResult[xyRight] = 5;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                                                ctrRight = 5;
-                        locRight = loc.add(Direction.NORTH);
-                        xyRight = xy + 60;
-                        lastDirectionRight = Direction.NORTH;
+
+                    if(mapCosts[xy + 128] <= cost_max_per_cell) {
+
+                        ctrRight = 5;
+                        xyRight = xy + 128;
+                        lastDirectionRight = 0;
                         mapResult[xyRight] = 4;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                                                ctrRight = 6;
-                        locRight = loc.add(Direction.NORTHWEST);
-                        xyRight = xy + 59;
-                        lastDirectionRight = Direction.NORTHWEST;
+
+                    if(mapCosts[xy + 127] <= cost_max_per_cell) {
+
+                        ctrRight = 6;
+                        xyRight = xy + 127;
+                        lastDirectionRight = 7;
                         mapResult[xyRight] = 3;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
-                                         break;
+                    
+                     break;
 
-                case WEST:
+                case 6:
                 
                     initSideLeft:{
-                                        if(onTheMap(loc.add(Direction.NORTHWEST)) && mapCosts[xy + 59] <= cost_max_per_cell) {
-                                                ctrLeft = 1;
-                        locLeft = loc.add(Direction.NORTHWEST);
-                        xyLeft = xy + 59;
-                        lastDirectionLeft = Direction.NORTHWEST;
+                    if(mapCosts[xy + 127] <= cost_max_per_cell) {
+
+                        ctrLeft = 1;
+                        xyLeft = xy + 127;
+                        lastDirectionLeft = 7;
                         mapResult[xyLeft] = 3;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                                                ctrLeft = 2;
-                        locLeft = loc.add(Direction.NORTH);
-                        xyLeft = xy + 60;
-                        lastDirectionLeft = Direction.NORTH;
+
+                    if(mapCosts[xy + 128] <= cost_max_per_cell) {
+
+                        ctrLeft = 2;
+                        xyLeft = xy + 128;
+                        lastDirectionLeft = 0;
                         mapResult[xyLeft] = 4;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                                                ctrLeft = 3;
-                        locLeft = loc.add(Direction.NORTHEAST);
-                        xyLeft = xy + 61;
-                        lastDirectionLeft = Direction.NORTHEAST;
+
+                    if(mapCosts[xy + 129] <= cost_max_per_cell) {
+
+                        ctrLeft = 3;
+                        xyLeft = xy + 129;
+                        lastDirectionLeft = 1;
                         mapResult[xyLeft] = 5;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                                                ctrLeft = 4;
-                        locLeft = loc.add(Direction.EAST);
+
+                    if(mapCosts[xy + 1] <= cost_max_per_cell) {
+
+                        ctrLeft = 4;
                         xyLeft = xy + 1;
-                        lastDirectionLeft = Direction.EAST;
+                        lastDirectionLeft = 2;
                         mapResult[xyLeft] = 6;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                                                ctrLeft = 5;
-                        locLeft = loc.add(Direction.SOUTHEAST);
-                        xyLeft = xy - 59;
-                        lastDirectionLeft = Direction.SOUTHEAST;
+
+                    if(mapCosts[xy - 127] <= cost_max_per_cell) {
+
+                        ctrLeft = 5;
+                        xyLeft = xy - 127;
+                        lastDirectionLeft = 3;
                         mapResult[xyLeft] = 7;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                                                ctrLeft = 6;
-                        locLeft = loc.add(Direction.SOUTH);
-                        xyLeft = xy - 60;
-                        lastDirectionLeft = Direction.SOUTH;
+
+                    if(mapCosts[xy - 128] <= cost_max_per_cell) {
+
+                        ctrLeft = 6;
+                        xyLeft = xy - 128;
+                        lastDirectionLeft = 4;
                         mapResult[xyLeft] = 0;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
+                    
                     initSideRight:{
-                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                                                ctrRight = 1;
-                        locRight = loc.add(Direction.SOUTHWEST);
-                        xyRight = xy - 61;
-                        lastDirectionRight = Direction.SOUTHWEST;
+                    if(mapCosts[xy - 129] <= cost_max_per_cell) {
+
+                        ctrRight = 1;
+                        xyRight = xy - 129;
+                        lastDirectionRight = 5;
                         mapResult[xyRight] = 1;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                                                ctrRight = 2;
-                        locRight = loc.add(Direction.SOUTH);
-                        xyRight = xy - 60;
-                        lastDirectionRight = Direction.SOUTH;
+
+                    if(mapCosts[xy - 128] <= cost_max_per_cell) {
+
+                        ctrRight = 2;
+                        xyRight = xy - 128;
+                        lastDirectionRight = 4;
                         mapResult[xyRight] = 0;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                                                ctrRight = 3;
-                        locRight = loc.add(Direction.SOUTHEAST);
-                        xyRight = xy - 59;
-                        lastDirectionRight = Direction.SOUTHEAST;
+
+                    if(mapCosts[xy - 127] <= cost_max_per_cell) {
+
+                        ctrRight = 3;
+                        xyRight = xy - 127;
+                        lastDirectionRight = 3;
                         mapResult[xyRight] = 7;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                                                ctrRight = 4;
-                        locRight = loc.add(Direction.EAST);
+
+                    if(mapCosts[xy + 1] <= cost_max_per_cell) {
+
+                        ctrRight = 4;
                         xyRight = xy + 1;
-                        lastDirectionRight = Direction.EAST;
+                        lastDirectionRight = 2;
                         mapResult[xyRight] = 6;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                                                ctrRight = 5;
-                        locRight = loc.add(Direction.NORTHEAST);
-                        xyRight = xy + 61;
-                        lastDirectionRight = Direction.NORTHEAST;
+
+                    if(mapCosts[xy + 129] <= cost_max_per_cell) {
+
+                        ctrRight = 5;
+                        xyRight = xy + 129;
+                        lastDirectionRight = 1;
                         mapResult[xyRight] = 5;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                                                ctrRight = 6;
-                        locRight = loc.add(Direction.NORTH);
-                        xyRight = xy + 60;
-                        lastDirectionRight = Direction.NORTH;
+
+                    if(mapCosts[xy + 128] <= cost_max_per_cell) {
+
+                        ctrRight = 6;
+                        xyRight = xy + 128;
+                        lastDirectionRight = 0;
                         mapResult[xyRight] = 4;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
-                                         break;
+                    
+                     break;
 
-                case NORTHWEST:
+                case 7:
                 
                     initSideLeft:{
-                                        if(onTheMap(loc.add(Direction.NORTH)) && mapCosts[xy + 60] <= cost_max_per_cell) {
-                                                ctrLeft = 1;
-                        locLeft = loc.add(Direction.NORTH);
-                        xyLeft = xy + 60;
-                        lastDirectionLeft = Direction.NORTH;
+                    if(mapCosts[xy + 128] <= cost_max_per_cell) {
+
+                        ctrLeft = 1;
+                        xyLeft = xy + 128;
+                        lastDirectionLeft = 0;
                         mapResult[xyLeft] = 4;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                                                ctrLeft = 2;
-                        locLeft = loc.add(Direction.NORTHEAST);
-                        xyLeft = xy + 61;
-                        lastDirectionLeft = Direction.NORTHEAST;
+
+                    if(mapCosts[xy + 129] <= cost_max_per_cell) {
+
+                        ctrLeft = 2;
+                        xyLeft = xy + 129;
+                        lastDirectionLeft = 1;
                         mapResult[xyLeft] = 5;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                                                ctrLeft = 3;
-                        locLeft = loc.add(Direction.EAST);
+
+                    if(mapCosts[xy + 1] <= cost_max_per_cell) {
+
+                        ctrLeft = 3;
                         xyLeft = xy + 1;
-                        lastDirectionLeft = Direction.EAST;
+                        lastDirectionLeft = 2;
                         mapResult[xyLeft] = 6;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                                                ctrLeft = 4;
-                        locLeft = loc.add(Direction.SOUTHEAST);
-                        xyLeft = xy - 59;
-                        lastDirectionLeft = Direction.SOUTHEAST;
+
+                    if(mapCosts[xy - 127] <= cost_max_per_cell) {
+
+                        ctrLeft = 4;
+                        xyLeft = xy - 127;
+                        lastDirectionLeft = 3;
                         mapResult[xyLeft] = 7;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                                                ctrLeft = 5;
-                        locLeft = loc.add(Direction.SOUTH);
-                        xyLeft = xy - 60;
-                        lastDirectionLeft = Direction.SOUTH;
+
+                    if(mapCosts[xy - 128] <= cost_max_per_cell) {
+
+                        ctrLeft = 5;
+                        xyLeft = xy - 128;
+                        lastDirectionLeft = 4;
                         mapResult[xyLeft] = 0;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                                                ctrLeft = 6;
-                        locLeft = loc.add(Direction.SOUTHWEST);
-                        xyLeft = xy - 61;
-                        lastDirectionLeft = Direction.SOUTHWEST;
+
+                    if(mapCosts[xy - 129] <= cost_max_per_cell) {
+
+                        ctrLeft = 6;
+                        xyLeft = xy - 129;
+                        lastDirectionLeft = 5;
                         mapResult[xyLeft] = 1;
 
-                                                break initSideLeft;
-
+                        break initSideLeft;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
+                    
                     initSideRight:{
-                                        if(onTheMap(loc.add(Direction.WEST)) && mapCosts[xy - 1] <= cost_max_per_cell) {
-                                                ctrRight = 1;
-                        locRight = loc.add(Direction.WEST);
+                    if(mapCosts[xy - 1] <= cost_max_per_cell) {
+
+                        ctrRight = 1;
                         xyRight = xy - 1;
-                        lastDirectionRight = Direction.WEST;
+                        lastDirectionRight = 6;
                         mapResult[xyRight] = 2;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHWEST)) && mapCosts[xy - 61] <= cost_max_per_cell) {
-                                                ctrRight = 2;
-                        locRight = loc.add(Direction.SOUTHWEST);
-                        xyRight = xy - 61;
-                        lastDirectionRight = Direction.SOUTHWEST;
+
+                    if(mapCosts[xy - 129] <= cost_max_per_cell) {
+
+                        ctrRight = 2;
+                        xyRight = xy - 129;
+                        lastDirectionRight = 5;
                         mapResult[xyRight] = 1;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTH)) && mapCosts[xy - 60] <= cost_max_per_cell) {
-                                                ctrRight = 3;
-                        locRight = loc.add(Direction.SOUTH);
-                        xyRight = xy - 60;
-                        lastDirectionRight = Direction.SOUTH;
+
+                    if(mapCosts[xy - 128] <= cost_max_per_cell) {
+
+                        ctrRight = 3;
+                        xyRight = xy - 128;
+                        lastDirectionRight = 4;
                         mapResult[xyRight] = 0;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.SOUTHEAST)) && mapCosts[xy - 59] <= cost_max_per_cell) {
-                                                ctrRight = 4;
-                        locRight = loc.add(Direction.SOUTHEAST);
-                        xyRight = xy - 59;
-                        lastDirectionRight = Direction.SOUTHEAST;
+
+                    if(mapCosts[xy - 127] <= cost_max_per_cell) {
+
+                        ctrRight = 4;
+                        xyRight = xy - 127;
+                        lastDirectionRight = 3;
                         mapResult[xyRight] = 7;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.EAST)) && mapCosts[xy + 1] <= cost_max_per_cell) {
-                                                ctrRight = 5;
-                        locRight = loc.add(Direction.EAST);
+
+                    if(mapCosts[xy + 1] <= cost_max_per_cell) {
+
+                        ctrRight = 5;
                         xyRight = xy + 1;
-                        lastDirectionRight = Direction.EAST;
+                        lastDirectionRight = 2;
                         mapResult[xyRight] = 6;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                                        if(onTheMap(loc.add(Direction.NORTHEAST)) && mapCosts[xy + 61] <= cost_max_per_cell) {
-                                                ctrRight = 6;
-                        locRight = loc.add(Direction.NORTHEAST);
-                        xyRight = xy + 61;
-                        lastDirectionRight = Direction.NORTHEAST;
+
+                    if(mapCosts[xy + 129] <= cost_max_per_cell) {
+
+                        ctrRight = 6;
+                        xyRight = xy + 129;
+                        lastDirectionRight = 1;
                         mapResult[xyRight] = 5;
 
-                                                break initSideRight;
-
+                        break initSideRight;
                     }
-                    
+
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
-                                         break;
+                    
+                     break;
 
-                     
-                default:
-                    throw new java.lang.Error("ERR Pathfinding: dir is center when split init");
+                     default:
+                    throw new java.lang.Error("ERR Pathfinding: Initsplit: Invalid direction to target. : " + DIRECTIONS[mapDirections[xyEndDir - xy]] + " ");
             }
 
             
@@ -1404,7 +4729,7 @@ public class BugNavLmx {
             /////////////////////////////////// Split mode ////////////////////////////////
             /// The direction we want to take is blocked, we will split bugnav to right and left
             /// We advance side with the lowest score, with score = distance for example
-            /// When dir is not blocked anymore, we go back to modeDefault
+            /// When dir is not blocked anymore, we go REVERSE to modeDefault
 
             modeSplit:
             for (;;) {
@@ -1419,2330 +4744,2231 @@ public class BugNavLmx {
                     }
 
                                         modeSplitGoLeft: {
-                    /// If we can move without obstacle, we are free !
-                                        if(ctrLeft <= 0){                         switch (locLeft.directionTo(locEnd)){
-                            case NORTH:
-                                xyTmp = xyLeft + 60;
-                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
-                                    xy = xyTmp;
+                    // debug messages
+                    
+                    // We dont want to rush destination if we haven't turn enough
+                    if(ctrLeft <= 0){ switch (mapDirections[xyEndDir - xyLeft]){
+                            case 0:
 
+                                xyTmp = xyLeft + 128;
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
+
+                                    xy = xyTmp;
                                     mapResult[xyTmp] = 4;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locLeft.add(Direction.NORTH);
                                     score = scoreLeft + mapCosts[xy];
-                                    break modeSplit;
-                                }
-                                break;
-                            case NORTHEAST:
-                                xyTmp = xyLeft + 61;
-                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
-                                    xy = xyTmp;
+                                    xyLastWallLeave = xyTmp;
 
-                                    mapResult[xyTmp] = 5;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locLeft.add(Direction.NORTHEAST);
-                                    score = scoreLeft + mapCosts[xy];
                                     break modeSplit;
                                 }
                                 break;
-                            case EAST:
+                            case 1:
+
+                                xyTmp = xyLeft + 129;
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
+
+                                    xy = xyTmp;
+                                    mapResult[xyTmp] = 5;
+                                    score = scoreLeft + mapCosts[xy];
+                                    xyLastWallLeave = xyTmp;
+
+                                    break modeSplit;
+                                }
+                                break;
+                            case 2:
+
                                 xyTmp = xyLeft + 1;
                                 if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
-                                    xy = xyTmp;
 
+                                    xy = xyTmp;
                                     mapResult[xyTmp] = 6;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locLeft.add(Direction.EAST);
                                     score = scoreLeft + mapCosts[xy];
+                                    xyLastWallLeave = xyTmp;
+
                                     break modeSplit;
                                 }
                                 break;
-                            case SOUTHEAST:
-                                xyTmp = xyLeft - 59;
-                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
-                                    xy = xyTmp;
+                            case 3:
 
+                                xyTmp = xyLeft - 127;
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
+
+                                    xy = xyTmp;
                                     mapResult[xyTmp] = 7;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locLeft.add(Direction.SOUTHEAST);
                                     score = scoreLeft + mapCosts[xy];
+                                    xyLastWallLeave = xyTmp;
+
                                     break modeSplit;
                                 }
                                 break;
-                            case SOUTH:
-                                xyTmp = xyLeft - 60;
-                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
-                                    xy = xyTmp;
+                            case 4:
 
+                                xyTmp = xyLeft - 128;
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
+
+                                    xy = xyTmp;
                                     mapResult[xyTmp] = 0;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locLeft.add(Direction.SOUTH);
                                     score = scoreLeft + mapCosts[xy];
-                                    break modeSplit;
-                                }
-                                break;
-                            case SOUTHWEST:
-                                xyTmp = xyLeft - 61;
-                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
-                                    xy = xyTmp;
+                                    xyLastWallLeave = xyTmp;
 
-                                    mapResult[xyTmp] = 1;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locLeft.add(Direction.SOUTHWEST);
-                                    score = scoreLeft + mapCosts[xy];
                                     break modeSplit;
                                 }
                                 break;
-                            case WEST:
+                            case 5:
+
+                                xyTmp = xyLeft - 129;
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
+
+                                    xy = xyTmp;
+                                    mapResult[xyTmp] = 1;
+                                    score = scoreLeft + mapCosts[xy];
+                                    xyLastWallLeave = xyTmp;
+
+                                    break modeSplit;
+                                }
+                                break;
+                            case 6:
+
                                 xyTmp = xyLeft - 1;
                                 if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
-                                    xy = xyTmp;
 
+                                    xy = xyTmp;
                                     mapResult[xyTmp] = 2;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locLeft.add(Direction.WEST);
                                     score = scoreLeft + mapCosts[xy];
+                                    xyLastWallLeave = xyTmp;
+
                                     break modeSplit;
                                 }
                                 break;
-                            case NORTHWEST:
-                                xyTmp = xyLeft + 59;
-                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
-                                    xy = xyTmp;
+                            case 7:
 
+                                xyTmp = xyLeft + 127;
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothLeft <= 0){
+
+                                    xy = xyTmp;
                                     mapResult[xyTmp] = 3;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locLeft.add(Direction.NORTHWEST);
                                     score = scoreLeft + mapCosts[xy];
+                                    xyLastWallLeave = xyTmp;
+
                                     break modeSplit;
                                 }
                                 break;
                             
-                            case CENTER:
+                            case 8:
                                 break mainLoop;
+
+                            default:
+                                throw new java.lang.Error("ERR Pathfinding: Split mode:Left Invalid direction to target. : " + (int)mapDirections[xyEndDir - xyLeft] + " ");
                         }
                     }
 
-                    //TODO: Ces 2 la peuvent se grouper ?
-                    /// Otherwise, we check by turning progressively until we found a nice space
+                    /// Otherwise, we check by turning progressively until we found the next free cell next to the wall
                     switch (lastDirectionLeft){
-                        case NORTH:
-                            if(!onTheMap(locLeft.add(Direction.WEST))) {
+                        case 0:
+                            xyTmp = xyLeft - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 2;
-
-                                locLeft = locLeft.add(Direction.WEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.WEST;
+                                lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
+                            xyTmp = xyLeft + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 3;
-
-                                locLeft = locLeft.add(Direction.NORTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHWEST;
+                                lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTH))) {
+                            xyTmp = xyLeft + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 4;
-
-                                locLeft = locLeft.add(Direction.NORTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTH;
+                                lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
+                            xyTmp = xyLeft + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 5;
-
-                                locLeft = locLeft.add(Direction.NORTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHEAST;
+                                lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.EAST))) {
+                            xyTmp = xyLeft + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 6;
-
-                                locLeft = locLeft.add(Direction.EAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.EAST;
+                                lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyLeft - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 7;
-
-                                locLeft = locLeft.add(Direction.SOUTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHEAST;
+                                lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTH))) {
+                            xyTmp = xyLeft - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 0;
-
-                                locLeft = locLeft.add(Direction.SOUTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTH;
+                                lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyLeft - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 1;
-
-                                locLeft = locLeft.add(Direction.SOUTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHWEST;
+                                lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir NORTH");
-                        case NORTHEAST:
-                            if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
+                        case 1:
+                            xyTmp = xyLeft + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 3;
-
-                                locLeft = locLeft.add(Direction.NORTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHWEST;
+                                lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTH))) {
+                            xyTmp = xyLeft + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 4;
-
-                                locLeft = locLeft.add(Direction.NORTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTH;
+                                lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
+                            xyTmp = xyLeft + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 5;
-
-                                locLeft = locLeft.add(Direction.NORTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHEAST;
+                                lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.EAST))) {
+                            xyTmp = xyLeft + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 6;
-
-                                locLeft = locLeft.add(Direction.EAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.EAST;
+                                lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyLeft - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 7;
-
-                                locLeft = locLeft.add(Direction.SOUTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHEAST;
+                                lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTH))) {
+                            xyTmp = xyLeft - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 0;
-
-                                locLeft = locLeft.add(Direction.SOUTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTH;
+                                lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyLeft - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 1;
-
-                                locLeft = locLeft.add(Direction.SOUTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHWEST;
+                                lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.WEST))) {
+                            xyTmp = xyLeft - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 2;
-
-                                locLeft = locLeft.add(Direction.WEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.WEST;
+                                lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir NORTHEAST");
-                        case EAST:
-                            if(!onTheMap(locLeft.add(Direction.NORTH))) {
+                        case 2:
+                            xyTmp = xyLeft + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 4;
-
-                                locLeft = locLeft.add(Direction.NORTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTH;
+                                lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
+                            xyTmp = xyLeft + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 5;
-
-                                locLeft = locLeft.add(Direction.NORTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHEAST;
+                                lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.EAST))) {
+                            xyTmp = xyLeft + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 6;
-
-                                locLeft = locLeft.add(Direction.EAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.EAST;
+                                lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyLeft - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 7;
-
-                                locLeft = locLeft.add(Direction.SOUTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHEAST;
+                                lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTH))) {
+                            xyTmp = xyLeft - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 0;
-
-                                locLeft = locLeft.add(Direction.SOUTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTH;
+                                lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyLeft - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 1;
-
-                                locLeft = locLeft.add(Direction.SOUTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHWEST;
+                                lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.WEST))) {
+                            xyTmp = xyLeft - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 2;
-
-                                locLeft = locLeft.add(Direction.WEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.WEST;
+                                lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
+                            xyTmp = xyLeft + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 3;
-
-                                locLeft = locLeft.add(Direction.NORTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHWEST;
+                                lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir EAST");
-                        case SOUTHEAST:
-                            if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
+                        case 3:
+                            xyTmp = xyLeft + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 5;
-
-                                locLeft = locLeft.add(Direction.NORTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHEAST;
+                                lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.EAST))) {
+                            xyTmp = xyLeft + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 6;
-
-                                locLeft = locLeft.add(Direction.EAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.EAST;
+                                lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyLeft - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 7;
-
-                                locLeft = locLeft.add(Direction.SOUTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHEAST;
+                                lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTH))) {
+                            xyTmp = xyLeft - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 0;
-
-                                locLeft = locLeft.add(Direction.SOUTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTH;
+                                lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyLeft - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 1;
-
-                                locLeft = locLeft.add(Direction.SOUTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHWEST;
+                                lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.WEST))) {
+                            xyTmp = xyLeft - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 2;
-
-                                locLeft = locLeft.add(Direction.WEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.WEST;
+                                lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
+                            xyTmp = xyLeft + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 3;
-
-                                locLeft = locLeft.add(Direction.NORTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHWEST;
+                                lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTH))) {
+                            xyTmp = xyLeft + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 4;
-
-                                locLeft = locLeft.add(Direction.NORTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTH;
+                                lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir SOUTHEAST");
-                        case SOUTH:
-                            if(!onTheMap(locLeft.add(Direction.EAST))) {
+                        case 4:
+                            xyTmp = xyLeft + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 6;
-
-                                locLeft = locLeft.add(Direction.EAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.EAST;
+                                lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyLeft - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 7;
-
-                                locLeft = locLeft.add(Direction.SOUTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHEAST;
+                                lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTH))) {
+                            xyTmp = xyLeft - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 0;
-
-                                locLeft = locLeft.add(Direction.SOUTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTH;
+                                lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyLeft - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 1;
-
-                                locLeft = locLeft.add(Direction.SOUTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHWEST;
+                                lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.WEST))) {
+                            xyTmp = xyLeft - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 2;
-
-                                locLeft = locLeft.add(Direction.WEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.WEST;
+                                lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
+                            xyTmp = xyLeft + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 3;
-
-                                locLeft = locLeft.add(Direction.NORTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHWEST;
+                                lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTH))) {
+                            xyTmp = xyLeft + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 4;
-
-                                locLeft = locLeft.add(Direction.NORTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTH;
+                                lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
+                            xyTmp = xyLeft + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 5;
-
-                                locLeft = locLeft.add(Direction.NORTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHEAST;
+                                lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir SOUTH");
-                        case SOUTHWEST:
-                            if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
+                        case 5:
+                            xyTmp = xyLeft - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 7;
-
-                                locLeft = locLeft.add(Direction.SOUTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHEAST;
+                                lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTH))) {
+                            xyTmp = xyLeft - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 0;
-
-                                locLeft = locLeft.add(Direction.SOUTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTH;
+                                lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyLeft - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 1;
-
-                                locLeft = locLeft.add(Direction.SOUTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHWEST;
+                                lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.WEST))) {
+                            xyTmp = xyLeft - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 2;
-
-                                locLeft = locLeft.add(Direction.WEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.WEST;
+                                lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
+                            xyTmp = xyLeft + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 3;
-
-                                locLeft = locLeft.add(Direction.NORTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHWEST;
+                                lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTH))) {
+                            xyTmp = xyLeft + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 4;
-
-                                locLeft = locLeft.add(Direction.NORTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTH;
+                                lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
+                            xyTmp = xyLeft + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 5;
-
-                                locLeft = locLeft.add(Direction.NORTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHEAST;
+                                lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.EAST))) {
+                            xyTmp = xyLeft + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 6;
-
-                                locLeft = locLeft.add(Direction.EAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.EAST;
+                                lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir SOUTHWEST");
-                        case WEST:
-                            if(!onTheMap(locLeft.add(Direction.SOUTH))) {
+                        case 6:
+                            xyTmp = xyLeft - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 0;
-
-                                locLeft = locLeft.add(Direction.SOUTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTH;
+                                lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyLeft - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 1;
-
-                                locLeft = locLeft.add(Direction.SOUTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHWEST;
+                                lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.WEST))) {
+                            xyTmp = xyLeft - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 2;
-
-                                locLeft = locLeft.add(Direction.WEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.WEST;
+                                lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
+                            xyTmp = xyLeft + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 3;
-
-                                locLeft = locLeft.add(Direction.NORTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHWEST;
+                                lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTH))) {
+                            xyTmp = xyLeft + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 4;
-
-                                locLeft = locLeft.add(Direction.NORTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTH;
+                                lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
+                            xyTmp = xyLeft + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 5;
-
-                                locLeft = locLeft.add(Direction.NORTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHEAST;
+                                lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.EAST))) {
+                            xyTmp = xyLeft + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 6;
-
-                                locLeft = locLeft.add(Direction.EAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.EAST;
+                                lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyLeft - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 7;
-
-                                locLeft = locLeft.add(Direction.SOUTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHEAST;
+                                lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir WEST");
-                        case NORTHWEST:
-                            if(!onTheMap(locLeft.add(Direction.SOUTHWEST))) {
+                        case 7:
+                            xyTmp = xyLeft - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 mapResult[xyTmp] = 1;
-
-                                locLeft = locLeft.add(Direction.SOUTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHWEST;
+                                lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.WEST))) {
+                            xyTmp = xyLeft - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 mapResult[xyTmp] = 2;
-
-                                locLeft = locLeft.add(Direction.WEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.WEST;
+                                lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHWEST))) {
+                            xyTmp = xyLeft + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 mapResult[xyTmp] = 3;
-
-                                locLeft = locLeft.add(Direction.NORTHWEST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHWEST;
+                                lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTH))) {
+                            xyTmp = xyLeft + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 mapResult[xyTmp] = 4;
-
-                                locLeft = locLeft.add(Direction.NORTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTH;
+                                lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.NORTHEAST))) {
+                            xyTmp = xyLeft + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 mapResult[xyTmp] = 5;
-
-                                locLeft = locLeft.add(Direction.NORTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.NORTHEAST;
+                                lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.EAST))) {
+                            xyTmp = xyLeft + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 mapResult[xyTmp] = 6;
-
-                                locLeft = locLeft.add(Direction.EAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.EAST;
+                                lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyLeft - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 mapResult[xyTmp] = 7;
-
-                                locLeft = locLeft.add(Direction.SOUTHEAST);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTHEAST;
+                                lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            if(!onTheMap(locLeft.add(Direction.SOUTH))) {
+                            xyTmp = xyLeft - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreLeft = MAX_SCORE;
                                 break modeSplitGoLeft;
                             }
 
-                            xyTmp = xyLeft - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 mapResult[xyTmp] = 0;
-
-                                locLeft = locLeft.add(Direction.SOUTH);
                                 scoreLeft += mapCosts[xyTmp];
-                                lastDirectionLeft = Direction.SOUTH;
+                                lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir NORTHWEST");
                         
-                        case CENTER:
+                        case 8: // Center
                             throw new java.lang.Error("ERR Pathfinding: previous dir is center");
+
+                        default:
+                            throw new java.lang.Error("ERR Pathfinding: Split mode:Left Invalid last direction.");
                     }
                     } // End modeSplitGoLeft
 
-                                                        }else{
-                                                            modeSplitGoRight: {
-                    /// If we can move without obstacle, we are free !
-                                        if(ctrRight <= 0){                         switch (locRight.directionTo(locEnd)){
-                            case NORTH:
-                                xyTmp = xyRight + 60;
-                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
-                                    xy = xyTmp;
+                    }else{
+                                        modeSplitGoRight: {
+                    // debug messages
+                    
+                    // We dont want to rush destination if we haven't turn enough
+                    if(ctrRight <= 0){ switch (mapDirections[xyEndDir - xyRight]){
+                            case 0:
 
+                                xyTmp = xyRight + 128;
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
+
+                                    xy = xyTmp;
                                     mapResult[xyTmp] = 4;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locRight.add(Direction.NORTH);
                                     score = scoreRight + mapCosts[xy];
-                                    break modeSplit;
-                                }
-                                break;
-                            case NORTHEAST:
-                                xyTmp = xyRight + 61;
-                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
-                                    xy = xyTmp;
+                                    xyLastWallLeave = xyTmp;
 
-                                    mapResult[xyTmp] = 5;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locRight.add(Direction.NORTHEAST);
-                                    score = scoreRight + mapCosts[xy];
                                     break modeSplit;
                                 }
                                 break;
-                            case EAST:
+                            case 1:
+
+                                xyTmp = xyRight + 129;
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
+
+                                    xy = xyTmp;
+                                    mapResult[xyTmp] = 5;
+                                    score = scoreRight + mapCosts[xy];
+                                    xyLastWallLeave = xyTmp;
+
+                                    break modeSplit;
+                                }
+                                break;
+                            case 2:
+
                                 xyTmp = xyRight + 1;
                                 if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
-                                    xy = xyTmp;
 
+                                    xy = xyTmp;
                                     mapResult[xyTmp] = 6;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locRight.add(Direction.EAST);
                                     score = scoreRight + mapCosts[xy];
+                                    xyLastWallLeave = xyTmp;
+
                                     break modeSplit;
                                 }
                                 break;
-                            case SOUTHEAST:
-                                xyTmp = xyRight - 59;
-                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
-                                    xy = xyTmp;
+                            case 3:
 
+                                xyTmp = xyRight - 127;
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
+
+                                    xy = xyTmp;
                                     mapResult[xyTmp] = 7;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locRight.add(Direction.SOUTHEAST);
                                     score = scoreRight + mapCosts[xy];
+                                    xyLastWallLeave = xyTmp;
+
                                     break modeSplit;
                                 }
                                 break;
-                            case SOUTH:
-                                xyTmp = xyRight - 60;
-                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
-                                    xy = xyTmp;
+                            case 4:
 
+                                xyTmp = xyRight - 128;
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
+
+                                    xy = xyTmp;
                                     mapResult[xyTmp] = 0;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locRight.add(Direction.SOUTH);
                                     score = scoreRight + mapCosts[xy];
-                                    break modeSplit;
-                                }
-                                break;
-                            case SOUTHWEST:
-                                xyTmp = xyRight - 61;
-                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
-                                    xy = xyTmp;
+                                    xyLastWallLeave = xyTmp;
 
-                                    mapResult[xyTmp] = 1;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locRight.add(Direction.SOUTHWEST);
-                                    score = scoreRight + mapCosts[xy];
                                     break modeSplit;
                                 }
                                 break;
-                            case WEST:
+                            case 5:
+
+                                xyTmp = xyRight - 129;
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
+
+                                    xy = xyTmp;
+                                    mapResult[xyTmp] = 1;
+                                    score = scoreRight + mapCosts[xy];
+                                    xyLastWallLeave = xyTmp;
+
+                                    break modeSplit;
+                                }
+                                break;
+                            case 6:
+
                                 xyTmp = xyRight - 1;
                                 if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
-                                    xy = xyTmp;
 
+                                    xy = xyTmp;
                                     mapResult[xyTmp] = 2;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locRight.add(Direction.WEST);
                                     score = scoreRight + mapCosts[xy];
+                                    xyLastWallLeave = xyTmp;
+
                                     break modeSplit;
                                 }
                                 break;
-                            case NORTHWEST:
-                                xyTmp = xyRight + 59;
-                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
-                                    xy = xyTmp;
+                            case 7:
 
+                                xyTmp = xyRight + 127;
+                                if(mapCosts[xyTmp] <= cost_max_per_cell && --smoothRight <= 0){
+
+                                    xy = xyTmp;
                                     mapResult[xyTmp] = 3;
-                                    xyLastWallLeave = xyTmp;
-                                    loc = locRight.add(Direction.NORTHWEST);
                                     score = scoreRight + mapCosts[xy];
+                                    xyLastWallLeave = xyTmp;
+
                                     break modeSplit;
                                 }
                                 break;
                             
-                            case CENTER:
+                            case 8:
                                 break mainLoop;
+
+                            default:
+                                throw new java.lang.Error("ERR Pathfinding: Split mode:Right Invalid direction to target. : " + (int)mapDirections[xyEndDir - xyRight] + " ");
                         }
                     }
 
-                    //TODO: Ces 2 la peuvent se grouper ?
-                    /// Otherwise, we check by turning progressively until we found a nice space
+                    /// Otherwise, we check by turning progressively until we found the next free cell next to the wall
                     switch (lastDirectionRight){
-                        case NORTH:
-                            if(!onTheMap(locRight.add(Direction.EAST))) {
+                        case 0:
+                            xyTmp = xyRight + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 6;
-
-                                locRight = locRight.add(Direction.EAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.EAST;
+                                lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
+                            xyTmp = xyRight + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 5;
-
-                                locRight = locRight.add(Direction.NORTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHEAST;
+                                lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTH))) {
+                            xyTmp = xyRight + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 4;
-
-                                locRight = locRight.add(Direction.NORTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTH;
+                                lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
+                            xyTmp = xyRight + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 3;
-
-                                locRight = locRight.add(Direction.NORTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHWEST;
+                                lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.WEST))) {
+                            xyTmp = xyRight - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 2;
-
-                                locRight = locRight.add(Direction.WEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.WEST;
+                                lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyRight - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 1;
-
-                                locRight = locRight.add(Direction.SOUTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHWEST;
+                                lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTH))) {
+                            xyTmp = xyRight - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 0;
-
-                                locRight = locRight.add(Direction.SOUTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTH;
+                                lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyRight - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 7;
-
-                                locRight = locRight.add(Direction.SOUTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHEAST;
+                                lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir NORTH");
-                        case NORTHEAST:
-                            if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
+                        case 1:
+                            xyTmp = xyRight - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 7;
-
-                                locRight = locRight.add(Direction.SOUTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHEAST;
+                                lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.EAST))) {
+                            xyTmp = xyRight + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 6;
-
-                                locRight = locRight.add(Direction.EAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.EAST;
+                                lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
+                            xyTmp = xyRight + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 5;
-
-                                locRight = locRight.add(Direction.NORTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHEAST;
+                                lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTH))) {
+                            xyTmp = xyRight + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 4;
-
-                                locRight = locRight.add(Direction.NORTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTH;
+                                lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
+                            xyTmp = xyRight + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 3;
-
-                                locRight = locRight.add(Direction.NORTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHWEST;
+                                lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.WEST))) {
+                            xyTmp = xyRight - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 2;
-
-                                locRight = locRight.add(Direction.WEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.WEST;
+                                lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyRight - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 1;
-
-                                locRight = locRight.add(Direction.SOUTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHWEST;
+                                lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTH))) {
+                            xyTmp = xyRight - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 0;
-
-                                locRight = locRight.add(Direction.SOUTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTH;
+                                lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir NORTHEAST");
-                        case EAST:
-                            if(!onTheMap(locRight.add(Direction.SOUTH))) {
+                        case 2:
+                            xyTmp = xyRight - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 0;
-
-                                locRight = locRight.add(Direction.SOUTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTH;
+                                lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyRight - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 7;
-
-                                locRight = locRight.add(Direction.SOUTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHEAST;
+                                lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.EAST))) {
+                            xyTmp = xyRight + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 6;
-
-                                locRight = locRight.add(Direction.EAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.EAST;
+                                lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
+                            xyTmp = xyRight + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 5;
-
-                                locRight = locRight.add(Direction.NORTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHEAST;
+                                lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTH))) {
+                            xyTmp = xyRight + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 4;
-
-                                locRight = locRight.add(Direction.NORTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTH;
+                                lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
+                            xyTmp = xyRight + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 3;
-
-                                locRight = locRight.add(Direction.NORTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHWEST;
+                                lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.WEST))) {
+                            xyTmp = xyRight - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 2;
-
-                                locRight = locRight.add(Direction.WEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.WEST;
+                                lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyRight - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 1;
-
-                                locRight = locRight.add(Direction.SOUTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHWEST;
+                                lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir EAST");
-                        case SOUTHEAST:
-                            if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
+                        case 3:
+                            xyTmp = xyRight - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 1;
-
-                                locRight = locRight.add(Direction.SOUTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHWEST;
+                                lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTH))) {
+                            xyTmp = xyRight - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 0;
-
-                                locRight = locRight.add(Direction.SOUTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTH;
+                                lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyRight - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 7;
-
-                                locRight = locRight.add(Direction.SOUTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHEAST;
+                                lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.EAST))) {
+                            xyTmp = xyRight + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 6;
-
-                                locRight = locRight.add(Direction.EAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.EAST;
+                                lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
+                            xyTmp = xyRight + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 5;
-
-                                locRight = locRight.add(Direction.NORTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHEAST;
+                                lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTH))) {
+                            xyTmp = xyRight + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 4;
-
-                                locRight = locRight.add(Direction.NORTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTH;
+                                lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
+                            xyTmp = xyRight + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 3;
-
-                                locRight = locRight.add(Direction.NORTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHWEST;
+                                lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.WEST))) {
+                            xyTmp = xyRight - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 2;
-
-                                locRight = locRight.add(Direction.WEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.WEST;
+                                lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir SOUTHEAST");
-                        case SOUTH:
-                            if(!onTheMap(locRight.add(Direction.WEST))) {
+                        case 4:
+                            xyTmp = xyRight - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 2;
-
-                                locRight = locRight.add(Direction.WEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.WEST;
+                                lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyRight - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 1;
-
-                                locRight = locRight.add(Direction.SOUTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHWEST;
+                                lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTH))) {
+                            xyTmp = xyRight - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 0;
-
-                                locRight = locRight.add(Direction.SOUTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTH;
+                                lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyRight - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 7;
-
-                                locRight = locRight.add(Direction.SOUTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHEAST;
+                                lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.EAST))) {
+                            xyTmp = xyRight + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 6;
-
-                                locRight = locRight.add(Direction.EAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.EAST;
+                                lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
+                            xyTmp = xyRight + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 5;
-
-                                locRight = locRight.add(Direction.NORTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHEAST;
+                                lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTH))) {
+                            xyTmp = xyRight + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 4;
-
-                                locRight = locRight.add(Direction.NORTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTH;
+                                lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
+                            xyTmp = xyRight + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 3;
-
-                                locRight = locRight.add(Direction.NORTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHWEST;
+                                lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir SOUTH");
-                        case SOUTHWEST:
-                            if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
+                        case 5:
+                            xyTmp = xyRight + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 3;
-
-                                locRight = locRight.add(Direction.NORTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHWEST;
+                                lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.WEST))) {
+                            xyTmp = xyRight - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 2;
-
-                                locRight = locRight.add(Direction.WEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.WEST;
+                                lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyRight - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 1;
-
-                                locRight = locRight.add(Direction.SOUTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHWEST;
+                                lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTH))) {
+                            xyTmp = xyRight - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 0;
-
-                                locRight = locRight.add(Direction.SOUTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTH;
+                                lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyRight - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 7;
-
-                                locRight = locRight.add(Direction.SOUTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHEAST;
+                                lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.EAST))) {
+                            xyTmp = xyRight + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 6;
-
-                                locRight = locRight.add(Direction.EAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.EAST;
+                                lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
+                            xyTmp = xyRight + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 5;
-
-                                locRight = locRight.add(Direction.NORTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHEAST;
+                                lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTH))) {
+                            xyTmp = xyRight + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 4;
-
-                                locRight = locRight.add(Direction.NORTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTH;
+                                lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir SOUTHWEST");
-                        case WEST:
-                            if(!onTheMap(locRight.add(Direction.NORTH))) {
+                        case 6:
+                            xyTmp = xyRight + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 4;
-
-                                locRight = locRight.add(Direction.NORTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTH;
+                                lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
+                            xyTmp = xyRight + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 3;
-
-                                locRight = locRight.add(Direction.NORTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHWEST;
+                                lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.WEST))) {
+                            xyTmp = xyRight - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 2;
-
-                                locRight = locRight.add(Direction.WEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.WEST;
+                                lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyRight - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 1;
-
-                                locRight = locRight.add(Direction.SOUTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHWEST;
+                                lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTH))) {
+                            xyTmp = xyRight - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 0;
-
-                                locRight = locRight.add(Direction.SOUTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTH;
+                                lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyRight - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 7;
-
-                                locRight = locRight.add(Direction.SOUTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHEAST;
+                                lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.EAST))) {
+                            xyTmp = xyRight + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 6;
-
-                                locRight = locRight.add(Direction.EAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.EAST;
+                                lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
+                            xyTmp = xyRight + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 5;
-
-                                locRight = locRight.add(Direction.NORTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHEAST;
+                                lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir WEST");
-                        case NORTHWEST:
-                            if(!onTheMap(locRight.add(Direction.NORTHEAST))) {
+                        case 7:
+                            xyTmp = xyRight + 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 mapResult[xyTmp] = 5;
-
-                                locRight = locRight.add(Direction.NORTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHEAST;
+                                lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTH))) {
+                            xyTmp = xyRight + 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 mapResult[xyTmp] = 4;
-
-                                locRight = locRight.add(Direction.NORTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTH;
+                                lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.NORTHWEST))) {
+                            xyTmp = xyRight + 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 mapResult[xyTmp] = 3;
-
-                                locRight = locRight.add(Direction.NORTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.NORTHWEST;
+                                lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.WEST))) {
+                            xyTmp = xyRight - 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 mapResult[xyTmp] = 2;
-
-                                locRight = locRight.add(Direction.WEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.WEST;
+                                lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHWEST))) {
+                            xyTmp = xyRight - 129;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 61;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 mapResult[xyTmp] = 1;
-
-                                locRight = locRight.add(Direction.SOUTHWEST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHWEST;
+                                lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTH))) {
+                            xyTmp = xyRight - 128;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 60;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 mapResult[xyTmp] = 0;
-
-                                locRight = locRight.add(Direction.SOUTH);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTH;
+                                lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.SOUTHEAST))) {
+                            xyTmp = xyRight - 127;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight - 59;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 mapResult[xyTmp] = 7;
-
-                                locRight = locRight.add(Direction.SOUTHEAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.SOUTHEAST;
+                                lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            if(!onTheMap(locRight.add(Direction.EAST))) {
+                            xyTmp = xyRight + 1;
+
+                            if(mapCosts[xyTmp] == 32001) {
                                 scoreRight = MAX_SCORE;
                                 break modeSplitGoRight;
                             }
 
-                            xyTmp = xyRight + 1;
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 mapResult[xyTmp] = 6;
-
-                                locRight = locRight.add(Direction.EAST);
                                 scoreRight += mapCosts[xyTmp];
-                                lastDirectionRight = Direction.EAST;
+                                lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir NORTHWEST");
                         
-                        case CENTER:
+                        case 8: // Center
                             throw new java.lang.Error("ERR Pathfinding: previous dir is center");
+
+                        default:
+                            throw new java.lang.Error("ERR Pathfinding: Split mode:Right Invalid last direction.");
                     }
                     } // End modeSplitGoRight
 
-                                                                            }
+                                    }
 
             }// End main for loop
         } // End mainLoopLabel
 
         if(!withReturn){
             if( rc.getRoundNum() < 150){
-                System.out.println("===Pathfinding report : Backtracking===");
+                System.out.println("===Pathfinding report : REVERSEtracking===");
                 System.out.println("Iterations normal : " + iterationsNormal);
                 System.out.println("Iterations split  : " + iterationsSplit);
                 System.out.println("Bytecode used     : " + (startRemainingBytecode - Clock.getBytecodesLeft()));
             }
 
             BugNavLmx.mapResult = mapResult;
-            if(xy != xyEnd){
-                return -1;
+            if(xy != xyEnd){ return -1;
             }
             return 1;
         }
@@ -3757,14 +6983,17 @@ public class BugNavLmx {
         if(xyLastWallLeave != -1){
             xyReturn = xyLastWallLeave; // 1)
             }else{
-            if(locLeft == null){
+            if(xyLeft == -1){
                 xyReturn = xyRight;
 
             }else{
-                if(locRight == null){
+                if(xyRight == -1){
                     xyReturn = xyLeft;
 
                 }else{
+                    MapLocation locEnd = new MapLocation((xyEnd & 0b111111) - 1, (xyEnd >> 7) - 1);
+                    MapLocation locLeft = new MapLocation((xyLeft & 0b111111) - 1, (xyLeft >> 7) - 1);
+                    MapLocation locRight = new MapLocation((xyRight & 0b111111) - 1, (xyRight >> 7) - 1);
                     if(locEnd.distanceSquaredTo(locLeft) < locEnd.distanceSquaredTo(locRight)){ // 2)
                         xyReturn = xyLeft;
                         }else{
@@ -3784,132 +7013,91 @@ public class BugNavLmx {
             throw new java.lang.Error("ERR Pathfinding: xyReturn is -1");
         }
 
-        loc = new MapLocation(xyReturn % 60, xyReturn / 60);
-        mode = "BACK";
-        int returnDirection = mapResult[xyReturn];
+        mode = "REVERSE";
         int iterationsReturn = 0;
-        backtrackingLoop:
+        int xyStartDir = (xyStart) | 8256;
+        
+        ReverseLoop:
         for(;;){
             iterationsReturn++;
+
+            // Check bytecode limits
             if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
-                break backtrackingLoop;
+                break ReverseLoop;
             }
 
-                        rc.setIndicatorDot(loc, 206, 174, 243);
-            switch(loc.directionTo(startLoc)){
-                case NORTH:
-                    if(0 != returnDirection && mapCosts[xyReturn + 60] <= cost_max_per_cell){
-                        loc = loc.add(Direction.NORTH);     
-                        break backtrackingLoop;
+
+            // Debug
+            int returnDirection = mapResult[xyReturn];
+                        rc.setIndicatorDot(new MapLocation((xyReturn & 0b111111) - 1, (xyReturn >> 7) - 1), 206, 174, 243);
+            switch(mapDirections[xyStartDir - xyReturn]){
+                case 0:
+                    if(0 != returnDirection && mapCosts[xyReturn + 128] <= cost_max_per_cell){
+                        xyReturn += 128;
+                        break ReverseLoop;
                     }else{
                         }
                     break;
-                case NORTHEAST:
-                    if(1 != returnDirection && mapCosts[xyReturn + 61] <= cost_max_per_cell){
-                        loc = loc.add(Direction.NORTHEAST);     
-                        break backtrackingLoop;
+                case 1:
+                    if(1 != returnDirection && mapCosts[xyReturn + 129] <= cost_max_per_cell){
+                        xyReturn += 129;
+                        break ReverseLoop;
                     }else{
                         }
                     break;
-                case EAST:
+                case 2:
                     if(2 != returnDirection && mapCosts[xyReturn + 1] <= cost_max_per_cell){
-                        loc = loc.add(Direction.EAST);     
-                        break backtrackingLoop;
+                        xyReturn += 1;
+                        break ReverseLoop;
                     }else{
                         }
                     break;
-                case SOUTHEAST:
-                    if(3 != returnDirection && mapCosts[xyReturn - 59] <= cost_max_per_cell){
-                        loc = loc.add(Direction.SOUTHEAST);     
-                        break backtrackingLoop;
+                case 3:
+                    if(3 != returnDirection && mapCosts[xyReturn - 127] <= cost_max_per_cell){
+                        xyReturn += -127;
+                        break ReverseLoop;
                     }else{
                         }
                     break;
-                case SOUTH:
-                    if(4 != returnDirection && mapCosts[xyReturn - 60] <= cost_max_per_cell){
-                        loc = loc.add(Direction.SOUTH);     
-                        break backtrackingLoop;
+                case 4:
+                    if(4 != returnDirection && mapCosts[xyReturn - 128] <= cost_max_per_cell){
+                        xyReturn += -128;
+                        break ReverseLoop;
                     }else{
                         }
                     break;
-                case SOUTHWEST:
-                    if(5 != returnDirection && mapCosts[xyReturn - 61] <= cost_max_per_cell){
-                        loc = loc.add(Direction.SOUTHWEST);     
-                        break backtrackingLoop;
+                case 5:
+                    if(5 != returnDirection && mapCosts[xyReturn - 129] <= cost_max_per_cell){
+                        xyReturn += -129;
+                        break ReverseLoop;
                     }else{
                         }
                     break;
-                case WEST:
+                case 6:
                     if(6 != returnDirection && mapCosts[xyReturn - 1] <= cost_max_per_cell){
-                        loc = loc.add(Direction.WEST);     
-                        break backtrackingLoop;
+                        xyReturn += -1;
+                        break ReverseLoop;
                     }else{
                         }
                     break;
-                case NORTHWEST:
-                    if(7 != returnDirection && mapCosts[xyReturn + 59] <= cost_max_per_cell){
-                        loc = loc.add(Direction.NORTHWEST);     
-                        break backtrackingLoop;
+                case 7:
+                    if(7 != returnDirection && mapCosts[xyReturn + 127] <= cost_max_per_cell){
+                        xyReturn += 127;
+                        break ReverseLoop;
                     }else{
                         }
                     break;
                 
-                case CENTER:
-                    BugNavLmx.mapResult = mapResult;
+                case 8: // Center
                     return 1;
+
+                default:
+                    throw new java.lang.Error("ERR Pathfinding: REVERSE mode: Invalid direction to start. : " + (int)mapDirections[xyStartDir - xyReturn] + " ");
             }
 
-            switch(returnDirection){
-                case 0: // NORTH
-                    xyReturn += 60;
-                    loc = loc.add(Direction.NORTH);
-                    returnDirection = mapResult[xyReturn];
-                    mapResult[xyReturn] = 4;
-                    break;
-                case 1: // NORTHEAST
-                    xyReturn += 61;
-                    loc = loc.add(Direction.NORTHEAST);
-                    returnDirection = mapResult[xyReturn];
-                    mapResult[xyReturn] = 5;
-                    break;
-                case 2: // EAST
-                    xyReturn += 1;
-                    loc = loc.add(Direction.EAST);
-                    returnDirection = mapResult[xyReturn];
-                    mapResult[xyReturn] = 6;
-                    break;
-                case 3: // SOUTHEAST
-                    xyReturn += -59;
-                    loc = loc.add(Direction.SOUTHEAST);
-                    returnDirection = mapResult[xyReturn];
-                    mapResult[xyReturn] = 7;
-                    break;
-                case 4: // SOUTH
-                    xyReturn += -60;
-                    loc = loc.add(Direction.SOUTH);
-                    returnDirection = mapResult[xyReturn];
-                    mapResult[xyReturn] = 0;
-                    break;
-                case 5: // SOUTHWEST
-                    xyReturn += -61;
-                    loc = loc.add(Direction.SOUTHWEST);
-                    returnDirection = mapResult[xyReturn];
-                    mapResult[xyReturn] = 1;
-                    break;
-                case 6: // WEST
-                    xyReturn += -1;
-                    loc = loc.add(Direction.WEST);
-                    returnDirection = mapResult[xyReturn];
-                    mapResult[xyReturn] = 2;
-                    break;
-                case 7: // NORTHWEST
-                    xyReturn += 59;
-                    loc = loc.add(Direction.NORTHWEST);
-                    returnDirection = mapResult[xyReturn];
-                    mapResult[xyReturn] = 3;
-                    break;
-                            }
-        }// End backtrackingLoop
+            mapResult[xyReturn] = dirsOrdsOpposite[returnDirection];
+            xyReturn += dirsShift7Bxy[returnDirection];
+        }// End ReverseLoop
 
         if( rc.getRoundNum() < 150){
             System.out.println("===Pathfinding report : Normal===");
@@ -3921,17 +7109,18 @@ public class BugNavLmx {
         }
 
         return generatePathTo(
-            loc, startLoc, 
-            mapCosts, mapResult, MAX_SCORE,  false, 
+            xyReturn, xyStart, 
+            MAX_SCORE, false /* withReturn */, 
             cost_max_per_cell, maxBytecodeUsed
         );
     }
 
-    public static char[] generateEmptyMapCosts(){
-        return "\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8".toCharArray();
+    public static char[] generateEmptyMapCosts7B(){
+        // generateEmptyMapCosts7B(passableValue, mod2value, borderValue, invalidValue):
+        return "\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u00c8\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01\u7d01".toCharArray();
     }
 
-    public static char[] getMap3600(){
-        return "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000".toCharArray();
+    public static char[] getMap7B(){
+        return "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000".toCharArray();
     }
 }

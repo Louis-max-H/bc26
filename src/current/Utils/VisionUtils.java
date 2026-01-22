@@ -50,143 +50,143 @@ public class VisionUtils {
         target = target.translate(-from.x, -from.y);
         return switch(target.hashCode()){ // (this.y x8000) & 0xffff | (this.x << 16)
                         /* cell : (-4, -2) */
-            case -229378 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,};
+            case -229378 -> new Direction[]{Direction.SOUTHWEST,Direction.WEST,};
                         /* cell : (-4, -1) */
-            case -229377 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,};
+            case -229377 -> new Direction[]{Direction.SOUTHWEST,Direction.WEST,};
                         /* cell : (-4, 0) */
-            case -229376 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.SOUTHWEST,};
+            case -229376 -> new Direction[]{Direction.SOUTHWEST,Direction.WEST,Direction.NORTHWEST,};
                         /* cell : (-4, 1) */
             case -229375 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,};
                         /* cell : (-4, 2) */
             case -229374 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,};
                         /* cell : (-3, -3) */
-            case -163843 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,Direction.SOUTH,};
+            case -163843 -> new Direction[]{Direction.SOUTH,Direction.SOUTHWEST,Direction.WEST,};
                         /* cell : (-3, -2) */
-            case -163842 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,};
+            case -163842 -> new Direction[]{Direction.SOUTHWEST,Direction.WEST,};
                         /* cell : (-3, -1) */
-            case -163841 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,};
+            case -163841 -> new Direction[]{Direction.SOUTHWEST,Direction.WEST,};
                         /* cell : (-3, 0) */
-            case -163840 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.SOUTHWEST,};
+            case -163840 -> new Direction[]{Direction.SOUTHWEST,Direction.WEST,Direction.NORTHWEST,};
                         /* cell : (-3, 1) */
             case -163839 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,};
                         /* cell : (-3, 2) */
             case -163838 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,};
                         /* cell : (-3, 3) */
-            case -163837 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.NORTH,};
+            case -163837 -> new Direction[]{Direction.NORTH,Direction.WEST,Direction.NORTHWEST,};
                         /* cell : (-2, -4) */
-            case -98308 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,};
+            case -98308 -> new Direction[]{Direction.SOUTH,Direction.SOUTHWEST,};
                         /* cell : (-2, -3) */
-            case -98307 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,};
+            case -98307 -> new Direction[]{Direction.SOUTH,Direction.SOUTHWEST,};
                         /* cell : (-2, -2) */
-            case -98306 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,Direction.SOUTH,};
+            case -98306 -> new Direction[]{Direction.SOUTH,Direction.SOUTHWEST,Direction.WEST,};
                         /* cell : (-2, -1) */
-            case -98305 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,};
+            case -98305 -> new Direction[]{Direction.SOUTHWEST,Direction.WEST,};
                         /* cell : (-2, 0) */
-            case -98304 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.SOUTHWEST,};
+            case -98304 -> new Direction[]{Direction.SOUTHWEST,Direction.WEST,Direction.NORTHWEST,};
                         /* cell : (-2, 1) */
             case -98303 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,};
                         /* cell : (-2, 2) */
-            case -98302 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.NORTH,};
+            case -98302 -> new Direction[]{Direction.NORTH,Direction.WEST,Direction.NORTHWEST,};
                         /* cell : (-2, 3) */
-            case -98301 -> new Direction[]{Direction.NORTHWEST,Direction.NORTH,};
+            case -98301 -> new Direction[]{Direction.NORTH,Direction.NORTHWEST,};
                         /* cell : (-2, 4) */
-            case -98300 -> new Direction[]{Direction.NORTHWEST,Direction.NORTH,};
+            case -98300 -> new Direction[]{Direction.NORTH,Direction.NORTHWEST,};
                         /* cell : (-1, -4) */
-            case -32772 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,};
+            case -32772 -> new Direction[]{Direction.SOUTH,Direction.SOUTHWEST,};
                         /* cell : (-1, -3) */
-            case -32771 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,};
+            case -32771 -> new Direction[]{Direction.SOUTH,Direction.SOUTHWEST,};
                         /* cell : (-1, -2) */
-            case -32770 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,};
+            case -32770 -> new Direction[]{Direction.SOUTH,Direction.SOUTHWEST,};
                         /* cell : (-1, -1) */
-            case -32769 -> new Direction[]{Direction.WEST,Direction.SOUTHWEST,Direction.SOUTH,};
+            case -32769 -> new Direction[]{Direction.SOUTH,Direction.SOUTHWEST,Direction.WEST,};
                         /* cell : (-1, 0) */
-            case -32768 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.SOUTHWEST,};
+            case -32768 -> new Direction[]{Direction.SOUTHWEST,Direction.WEST,Direction.NORTHWEST,};
                         /* cell : (-1, 1) */
-            case -32767 -> new Direction[]{Direction.WEST,Direction.NORTHWEST,Direction.NORTH,};
+            case -32767 -> new Direction[]{Direction.NORTH,Direction.WEST,Direction.NORTHWEST,};
                         /* cell : (-1, 2) */
-            case -32766 -> new Direction[]{Direction.NORTHWEST,Direction.NORTH,};
+            case -32766 -> new Direction[]{Direction.NORTH,Direction.NORTHWEST,};
                         /* cell : (-1, 3) */
-            case -32765 -> new Direction[]{Direction.NORTHWEST,Direction.NORTH,};
+            case -32765 -> new Direction[]{Direction.NORTH,Direction.NORTHWEST,};
                         /* cell : (-1, 4) */
-            case -32764 -> new Direction[]{Direction.NORTHWEST,Direction.NORTH,};
+            case -32764 -> new Direction[]{Direction.NORTH,Direction.NORTHWEST,};
                         /* cell : (0, -4) */
-            case 32764 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,Direction.SOUTHEAST,};
+            case 32764 -> new Direction[]{Direction.SOUTHEAST,Direction.SOUTH,Direction.SOUTHWEST,};
                         /* cell : (0, -3) */
-            case 32765 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,Direction.SOUTHEAST,};
+            case 32765 -> new Direction[]{Direction.SOUTHEAST,Direction.SOUTH,Direction.SOUTHWEST,};
                         /* cell : (0, -2) */
-            case 32766 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,Direction.SOUTHEAST,};
+            case 32766 -> new Direction[]{Direction.SOUTHEAST,Direction.SOUTH,Direction.SOUTHWEST,};
                         /* cell : (0, -1) */
-            case 32767 -> new Direction[]{Direction.SOUTHWEST,Direction.SOUTH,Direction.SOUTHEAST,};
+            case 32767 -> new Direction[]{Direction.SOUTHEAST,Direction.SOUTH,Direction.SOUTHWEST,};
                         /* cell : (0, 0) */
-            case 32768 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+            case 32768 -> new Direction[]{Direction.NORTHEAST,Direction.EAST,Direction.SOUTHEAST,Direction.CENTER,};
                         /* cell : (0, 1) */
-            case 32769 -> new Direction[]{Direction.NORTHWEST,Direction.NORTHEAST,Direction.NORTH,};
+            case 32769 -> new Direction[]{Direction.NORTH,Direction.NORTHEAST,Direction.NORTHWEST,};
                         /* cell : (0, 2) */
-            case 32770 -> new Direction[]{Direction.NORTHWEST,Direction.NORTHEAST,Direction.NORTH,};
+            case 32770 -> new Direction[]{Direction.NORTH,Direction.NORTHEAST,Direction.NORTHWEST,};
                         /* cell : (0, 3) */
-            case 32771 -> new Direction[]{Direction.NORTHWEST,Direction.NORTHEAST,Direction.NORTH,};
+            case 32771 -> new Direction[]{Direction.NORTH,Direction.NORTHEAST,Direction.NORTHWEST,};
                         /* cell : (0, 4) */
-            case 32772 -> new Direction[]{Direction.NORTHWEST,Direction.NORTHEAST,Direction.NORTH,};
+            case 32772 -> new Direction[]{Direction.NORTH,Direction.NORTHEAST,Direction.NORTHWEST,};
                         /* cell : (1, -4) */
-            case 98300 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,};
+            case 98300 -> new Direction[]{Direction.SOUTHEAST,Direction.SOUTH,};
                         /* cell : (1, -3) */
-            case 98301 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,};
+            case 98301 -> new Direction[]{Direction.SOUTHEAST,Direction.SOUTH,};
                         /* cell : (1, -2) */
-            case 98302 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,};
+            case 98302 -> new Direction[]{Direction.SOUTHEAST,Direction.SOUTH,};
                         /* cell : (1, -1) */
-            case 98303 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+            case 98303 -> new Direction[]{Direction.EAST,Direction.SOUTHEAST,Direction.SOUTH,Direction.CENTER,};
                         /* cell : (1, 0) */
-            case 98304 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+            case 98304 -> new Direction[]{Direction.NORTHEAST,Direction.EAST,Direction.SOUTHEAST,Direction.CENTER,};
                         /* cell : (1, 1) */
-            case 98305 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.NORTH,Direction.CENTER,};
+            case 98305 -> new Direction[]{Direction.NORTH,Direction.NORTHEAST,Direction.EAST,Direction.CENTER,};
                         /* cell : (1, 2) */
-            case 98306 -> new Direction[]{Direction.NORTHEAST,Direction.NORTH,};
+            case 98306 -> new Direction[]{Direction.NORTH,Direction.NORTHEAST,};
                         /* cell : (1, 3) */
-            case 98307 -> new Direction[]{Direction.NORTHEAST,Direction.NORTH,};
+            case 98307 -> new Direction[]{Direction.NORTH,Direction.NORTHEAST,};
                         /* cell : (1, 4) */
-            case 98308 -> new Direction[]{Direction.NORTHEAST,Direction.NORTH,};
+            case 98308 -> new Direction[]{Direction.NORTH,Direction.NORTHEAST,};
                         /* cell : (2, -4) */
-            case 163836 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,};
+            case 163836 -> new Direction[]{Direction.SOUTHEAST,Direction.SOUTH,};
                         /* cell : (2, -3) */
-            case 163837 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,};
+            case 163837 -> new Direction[]{Direction.SOUTHEAST,Direction.SOUTH,};
                         /* cell : (2, -2) */
-            case 163838 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+            case 163838 -> new Direction[]{Direction.EAST,Direction.SOUTHEAST,Direction.SOUTH,Direction.CENTER,};
                         /* cell : (2, -1) */
-            case 163839 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+            case 163839 -> new Direction[]{Direction.EAST,Direction.SOUTHEAST,Direction.CENTER,};
                         /* cell : (2, 0) */
-            case 163840 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+            case 163840 -> new Direction[]{Direction.NORTHEAST,Direction.EAST,Direction.SOUTHEAST,Direction.CENTER,};
                         /* cell : (2, 1) */
-            case 163841 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+            case 163841 -> new Direction[]{Direction.NORTHEAST,Direction.EAST,Direction.CENTER,};
                         /* cell : (2, 2) */
-            case 163842 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.NORTH,Direction.CENTER,};
+            case 163842 -> new Direction[]{Direction.NORTH,Direction.NORTHEAST,Direction.EAST,Direction.CENTER,};
                         /* cell : (2, 3) */
-            case 163843 -> new Direction[]{Direction.NORTHEAST,Direction.NORTH,};
+            case 163843 -> new Direction[]{Direction.NORTH,Direction.NORTHEAST,};
                         /* cell : (2, 4) */
-            case 163844 -> new Direction[]{Direction.NORTHEAST,Direction.NORTH,};
+            case 163844 -> new Direction[]{Direction.NORTH,Direction.NORTHEAST,};
                         /* cell : (3, -3) */
-            case 229373 -> new Direction[]{Direction.SOUTH,Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+            case 229373 -> new Direction[]{Direction.EAST,Direction.SOUTHEAST,Direction.SOUTH,Direction.CENTER,};
                         /* cell : (3, -2) */
-            case 229374 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+            case 229374 -> new Direction[]{Direction.EAST,Direction.SOUTHEAST,Direction.CENTER,};
                         /* cell : (3, -1) */
-            case 229375 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+            case 229375 -> new Direction[]{Direction.EAST,Direction.SOUTHEAST,Direction.CENTER,};
                         /* cell : (3, 0) */
-            case 229376 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+            case 229376 -> new Direction[]{Direction.NORTHEAST,Direction.EAST,Direction.SOUTHEAST,Direction.CENTER,};
                         /* cell : (3, 1) */
-            case 229377 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+            case 229377 -> new Direction[]{Direction.NORTHEAST,Direction.EAST,Direction.CENTER,};
                         /* cell : (3, 2) */
-            case 229378 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+            case 229378 -> new Direction[]{Direction.NORTHEAST,Direction.EAST,Direction.CENTER,};
                         /* cell : (3, 3) */
-            case 229379 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.NORTH,Direction.CENTER,};
+            case 229379 -> new Direction[]{Direction.NORTH,Direction.NORTHEAST,Direction.EAST,Direction.CENTER,};
                         /* cell : (4, -2) */
-            case 294910 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+            case 294910 -> new Direction[]{Direction.EAST,Direction.SOUTHEAST,Direction.CENTER,};
                         /* cell : (4, -1) */
-            case 294911 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.CENTER,};
+            case 294911 -> new Direction[]{Direction.EAST,Direction.SOUTHEAST,Direction.CENTER,};
                         /* cell : (4, 0) */
-            case 294912 -> new Direction[]{Direction.SOUTHEAST,Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+            case 294912 -> new Direction[]{Direction.NORTHEAST,Direction.EAST,Direction.SOUTHEAST,Direction.CENTER,};
                         /* cell : (4, 1) */
-            case 294913 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+            case 294913 -> new Direction[]{Direction.NORTHEAST,Direction.EAST,Direction.CENTER,};
                         /* cell : (4, 2) */
-            case 294914 -> new Direction[]{Direction.EAST,Direction.NORTHEAST,Direction.CENTER,};
+            case 294914 -> new Direction[]{Direction.NORTHEAST,Direction.EAST,Direction.CENTER,};
                         default -> {
                 System.out.println("ERR: Target location is out of radius");
                 yield Direction.values();
@@ -224,6 +224,54 @@ public class VisionUtils {
 
         Direction bestDir = Direction.CENTER;
         int bestScore = 0;
+        if(lookDirections[0] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.NORTH, rc.getType()) * lookDirections[0];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.NORTH, lookDirections[0]));
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.NORTH;
+            }
+        }
+        if(lookDirections[1] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.NORTHEAST, rc.getType()) * lookDirections[1];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.NORTHEAST, lookDirections[1]));
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.NORTHEAST;
+            }
+        }
+        if(lookDirections[2] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.EAST, rc.getType()) * lookDirections[2];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.EAST, lookDirections[2]));
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.EAST;
+            }
+        }
+        if(lookDirections[3] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.SOUTHEAST, rc.getType()) * lookDirections[3];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.SOUTHEAST, lookDirections[3]));
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.SOUTHEAST;
+            }
+        }
+        if(lookDirections[4] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.SOUTH, rc.getType()) * lookDirections[4];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.SOUTH, lookDirections[4]));
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.SOUTH;
+            }
+        }
+        if(lookDirections[5] > 0){
+            int score = getScoreInView(rc.getLocation(), Direction.SOUTHWEST, rc.getType()) * lookDirections[5];
+            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.SOUTHWEST, lookDirections[5]));
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = Direction.SOUTHWEST;
+            }
+        }
         if(lookDirections[6] > 0){
             int score = getScoreInView(rc.getLocation(), Direction.WEST, rc.getType()) * lookDirections[6];
             Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.WEST, lookDirections[6]));
@@ -238,54 +286,6 @@ public class VisionUtils {
             if(score > bestScore){
                 bestScore = score;
                 bestDir = Direction.NORTHWEST;
-            }
-        }
-        if(lookDirections[5] > 0){
-            int score = getScoreInView(rc.getLocation(), Direction.SOUTHWEST, rc.getType()) * lookDirections[5];
-            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.SOUTHWEST, lookDirections[5]));
-            if(score > bestScore){
-                bestScore = score;
-                bestDir = Direction.SOUTHWEST;
-            }
-        }
-        if(lookDirections[4] > 0){
-            int score = getScoreInView(rc.getLocation(), Direction.SOUTH, rc.getType()) * lookDirections[4];
-            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.SOUTH, lookDirections[4]));
-            if(score > bestScore){
-                bestScore = score;
-                bestDir = Direction.SOUTH;
-            }
-        }
-        if(lookDirections[3] > 0){
-            int score = getScoreInView(rc.getLocation(), Direction.SOUTHEAST, rc.getType()) * lookDirections[3];
-            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.SOUTHEAST, lookDirections[3]));
-            if(score > bestScore){
-                bestScore = score;
-                bestDir = Direction.SOUTHEAST;
-            }
-        }
-        if(lookDirections[2] > 0){
-            int score = getScoreInView(rc.getLocation(), Direction.EAST, rc.getType()) * lookDirections[2];
-            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.EAST, lookDirections[2]));
-            if(score > bestScore){
-                bestScore = score;
-                bestDir = Direction.EAST;
-            }
-        }
-        if(lookDirections[1] > 0){
-            int score = getScoreInView(rc.getLocation(), Direction.NORTHEAST, rc.getType()) * lookDirections[1];
-            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.NORTHEAST, lookDirections[1]));
-            if(score > bestScore){
-                bestScore = score;
-                bestDir = Direction.NORTHEAST;
-            }
-        }
-        if(lookDirections[0] > 0){
-            int score = getScoreInView(rc.getLocation(), Direction.NORTH, rc.getType()) * lookDirections[0];
-            Robot.print(String.format("Smart look score of %-10d %-10s %-2d", score, Direction.NORTH, lookDirections[0]));
-            if(score > bestScore){
-                bestScore = score;
-                bestDir = Direction.NORTH;
             }
         }
         
@@ -443,14 +443,14 @@ public class VisionUtils {
         return switch(unit){
             
             case BABY_RAT -> switch(dir){
+                                case NORTH -> new MapLocation[]{new MapLocation(x - 3, y + 3), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y + 3)};
+                                case NORTHEAST -> new MapLocation[]{new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2)};
+                                case EAST -> new MapLocation[]{new MapLocation(x , y ), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2)};
+                                case SOUTHEAST -> new MapLocation[]{new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y )};
+                                case SOUTH -> new MapLocation[]{new MapLocation(x - 3, y - 3), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 3, y - 3)};
+                                case SOUTHWEST -> new MapLocation[]{new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y )};
                                 case WEST -> new MapLocation[]{new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x , y )};
                                 case NORTHWEST -> new MapLocation[]{new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4)};
-                                case SOUTHWEST -> new MapLocation[]{new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y )};
-                                case SOUTH -> new MapLocation[]{new MapLocation(x - 3, y - 3), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 3, y - 3)};
-                                case SOUTHEAST -> new MapLocation[]{new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y )};
-                                case EAST -> new MapLocation[]{new MapLocation(x , y ), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2)};
-                                case NORTHEAST -> new MapLocation[]{new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2)};
-                                case NORTH -> new MapLocation[]{new MapLocation(x - 3, y + 3), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y + 3)};
                 
                 case CENTER -> {
                     System.out.println("ERR: can't getAllLocationsFrom for CENTER");
@@ -459,14 +459,14 @@ public class VisionUtils {
             };
             
             case RAT_KING -> switch(dir){
+                                case NORTH -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
+                                case NORTHEAST -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
+                                case EAST -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
+                                case SOUTHEAST -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
+                                case SOUTH -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
+                                case SOUTHWEST -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
                                 case WEST -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
                                 case NORTHWEST -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
-                                case SOUTHWEST -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
-                                case SOUTH -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
-                                case SOUTHEAST -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
-                                case EAST -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
-                                case NORTHEAST -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
-                                case NORTH -> new MapLocation[]{new MapLocation(x - 5, y ), new MapLocation(x - 4, y - 3), new MapLocation(x - 4, y - 2), new MapLocation(x - 4, y - 1), new MapLocation(x - 4, y ), new MapLocation(x - 4, y + 1), new MapLocation(x - 4, y + 2), new MapLocation(x - 4, y + 3), new MapLocation(x - 3, y - 4), new MapLocation(x - 3, y - 3), new MapLocation(x - 3, y - 2), new MapLocation(x - 3, y - 1), new MapLocation(x - 3, y ), new MapLocation(x - 3, y + 1), new MapLocation(x - 3, y + 2), new MapLocation(x - 3, y + 3), new MapLocation(x - 3, y + 4), new MapLocation(x - 2, y - 4), new MapLocation(x - 2, y - 3), new MapLocation(x - 2, y - 2), new MapLocation(x - 2, y - 1), new MapLocation(x - 2, y ), new MapLocation(x - 2, y + 1), new MapLocation(x - 2, y + 2), new MapLocation(x - 2, y + 3), new MapLocation(x - 2, y + 4), new MapLocation(x - 1, y - 4), new MapLocation(x - 1, y - 3), new MapLocation(x - 1, y - 2), new MapLocation(x - 1, y - 1), new MapLocation(x - 1, y ), new MapLocation(x - 1, y + 1), new MapLocation(x - 1, y + 2), new MapLocation(x - 1, y + 3), new MapLocation(x - 1, y + 4), new MapLocation(x , y - 5), new MapLocation(x , y - 4), new MapLocation(x , y - 3), new MapLocation(x , y - 2), new MapLocation(x , y - 1), new MapLocation(x , y ), new MapLocation(x , y + 1), new MapLocation(x , y + 2), new MapLocation(x , y + 3), new MapLocation(x , y + 4), new MapLocation(x , y + 5), new MapLocation(x + 1, y - 4), new MapLocation(x + 1, y - 3), new MapLocation(x + 1, y - 2), new MapLocation(x + 1, y - 1), new MapLocation(x + 1, y ), new MapLocation(x + 1, y + 1), new MapLocation(x + 1, y + 2), new MapLocation(x + 1, y + 3), new MapLocation(x + 1, y + 4), new MapLocation(x + 2, y - 4), new MapLocation(x + 2, y - 3), new MapLocation(x + 2, y - 2), new MapLocation(x + 2, y - 1), new MapLocation(x + 2, y ), new MapLocation(x + 2, y + 1), new MapLocation(x + 2, y + 2), new MapLocation(x + 2, y + 3), new MapLocation(x + 2, y + 4), new MapLocation(x + 3, y - 4), new MapLocation(x + 3, y - 3), new MapLocation(x + 3, y - 2), new MapLocation(x + 3, y - 1), new MapLocation(x + 3, y ), new MapLocation(x + 3, y + 1), new MapLocation(x + 3, y + 2), new MapLocation(x + 3, y + 3), new MapLocation(x + 3, y + 4), new MapLocation(x + 4, y - 3), new MapLocation(x + 4, y - 2), new MapLocation(x + 4, y - 1), new MapLocation(x + 4, y ), new MapLocation(x + 4, y + 1), new MapLocation(x + 4, y + 2), new MapLocation(x + 4, y + 3), new MapLocation(x + 5, y )};
                 
                 case CENTER -> {
                     System.out.println("ERR: can't getAllLocationsFrom for CENTER");
@@ -487,6 +487,153 @@ public class VisionUtils {
         int xy = x + y*68 + 552;
         switch(dir){
                         
+            case NORTH:
+            scores[xy + 201] = score;
+            scores[xy + 134] = score;
+            scores[xy + 202] = score;
+            scores[xy + 270] = score;
+            scores[xy + 67] = score;
+            scores[xy + 135] = score;
+            scores[xy + 203] = score;
+            scores[xy + 271] = score;
+            scores[xy ] = score;
+            scores[xy + 68] = score;
+            scores[xy + 136] = score;
+            scores[xy + 204] = score;
+            scores[xy + 272] = score;
+            scores[xy + 69] = score;
+            scores[xy + 137] = score;
+            scores[xy + 205] = score;
+            scores[xy + 273] = score;
+            scores[xy + 138] = score;
+            scores[xy + 206] = score;
+            scores[xy + 274] = score;
+            scores[xy + 207] = score;
+                        return;
+                        
+            case NORTHEAST:
+            scores[xy ] = score;
+            scores[xy + 68] = score;
+            scores[xy + 136] = score;
+            scores[xy + 204] = score;
+            scores[xy + 272] = score;
+            scores[xy + 1] = score;
+            scores[xy + 69] = score;
+            scores[xy + 137] = score;
+            scores[xy + 205] = score;
+            scores[xy + 273] = score;
+            scores[xy + 2] = score;
+            scores[xy + 70] = score;
+            scores[xy + 138] = score;
+            scores[xy + 206] = score;
+            scores[xy + 274] = score;
+            scores[xy + 3] = score;
+            scores[xy + 71] = score;
+            scores[xy + 139] = score;
+            scores[xy + 207] = score;
+            scores[xy + 4] = score;
+            scores[xy + 72] = score;
+            scores[xy + 140] = score;
+                        return;
+                        
+            case EAST:
+            scores[xy ] = score;
+            scores[xy - 67] = score;
+            scores[xy + 1] = score;
+            scores[xy + 69] = score;
+            scores[xy - 134] = score;
+            scores[xy - 66] = score;
+            scores[xy + 2] = score;
+            scores[xy + 70] = score;
+            scores[xy + 138] = score;
+            scores[xy - 201] = score;
+            scores[xy - 133] = score;
+            scores[xy - 65] = score;
+            scores[xy + 3] = score;
+            scores[xy + 71] = score;
+            scores[xy + 139] = score;
+            scores[xy + 207] = score;
+            scores[xy - 132] = score;
+            scores[xy - 64] = score;
+            scores[xy + 4] = score;
+            scores[xy + 72] = score;
+            scores[xy + 140] = score;
+                        return;
+                        
+            case SOUTHEAST:
+            scores[xy - 272] = score;
+            scores[xy - 204] = score;
+            scores[xy - 136] = score;
+            scores[xy - 68] = score;
+            scores[xy ] = score;
+            scores[xy - 271] = score;
+            scores[xy - 203] = score;
+            scores[xy - 135] = score;
+            scores[xy - 67] = score;
+            scores[xy + 1] = score;
+            scores[xy - 270] = score;
+            scores[xy - 202] = score;
+            scores[xy - 134] = score;
+            scores[xy - 66] = score;
+            scores[xy + 2] = score;
+            scores[xy - 201] = score;
+            scores[xy - 133] = score;
+            scores[xy - 65] = score;
+            scores[xy + 3] = score;
+            scores[xy - 132] = score;
+            scores[xy - 64] = score;
+            scores[xy + 4] = score;
+                        return;
+                        
+            case SOUTH:
+            scores[xy - 207] = score;
+            scores[xy - 274] = score;
+            scores[xy - 206] = score;
+            scores[xy - 138] = score;
+            scores[xy - 273] = score;
+            scores[xy - 205] = score;
+            scores[xy - 137] = score;
+            scores[xy - 69] = score;
+            scores[xy - 272] = score;
+            scores[xy - 204] = score;
+            scores[xy - 136] = score;
+            scores[xy - 68] = score;
+            scores[xy ] = score;
+            scores[xy - 271] = score;
+            scores[xy - 203] = score;
+            scores[xy - 135] = score;
+            scores[xy - 67] = score;
+            scores[xy - 270] = score;
+            scores[xy - 202] = score;
+            scores[xy - 134] = score;
+            scores[xy - 201] = score;
+                        return;
+                        
+            case SOUTHWEST:
+            scores[xy - 140] = score;
+            scores[xy - 72] = score;
+            scores[xy - 4] = score;
+            scores[xy - 207] = score;
+            scores[xy - 139] = score;
+            scores[xy - 71] = score;
+            scores[xy - 3] = score;
+            scores[xy - 274] = score;
+            scores[xy - 206] = score;
+            scores[xy - 138] = score;
+            scores[xy - 70] = score;
+            scores[xy - 2] = score;
+            scores[xy - 273] = score;
+            scores[xy - 205] = score;
+            scores[xy - 137] = score;
+            scores[xy - 69] = score;
+            scores[xy - 1] = score;
+            scores[xy - 272] = score;
+            scores[xy - 204] = score;
+            scores[xy - 136] = score;
+            scores[xy - 68] = score;
+            scores[xy ] = score;
+                        return;
+                        
             case WEST:
             scores[xy - 140] = score;
             scores[xy - 72] = score;
@@ -534,153 +681,6 @@ public class VisionUtils {
             scores[xy + 136] = score;
             scores[xy + 204] = score;
             scores[xy + 272] = score;
-                        return;
-                        
-            case SOUTHWEST:
-            scores[xy - 140] = score;
-            scores[xy - 72] = score;
-            scores[xy - 4] = score;
-            scores[xy - 207] = score;
-            scores[xy - 139] = score;
-            scores[xy - 71] = score;
-            scores[xy - 3] = score;
-            scores[xy - 274] = score;
-            scores[xy - 206] = score;
-            scores[xy - 138] = score;
-            scores[xy - 70] = score;
-            scores[xy - 2] = score;
-            scores[xy - 273] = score;
-            scores[xy - 205] = score;
-            scores[xy - 137] = score;
-            scores[xy - 69] = score;
-            scores[xy - 1] = score;
-            scores[xy - 272] = score;
-            scores[xy - 204] = score;
-            scores[xy - 136] = score;
-            scores[xy - 68] = score;
-            scores[xy ] = score;
-                        return;
-                        
-            case SOUTH:
-            scores[xy - 207] = score;
-            scores[xy - 274] = score;
-            scores[xy - 206] = score;
-            scores[xy - 138] = score;
-            scores[xy - 273] = score;
-            scores[xy - 205] = score;
-            scores[xy - 137] = score;
-            scores[xy - 69] = score;
-            scores[xy - 272] = score;
-            scores[xy - 204] = score;
-            scores[xy - 136] = score;
-            scores[xy - 68] = score;
-            scores[xy ] = score;
-            scores[xy - 271] = score;
-            scores[xy - 203] = score;
-            scores[xy - 135] = score;
-            scores[xy - 67] = score;
-            scores[xy - 270] = score;
-            scores[xy - 202] = score;
-            scores[xy - 134] = score;
-            scores[xy - 201] = score;
-                        return;
-                        
-            case SOUTHEAST:
-            scores[xy - 272] = score;
-            scores[xy - 204] = score;
-            scores[xy - 136] = score;
-            scores[xy - 68] = score;
-            scores[xy ] = score;
-            scores[xy - 271] = score;
-            scores[xy - 203] = score;
-            scores[xy - 135] = score;
-            scores[xy - 67] = score;
-            scores[xy + 1] = score;
-            scores[xy - 270] = score;
-            scores[xy - 202] = score;
-            scores[xy - 134] = score;
-            scores[xy - 66] = score;
-            scores[xy + 2] = score;
-            scores[xy - 201] = score;
-            scores[xy - 133] = score;
-            scores[xy - 65] = score;
-            scores[xy + 3] = score;
-            scores[xy - 132] = score;
-            scores[xy - 64] = score;
-            scores[xy + 4] = score;
-                        return;
-                        
-            case EAST:
-            scores[xy ] = score;
-            scores[xy - 67] = score;
-            scores[xy + 1] = score;
-            scores[xy + 69] = score;
-            scores[xy - 134] = score;
-            scores[xy - 66] = score;
-            scores[xy + 2] = score;
-            scores[xy + 70] = score;
-            scores[xy + 138] = score;
-            scores[xy - 201] = score;
-            scores[xy - 133] = score;
-            scores[xy - 65] = score;
-            scores[xy + 3] = score;
-            scores[xy + 71] = score;
-            scores[xy + 139] = score;
-            scores[xy + 207] = score;
-            scores[xy - 132] = score;
-            scores[xy - 64] = score;
-            scores[xy + 4] = score;
-            scores[xy + 72] = score;
-            scores[xy + 140] = score;
-                        return;
-                        
-            case NORTHEAST:
-            scores[xy ] = score;
-            scores[xy + 68] = score;
-            scores[xy + 136] = score;
-            scores[xy + 204] = score;
-            scores[xy + 272] = score;
-            scores[xy + 1] = score;
-            scores[xy + 69] = score;
-            scores[xy + 137] = score;
-            scores[xy + 205] = score;
-            scores[xy + 273] = score;
-            scores[xy + 2] = score;
-            scores[xy + 70] = score;
-            scores[xy + 138] = score;
-            scores[xy + 206] = score;
-            scores[xy + 274] = score;
-            scores[xy + 3] = score;
-            scores[xy + 71] = score;
-            scores[xy + 139] = score;
-            scores[xy + 207] = score;
-            scores[xy + 4] = score;
-            scores[xy + 72] = score;
-            scores[xy + 140] = score;
-                        return;
-                        
-            case NORTH:
-            scores[xy + 201] = score;
-            scores[xy + 134] = score;
-            scores[xy + 202] = score;
-            scores[xy + 270] = score;
-            scores[xy + 67] = score;
-            scores[xy + 135] = score;
-            scores[xy + 203] = score;
-            scores[xy + 271] = score;
-            scores[xy ] = score;
-            scores[xy + 68] = score;
-            scores[xy + 136] = score;
-            scores[xy + 204] = score;
-            scores[xy + 272] = score;
-            scores[xy + 69] = score;
-            scores[xy + 137] = score;
-            scores[xy + 205] = score;
-            scores[xy + 273] = score;
-            scores[xy + 138] = score;
-            scores[xy + 206] = score;
-            scores[xy + 274] = score;
-            scores[xy + 207] = score;
                         return;
             
             case CENTER:
@@ -695,6 +695,153 @@ public class VisionUtils {
         int xy = x + y*68 + 552;
         switch(dir){
                         
+            case NORTH:
+                            scores[xy + 201] /= 2;
+                            scores[xy + 134] /= 2;
+                            scores[xy + 202] /= 2;
+                            scores[xy + 270] /= 2;
+                            scores[xy + 67] /= 2;
+                            scores[xy + 135] /= 2;
+                            scores[xy + 203] /= 2;
+                            scores[xy + 271] /= 2;
+                            scores[xy ] /= 2;
+                            scores[xy + 68] /= 2;
+                            scores[xy + 136] /= 2;
+                            scores[xy + 204] /= 2;
+                            scores[xy + 272] /= 2;
+                            scores[xy + 69] /= 2;
+                            scores[xy + 137] /= 2;
+                            scores[xy + 205] /= 2;
+                            scores[xy + 273] /= 2;
+                            scores[xy + 138] /= 2;
+                            scores[xy + 206] /= 2;
+                            scores[xy + 274] /= 2;
+                            scores[xy + 207] /= 2;
+                        return;
+                        
+            case NORTHEAST:
+                            scores[xy ] /= 2;
+                            scores[xy + 68] /= 2;
+                            scores[xy + 136] /= 2;
+                            scores[xy + 204] /= 2;
+                            scores[xy + 272] /= 2;
+                            scores[xy + 1] /= 2;
+                            scores[xy + 69] /= 2;
+                            scores[xy + 137] /= 2;
+                            scores[xy + 205] /= 2;
+                            scores[xy + 273] /= 2;
+                            scores[xy + 2] /= 2;
+                            scores[xy + 70] /= 2;
+                            scores[xy + 138] /= 2;
+                            scores[xy + 206] /= 2;
+                            scores[xy + 274] /= 2;
+                            scores[xy + 3] /= 2;
+                            scores[xy + 71] /= 2;
+                            scores[xy + 139] /= 2;
+                            scores[xy + 207] /= 2;
+                            scores[xy + 4] /= 2;
+                            scores[xy + 72] /= 2;
+                            scores[xy + 140] /= 2;
+                        return;
+                        
+            case EAST:
+                            scores[xy ] /= 2;
+                            scores[xy - 67] /= 2;
+                            scores[xy + 1] /= 2;
+                            scores[xy + 69] /= 2;
+                            scores[xy - 134] /= 2;
+                            scores[xy - 66] /= 2;
+                            scores[xy + 2] /= 2;
+                            scores[xy + 70] /= 2;
+                            scores[xy + 138] /= 2;
+                            scores[xy - 201] /= 2;
+                            scores[xy - 133] /= 2;
+                            scores[xy - 65] /= 2;
+                            scores[xy + 3] /= 2;
+                            scores[xy + 71] /= 2;
+                            scores[xy + 139] /= 2;
+                            scores[xy + 207] /= 2;
+                            scores[xy - 132] /= 2;
+                            scores[xy - 64] /= 2;
+                            scores[xy + 4] /= 2;
+                            scores[xy + 72] /= 2;
+                            scores[xy + 140] /= 2;
+                        return;
+                        
+            case SOUTHEAST:
+                            scores[xy - 272] /= 2;
+                            scores[xy - 204] /= 2;
+                            scores[xy - 136] /= 2;
+                            scores[xy - 68] /= 2;
+                            scores[xy ] /= 2;
+                            scores[xy - 271] /= 2;
+                            scores[xy - 203] /= 2;
+                            scores[xy - 135] /= 2;
+                            scores[xy - 67] /= 2;
+                            scores[xy + 1] /= 2;
+                            scores[xy - 270] /= 2;
+                            scores[xy - 202] /= 2;
+                            scores[xy - 134] /= 2;
+                            scores[xy - 66] /= 2;
+                            scores[xy + 2] /= 2;
+                            scores[xy - 201] /= 2;
+                            scores[xy - 133] /= 2;
+                            scores[xy - 65] /= 2;
+                            scores[xy + 3] /= 2;
+                            scores[xy - 132] /= 2;
+                            scores[xy - 64] /= 2;
+                            scores[xy + 4] /= 2;
+                        return;
+                        
+            case SOUTH:
+                            scores[xy - 207] /= 2;
+                            scores[xy - 274] /= 2;
+                            scores[xy - 206] /= 2;
+                            scores[xy - 138] /= 2;
+                            scores[xy - 273] /= 2;
+                            scores[xy - 205] /= 2;
+                            scores[xy - 137] /= 2;
+                            scores[xy - 69] /= 2;
+                            scores[xy - 272] /= 2;
+                            scores[xy - 204] /= 2;
+                            scores[xy - 136] /= 2;
+                            scores[xy - 68] /= 2;
+                            scores[xy ] /= 2;
+                            scores[xy - 271] /= 2;
+                            scores[xy - 203] /= 2;
+                            scores[xy - 135] /= 2;
+                            scores[xy - 67] /= 2;
+                            scores[xy - 270] /= 2;
+                            scores[xy - 202] /= 2;
+                            scores[xy - 134] /= 2;
+                            scores[xy - 201] /= 2;
+                        return;
+                        
+            case SOUTHWEST:
+                            scores[xy - 140] /= 2;
+                            scores[xy - 72] /= 2;
+                            scores[xy - 4] /= 2;
+                            scores[xy - 207] /= 2;
+                            scores[xy - 139] /= 2;
+                            scores[xy - 71] /= 2;
+                            scores[xy - 3] /= 2;
+                            scores[xy - 274] /= 2;
+                            scores[xy - 206] /= 2;
+                            scores[xy - 138] /= 2;
+                            scores[xy - 70] /= 2;
+                            scores[xy - 2] /= 2;
+                            scores[xy - 273] /= 2;
+                            scores[xy - 205] /= 2;
+                            scores[xy - 137] /= 2;
+                            scores[xy - 69] /= 2;
+                            scores[xy - 1] /= 2;
+                            scores[xy - 272] /= 2;
+                            scores[xy - 204] /= 2;
+                            scores[xy - 136] /= 2;
+                            scores[xy - 68] /= 2;
+                            scores[xy ] /= 2;
+                        return;
+                        
             case WEST:
                             scores[xy - 140] /= 2;
                             scores[xy - 72] /= 2;
@@ -742,153 +889,6 @@ public class VisionUtils {
                             scores[xy + 136] /= 2;
                             scores[xy + 204] /= 2;
                             scores[xy + 272] /= 2;
-                        return;
-                        
-            case SOUTHWEST:
-                            scores[xy - 140] /= 2;
-                            scores[xy - 72] /= 2;
-                            scores[xy - 4] /= 2;
-                            scores[xy - 207] /= 2;
-                            scores[xy - 139] /= 2;
-                            scores[xy - 71] /= 2;
-                            scores[xy - 3] /= 2;
-                            scores[xy - 274] /= 2;
-                            scores[xy - 206] /= 2;
-                            scores[xy - 138] /= 2;
-                            scores[xy - 70] /= 2;
-                            scores[xy - 2] /= 2;
-                            scores[xy - 273] /= 2;
-                            scores[xy - 205] /= 2;
-                            scores[xy - 137] /= 2;
-                            scores[xy - 69] /= 2;
-                            scores[xy - 1] /= 2;
-                            scores[xy - 272] /= 2;
-                            scores[xy - 204] /= 2;
-                            scores[xy - 136] /= 2;
-                            scores[xy - 68] /= 2;
-                            scores[xy ] /= 2;
-                        return;
-                        
-            case SOUTH:
-                            scores[xy - 207] /= 2;
-                            scores[xy - 274] /= 2;
-                            scores[xy - 206] /= 2;
-                            scores[xy - 138] /= 2;
-                            scores[xy - 273] /= 2;
-                            scores[xy - 205] /= 2;
-                            scores[xy - 137] /= 2;
-                            scores[xy - 69] /= 2;
-                            scores[xy - 272] /= 2;
-                            scores[xy - 204] /= 2;
-                            scores[xy - 136] /= 2;
-                            scores[xy - 68] /= 2;
-                            scores[xy ] /= 2;
-                            scores[xy - 271] /= 2;
-                            scores[xy - 203] /= 2;
-                            scores[xy - 135] /= 2;
-                            scores[xy - 67] /= 2;
-                            scores[xy - 270] /= 2;
-                            scores[xy - 202] /= 2;
-                            scores[xy - 134] /= 2;
-                            scores[xy - 201] /= 2;
-                        return;
-                        
-            case SOUTHEAST:
-                            scores[xy - 272] /= 2;
-                            scores[xy - 204] /= 2;
-                            scores[xy - 136] /= 2;
-                            scores[xy - 68] /= 2;
-                            scores[xy ] /= 2;
-                            scores[xy - 271] /= 2;
-                            scores[xy - 203] /= 2;
-                            scores[xy - 135] /= 2;
-                            scores[xy - 67] /= 2;
-                            scores[xy + 1] /= 2;
-                            scores[xy - 270] /= 2;
-                            scores[xy - 202] /= 2;
-                            scores[xy - 134] /= 2;
-                            scores[xy - 66] /= 2;
-                            scores[xy + 2] /= 2;
-                            scores[xy - 201] /= 2;
-                            scores[xy - 133] /= 2;
-                            scores[xy - 65] /= 2;
-                            scores[xy + 3] /= 2;
-                            scores[xy - 132] /= 2;
-                            scores[xy - 64] /= 2;
-                            scores[xy + 4] /= 2;
-                        return;
-                        
-            case EAST:
-                            scores[xy ] /= 2;
-                            scores[xy - 67] /= 2;
-                            scores[xy + 1] /= 2;
-                            scores[xy + 69] /= 2;
-                            scores[xy - 134] /= 2;
-                            scores[xy - 66] /= 2;
-                            scores[xy + 2] /= 2;
-                            scores[xy + 70] /= 2;
-                            scores[xy + 138] /= 2;
-                            scores[xy - 201] /= 2;
-                            scores[xy - 133] /= 2;
-                            scores[xy - 65] /= 2;
-                            scores[xy + 3] /= 2;
-                            scores[xy + 71] /= 2;
-                            scores[xy + 139] /= 2;
-                            scores[xy + 207] /= 2;
-                            scores[xy - 132] /= 2;
-                            scores[xy - 64] /= 2;
-                            scores[xy + 4] /= 2;
-                            scores[xy + 72] /= 2;
-                            scores[xy + 140] /= 2;
-                        return;
-                        
-            case NORTHEAST:
-                            scores[xy ] /= 2;
-                            scores[xy + 68] /= 2;
-                            scores[xy + 136] /= 2;
-                            scores[xy + 204] /= 2;
-                            scores[xy + 272] /= 2;
-                            scores[xy + 1] /= 2;
-                            scores[xy + 69] /= 2;
-                            scores[xy + 137] /= 2;
-                            scores[xy + 205] /= 2;
-                            scores[xy + 273] /= 2;
-                            scores[xy + 2] /= 2;
-                            scores[xy + 70] /= 2;
-                            scores[xy + 138] /= 2;
-                            scores[xy + 206] /= 2;
-                            scores[xy + 274] /= 2;
-                            scores[xy + 3] /= 2;
-                            scores[xy + 71] /= 2;
-                            scores[xy + 139] /= 2;
-                            scores[xy + 207] /= 2;
-                            scores[xy + 4] /= 2;
-                            scores[xy + 72] /= 2;
-                            scores[xy + 140] /= 2;
-                        return;
-                        
-            case NORTH:
-                            scores[xy + 201] /= 2;
-                            scores[xy + 134] /= 2;
-                            scores[xy + 202] /= 2;
-                            scores[xy + 270] /= 2;
-                            scores[xy + 67] /= 2;
-                            scores[xy + 135] /= 2;
-                            scores[xy + 203] /= 2;
-                            scores[xy + 271] /= 2;
-                            scores[xy ] /= 2;
-                            scores[xy + 68] /= 2;
-                            scores[xy + 136] /= 2;
-                            scores[xy + 204] /= 2;
-                            scores[xy + 272] /= 2;
-                            scores[xy + 69] /= 2;
-                            scores[xy + 137] /= 2;
-                            scores[xy + 205] /= 2;
-                            scores[xy + 273] /= 2;
-                            scores[xy + 138] /= 2;
-                            scores[xy + 206] /= 2;
-                            scores[xy + 274] /= 2;
-                            scores[xy + 207] /= 2;
                         return;
                         case CENTER:
                 System.out.println("ERR: can't divideScoreBy2InRatVision for CENTER");
@@ -902,6 +902,153 @@ public class VisionUtils {
         int xy = x + y*68 + 552;
         switch(dir){
                         
+            case NORTH:
+                            scores[xy + 201] *= 2;
+                            scores[xy + 134] *= 2;
+                            scores[xy + 202] *= 2;
+                            scores[xy + 270] *= 2;
+                            scores[xy + 67] *= 2;
+                            scores[xy + 135] *= 2;
+                            scores[xy + 203] *= 2;
+                            scores[xy + 271] *= 2;
+                            scores[xy ] *= 2;
+                            scores[xy + 68] *= 2;
+                            scores[xy + 136] *= 2;
+                            scores[xy + 204] *= 2;
+                            scores[xy + 272] *= 2;
+                            scores[xy + 69] *= 2;
+                            scores[xy + 137] *= 2;
+                            scores[xy + 205] *= 2;
+                            scores[xy + 273] *= 2;
+                            scores[xy + 138] *= 2;
+                            scores[xy + 206] *= 2;
+                            scores[xy + 274] *= 2;
+                            scores[xy + 207] *= 2;
+                        return;
+                        
+            case NORTHEAST:
+                            scores[xy ] *= 2;
+                            scores[xy + 68] *= 2;
+                            scores[xy + 136] *= 2;
+                            scores[xy + 204] *= 2;
+                            scores[xy + 272] *= 2;
+                            scores[xy + 1] *= 2;
+                            scores[xy + 69] *= 2;
+                            scores[xy + 137] *= 2;
+                            scores[xy + 205] *= 2;
+                            scores[xy + 273] *= 2;
+                            scores[xy + 2] *= 2;
+                            scores[xy + 70] *= 2;
+                            scores[xy + 138] *= 2;
+                            scores[xy + 206] *= 2;
+                            scores[xy + 274] *= 2;
+                            scores[xy + 3] *= 2;
+                            scores[xy + 71] *= 2;
+                            scores[xy + 139] *= 2;
+                            scores[xy + 207] *= 2;
+                            scores[xy + 4] *= 2;
+                            scores[xy + 72] *= 2;
+                            scores[xy + 140] *= 2;
+                        return;
+                        
+            case EAST:
+                            scores[xy ] *= 2;
+                            scores[xy - 67] *= 2;
+                            scores[xy + 1] *= 2;
+                            scores[xy + 69] *= 2;
+                            scores[xy - 134] *= 2;
+                            scores[xy - 66] *= 2;
+                            scores[xy + 2] *= 2;
+                            scores[xy + 70] *= 2;
+                            scores[xy + 138] *= 2;
+                            scores[xy - 201] *= 2;
+                            scores[xy - 133] *= 2;
+                            scores[xy - 65] *= 2;
+                            scores[xy + 3] *= 2;
+                            scores[xy + 71] *= 2;
+                            scores[xy + 139] *= 2;
+                            scores[xy + 207] *= 2;
+                            scores[xy - 132] *= 2;
+                            scores[xy - 64] *= 2;
+                            scores[xy + 4] *= 2;
+                            scores[xy + 72] *= 2;
+                            scores[xy + 140] *= 2;
+                        return;
+                        
+            case SOUTHEAST:
+                            scores[xy - 272] *= 2;
+                            scores[xy - 204] *= 2;
+                            scores[xy - 136] *= 2;
+                            scores[xy - 68] *= 2;
+                            scores[xy ] *= 2;
+                            scores[xy - 271] *= 2;
+                            scores[xy - 203] *= 2;
+                            scores[xy - 135] *= 2;
+                            scores[xy - 67] *= 2;
+                            scores[xy + 1] *= 2;
+                            scores[xy - 270] *= 2;
+                            scores[xy - 202] *= 2;
+                            scores[xy - 134] *= 2;
+                            scores[xy - 66] *= 2;
+                            scores[xy + 2] *= 2;
+                            scores[xy - 201] *= 2;
+                            scores[xy - 133] *= 2;
+                            scores[xy - 65] *= 2;
+                            scores[xy + 3] *= 2;
+                            scores[xy - 132] *= 2;
+                            scores[xy - 64] *= 2;
+                            scores[xy + 4] *= 2;
+                        return;
+                        
+            case SOUTH:
+                            scores[xy - 207] *= 2;
+                            scores[xy - 274] *= 2;
+                            scores[xy - 206] *= 2;
+                            scores[xy - 138] *= 2;
+                            scores[xy - 273] *= 2;
+                            scores[xy - 205] *= 2;
+                            scores[xy - 137] *= 2;
+                            scores[xy - 69] *= 2;
+                            scores[xy - 272] *= 2;
+                            scores[xy - 204] *= 2;
+                            scores[xy - 136] *= 2;
+                            scores[xy - 68] *= 2;
+                            scores[xy ] *= 2;
+                            scores[xy - 271] *= 2;
+                            scores[xy - 203] *= 2;
+                            scores[xy - 135] *= 2;
+                            scores[xy - 67] *= 2;
+                            scores[xy - 270] *= 2;
+                            scores[xy - 202] *= 2;
+                            scores[xy - 134] *= 2;
+                            scores[xy - 201] *= 2;
+                        return;
+                        
+            case SOUTHWEST:
+                            scores[xy - 140] *= 2;
+                            scores[xy - 72] *= 2;
+                            scores[xy - 4] *= 2;
+                            scores[xy - 207] *= 2;
+                            scores[xy - 139] *= 2;
+                            scores[xy - 71] *= 2;
+                            scores[xy - 3] *= 2;
+                            scores[xy - 274] *= 2;
+                            scores[xy - 206] *= 2;
+                            scores[xy - 138] *= 2;
+                            scores[xy - 70] *= 2;
+                            scores[xy - 2] *= 2;
+                            scores[xy - 273] *= 2;
+                            scores[xy - 205] *= 2;
+                            scores[xy - 137] *= 2;
+                            scores[xy - 69] *= 2;
+                            scores[xy - 1] *= 2;
+                            scores[xy - 272] *= 2;
+                            scores[xy - 204] *= 2;
+                            scores[xy - 136] *= 2;
+                            scores[xy - 68] *= 2;
+                            scores[xy ] *= 2;
+                        return;
+                        
             case WEST:
                             scores[xy - 140] *= 2;
                             scores[xy - 72] *= 2;
@@ -949,153 +1096,6 @@ public class VisionUtils {
                             scores[xy + 136] *= 2;
                             scores[xy + 204] *= 2;
                             scores[xy + 272] *= 2;
-                        return;
-                        
-            case SOUTHWEST:
-                            scores[xy - 140] *= 2;
-                            scores[xy - 72] *= 2;
-                            scores[xy - 4] *= 2;
-                            scores[xy - 207] *= 2;
-                            scores[xy - 139] *= 2;
-                            scores[xy - 71] *= 2;
-                            scores[xy - 3] *= 2;
-                            scores[xy - 274] *= 2;
-                            scores[xy - 206] *= 2;
-                            scores[xy - 138] *= 2;
-                            scores[xy - 70] *= 2;
-                            scores[xy - 2] *= 2;
-                            scores[xy - 273] *= 2;
-                            scores[xy - 205] *= 2;
-                            scores[xy - 137] *= 2;
-                            scores[xy - 69] *= 2;
-                            scores[xy - 1] *= 2;
-                            scores[xy - 272] *= 2;
-                            scores[xy - 204] *= 2;
-                            scores[xy - 136] *= 2;
-                            scores[xy - 68] *= 2;
-                            scores[xy ] *= 2;
-                        return;
-                        
-            case SOUTH:
-                            scores[xy - 207] *= 2;
-                            scores[xy - 274] *= 2;
-                            scores[xy - 206] *= 2;
-                            scores[xy - 138] *= 2;
-                            scores[xy - 273] *= 2;
-                            scores[xy - 205] *= 2;
-                            scores[xy - 137] *= 2;
-                            scores[xy - 69] *= 2;
-                            scores[xy - 272] *= 2;
-                            scores[xy - 204] *= 2;
-                            scores[xy - 136] *= 2;
-                            scores[xy - 68] *= 2;
-                            scores[xy ] *= 2;
-                            scores[xy - 271] *= 2;
-                            scores[xy - 203] *= 2;
-                            scores[xy - 135] *= 2;
-                            scores[xy - 67] *= 2;
-                            scores[xy - 270] *= 2;
-                            scores[xy - 202] *= 2;
-                            scores[xy - 134] *= 2;
-                            scores[xy - 201] *= 2;
-                        return;
-                        
-            case SOUTHEAST:
-                            scores[xy - 272] *= 2;
-                            scores[xy - 204] *= 2;
-                            scores[xy - 136] *= 2;
-                            scores[xy - 68] *= 2;
-                            scores[xy ] *= 2;
-                            scores[xy - 271] *= 2;
-                            scores[xy - 203] *= 2;
-                            scores[xy - 135] *= 2;
-                            scores[xy - 67] *= 2;
-                            scores[xy + 1] *= 2;
-                            scores[xy - 270] *= 2;
-                            scores[xy - 202] *= 2;
-                            scores[xy - 134] *= 2;
-                            scores[xy - 66] *= 2;
-                            scores[xy + 2] *= 2;
-                            scores[xy - 201] *= 2;
-                            scores[xy - 133] *= 2;
-                            scores[xy - 65] *= 2;
-                            scores[xy + 3] *= 2;
-                            scores[xy - 132] *= 2;
-                            scores[xy - 64] *= 2;
-                            scores[xy + 4] *= 2;
-                        return;
-                        
-            case EAST:
-                            scores[xy ] *= 2;
-                            scores[xy - 67] *= 2;
-                            scores[xy + 1] *= 2;
-                            scores[xy + 69] *= 2;
-                            scores[xy - 134] *= 2;
-                            scores[xy - 66] *= 2;
-                            scores[xy + 2] *= 2;
-                            scores[xy + 70] *= 2;
-                            scores[xy + 138] *= 2;
-                            scores[xy - 201] *= 2;
-                            scores[xy - 133] *= 2;
-                            scores[xy - 65] *= 2;
-                            scores[xy + 3] *= 2;
-                            scores[xy + 71] *= 2;
-                            scores[xy + 139] *= 2;
-                            scores[xy + 207] *= 2;
-                            scores[xy - 132] *= 2;
-                            scores[xy - 64] *= 2;
-                            scores[xy + 4] *= 2;
-                            scores[xy + 72] *= 2;
-                            scores[xy + 140] *= 2;
-                        return;
-                        
-            case NORTHEAST:
-                            scores[xy ] *= 2;
-                            scores[xy + 68] *= 2;
-                            scores[xy + 136] *= 2;
-                            scores[xy + 204] *= 2;
-                            scores[xy + 272] *= 2;
-                            scores[xy + 1] *= 2;
-                            scores[xy + 69] *= 2;
-                            scores[xy + 137] *= 2;
-                            scores[xy + 205] *= 2;
-                            scores[xy + 273] *= 2;
-                            scores[xy + 2] *= 2;
-                            scores[xy + 70] *= 2;
-                            scores[xy + 138] *= 2;
-                            scores[xy + 206] *= 2;
-                            scores[xy + 274] *= 2;
-                            scores[xy + 3] *= 2;
-                            scores[xy + 71] *= 2;
-                            scores[xy + 139] *= 2;
-                            scores[xy + 207] *= 2;
-                            scores[xy + 4] *= 2;
-                            scores[xy + 72] *= 2;
-                            scores[xy + 140] *= 2;
-                        return;
-                        
-            case NORTH:
-                            scores[xy + 201] *= 2;
-                            scores[xy + 134] *= 2;
-                            scores[xy + 202] *= 2;
-                            scores[xy + 270] *= 2;
-                            scores[xy + 67] *= 2;
-                            scores[xy + 135] *= 2;
-                            scores[xy + 203] *= 2;
-                            scores[xy + 271] *= 2;
-                            scores[xy ] *= 2;
-                            scores[xy + 68] *= 2;
-                            scores[xy + 136] *= 2;
-                            scores[xy + 204] *= 2;
-                            scores[xy + 272] *= 2;
-                            scores[xy + 69] *= 2;
-                            scores[xy + 137] *= 2;
-                            scores[xy + 205] *= 2;
-                            scores[xy + 273] *= 2;
-                            scores[xy + 138] *= 2;
-                            scores[xy + 206] *= 2;
-                            scores[xy + 274] *= 2;
-                            scores[xy + 207] *= 2;
                         return;
                         case CENTER:
                 System.out.println("ERR: can't divideScoreBy2InRatVision for CENTER");
@@ -1223,14 +1223,14 @@ public class VisionUtils {
 
         return switch(unit){            case BABY_RAT -> switch(direction){
 
+                                case NORTH -> (int)( + scores[xy + 201] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy + 207]);
+                                case NORTHEAST -> (int)( + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140]);
+                                case EAST -> (int)( + scores[xy ] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140]);
+                                case SOUTHEAST -> (int)( + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4]);
+                                case SOUTH -> (int)( + scores[xy - 207] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 201]);
+                                case SOUTHWEST -> (int)( + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ]);
                                 case WEST -> (int)( + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy ]);
                                 case NORTHWEST -> (int)( + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272]);
-                                case SOUTHWEST -> (int)( + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ]);
-                                case SOUTH -> (int)( + scores[xy - 207] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 201]);
-                                case SOUTHEAST -> (int)( + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4]);
-                                case EAST -> (int)( + scores[xy ] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140]);
-                                case NORTHEAST -> (int)( + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140]);
-                                case NORTH -> (int)( + scores[xy + 201] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy + 207]);
                 
                 case CENTER -> {
                     System.out.println("ERR: getScoreInViewCan't turn to center");
@@ -1239,14 +1239,14 @@ public class VisionUtils {
             };
                         case RAT_KING -> switch(direction){
 
+                                case NORTH -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
+                                case NORTHEAST -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
+                                case EAST -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
+                                case SOUTHEAST -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
+                                case SOUTH -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
+                                case SOUTHWEST -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
                                 case WEST -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
                                 case NORTHWEST -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
-                                case SOUTHWEST -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
-                                case SOUTH -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
-                                case SOUTHEAST -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
-                                case EAST -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
-                                case NORTHEAST -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
-                                case NORTH -> (int)( + scores[xy - 5] + scores[xy - 208] + scores[xy - 140] + scores[xy - 72] + scores[xy - 4] + scores[xy + 64] + scores[xy + 132] + scores[xy + 200] + scores[xy - 275] + scores[xy - 207] + scores[xy - 139] + scores[xy - 71] + scores[xy - 3] + scores[xy + 65] + scores[xy + 133] + scores[xy + 201] + scores[xy + 269] + scores[xy - 274] + scores[xy - 206] + scores[xy - 138] + scores[xy - 70] + scores[xy - 2] + scores[xy + 66] + scores[xy + 134] + scores[xy + 202] + scores[xy + 270] + scores[xy - 273] + scores[xy - 205] + scores[xy - 137] + scores[xy - 69] + scores[xy - 1] + scores[xy + 67] + scores[xy + 135] + scores[xy + 203] + scores[xy + 271] + scores[xy - 340] + scores[xy - 272] + scores[xy - 204] + scores[xy - 136] + scores[xy - 68] + scores[xy ] + scores[xy + 68] + scores[xy + 136] + scores[xy + 204] + scores[xy + 272] + scores[xy + 340] + scores[xy - 271] + scores[xy - 203] + scores[xy - 135] + scores[xy - 67] + scores[xy + 1] + scores[xy + 69] + scores[xy + 137] + scores[xy + 205] + scores[xy + 273] + scores[xy - 270] + scores[xy - 202] + scores[xy - 134] + scores[xy - 66] + scores[xy + 2] + scores[xy + 70] + scores[xy + 138] + scores[xy + 206] + scores[xy + 274] + scores[xy - 269] + scores[xy - 201] + scores[xy - 133] + scores[xy - 65] + scores[xy + 3] + scores[xy + 71] + scores[xy + 139] + scores[xy + 207] + scores[xy + 275] + scores[xy - 200] + scores[xy - 132] + scores[xy - 64] + scores[xy + 4] + scores[xy + 72] + scores[xy + 140] + scores[xy + 208] + scores[xy + 5]);
                 
                 case CENTER -> {
                     System.out.println("ERR: getScoreInViewCan't turn to center");

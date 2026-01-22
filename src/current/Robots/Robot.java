@@ -28,8 +28,8 @@ public class Robot {
 
     // Nearest locations
     public static MapLocation nearestCat;
-    public static MapLocation nearestRat;
     public static MapLocation nearestKing;
+    public static MapLocation nearestAllyRat;
     public static MapLocation nearestEnemyRat;
     public static MapLocation nearestEnemyKing;
     public static MapLocation nearestMine;
@@ -37,16 +37,16 @@ public class Robot {
     public static MapLocation nearestCheese;
 
     // Nearest ID, ID are mod 4096
+    public static int nearestAllyRatID;
     public static int nearestEnemyRatID;
     public static int nearestCatID;
     public static int nearestKingID;
     public static int nearestEnemyKingID;
 
     // Memory
-    public static MapLocations rats = new MapLocations((char) 100);
     public static MapLocations cheeseMines = new MapLocations((char) 150);
     public static MapLocations cheeseMinesFromArray = new  MapLocations((char) 150);
-    public static MapLocationsWithId allyRats = new MapLocationsWithId((char) 15, true);
+    public static MapLocationsWithId alliesRats = new MapLocationsWithId((char) 100, true);
     public static MapLocationsWithId enemiesRats = new MapLocationsWithId((char) 30, true);
     public static MapLocationsWithId cats = new MapLocationsWithId((char) 100, true);
     public static MapLocationsWithId kings = new MapLocationsWithId((char) 100, true);
