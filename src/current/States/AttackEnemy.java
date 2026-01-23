@@ -29,17 +29,35 @@ public class AttackEnemy extends State {
     public static char[] attackDirections;
     public static boolean[] isThrowAction;
     public static boolean throwEnable = true;
+    private static int noAttackStreak = 0;
+    private static final int MAX_NO_ATTACK_STREAK = 6;
 
     @Override
     public Result run() throws GameActionException {
         // Check if enemy
         if (nearestEnemyRat == null || myLoc.distanceSquaredTo(nearestEnemyRat) > 18) {
+            noAttackStreak = 0;
             return new Result(OK, "No enemy or too far");
         }
 
         // Play
         throwEnable = true;
-        return play();
+        boolean actionReadyAtStart = rc.isActionReady();
+        Result result = play();
+        if(actionReadyAtStart){
+            if(!rc.isActionReady()){
+                noAttackStreak = 0;
+            }else{
+                noAttackStreak++;
+            }
+        }
+
+        if(noAttackStreak >= MAX_NO_ATTACK_STREAK){
+            noAttackStreak = 0;
+            return new Result(END_OF_TURN, "No attack for a while, cooling down");
+        }
+
+        return result;
     }
 
     /// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,6 +71,9 @@ public class AttackEnemy extends State {
         // For all enemies, add attack, danger and is throw to them
         int i = 0;
         boolean canThrow = throwEnable & (rc.getCarrying() != null) && rc.isActionReady();
+        int baseDamage = GameConstants.RAT_BITE_DAMAGE;
+        int cheeseBonusDamage = Math.min(3, rc.getRawCheese());
+        Team myTeam = rc.getTeam();
         while (i < enemiesRats.size) {
             debug("Rat " + enemiesRats.ids[i] + " at " + enemiesRats.locs[i]);
 
@@ -64,7 +85,13 @@ public class AttackEnemy extends State {
 
             // Add micro score
             char targetDir = directionEnemyRats[enemiesRats.ids[i]];
-            int damage = 10; // TODO: Maybe more damage if cheese, or more if can kill enemey ?
+            int damage = baseDamage + cheeseBonusDamage;
+            if(rc.canSenseLocation(targetLoc)){
+                RobotInfo info = rc.senseRobotAtLocation(targetLoc);
+                if(info != null && info.getTeam() != myTeam && info.getHealth() <= damage){
+                    damage += baseDamage;
+                }
+            }
 
             // Add bonus if can ratnap
             long bonusIfCanRatnap = (rc.getCarrying() == null) ? 100 : 0;
@@ -144,7 +171,6 @@ public class AttackEnemy extends State {
     /// /////////////////////////////////// PLAY        ////////////////////////////////////////////////////////////////
     /// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // TODO: Add cooldown, if can"t attack during 5 or 6 consecutive 5 turns, exit mode
     public Result play() throws GameActionException {
         // init scores
         initScore();

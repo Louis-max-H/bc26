@@ -28,11 +28,8 @@ public class PathFinding {
         RobotController rc = Robot.rc;
         MapLocation myLoc = Robot.rc.getLocation();
 
-        // TODO: Consider we can always dig
-        // Check if we can dig
-        // if(rc.getGlobalCheese() < GameConstants.DIG_DIRT_CHEESE_COST){
-        //    digEnable = false;
-        // }
+        // Check if we can afford digging this turn.
+        digEnable = rc.getGlobalCheese() >= GameConstants.DIG_DIRT_CHEESE_COST;
 
 
         // Check all direction
@@ -40,7 +37,7 @@ public class PathFinding {
             MapLocation loc = myLoc.add(dir);
 
             if(!rc.canMove(dir)) {
-                int cellType = BugNavLmx.mapCosts[loc.x + (loc.y<<7) + 128];
+                int cellType = BugNavLmx.mapCosts[loc.x + (loc.y<<7) + 129];
 
                 // If we have a wall, can't dig
                 if (cellType == BugNavLmx.SCORE_CELL_WALL) {
@@ -132,7 +129,7 @@ public class PathFinding {
         }
 
         // If dirt, turn to the direction and remove dirt
-        int xy = locMove.x + 60 * locMove.y;
+        int xy = locMove.x + (locMove.y<<7) + 129;
         Robot.print("Score at loc is " + (int)BugNavLmx.mapCosts[xy]);
         if(BugNavLmx.mapCosts[xy] == BugNavLmx.SCORE_CELL_IF_DIG){
             Robot.print("Try diging dirt at " + locMove);

@@ -292,8 +292,55 @@ public class VisionUtils {
         if(bestDir != Direction.CENTER){
             rc.turn(bestDir);
         }else{
-            //TODO: Explore function ? 
-            rc.turn(rc.getDirection().rotateRight().rotateRight());
+            Direction fallbackDir = Direction.CENTER;
+            int fallbackScore = 0;
+            int fallbackScore0 = getScoreInView(rc.getLocation(), Direction.NORTH, rc.getType());
+            if(fallbackScore0 > fallbackScore){
+                fallbackScore = fallbackScore0;
+                fallbackDir = Direction.NORTH;
+            }
+            int fallbackScore1 = getScoreInView(rc.getLocation(), Direction.NORTHEAST, rc.getType());
+            if(fallbackScore1 > fallbackScore){
+                fallbackScore = fallbackScore1;
+                fallbackDir = Direction.NORTHEAST;
+            }
+            int fallbackScore2 = getScoreInView(rc.getLocation(), Direction.EAST, rc.getType());
+            if(fallbackScore2 > fallbackScore){
+                fallbackScore = fallbackScore2;
+                fallbackDir = Direction.EAST;
+            }
+            int fallbackScore3 = getScoreInView(rc.getLocation(), Direction.SOUTHEAST, rc.getType());
+            if(fallbackScore3 > fallbackScore){
+                fallbackScore = fallbackScore3;
+                fallbackDir = Direction.SOUTHEAST;
+            }
+            int fallbackScore4 = getScoreInView(rc.getLocation(), Direction.SOUTH, rc.getType());
+            if(fallbackScore4 > fallbackScore){
+                fallbackScore = fallbackScore4;
+                fallbackDir = Direction.SOUTH;
+            }
+            int fallbackScore5 = getScoreInView(rc.getLocation(), Direction.SOUTHWEST, rc.getType());
+            if(fallbackScore5 > fallbackScore){
+                fallbackScore = fallbackScore5;
+                fallbackDir = Direction.SOUTHWEST;
+            }
+            int fallbackScore6 = getScoreInView(rc.getLocation(), Direction.WEST, rc.getType());
+            if(fallbackScore6 > fallbackScore){
+                fallbackScore = fallbackScore6;
+                fallbackDir = Direction.WEST;
+            }
+            int fallbackScore7 = getScoreInView(rc.getLocation(), Direction.NORTHWEST, rc.getType());
+            if(fallbackScore7 > fallbackScore){
+                fallbackScore = fallbackScore7;
+                fallbackDir = Direction.NORTHWEST;
+            }
+                        if(fallbackDir != Direction.CENTER){
+                bestDir = fallbackDir;
+                bestScore = fallbackScore;
+                rc.turn(fallbackDir);
+            }else{
+                rc.turn(rc.getDirection().rotateRight().rotateRight());
+            }
         }
         Robot.print(String.format("Smart look best dir is %10s with score %d", bestDir, bestScore));
         return new Result(OK, "Looked at " + bestDir + " with score " + bestScore);
@@ -1272,12 +1319,14 @@ public class VisionUtils {
         RobotController rc = Robot.rc;
 
         for(MapInfo infos: rc.senseNearbyMapInfos()){
+            MapLocation loc = infos.getMapLocation();
+            int xy = loc.x + (loc.y<<7) + 129;
             if (infos.isPassable()) {
-                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = passable;
+                scores[xy] = passable;
             } else if (infos.isDirt()) {
-                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = dirt;
+                scores[xy] = dirt;
             } else {
-                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = wall;
+                scores[xy] = wall;
             }
         }
     }

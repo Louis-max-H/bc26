@@ -76,13 +76,8 @@ if(PathFinding.move(bestDir).notOk()){
 ### Déplacement vers une cible
 Et si je veux me déplacer vers un endroit précis ?
 ```java
-// TODOS: Use Bugnav to get best direction to loc
-public static Direction directionTo(MapLocation loc){
-    return Robot.rc.getLocation().directionTo(loc);
-}
-
 public static Result moveTo(MapLocation loc) throws GameActionException {
-    return move(directionTo(loc));
+    return PathFinding.smartMoveTo(loc);
 }
 
 public static Result move(Direction dir) throws GameActionException {
@@ -155,4 +150,3 @@ Allez, c'est le moment de se jetter des fleurs (expression française, je ne sai
 - Car on utilise Jinja pour avoir un `VisionUtils` super rapide
 - Car on va faire des déplacements multi-heuristique
 - Car tout les paramètres de coefficients pourrons être optimisés en lançant des milliers de matchs sur des serveurs de tests, je vais surement faire ça prochainement
-

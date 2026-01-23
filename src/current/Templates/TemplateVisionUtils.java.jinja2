@@ -102,8 +102,22 @@ public class {{ className }} {
         if(bestDir != Direction.CENTER){
             rc.turn(bestDir);
         }else{
-            //TODO: Explore function ? 
-            rc.turn(rc.getDirection().rotateRight().rotateRight());
+            Direction fallbackDir = Direction.CENTER;
+            int fallbackScore = 0;
+            {% for dir in directionsWhitoutCenter -%}
+            int fallbackScore{{dirsOrds[dir]}} = getScoreInView(rc.getLocation(), Direction.{{dir}}, rc.getType());
+            if(fallbackScore{{dirsOrds[dir]}} > fallbackScore){
+                fallbackScore = fallbackScore{{dirsOrds[dir]}};
+                fallbackDir = Direction.{{dir}};
+            }
+            {% endfor %}
+            if(fallbackDir != Direction.CENTER){
+                bestDir = fallbackDir;
+                bestScore = fallbackScore;
+                rc.turn(fallbackDir);
+            }else{
+                rc.turn(rc.getDirection().rotateRight().rotateRight());
+            }
         }
         Robot.print(String.format("Smart look best dir is %10s with score %d", bestDir, bestScore));
         return new Result(OK, "Looked at " + bestDir + " with score " + bestScore);
@@ -273,12 +287,14 @@ public class {{ className }} {
         RobotController rc = Robot.rc;
 
         for(MapInfo infos: rc.senseNearbyMapInfos()){
+            MapLocation loc = infos.getMapLocation();
+            int xy = loc.x + (loc.y<<7) + 129;
             if (infos.isPassable()) {
-                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = passable;
+                scores[xy] = passable;
             } else if (infos.isDirt()) {
-                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = dirt;
+                scores[xy] = dirt;
             } else {
-                scores[infos.getMapLocation().x + 60 * infos.getMapLocation().y] = wall;
+                scores[xy] = wall;
             }
         }
     }

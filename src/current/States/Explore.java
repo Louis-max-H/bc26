@@ -27,11 +27,14 @@ public class Explore extends State {
             return new Result(CANT, "Can't turn");
         }
 
+        UnitType unitType = rc.getType();
         // For each nearby cells, add their heuristic to the direction that lead to this cell
         long[] scores = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+        long[] lookScores = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
         for(Direction dir : Direction.values()){
             if(dir != Direction.CENTER){
-                scores[dir.ordinal()] = VisionUtils.getScoreInView(myLoc.add(dir), dir, rc.getType());
+                scores[dir.ordinal()] = VisionUtils.getScoreInView(myLoc.add(dir), dir, unitType);
+                lookScores[dir.ordinal()] = VisionUtils.getScoreInView(myLoc, dir, unitType);
             }
         }
 
@@ -45,15 +48,40 @@ public class Explore extends State {
         scores[dirToCenter.rotateLeft().ordinal()] += centerBias;
         scores[dirToCenter.rotateRight().ordinal()] += centerBias;
 
+        // If turning yields more exploration than moving, prefer to turn and rescore next turn.
+        Direction bestLookDir = Direction.CENTER;
+        long bestLookScore = 0;
+        for(Direction dir : Direction.values()){
+            if(dir == Direction.CENTER || !rc.canTurn(dir)){
+                continue;
+            }
+            long score = lookScores[dir.ordinal()];
+            if(score > bestLookScore){
+                bestLookScore = score;
+                bestLookDir = dir;
+            }
+        }
+
+        long bestMoveScore = 0;
+        for(Direction dir : Direction.values()){
+            if(dir == Direction.CENTER || !rc.canMove(dir)){
+                continue;
+            }
+            long score = scores[dir.ordinal()];
+            if(score > bestMoveScore){
+                bestMoveScore = score;
+            }
+        }
+
+        if(bestLookDir != Direction.CENTER && bestLookScore > bestMoveScore * 12 / 10){
+            rc.turn(bestLookDir);
+            return new Result(OK, "Turned to " + bestLookDir + " for better vision");
+        }
+
         // Add scores and move to best dir
         PathFinding.addScoresWithNormalization(scores, 1);
         Result result = PathFinding.moveBest();
         Result resultTurn = VisionUtils.smartLook();
         return new Result(OK, "Move result : " + result.msg + " Turn result : " + resultTurn.msg);
-
-        // TODOS: Maybe turn, and then, according to new infos, restart from beginning ?
-        // TODOS: Check if you need to move after turning
-        // TODOS: Check if second score parameters is pertinent
-        // TODOS: Check if not moving when second direction is nice, is good choice (can allow us to just tourn arround and then move)
     };
 }

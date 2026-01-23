@@ -47,6 +47,7 @@ public class Communication extends Robot {
     public static final int TYPE_ENEMY_KING   =   0b000011_000000000000_000000000000;
     public static final int TYPE_MINE         =   0b000100_000000000000_000000000000;
     public static final int TYPE_ENEMY_RAT    =   0b000101_000000000000_000000000000;
+    public static final int TYPE_ALLY_RAT     =   0b000110_000000000000_000000000000;
     public static final int TYPE_MICRO        =   0b000111_000000000000_000000000000;
     public static final int MASK_POSITION     =   0b000000_000000000000_111111111111;
     //                                                    _            |yyyyyyxxxxxx; // Bits 0-11 : 12 bits = log2(64*64)
@@ -68,6 +69,8 @@ public class Communication extends Robot {
     public static final int SHIFT_DIR_TARGET  =  8;
     public static final int SHIFT_TARGET_ID   = 11;
     public static final int SHIFT_DIR_SENDER  = 29;
+
+    private static final int CHEESE_RETURN_BONUS = 20000;
 
     /////////////////////////////////////// Message Decoding ///////////////////////////////////////
 
@@ -107,9 +110,13 @@ public class Communication extends Robot {
                 enemiesRats.add(new MapLocation(x, y), (msg & MASK_UNIT_ID) >> 12);
                 break;
 
-            //TODO: Add ally position ?
+            case TYPE_ALLY_RAT:
+                debug("###Decoding ally rat : at x: " + x + " y: " + y);
+                alliesRats.add(new MapLocation(x, y), (msg & MASK_UNIT_ID) >> 12);
+                break;
+
             case 0:
-                // TODO: check why we have empty message, maybe during splitting messages ?
+                // Empty or uninitialized message slot.
                 break;
 
             default:
@@ -182,8 +189,19 @@ public class Communication extends Robot {
                         yield Direction.NORTH;
                     }
                 };
-                // TODO: Add bonus if come bacl with cheese, rather than divided
-                VisionUtils.divideScoreBy2InRatVision(msg.getSource(), senderDirection);
+                boolean senderHasCheese = false;
+                if(rc.canSenseLocation(msg.getSource())){
+                    RobotInfo senderInfo = rc.senseRobotAtLocation(msg.getSource());
+                    senderHasCheese = senderInfo != null
+                        && senderInfo.getTeam() == rc.getTeam()
+                        && senderInfo.getRawCheeseAmount() > 0;
+                }
+
+                if(senderHasCheese){
+                    VisionUtils.addScoreArroundUnit(msg.getSource(), CHEESE_RETURN_BONUS);
+                }else{
+                    VisionUtils.divideScoreBy2InRatVision(msg.getSource(), senderDirection);
+                }
                 lastSeenSender[msg.getSenderID() % 4096] = (char) min_round;
                 alliesRats.add(msg.getSource(), msg.getSenderID());
 
@@ -247,6 +265,9 @@ public class Communication extends Robot {
     }
     public static void addMessageEnemyRat(MapLocation loc, int id, int priority) {
         addMessage("addMessageEnemyRat", (TYPE_ENEMY_RAT | ((id % 4096) << 12) | loc.x | (loc.y << 6)), priority);
+    }
+    public static void addMessageAllyRat(MapLocation loc, int id, int priority) {
+        addMessage("addMessageAllyRat", (TYPE_ALLY_RAT | ((id % 4096) << 12) | loc.x | (loc.y << 6)), priority);
     }
     public static void addMessageEnemyKing(MapLocation loc, int id, int priority) {
         addMessage("addMessageEnemyKing", TYPE_ENEMY_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), priority);

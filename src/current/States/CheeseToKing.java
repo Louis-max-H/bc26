@@ -3,12 +3,31 @@ package current.States;
 import battlecode.common.*;
 import current.Robots.King;
 import current.Utils.PathFinding;
+import current.Utils.VisionUtils;
 
 import static current.States.Code.*;
 
 public class CheeseToKing extends State {
     public CheeseToKing(){
         this.name = "CheeseToKing";
+    }
+
+    private Direction bestDirectionCovering(MapLocation target){
+        MapLocation from = rc.getLocation();
+        UnitType unitType = rc.getType();
+        Direction bestDir = rc.getDirection();
+        int bestScore = Integer.MIN_VALUE;
+        for(Direction dir : VisionUtils.directionsToSeeTarget(target, from)){
+            if(dir == Direction.CENTER){
+                continue;
+            }
+            int score = VisionUtils.getScoreInView(from, dir, unitType);
+            if(score > bestScore){
+                bestScore = score;
+                bestDir = dir;
+            }
+        }
+        return bestDir;
     }
 
     @Override
@@ -30,9 +49,16 @@ public class CheeseToKing extends State {
         // Turn to king to transfert
         if(rc.getLocation().distanceSquaredTo(nearestKing) <= GameConstants.CHEESE_TRANSFER_RADIUS_SQUARED){
             if(rc.canTurn()){
-                rc.turn(rc.getLocation().directionTo(nearestKing));
+                Direction lookDir = bestDirectionCovering(nearestKing);
+                if(lookDir != Direction.CENTER && rc.canTurn(lookDir)){
+                    rc.turn(lookDir);
+                }else{
+                    Direction directDir = rc.getLocation().directionTo(nearestKing);
+                    if(rc.canTurn(directDir)){
+                        rc.turn(directDir);
+                    }
+                }
             }
-            // TODO: Make a function to choose the best direction voering the cell
         }
 
         // Try to transfer
