@@ -7,10 +7,10 @@
 {% set SCORE_CELL_BORDER    =   32001 %}
 
 {# Parametres pour la génération du code -#}
-{% set DEBUG = true %}
+{% set DEBUG = false %}
 {% set BATTLECODE = true %}
 {% set MAX_DEBUG_ROUND = 200 %}
-{% set DOT_DEBUG_LEVEL = 2 %} {# Level of debug for battlecode0: None, 1: Only reverse path, 2: All -#}
+{% set DOT_DEBUG_LEVEL = 0 %} {# Level of debug for battlecode0: None, 1: Only reverse path, 2: All -#}
 {% set colorLeft = "173, 216, 230" %}
 {% set colorRight = "255, 228, 181" %}
 {% set getBytecodeRemaining = "Clock.getBytecodesLeft()" if BATTLECODE else "1" %}
