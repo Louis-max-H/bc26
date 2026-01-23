@@ -53,13 +53,26 @@ public class Explore extends State {
         }
 
         if(targetExplore == null || lastTargetRoundSet + 100 < rc.getRoundNum()){
-            targetExplore = nearestMine;
+            for (int i = 0; i < cheeseMines.size; i++) {
+                MapLocation loc = cheeseMines.locs[i];
+
+                // Not depleted ?
+                if(isMineDepleted[loc.x + loc.y * 60] <= rc.getRoundNum()){
+                    // Nearest ?
+                    if(targetExplore == null || myLoc.distanceSquaredTo(loc) < myLoc.distanceSquaredTo(targetExplore)){
+                        targetExplore = loc;
+                    }
+                }
+            }
         }
 
         // Add bonus to target
         if (targetExplore != null) {
             Direction dir = PathFinding.BugNavLmx(targetExplore);
-            if(BugNavLmx.resultCode <= 10){
+            if(BugNavLmx.resultCode <= -10 || dir == null){
+                if(targetExplore != null){
+                    isMineDepleted[targetExplore.x + targetExplore.y * 60] = (char) (rc.getRoundNum() + 150);
+                }
                 targetExplore = null;
                 print("BugNavLmx return " + BugNavLmx.resultCode + ", targetExplore set to null");
             }else{

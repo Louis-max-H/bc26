@@ -148,7 +148,7 @@ public class PathFinding {
 
         if(Robot.bugnavBugging + 10 > Robot.rc.getRoundNum()){
             isLmxBugnav = false;
-            return BugNavChenyx512.bugNavGetMoveDir(loc);
+            return Robot.rc.getLocation().directionTo(loc);
         }
 
         isLmxBugnav = true;
@@ -173,21 +173,17 @@ public class PathFinding {
         // First try, bugnav of Louis-Max
         Direction bugNavDir = BugNavLmx(loc);
 
-        // Fallback to Chenyx512 if failed
-        if(bugNavDir == null || bugNavDir == Direction.CENTER){
-            System.out.println("BugNavLmx return null or center, trying BugNavChenyx512");
-            Robot.rc.setIndicatorLine(Robot.rc.getLocation(), loc, 255, 0, 255);
-            isLmxBugnav = false;
-            bugNavDir = BugNavChenyx512.bugNavGetMoveDir(loc);
-        }
-
         // Fallback to direction if still fail
         if (bugNavDir == null) {
             System.out.println("BugNavChenyx512 return null, taking direct direction");
             bugNavDir = Robot.myLoc.directionTo(loc);
         }
 
-        modificatorOrientation(bugNavDir);
+        if(isLmxBugnav){
+            modificatorOrientation(bugNavDir);
+        }else{
+            modificatorOrientationSoft(bugNavDir, 1);
+        }
         return moveBest();
     }
 
@@ -302,7 +298,7 @@ public class PathFinding {
 
         /** Normalize to 100.000.000
          * */
-        printScores("Before adding score WithNormalization");
+        // printScores("Before adding score WithNormalization");
         long normalize = 100_000_000L * coef / max;
         // Robot.print("Noramize with coef : " + coef + " and max : " + max + " -> " + (normalize));
         // Robot.print("Adding : i=" + 0 + " " + newScores[0] * normalize);
@@ -326,7 +322,7 @@ public class PathFinding {
     }
 
     public static void addScoresWithoutNormalization(long[] newScores){
-        printScores("Before adding score Without Normalization");
+        // printScores("Before adding score Without Normalization");
         scores[0] += newScores[0];
         scores[1] += newScores[1];
         scores[2] += newScores[2];

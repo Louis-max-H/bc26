@@ -2,6 +2,7 @@ package current.Robots;
 
 import battlecode.common.*;
 import current.States.*;
+import current.Utils.ArrayUtils;
 import current.Utils.MapLocations;
 import current.Utils.MapLocationsWithId;
 import current.Utils.Tools;
@@ -26,6 +27,7 @@ public class Robot {
     public static boolean forceMovingEndOfTurn = true;
     public static char numberTimesOnPositions[];
     public static int bugnavBugging; // Last turn cycle detected
+    public static char[] isMineDepleted = ArrayUtils.char3600();
 
     // Meta variables
     public static boolean moveRandom = false; // Move random direction each 10 moves

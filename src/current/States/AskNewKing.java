@@ -11,7 +11,7 @@ import java.util.Map;
 import static current.States.Code.*;
 
 public class AskNewKing extends State {
-    public int costCap;
+    public int consecutiveNoKing = 0;
     public AskNewKing(){
         this.name = "AskNewKing";
     }
@@ -28,8 +28,14 @@ public class AskNewKing extends State {
         // If another king exist
         for (int i = 0; i < kings.size; i++) {
             if(kings.ids[i] != rc.getID() % 4096){
+                consecutiveNoKing = 0;
                 return new Result(OK, "Already have another king " + kings.ids[i]);
             }
+        }
+
+        consecutiveNoKing++;
+        if(consecutiveNoKing < 3){
+            return new Result(OK, "Maybe create new king : consectiveNoKing: " + consecutiveNoKing);
         }
 
         // Wait a little because when spawn, kings array is not initialized

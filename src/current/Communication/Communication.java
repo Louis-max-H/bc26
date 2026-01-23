@@ -5,6 +5,8 @@ import current.Robots.Robot;
 import current.Utils.Tools;
 import current.Utils.VisionUtils;
 
+import static java.lang.Math.max;
+
 /**
  * Communication system for Battlecode 2026
  *
@@ -29,7 +31,7 @@ public class Communication extends Robot {
     // Store previous turn's shared array to detect changes
     private static int[] sharedArray = new int[64];
     private static int[] lastDecodedMessages = new int[64];
-    private static int lastMessageIndex = 0;
+    private static int lastMessageIndex = 1;
 
     // Don't send message if we have recently seen a similar message
     public static char COOLDOWN_SEND_AGAIN_SQUEAK = 2;
@@ -89,7 +91,7 @@ public class Communication extends Robot {
                 break;
 
             case TYPE_KING:
-                // debug("###Decoding king position : at x: " + x + " y: " + y);
+                debug("###Decoding king position : at x: " + x + " y: " + y + " id " + ((msg & MASK_UNIT_ID) >> 12));
                 kings.add(new MapLocation(x, y), (msg & MASK_UNIT_ID) >> 12);
                 break;
 
@@ -138,29 +140,25 @@ public class Communication extends Robot {
 
     public static void readFromSharedArray() throws GameActionException {
         int nDecoded = 0;
+        int indexTo = max(sharedArray[0], 1);
         int startBytecode = Clock.getBytecodeNum();
         char sendCooldown = (char) (round + COOLDOWN_SEND_AGAIN_ARRAY);
 
         for(;;){
-            // debug("Reading message at index : " + lastMessageIndex);
-
-            // Assuming it's long
-            int message = (sharedArray[lastMessageIndex] << 20) | (sharedArray[lastMessageIndex + 1] << 10) | (sharedArray[lastMessageIndex + 2]);
-
-            // If same content, no need to read more
-            if(message == lastDecodedMessages[lastMessageIndex]){
+            if(lastMessageIndex == indexTo){
                 break;
             }
 
-            lastDecodedMessages[lastMessageIndex] = message;
+            int message = (sharedArray[lastMessageIndex] << 20) | (sharedArray[lastMessageIndex + 1] << 10) | (sharedArray[lastMessageIndex + 2]);
             lastMessageIndex += 3;
+
             decodeMessage(message, true);
             lastTimeSeenMessage[message & MASK_14BITS] = sendCooldown;
             nDecoded++;
 
             // Wrap around because a circular array
             if(lastMessageIndex > 60){ // Need more gap if message of size 3
-                lastMessageIndex = 0;
+                lastMessageIndex = 1;
             }
         }
 
@@ -358,6 +356,7 @@ public class Communication extends Robot {
     public static void writeToArray() throws GameActionException {
         int nWritten = 0;
         int startBytecode = Clock.getBytecodeNum();
+        lastMessageIndex = max(sharedArray[0], 1);
         for(;;){
             if(Clock.getBytecodesLeft() < 1000){
                 System.out.println("Stop writing to shared array because of low bytecode count");
@@ -384,9 +383,11 @@ public class Communication extends Robot {
 
             // Wrap around because a circular array
             if(lastMessageIndex > 60){
-                lastMessageIndex = 0;
+                lastMessageIndex = 1;
             }
         }
+
+        rc.writeSharedArray(0, lastMessageIndex);
 
         print("Shared Array : " + nWritten + " messages in " + (Clock.getBytecodeNum() - startBytecode) + " bytecode(s)");
     }

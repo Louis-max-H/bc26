@@ -163,7 +163,7 @@ public class {{ className }} {
         Direction dir = DIRECTIONS[mapResult[startXY]];
 
         // Check if we can reuse previous path
-        if(lastRoundCalculation + 1 >= {{ getRound }} && lastDestination.equals(endLoc)){
+        if(lastRoundCalculation + 3 >= {{ getRound }} && lastDestination.equals(endLoc)){
             if(dir != Direction.CENTER){
                 if({{getRound}} < {{MAX_DEBUG_ROUND}}){System.out.println("Pathfinding: Reuse previous path -> " + dir);}
                 lastRoundCalculation = -2;
@@ -406,7 +406,7 @@ public class {{ className }} {
                     break mainLoop;
                 }
 
-                if(scoreLeft < scoreRight + SCORE_CELL_PASSABLE * 4){ // Little advantage on right
+                if(scoreLeft < scoreRight){ // Little advantage on right
                     if(scoreLeft >= MAX_SCORE){
                         {% if DEBUG -%}System.out.println("MSG=MAX_SCORE left " + scoreLeft + " and right " + scoreRight + " are >= " + MAX_SCORE);
                         {% endif -%}

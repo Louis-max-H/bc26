@@ -8,6 +8,7 @@ import current.Communication.Communication;
 import current.Utils.BugNavLmx;
 import current.Utils.PathFinding;
 import current.Utils.VisionUtils;
+import scala.collection.Map;
 
 import static current.States.Code.*;
 
@@ -25,8 +26,9 @@ public class BecomeKing extends State {
         // If I can create a king, make it
         if(rc.canBecomeRatKing()){
             rc.becomeRatKing();
+            print("We need to make a crash to restore parameters and reload the bot");
+            rc.senseMapInfo(new MapLocation(61, 61));
         }
-
 
         // No one asking
         if(nearestCallForKing == null){

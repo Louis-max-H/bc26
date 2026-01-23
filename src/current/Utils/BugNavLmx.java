@@ -5203,7 +5203,7 @@ public class BugNavLmx {
         Direction dir = DIRECTIONS[mapResult[startXY]];
 
         // Check if we can reuse previous path
-        if(lastRoundCalculation + 1 >= rc.getRoundNum() && lastDestination.equals(endLoc)){
+        if(lastRoundCalculation + 3 >= rc.getRoundNum() && lastDestination.equals(endLoc)){
             if(dir != Direction.CENTER){
                 if(rc.getRoundNum() < 200){System.out.println("Pathfinding: Reuse previous path -> " + dir);}
                 lastRoundCalculation = -2;
@@ -5214,7 +5214,7 @@ public class BugNavLmx {
         // Generate path
         generatePathTo(startXY, endLoc.x + (endLoc.y<<7) + 129, MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
         dir = DIRECTIONS[mapResult[startXY]];
-        System.out.println("Get result of pathfinding: DIRECTIONS[mapResult[startXY]]=DIRECTIONS[" + (int)mapResult[startXY] + "] with startXY=" + startXY);// Check result validity
+        // Check result validity
         if(resultCode < 0){
             if(rc.getRoundNum() < 200){
                 System.out.println("Pathfinding: Warning return code : " + resultCode + " : " + dir);
@@ -5292,13 +5292,7 @@ public class BugNavLmx {
             for (;;) {
                 iterationsNormal++;
 
-                System.out.println("MODE=" + mode + ", resume at POS=" + xy + " want to go to " + xyEnd + " -> " + DIRECTIONS[mapDirections[xyEndDir - xy]]);
-                    if(withReturn){System.out.println("SCORE=" + score);}
-                if(withReturn){  rc.setIndicatorDot(new MapLocation((xy & 0b111111) - 1, (xy >> 7) - 1), 0, 10, 10); // Blue
-                    }else{           rc.setIndicatorDot(new MapLocation((xy & 0b111111) - 1, (xy >> 7) - 1), 206, 174, 243); // Violet
-                    }
                 if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
-                    System.out.println("MSG=not enough bytecode remaining mode default");
                     resultCode = -1; // Not enought bytecode
                     break mainLoop;
                 }
@@ -5308,13 +5302,10 @@ public class BugNavLmx {
 
                         xyTmp = xy + 128;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
-                            System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=WALL score: " + (int)mapCosts[xyTmp] + " for cell " + xyTmp);
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                        System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=OK score: " + (int)mapCosts[xyTmp]);
-                        System.out.println("Writte mapResult[" + xyTmp + "] = " + DIRECTIONS[4] + "dursOrdsOpposite[NORTH] = SOUTH at " + (int)xyTmp);
                         xy = xyTmp;
                         mapResult[xyTmp] = 4;
                         break;
@@ -5322,13 +5313,10 @@ public class BugNavLmx {
 
                         xyTmp = xy + 129;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
-                            System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=WALL score: " + (int)mapCosts[xyTmp] + " for cell " + xyTmp);
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                        System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=OK score: " + (int)mapCosts[xyTmp]);
-                        System.out.println("Writte mapResult[" + xyTmp + "] = " + DIRECTIONS[5] + "dursOrdsOpposite[NORTHEAST] = SOUTHWEST at " + (int)xyTmp);
                         xy = xyTmp;
                         mapResult[xyTmp] = 5;
                         break;
@@ -5336,13 +5324,10 @@ public class BugNavLmx {
 
                         xyTmp = xy + 1;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
-                            System.out.println("POS=" + xy + ", DIR=EAST, RESULT=WALL score: " + (int)mapCosts[xyTmp] + " for cell " + xyTmp);
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                        System.out.println("POS=" + xy + ", DIR=EAST, RESULT=OK score: " + (int)mapCosts[xyTmp]);
-                        System.out.println("Writte mapResult[" + xyTmp + "] = " + DIRECTIONS[6] + "dursOrdsOpposite[EAST] = WEST at " + (int)xyTmp);
                         xy = xyTmp;
                         mapResult[xyTmp] = 6;
                         break;
@@ -5350,13 +5335,10 @@ public class BugNavLmx {
 
                         xyTmp = xy - 127;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
-                            System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=WALL score: " + (int)mapCosts[xyTmp] + " for cell " + xyTmp);
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                        System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=OK score: " + (int)mapCosts[xyTmp]);
-                        System.out.println("Writte mapResult[" + xyTmp + "] = " + DIRECTIONS[7] + "dursOrdsOpposite[SOUTHEAST] = NORTHWEST at " + (int)xyTmp);
                         xy = xyTmp;
                         mapResult[xyTmp] = 7;
                         break;
@@ -5364,13 +5346,10 @@ public class BugNavLmx {
 
                         xyTmp = xy - 128;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
-                            System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=WALL score: " + (int)mapCosts[xyTmp] + " for cell " + xyTmp);
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                        System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=OK score: " + (int)mapCosts[xyTmp]);
-                        System.out.println("Writte mapResult[" + xyTmp + "] = " + DIRECTIONS[0] + "dursOrdsOpposite[SOUTH] = NORTH at " + (int)xyTmp);
                         xy = xyTmp;
                         mapResult[xyTmp] = 0;
                         break;
@@ -5378,13 +5357,10 @@ public class BugNavLmx {
 
                         xyTmp = xy - 129;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
-                            System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=WALL score: " + (int)mapCosts[xyTmp] + " for cell " + xyTmp);
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                        System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=OK score: " + (int)mapCosts[xyTmp]);
-                        System.out.println("Writte mapResult[" + xyTmp + "] = " + DIRECTIONS[1] + "dursOrdsOpposite[SOUTHWEST] = NORTHEAST at " + (int)xyTmp);
                         xy = xyTmp;
                         mapResult[xyTmp] = 1;
                         break;
@@ -5392,13 +5368,10 @@ public class BugNavLmx {
 
                         xyTmp = xy - 1;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
-                            System.out.println("POS=" + xy + ", DIR=WEST, RESULT=WALL score: " + (int)mapCosts[xyTmp] + " for cell " + xyTmp);
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                        System.out.println("POS=" + xy + ", DIR=WEST, RESULT=OK score: " + (int)mapCosts[xyTmp]);
-                        System.out.println("Writte mapResult[" + xyTmp + "] = " + DIRECTIONS[2] + "dursOrdsOpposite[WEST] = EAST at " + (int)xyTmp);
                         xy = xyTmp;
                         mapResult[xyTmp] = 2;
                         break;
@@ -5406,19 +5379,15 @@ public class BugNavLmx {
 
                         xyTmp = xy + 127;
                         if(mapCosts[xyTmp] > cost_max_per_cell){
-                            System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=WALL score: " + (int)mapCosts[xyTmp] + " for cell " + xyTmp);
                             xyLastWallHit = xyTmp;
                             break modeDefault;
                         }
 
-                        System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=OK score: " + (int)mapCosts[xyTmp]);
-                        System.out.println("Writte mapResult[" + xyTmp + "] = " + DIRECTIONS[3] + "dursOrdsOpposite[NORTHWEST] = SOUTHEAST at " + (int)xyTmp);
                         xy = xyTmp;
                         mapResult[xyTmp] = 3;
                         break;
                     
                     case 8: // CENTER
-                        System.out.println("MSG=CENTER from mainLopp");
                         break mainLoop;
 
                     default:
@@ -5427,14 +5396,12 @@ public class BugNavLmx {
         
                 score += mapCosts[xy];
                 if(score >= MAX_SCORE){ // We haven't enough score to reach our destination
-                    System.out.println("MSG=MAX_SCORE " + score + " >= " + MAX_SCORE);
                     break mainLoop;
                 }
             }
 
 
             /// ///////////////////// Init split mode /////////////////////
-            System.out.println("MSG=init split mode");
             xyLeft = xy;
             xyRight = xy;
             smoothLeft = 2;
@@ -5456,72 +5423,54 @@ public class BugNavLmx {
                         xyLeft = xy + 129;
                         lastDirectionLeft = 1;
                         mapResult[xyLeft] = 5;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[5]);System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 1] <= cost_max_per_cell) {
 
                         ctrLeft = 2;
                         xyLeft = xy + 1;
                         lastDirectionLeft = 2;
                         mapResult[xyLeft] = 6;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[6]);System.out.println("POS=" + xy + ", DIR=EAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=WALL");
                     if(mapCosts[xy - 127] <= cost_max_per_cell) {
 
                         ctrLeft = 3;
                         xyLeft = xy - 127;
                         lastDirectionLeft = 3;
                         mapResult[xyLeft] = 7;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[7]);System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=WALL");
                     if(mapCosts[xy - 128] <= cost_max_per_cell) {
 
                         ctrLeft = 4;
                         xyLeft = xy - 128;
                         lastDirectionLeft = 4;
                         mapResult[xyLeft] = 0;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[0]);System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=WALL");
                     if(mapCosts[xy - 129] <= cost_max_per_cell) {
 
                         ctrLeft = 5;
                         xyLeft = xy - 129;
                         lastDirectionLeft = 5;
                         mapResult[xyLeft] = 1;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[1]);System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 1] <= cost_max_per_cell) {
 
                         ctrLeft = 6;
                         xyLeft = xy - 1;
                         lastDirectionLeft = 6;
                         mapResult[xyLeft] = 2;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[2]);System.out.println("POS=" + xy + ", DIR=WEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     
@@ -5532,72 +5481,54 @@ public class BugNavLmx {
                         xyRight = xy + 127;
                         lastDirectionRight = 7;
                         mapResult[xyRight] = 3;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[3]);System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 1] <= cost_max_per_cell) {
 
                         ctrRight = 2;
                         xyRight = xy - 1;
                         lastDirectionRight = 6;
                         mapResult[xyRight] = 2;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[2]);System.out.println("POS=" + xy + ", DIR=WEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=WALL");
                     if(mapCosts[xy - 129] <= cost_max_per_cell) {
 
                         ctrRight = 3;
                         xyRight = xy - 129;
                         lastDirectionRight = 5;
                         mapResult[xyRight] = 1;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[1]);System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 128] <= cost_max_per_cell) {
 
                         ctrRight = 4;
                         xyRight = xy - 128;
                         lastDirectionRight = 4;
                         mapResult[xyRight] = 0;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[0]);System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=WALL");
                     if(mapCosts[xy - 127] <= cost_max_per_cell) {
 
                         ctrRight = 5;
                         xyRight = xy - 127;
                         lastDirectionRight = 3;
                         mapResult[xyRight] = 7;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[7]);System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 1] <= cost_max_per_cell) {
 
                         ctrRight = 6;
                         xyRight = xy + 1;
                         lastDirectionRight = 2;
                         mapResult[xyRight] = 6;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[6]);System.out.println("POS=" + xy + ", DIR=EAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                     
@@ -5612,72 +5543,54 @@ public class BugNavLmx {
                         xyLeft = xy + 1;
                         lastDirectionLeft = 2;
                         mapResult[xyLeft] = 6;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[6]);System.out.println("POS=" + xy + ", DIR=EAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=WALL");
                     if(mapCosts[xy - 127] <= cost_max_per_cell) {
 
                         ctrLeft = 2;
                         xyLeft = xy - 127;
                         lastDirectionLeft = 3;
                         mapResult[xyLeft] = 7;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[7]);System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=WALL");
                     if(mapCosts[xy - 128] <= cost_max_per_cell) {
 
                         ctrLeft = 3;
                         xyLeft = xy - 128;
                         lastDirectionLeft = 4;
                         mapResult[xyLeft] = 0;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[0]);System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=WALL");
                     if(mapCosts[xy - 129] <= cost_max_per_cell) {
 
                         ctrLeft = 4;
                         xyLeft = xy - 129;
                         lastDirectionLeft = 5;
                         mapResult[xyLeft] = 1;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[1]);System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 1] <= cost_max_per_cell) {
 
                         ctrLeft = 5;
                         xyLeft = xy - 1;
                         lastDirectionLeft = 6;
                         mapResult[xyLeft] = 2;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[2]);System.out.println("POS=" + xy + ", DIR=WEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=WALL");
                     if(mapCosts[xy + 127] <= cost_max_per_cell) {
 
                         ctrLeft = 6;
                         xyLeft = xy + 127;
                         lastDirectionLeft = 7;
                         mapResult[xyLeft] = 3;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[3]);System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     
@@ -5688,72 +5601,54 @@ public class BugNavLmx {
                         xyRight = xy + 128;
                         lastDirectionRight = 0;
                         mapResult[xyRight] = 4;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[4]);System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=WALL");
                     if(mapCosts[xy + 127] <= cost_max_per_cell) {
 
                         ctrRight = 2;
                         xyRight = xy + 127;
                         lastDirectionRight = 7;
                         mapResult[xyRight] = 3;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[3]);System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 1] <= cost_max_per_cell) {
 
                         ctrRight = 3;
                         xyRight = xy - 1;
                         lastDirectionRight = 6;
                         mapResult[xyRight] = 2;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[2]);System.out.println("POS=" + xy + ", DIR=WEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=WALL");
                     if(mapCosts[xy - 129] <= cost_max_per_cell) {
 
                         ctrRight = 4;
                         xyRight = xy - 129;
                         lastDirectionRight = 5;
                         mapResult[xyRight] = 1;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[1]);System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 128] <= cost_max_per_cell) {
 
                         ctrRight = 5;
                         xyRight = xy - 128;
                         lastDirectionRight = 4;
                         mapResult[xyRight] = 0;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[0]);System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=WALL");
                     if(mapCosts[xy - 127] <= cost_max_per_cell) {
 
                         ctrRight = 6;
                         xyRight = xy - 127;
                         lastDirectionRight = 3;
                         mapResult[xyRight] = 7;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[7]);System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                     
@@ -5768,72 +5663,54 @@ public class BugNavLmx {
                         xyLeft = xy - 127;
                         lastDirectionLeft = 3;
                         mapResult[xyLeft] = 7;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[7]);System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=WALL");
                     if(mapCosts[xy - 128] <= cost_max_per_cell) {
 
                         ctrLeft = 2;
                         xyLeft = xy - 128;
                         lastDirectionLeft = 4;
                         mapResult[xyLeft] = 0;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[0]);System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=WALL");
                     if(mapCosts[xy - 129] <= cost_max_per_cell) {
 
                         ctrLeft = 3;
                         xyLeft = xy - 129;
                         lastDirectionLeft = 5;
                         mapResult[xyLeft] = 1;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[1]);System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 1] <= cost_max_per_cell) {
 
                         ctrLeft = 4;
                         xyLeft = xy - 1;
                         lastDirectionLeft = 6;
                         mapResult[xyLeft] = 2;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[2]);System.out.println("POS=" + xy + ", DIR=WEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=WALL");
                     if(mapCosts[xy + 127] <= cost_max_per_cell) {
 
                         ctrLeft = 5;
                         xyLeft = xy + 127;
                         lastDirectionLeft = 7;
                         mapResult[xyLeft] = 3;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[3]);System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=WALL");
                     if(mapCosts[xy + 128] <= cost_max_per_cell) {
 
                         ctrLeft = 6;
                         xyLeft = xy + 128;
                         lastDirectionLeft = 0;
                         mapResult[xyLeft] = 4;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[4]);System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     
@@ -5844,72 +5721,54 @@ public class BugNavLmx {
                         xyRight = xy + 129;
                         lastDirectionRight = 1;
                         mapResult[xyRight] = 5;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[5]);System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 128] <= cost_max_per_cell) {
 
                         ctrRight = 2;
                         xyRight = xy + 128;
                         lastDirectionRight = 0;
                         mapResult[xyRight] = 4;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[4]);System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=WALL");
                     if(mapCosts[xy + 127] <= cost_max_per_cell) {
 
                         ctrRight = 3;
                         xyRight = xy + 127;
                         lastDirectionRight = 7;
                         mapResult[xyRight] = 3;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[3]);System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 1] <= cost_max_per_cell) {
 
                         ctrRight = 4;
                         xyRight = xy - 1;
                         lastDirectionRight = 6;
                         mapResult[xyRight] = 2;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[2]);System.out.println("POS=" + xy + ", DIR=WEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=WALL");
                     if(mapCosts[xy - 129] <= cost_max_per_cell) {
 
                         ctrRight = 5;
                         xyRight = xy - 129;
                         lastDirectionRight = 5;
                         mapResult[xyRight] = 1;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[1]);System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 128] <= cost_max_per_cell) {
 
                         ctrRight = 6;
                         xyRight = xy - 128;
                         lastDirectionRight = 4;
                         mapResult[xyRight] = 0;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[0]);System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                     
@@ -5924,72 +5783,54 @@ public class BugNavLmx {
                         xyLeft = xy - 128;
                         lastDirectionLeft = 4;
                         mapResult[xyLeft] = 0;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[0]);System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=WALL");
                     if(mapCosts[xy - 129] <= cost_max_per_cell) {
 
                         ctrLeft = 2;
                         xyLeft = xy - 129;
                         lastDirectionLeft = 5;
                         mapResult[xyLeft] = 1;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[1]);System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 1] <= cost_max_per_cell) {
 
                         ctrLeft = 3;
                         xyLeft = xy - 1;
                         lastDirectionLeft = 6;
                         mapResult[xyLeft] = 2;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[2]);System.out.println("POS=" + xy + ", DIR=WEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=WALL");
                     if(mapCosts[xy + 127] <= cost_max_per_cell) {
 
                         ctrLeft = 4;
                         xyLeft = xy + 127;
                         lastDirectionLeft = 7;
                         mapResult[xyLeft] = 3;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[3]);System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=WALL");
                     if(mapCosts[xy + 128] <= cost_max_per_cell) {
 
                         ctrLeft = 5;
                         xyLeft = xy + 128;
                         lastDirectionLeft = 0;
                         mapResult[xyLeft] = 4;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[4]);System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=WALL");
                     if(mapCosts[xy + 129] <= cost_max_per_cell) {
 
                         ctrLeft = 6;
                         xyLeft = xy + 129;
                         lastDirectionLeft = 1;
                         mapResult[xyLeft] = 5;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[5]);System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     
@@ -6000,72 +5841,54 @@ public class BugNavLmx {
                         xyRight = xy + 1;
                         lastDirectionRight = 2;
                         mapResult[xyRight] = 6;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[6]);System.out.println("POS=" + xy + ", DIR=EAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=WALL");
                     if(mapCosts[xy + 129] <= cost_max_per_cell) {
 
                         ctrRight = 2;
                         xyRight = xy + 129;
                         lastDirectionRight = 1;
                         mapResult[xyRight] = 5;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[5]);System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 128] <= cost_max_per_cell) {
 
                         ctrRight = 3;
                         xyRight = xy + 128;
                         lastDirectionRight = 0;
                         mapResult[xyRight] = 4;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[4]);System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=WALL");
                     if(mapCosts[xy + 127] <= cost_max_per_cell) {
 
                         ctrRight = 4;
                         xyRight = xy + 127;
                         lastDirectionRight = 7;
                         mapResult[xyRight] = 3;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[3]);System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 1] <= cost_max_per_cell) {
 
                         ctrRight = 5;
                         xyRight = xy - 1;
                         lastDirectionRight = 6;
                         mapResult[xyRight] = 2;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[2]);System.out.println("POS=" + xy + ", DIR=WEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=WALL");
                     if(mapCosts[xy - 129] <= cost_max_per_cell) {
 
                         ctrRight = 6;
                         xyRight = xy - 129;
                         lastDirectionRight = 5;
                         mapResult[xyRight] = 1;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[1]);System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                     
@@ -6080,72 +5903,54 @@ public class BugNavLmx {
                         xyLeft = xy - 129;
                         lastDirectionLeft = 5;
                         mapResult[xyLeft] = 1;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[1]);System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 1] <= cost_max_per_cell) {
 
                         ctrLeft = 2;
                         xyLeft = xy - 1;
                         lastDirectionLeft = 6;
                         mapResult[xyLeft] = 2;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[2]);System.out.println("POS=" + xy + ", DIR=WEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=WALL");
                     if(mapCosts[xy + 127] <= cost_max_per_cell) {
 
                         ctrLeft = 3;
                         xyLeft = xy + 127;
                         lastDirectionLeft = 7;
                         mapResult[xyLeft] = 3;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[3]);System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=WALL");
                     if(mapCosts[xy + 128] <= cost_max_per_cell) {
 
                         ctrLeft = 4;
                         xyLeft = xy + 128;
                         lastDirectionLeft = 0;
                         mapResult[xyLeft] = 4;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[4]);System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=WALL");
                     if(mapCosts[xy + 129] <= cost_max_per_cell) {
 
                         ctrLeft = 5;
                         xyLeft = xy + 129;
                         lastDirectionLeft = 1;
                         mapResult[xyLeft] = 5;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[5]);System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 1] <= cost_max_per_cell) {
 
                         ctrLeft = 6;
                         xyLeft = xy + 1;
                         lastDirectionLeft = 2;
                         mapResult[xyLeft] = 6;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[6]);System.out.println("POS=" + xy + ", DIR=EAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     
@@ -6156,72 +5961,54 @@ public class BugNavLmx {
                         xyRight = xy - 127;
                         lastDirectionRight = 3;
                         mapResult[xyRight] = 7;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[7]);System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 1] <= cost_max_per_cell) {
 
                         ctrRight = 2;
                         xyRight = xy + 1;
                         lastDirectionRight = 2;
                         mapResult[xyRight] = 6;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[6]);System.out.println("POS=" + xy + ", DIR=EAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=WALL");
                     if(mapCosts[xy + 129] <= cost_max_per_cell) {
 
                         ctrRight = 3;
                         xyRight = xy + 129;
                         lastDirectionRight = 1;
                         mapResult[xyRight] = 5;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[5]);System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 128] <= cost_max_per_cell) {
 
                         ctrRight = 4;
                         xyRight = xy + 128;
                         lastDirectionRight = 0;
                         mapResult[xyRight] = 4;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[4]);System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=WALL");
                     if(mapCosts[xy + 127] <= cost_max_per_cell) {
 
                         ctrRight = 5;
                         xyRight = xy + 127;
                         lastDirectionRight = 7;
                         mapResult[xyRight] = 3;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[3]);System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 1] <= cost_max_per_cell) {
 
                         ctrRight = 6;
                         xyRight = xy - 1;
                         lastDirectionRight = 6;
                         mapResult[xyRight] = 2;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[2]);System.out.println("POS=" + xy + ", DIR=WEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                     
@@ -6236,72 +6023,54 @@ public class BugNavLmx {
                         xyLeft = xy - 1;
                         lastDirectionLeft = 6;
                         mapResult[xyLeft] = 2;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[2]);System.out.println("POS=" + xy + ", DIR=WEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=WALL");
                     if(mapCosts[xy + 127] <= cost_max_per_cell) {
 
                         ctrLeft = 2;
                         xyLeft = xy + 127;
                         lastDirectionLeft = 7;
                         mapResult[xyLeft] = 3;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[3]);System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=WALL");
                     if(mapCosts[xy + 128] <= cost_max_per_cell) {
 
                         ctrLeft = 3;
                         xyLeft = xy + 128;
                         lastDirectionLeft = 0;
                         mapResult[xyLeft] = 4;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[4]);System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=WALL");
                     if(mapCosts[xy + 129] <= cost_max_per_cell) {
 
                         ctrLeft = 4;
                         xyLeft = xy + 129;
                         lastDirectionLeft = 1;
                         mapResult[xyLeft] = 5;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[5]);System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 1] <= cost_max_per_cell) {
 
                         ctrLeft = 5;
                         xyLeft = xy + 1;
                         lastDirectionLeft = 2;
                         mapResult[xyLeft] = 6;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[6]);System.out.println("POS=" + xy + ", DIR=EAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=WALL");
                     if(mapCosts[xy - 127] <= cost_max_per_cell) {
 
                         ctrLeft = 6;
                         xyLeft = xy - 127;
                         lastDirectionLeft = 3;
                         mapResult[xyLeft] = 7;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[7]);System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     
@@ -6312,72 +6081,54 @@ public class BugNavLmx {
                         xyRight = xy - 128;
                         lastDirectionRight = 4;
                         mapResult[xyRight] = 0;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[0]);System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=WALL");
                     if(mapCosts[xy - 127] <= cost_max_per_cell) {
 
                         ctrRight = 2;
                         xyRight = xy - 127;
                         lastDirectionRight = 3;
                         mapResult[xyRight] = 7;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[7]);System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 1] <= cost_max_per_cell) {
 
                         ctrRight = 3;
                         xyRight = xy + 1;
                         lastDirectionRight = 2;
                         mapResult[xyRight] = 6;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[6]);System.out.println("POS=" + xy + ", DIR=EAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=WALL");
                     if(mapCosts[xy + 129] <= cost_max_per_cell) {
 
                         ctrRight = 4;
                         xyRight = xy + 129;
                         lastDirectionRight = 1;
                         mapResult[xyRight] = 5;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[5]);System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 128] <= cost_max_per_cell) {
 
                         ctrRight = 5;
                         xyRight = xy + 128;
                         lastDirectionRight = 0;
                         mapResult[xyRight] = 4;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[4]);System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=WALL");
                     if(mapCosts[xy + 127] <= cost_max_per_cell) {
 
                         ctrRight = 6;
                         xyRight = xy + 127;
                         lastDirectionRight = 7;
                         mapResult[xyRight] = 3;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[3]);System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                     
@@ -6392,72 +6143,54 @@ public class BugNavLmx {
                         xyLeft = xy + 127;
                         lastDirectionLeft = 7;
                         mapResult[xyLeft] = 3;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[3]);System.out.println("POS=" + xy + ", DIR=NORTHWEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=WALL");
                     if(mapCosts[xy + 128] <= cost_max_per_cell) {
 
                         ctrLeft = 2;
                         xyLeft = xy + 128;
                         lastDirectionLeft = 0;
                         mapResult[xyLeft] = 4;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[4]);System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=WALL");
                     if(mapCosts[xy + 129] <= cost_max_per_cell) {
 
                         ctrLeft = 3;
                         xyLeft = xy + 129;
                         lastDirectionLeft = 1;
                         mapResult[xyLeft] = 5;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[5]);System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 1] <= cost_max_per_cell) {
 
                         ctrLeft = 4;
                         xyLeft = xy + 1;
                         lastDirectionLeft = 2;
                         mapResult[xyLeft] = 6;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[6]);System.out.println("POS=" + xy + ", DIR=EAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=WALL");
                     if(mapCosts[xy - 127] <= cost_max_per_cell) {
 
                         ctrLeft = 5;
                         xyLeft = xy - 127;
                         lastDirectionLeft = 3;
                         mapResult[xyLeft] = 7;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[7]);System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=WALL");
                     if(mapCosts[xy - 128] <= cost_max_per_cell) {
 
                         ctrLeft = 6;
                         xyLeft = xy - 128;
                         lastDirectionLeft = 4;
                         mapResult[xyLeft] = 0;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[0]);System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     
@@ -6468,72 +6201,54 @@ public class BugNavLmx {
                         xyRight = xy - 129;
                         lastDirectionRight = 5;
                         mapResult[xyRight] = 1;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[1]);System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 128] <= cost_max_per_cell) {
 
                         ctrRight = 2;
                         xyRight = xy - 128;
                         lastDirectionRight = 4;
                         mapResult[xyRight] = 0;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[0]);System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=WALL");
                     if(mapCosts[xy - 127] <= cost_max_per_cell) {
 
                         ctrRight = 3;
                         xyRight = xy - 127;
                         lastDirectionRight = 3;
                         mapResult[xyRight] = 7;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[7]);System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 1] <= cost_max_per_cell) {
 
                         ctrRight = 4;
                         xyRight = xy + 1;
                         lastDirectionRight = 2;
                         mapResult[xyRight] = 6;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[6]);System.out.println("POS=" + xy + ", DIR=EAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=WALL");
                     if(mapCosts[xy + 129] <= cost_max_per_cell) {
 
                         ctrRight = 5;
                         xyRight = xy + 129;
                         lastDirectionRight = 1;
                         mapResult[xyRight] = 5;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[5]);System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 128] <= cost_max_per_cell) {
 
                         ctrRight = 6;
                         xyRight = xy + 128;
                         lastDirectionRight = 0;
                         mapResult[xyRight] = 4;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[4]);System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                     
@@ -6548,72 +6263,54 @@ public class BugNavLmx {
                         xyLeft = xy + 128;
                         lastDirectionLeft = 0;
                         mapResult[xyLeft] = 4;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[4]);System.out.println("POS=" + xy + ", DIR=NORTH, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=WALL");
                     if(mapCosts[xy + 129] <= cost_max_per_cell) {
 
                         ctrLeft = 2;
                         xyLeft = xy + 129;
                         lastDirectionLeft = 1;
                         mapResult[xyLeft] = 5;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[5]);System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 1] <= cost_max_per_cell) {
 
                         ctrLeft = 3;
                         xyLeft = xy + 1;
                         lastDirectionLeft = 2;
                         mapResult[xyLeft] = 6;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[6]);System.out.println("POS=" + xy + ", DIR=EAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=WALL");
                     if(mapCosts[xy - 127] <= cost_max_per_cell) {
 
                         ctrLeft = 4;
                         xyLeft = xy - 127;
                         lastDirectionLeft = 3;
                         mapResult[xyLeft] = 7;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[7]);System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=WALL");
                     if(mapCosts[xy - 128] <= cost_max_per_cell) {
 
                         ctrLeft = 5;
                         xyLeft = xy - 128;
                         lastDirectionLeft = 4;
                         mapResult[xyLeft] = 0;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[0]);System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=WALL");
                     if(mapCosts[xy - 129] <= cost_max_per_cell) {
 
                         ctrLeft = 6;
                         xyLeft = xy - 129;
                         lastDirectionLeft = 5;
                         mapResult[xyLeft] = 1;
-                        System.out.println("MAPRESULT[" + xyLeft + "] = " + DIRECTIONS[1]);System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=OK");
-                            System.out.println("MSG=Left init to " + xyLeft);
                         break initSideLeft;
                     }
 
-                    System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideLeft
                     
@@ -6624,72 +6321,54 @@ public class BugNavLmx {
                         xyRight = xy - 1;
                         lastDirectionRight = 6;
                         mapResult[xyRight] = 2;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[2]);System.out.println("POS=" + xy + ", DIR=WEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=WALL");
                     if(mapCosts[xy - 129] <= cost_max_per_cell) {
 
                         ctrRight = 2;
                         xyRight = xy - 129;
                         lastDirectionRight = 5;
                         mapResult[xyRight] = 1;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[1]);System.out.println("POS=" + xy + ", DIR=SOUTHWEST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=WALL");
                     if(mapCosts[xy - 128] <= cost_max_per_cell) {
 
                         ctrRight = 3;
                         xyRight = xy - 128;
                         lastDirectionRight = 4;
                         mapResult[xyRight] = 0;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[0]);System.out.println("POS=" + xy + ", DIR=SOUTH, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=WALL");
                     if(mapCosts[xy - 127] <= cost_max_per_cell) {
 
                         ctrRight = 4;
                         xyRight = xy - 127;
                         lastDirectionRight = 3;
                         mapResult[xyRight] = 7;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[7]);System.out.println("POS=" + xy + ", DIR=SOUTHEAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=WALL");
                     if(mapCosts[xy + 1] <= cost_max_per_cell) {
 
                         ctrRight = 5;
                         xyRight = xy + 1;
                         lastDirectionRight = 2;
                         mapResult[xyRight] = 6;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[6]);System.out.println("POS=" + xy + ", DIR=EAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=WALL");
                     if(mapCosts[xy + 129] <= cost_max_per_cell) {
 
                         ctrRight = 6;
                         xyRight = xy + 129;
                         lastDirectionRight = 1;
                         mapResult[xyRight] = 5;
-                        System.out.println("MAPRESULT[" + xyRight + "] = " + DIRECTIONS[5]);System.out.println("POS=" + xy + ", DIR=NORTHEAST, RESULT=OK");
-                            System.out.println("MSG=Right init to " + xyRight);
                         break initSideRight;
                     }
 
-                    System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=WALL");
                     throw new java.lang.Error("ERR Pathfinding: impossible to init split mode (All directions are blocked)");
                     } // End initSideRight
                     
@@ -6714,23 +6393,17 @@ public class BugNavLmx {
             for (;;) {
                 iterationsSplit++;
                 if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
-                    System.out.println("MSG=not enough bytecode remaining mode split");
                     resultCode = -1; // Not enought bytecode
                     break mainLoop;
                 }
 
-                if(scoreLeft < scoreRight + SCORE_CELL_PASSABLE * 4){ // Little advantage on right
+                if(scoreLeft < scoreRight){ // Little advantage on right
                     if(scoreLeft >= MAX_SCORE){
-                        System.out.println("MSG=MAX_SCORE left " + scoreLeft + " and right " + scoreRight + " are >= " + MAX_SCORE);
                         break mainLoop;
                     }
 
-                                        System.out.println("MSG=Left, MODE=Left, score " + score + " resume at POS=" + xyLeft + " last dir " + DIRECTIONS[lastDirectionLeft] + " ctrLeft=" + ctrLeft);
-                    if(withReturn){System.out.println("SCORELeft=" + scoreLeft);}
-                    modeSplitGoLeft: {
+                                        modeSplitGoLeft: {
                     // debug messages
-                    System.out.println("We want to go from " + xyLeft + " to " + xyEnd + " -> " + DIRECTIONS[mapDirections[xyEndDir - xyLeft ]]);
-                                            int locIndicator = xyLeft; rc.setIndicatorDot(new MapLocation((locIndicator & 0b111111) - 1, (locIndicator >> 7) - 1), 173, 216, 230);
                     
                     // We dont want to rush destination if we haven't turn enough
                     if(ctrLeft <= 0){ switch (mapDirections[xyEndDir - xyLeft]){
@@ -6744,8 +6417,6 @@ public class BugNavLmx {
                                     score = scoreLeft + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=NORTH, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -6759,8 +6430,6 @@ public class BugNavLmx {
                                     score = scoreLeft + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=NORTHEAST, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -6774,8 +6443,6 @@ public class BugNavLmx {
                                     score = scoreLeft + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=EAST, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -6789,8 +6456,6 @@ public class BugNavLmx {
                                     score = scoreLeft + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=SOUTHEAST, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -6804,8 +6469,6 @@ public class BugNavLmx {
                                     score = scoreLeft + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=SOUTH, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -6819,8 +6482,6 @@ public class BugNavLmx {
                                     score = scoreLeft + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=SOUTHWEST, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -6834,8 +6495,6 @@ public class BugNavLmx {
                                     score = scoreLeft + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=WEST, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -6849,14 +6508,11 @@ public class BugNavLmx {
                                     score = scoreLeft + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=NORTHWEST, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
                             
                             case 8:
-                                System.out.println("MSG=Destination reached for side Left");
                                 break mainLoop;
 
                             default:
@@ -6870,13 +6526,11 @@ public class BugNavLmx {
                             xyTmp = xyLeft - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -6888,22 +6542,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyLeft + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -6915,22 +6565,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyLeft + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -6942,22 +6588,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyLeft + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -6969,22 +6611,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyLeft + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -6996,22 +6634,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyLeft - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7023,22 +6657,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyLeft - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7050,22 +6680,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyLeft - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7077,24 +6703,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir NORTH");
                         case 1:
                             xyTmp = xyLeft + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7106,22 +6728,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyLeft + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7133,22 +6751,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyLeft + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7160,22 +6774,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyLeft + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7187,22 +6797,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyLeft - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7214,22 +6820,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyLeft - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7241,22 +6843,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyLeft - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7268,22 +6866,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyLeft - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7295,24 +6889,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir NORTHEAST");
                         case 2:
                             xyTmp = xyLeft + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7324,22 +6914,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyLeft + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7351,22 +6937,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyLeft + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7378,22 +6960,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyLeft - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7405,22 +6983,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyLeft - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7432,22 +7006,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyLeft - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7459,22 +7029,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyLeft - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7486,22 +7052,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyLeft + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7513,24 +7075,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir EAST");
                         case 3:
                             xyTmp = xyLeft + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7542,22 +7100,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyLeft + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7569,22 +7123,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyLeft - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7596,22 +7146,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyLeft - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7623,22 +7169,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyLeft - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7650,22 +7192,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyLeft - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7677,22 +7215,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyLeft + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7704,22 +7238,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyLeft + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7731,24 +7261,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir SOUTHEAST");
                         case 4:
                             xyTmp = xyLeft + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7760,22 +7286,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyLeft - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7787,22 +7309,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyLeft - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7814,22 +7332,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyLeft - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7841,22 +7355,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyLeft - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7868,22 +7378,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyLeft + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7895,22 +7401,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyLeft + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7922,22 +7424,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyLeft + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7949,24 +7447,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir SOUTH");
                         case 5:
                             xyTmp = xyLeft - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -7978,22 +7472,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyLeft - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8005,22 +7495,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyLeft - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8032,22 +7518,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyLeft - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8059,22 +7541,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyLeft + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8086,22 +7564,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyLeft + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8113,22 +7587,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyLeft + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8140,22 +7610,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyLeft + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8167,24 +7633,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir SOUTHWEST");
                         case 6:
                             xyTmp = xyLeft - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8196,22 +7658,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyLeft - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8223,22 +7681,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyLeft - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8250,22 +7704,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyLeft + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8277,22 +7727,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyLeft + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8304,22 +7750,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyLeft + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8331,22 +7773,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyLeft + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8358,22 +7796,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyLeft - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8385,24 +7819,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir WEST");
                         case 7:
                             xyTmp = xyLeft - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8414,22 +7844,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 5;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyLeft - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8441,22 +7867,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 6;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyLeft + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8468,22 +7890,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 7;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyLeft + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8495,22 +7913,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 0;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyLeft + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8522,22 +7936,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 1;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyLeft + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8549,22 +7959,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 2;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyLeft - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8576,22 +7982,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 3;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyLeft - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Left, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreLeft = MAX_SCORE+111;
                                 break modeSplitGoLeft;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=OK");
                                 xyLeft = xyTmp;
                                 ctrLeft += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8603,12 +8005,10 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreLeft += mapCosts[xyTmp];
                                 lastDirectionLeft = 4;
                                 break modeSplitGoLeft;
                             }
-                            System.out.println("MODE=Left, POS=" + xyLeft + ", DIR=SOUTH, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Left and previous dir NORTHWEST");
                         
                         case 8: // Center
@@ -8620,13 +8020,8 @@ public class BugNavLmx {
                     } // End modeSplitGoLeft
 
                     }else{
-                    System.out.println("MSG=scoreLeft >= scoreRight");
-                                        System.out.println("MSG=Right, MODE=Right, score " + score + " resume at POS=" + xyRight + " last dir " + DIRECTIONS[lastDirectionRight] + " ctrRight=" + ctrRight);
-                    if(withReturn){System.out.println("SCORERight=" + scoreRight);}
-                    modeSplitGoRight: {
+                                        modeSplitGoRight: {
                     // debug messages
-                    System.out.println("We want to go from " + xyRight + " to " + xyEnd + " -> " + DIRECTIONS[mapDirections[xyEndDir - xyRight ]]);
-                                            int locIndicator = xyRight; rc.setIndicatorDot(new MapLocation((locIndicator & 0b111111) - 1, (locIndicator >> 7) - 1), 255, 228, 181);
                     
                     // We dont want to rush destination if we haven't turn enough
                     if(ctrRight <= 0){ switch (mapDirections[xyEndDir - xyRight]){
@@ -8640,8 +8035,6 @@ public class BugNavLmx {
                                     score = scoreRight + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=NORTH, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -8655,8 +8048,6 @@ public class BugNavLmx {
                                     score = scoreRight + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=NORTHEAST, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -8670,8 +8061,6 @@ public class BugNavLmx {
                                     score = scoreRight + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=EAST, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -8685,8 +8074,6 @@ public class BugNavLmx {
                                     score = scoreRight + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=SOUTHEAST, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -8700,8 +8087,6 @@ public class BugNavLmx {
                                     score = scoreRight + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=SOUTH, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -8715,8 +8100,6 @@ public class BugNavLmx {
                                     score = scoreRight + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=SOUTHWEST, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -8730,8 +8113,6 @@ public class BugNavLmx {
                                     score = scoreRight + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=WEST, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
@@ -8745,14 +8126,11 @@ public class BugNavLmx {
                                     score = scoreRight + mapCosts[xy];
                                     xyLastWallLeave = xyTmp;
 
-                                    System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
-                                    System.out.println("MODE=FREE, POS=" + xy + ", DIR=NORTHWEST, RESULT=FREE");
                                     break modeSplit;
                                 }
                                 break;
                             
                             case 8:
-                                System.out.println("MSG=Destination reached for side Right");
                                 break mainLoop;
 
                             default:
@@ -8766,13 +8144,11 @@ public class BugNavLmx {
                             xyTmp = xyRight + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8784,22 +8160,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyRight + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8811,22 +8183,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8838,22 +8206,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyRight + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8865,22 +8229,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8892,22 +8252,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyRight - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8919,22 +8275,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8946,22 +8298,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyRight - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -8973,24 +8321,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir NORTH");
                         case 1:
                             xyTmp = xyRight - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9002,22 +8346,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9029,22 +8369,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyRight + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9056,22 +8392,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9083,22 +8415,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyRight + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9110,22 +8438,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9137,22 +8461,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyRight - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9164,22 +8484,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9191,24 +8507,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir NORTHEAST");
                         case 2:
                             xyTmp = xyRight - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9220,22 +8532,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyRight - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9247,22 +8555,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9274,22 +8578,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyRight + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9301,22 +8601,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9328,22 +8624,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyRight + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9355,22 +8647,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9382,22 +8670,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyRight - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9409,24 +8693,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir EAST");
                         case 3:
                             xyTmp = xyRight - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9438,22 +8718,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9465,22 +8741,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyRight - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9492,22 +8764,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9519,22 +8787,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyRight + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9546,22 +8810,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9573,22 +8833,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyRight + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9600,22 +8856,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9627,24 +8879,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir SOUTHEAST");
                         case 4:
                             xyTmp = xyRight - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9656,22 +8904,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyRight - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9683,22 +8927,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9710,22 +8950,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyRight - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9737,22 +8973,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9764,22 +8996,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyRight + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9791,22 +9019,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9818,22 +9042,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyRight + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9845,24 +9065,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir SOUTH");
                         case 5:
                             xyTmp = xyRight + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9874,22 +9090,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9901,22 +9113,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyRight - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9928,22 +9136,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9955,22 +9159,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyRight - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -9982,22 +9182,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10009,22 +9205,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyRight + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10036,22 +9228,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10063,24 +9251,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir SOUTHWEST");
                         case 6:
                             xyTmp = xyRight + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10092,22 +9276,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyRight + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10119,22 +9299,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10146,22 +9322,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyRight - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10173,22 +9345,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10200,22 +9368,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyRight - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10227,22 +9391,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10254,22 +9414,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=WALL");
                             xyTmp = xyRight + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10281,24 +9437,20 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir WEST");
                         case 7:
                             xyTmp = xyRight + 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10310,22 +9462,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 5;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[5]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 1;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += -1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10337,22 +9485,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 4;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[4]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 0;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTH, RESULT=WALL");
                             xyTmp = xyRight + 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=NORTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 0;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10364,22 +9508,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 3;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[3]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 7;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=NORTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=WEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 1;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10391,22 +9531,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 2;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[2]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 6;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=WEST, RESULT=WALL");
                             xyTmp = xyRight - 129;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHWEST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 2;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10418,22 +9554,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 1;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[1]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 5;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHWEST, RESULT=WALL");
                             xyTmp = xyRight - 128;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTH, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 3;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10445,22 +9577,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 0;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[0]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 4;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTH, RESULT=WALL");
                             xyTmp = xyRight - 127;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=SOUTHEAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 4;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10472,22 +9600,18 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 7;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[7]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 3;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=SOUTHEAST, RESULT=WALL");
                             xyTmp = xyRight + 1;
 
                             if(mapCosts[xyTmp] == 32001) {
-                                System.out.println("MODE=Right, POS=" + xy + ", DIR=EAST, RESULT=BORDER");
                                 scoreRight = MAX_SCORE+111;
                                 break modeSplitGoRight;
                             }
 
                             if(mapCosts[xyTmp] <= cost_max_per_cell){
-                                System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=OK");
                                 xyRight = xyTmp;
                                 ctrRight += 5;
                                 if(mapResult[xyTmp] != 8){//TODOLMX
@@ -10499,12 +9623,10 @@ public class BugNavLmx {
                                 }
 
                                 mapResult[xyTmp] = 6;
-                                System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[6]);
                                 scoreRight += mapCosts[xyTmp];
                                 lastDirectionRight = 2;
                                 break modeSplitGoRight;
                             }
-                            System.out.println("MODE=Right, POS=" + xyRight + ", DIR=EAST, RESULT=WALL");
                             throw new java.lang.Error("ERR Pathfinding: Can't find solution for side Right and previous dir NORTHWEST");
                         
                         case 8: // Center
@@ -10534,7 +9656,6 @@ public class BugNavLmx {
                 System.out.println("Bytecode used     : " + (startRemainingBytecode - Clock.getBytecodesLeft()));
             }
 
-            System.out.println("MSG=no return");
             BugNavLmx.mapResult = mapResult;
             if(xy != xyEnd){ if(resultCode < 0){
                     // Already an error, we don't want to overwrite it
@@ -10548,7 +9669,6 @@ public class BugNavLmx {
             return;
         }
 
-        System.out.println("Return mode");
         /// Now, we want to make the path in reverse to optimize it
         // We take by priority :
         // 1) xyLastWallLeave
@@ -10558,16 +9678,12 @@ public class BugNavLmx {
         int xyReturn;
         if(xyLastWallLeave >= 0){
             xyReturn = xyLastWallLeave; // 1)
-            System.out.println("POS=" + xy + ", RESULT=RETURN = last wall leave");
             }else{
-            System.out.println("xyLastWallLeave is " + xyLastWallLeave + " trying other values for xyReturn");
             if(xyLeft == -1){
-                System.out.println("locLeft is null, returning xyRight");
                 xyReturn = xyRight;
 
             }else{
                 if(xyRight == -1){
-                    System.out.println("locRight is null, returning xyLeft");
                     xyReturn = xyLeft;
 
                 }else{
@@ -10576,17 +9692,14 @@ public class BugNavLmx {
                     MapLocation locRight = new MapLocation((xyRight & 0b111111) - 1, (xyRight >> 7) - 1);
                     if(locEnd.distanceSquaredTo(locLeft) < locEnd.distanceSquaredTo(locRight)){ // 2)
                         xyReturn = xyLeft;
-                        System.out.println("locLeft is closer to end, returning xyLeft");
                         }else{
                         xyReturn = xyRight;
-                        System.out.println("locRight is closer to end, returning xyRight");
                         }
                 }
             }
 
             // 3)
             if(xyReturn == -1){
-                System.out.println("xyReturn is -1, returning xy");
                 xyReturn = xy;
             }
 
@@ -10606,7 +9719,6 @@ public class BugNavLmx {
 
             // Check bytecode limits
             if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
-                System.out.println("MSG=not enough bytecode remaining reverse loop");
                 resultCode = -1; // Not enought bytecode
                 break ReverseLoop;
             }
@@ -10614,79 +9726,61 @@ public class BugNavLmx {
 
             // Debug
             int returnDirection = mapResult[xyReturn];
-            System.out.println("MODE=REVERSE, I am at: POS=" + xyReturn + " returnDirection is " + DIRECTIONS[returnDirection]);
-                        rc.setIndicatorDot(new MapLocation((xyReturn & 0b111111) - 1, (xyReturn >> 7) - 1), 206, 174, 243);
             switch(mapDirections[xyStartDir - xyReturn]){
                 case 0:
                     if(0 != returnDirection && mapCosts[xyReturn + 128] <= cost_max_per_cell){
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=NORTH, RESULT=DIVERGE from return path");
                         xyReturn += 128;
                         break ReverseLoop;
                     }else{
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=NORTH, RESULT=WALL");
                         }
                     break;
                 case 1:
                     if(1 != returnDirection && mapCosts[xyReturn + 129] <= cost_max_per_cell){
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=NORTHEAST, RESULT=DIVERGE from return path");
                         xyReturn += 129;
                         break ReverseLoop;
                     }else{
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=NORTHEAST, RESULT=WALL");
                         }
                     break;
                 case 2:
                     if(2 != returnDirection && mapCosts[xyReturn + 1] <= cost_max_per_cell){
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=EAST, RESULT=DIVERGE from return path");
                         xyReturn += 1;
                         break ReverseLoop;
                     }else{
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=EAST, RESULT=WALL");
                         }
                     break;
                 case 3:
                     if(3 != returnDirection && mapCosts[xyReturn - 127] <= cost_max_per_cell){
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=SOUTHEAST, RESULT=DIVERGE from return path");
                         xyReturn += -127;
                         break ReverseLoop;
                     }else{
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=SOUTHEAST, RESULT=WALL");
                         }
                     break;
                 case 4:
                     if(4 != returnDirection && mapCosts[xyReturn - 128] <= cost_max_per_cell){
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=SOUTH, RESULT=DIVERGE from return path");
                         xyReturn += -128;
                         break ReverseLoop;
                     }else{
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=SOUTH, RESULT=WALL");
                         }
                     break;
                 case 5:
                     if(5 != returnDirection && mapCosts[xyReturn - 129] <= cost_max_per_cell){
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=SOUTHWEST, RESULT=DIVERGE from return path");
                         xyReturn += -129;
                         break ReverseLoop;
                     }else{
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=SOUTHWEST, RESULT=WALL");
                         }
                     break;
                 case 6:
                     if(6 != returnDirection && mapCosts[xyReturn - 1] <= cost_max_per_cell){
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=WEST, RESULT=DIVERGE from return path");
                         xyReturn += -1;
                         break ReverseLoop;
                     }else{
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=WEST, RESULT=WALL");
                         }
                     break;
                 case 7:
                     if(7 != returnDirection && mapCosts[xyReturn + 127] <= cost_max_per_cell){
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=NORTHWEST, RESULT=DIVERGE from return path");
                         xyReturn += 127;
                         break ReverseLoop;
                     }else{
-                        System.out.println("MODE=REVERSE, POS=" + xyReturn + ", DIR=NORTHWEST, RESULT=WALL");
                         }
                     break;
                 
