@@ -14,8 +14,6 @@ public class Explore extends State {
      * We have a big array of interrest, and we move/turn to the zone with the biggest score.
      * */
     MapLocation target;
-    public static char[] POI; // TODO: Maybe later ?
-
     public Explore(){
         this.name = "Explore";
     }
@@ -44,24 +42,13 @@ public class Explore extends State {
                 lookScores[dir.ordinal()] = VisionUtils.getScoreInView(myLoc, dir, unitType);
             }
         }
+        PathFinding.addScoresWithNormalization(scores, 1);
 
-        // Add bias toward map center for exploration
-        MapLocation mapCenter = new MapLocation(rc.getMapWidth() / 2, rc.getMapHeight() / 2);
-        Direction dirToCenter = myLoc.directionTo(mapCenter);
 
-        // Add bias to center
-        int centerBias = 50; // Small bias to encourage exploration toward center
-        scores[dirToCenter.ordinal()] += centerBias;
-        scores[dirToCenter.rotateLeft().ordinal()] += centerBias;
-        scores[dirToCenter.rotateRight().ordinal()] += centerBias;
-
-        // If turning yields more exploration than moving, prefer to turn and rescore next turn.
+        // Take best look direction
         Direction bestLookDir = Direction.CENTER;
         long bestLookScore = 0;
-        for(Direction dir : Direction.values()){
-            if(dir == Direction.CENTER || !rc.canTurn(dir)){
-                continue;
-            }
+        for(Direction dir : directions){
             long score = lookScores[dir.ordinal()];
             if(score > bestLookScore){
                 bestLookScore = score;
@@ -69,24 +56,21 @@ public class Explore extends State {
             }
         }
 
+        // Take best move direction
         long bestMoveScore = 0;
-        for(Direction dir : Direction.values()){
-            if(dir == Direction.CENTER || !rc.canMove(dir)){
-                continue;
-            }
+        for(Direction dir : directions){
             long score = scores[dir.ordinal()];
             if(score > bestMoveScore){
                 bestMoveScore = score;
             }
         }
 
-        if(bestLookDir != Direction.CENTER && bestLookScore > bestMoveScore * 12 / 10){
+        // Turn to direction
+        if(rc.canTurn() && bestLookDir != Direction.CENTER && bestLookScore > bestMoveScore * 12 / 10){
             rc.turn(bestLookDir);
-            return new Result(OK, "Turned to " + bestLookDir + " for better vision");
         }
 
-        // Add scores and move to best dir
-        PathFinding.addScoresWithNormalization(scores, 1);
+        // Move to best dir
         Result result = PathFinding.moveBest();
         Result resultTurn = VisionUtils.smartLook();
         return new Result(OK, "Move result : " + result.msg + " Turn result : " + resultTurn.msg);
