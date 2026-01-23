@@ -92,7 +92,7 @@ public class {{ className }} {
     // Add border to mapCosts
     public static void init(int width, int height){
         switch(width){
-            {% for w in range(20, 60)%}
+            {% for w in range(20, 61)%}
             case {{w}}:
                 {% for y in range(20, 60)%}
                 mapCosts[{{encodeCellPathfinding(w, y)}}] = {{SCORE_CELL_BORDER}};
@@ -104,7 +104,7 @@ public class {{ className }} {
         }
 
         switch(height){
-            {% for h in range(20, 60)%}
+            {% for h in range(20, 61)%}
             case {{h}}:
                 {% for x in range(20, 60)%}
                 mapCosts[{{encodeCellPathfinding(x, h)}}] = {{SCORE_CELL_BORDER}};
@@ -112,7 +112,7 @@ public class {{ className }} {
                 break;
             {% endfor %}
             default:
-                throw new IllegalArgumentException("Width " + width + " is not supported, should be between 20 and 60");
+                throw new IllegalArgumentException("Height " + height + " is not supported, should be between 20 and 60");
         }
     }
 

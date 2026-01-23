@@ -1739,6 +1739,48 @@ public class BugNavLmx {
                                 mapCosts[7612] = 32001;
                                 mapCosts[7740] = 32001;
                                 break;
+                        case 60:
+                                mapCosts[2749] = 32001;
+                                mapCosts[2877] = 32001;
+                                mapCosts[3005] = 32001;
+                                mapCosts[3133] = 32001;
+                                mapCosts[3261] = 32001;
+                                mapCosts[3389] = 32001;
+                                mapCosts[3517] = 32001;
+                                mapCosts[3645] = 32001;
+                                mapCosts[3773] = 32001;
+                                mapCosts[3901] = 32001;
+                                mapCosts[4029] = 32001;
+                                mapCosts[4157] = 32001;
+                                mapCosts[4285] = 32001;
+                                mapCosts[4413] = 32001;
+                                mapCosts[4541] = 32001;
+                                mapCosts[4669] = 32001;
+                                mapCosts[4797] = 32001;
+                                mapCosts[4925] = 32001;
+                                mapCosts[5053] = 32001;
+                                mapCosts[5181] = 32001;
+                                mapCosts[5309] = 32001;
+                                mapCosts[5437] = 32001;
+                                mapCosts[5565] = 32001;
+                                mapCosts[5693] = 32001;
+                                mapCosts[5821] = 32001;
+                                mapCosts[5949] = 32001;
+                                mapCosts[6077] = 32001;
+                                mapCosts[6205] = 32001;
+                                mapCosts[6333] = 32001;
+                                mapCosts[6461] = 32001;
+                                mapCosts[6589] = 32001;
+                                mapCosts[6717] = 32001;
+                                mapCosts[6845] = 32001;
+                                mapCosts[6973] = 32001;
+                                mapCosts[7101] = 32001;
+                                mapCosts[7229] = 32001;
+                                mapCosts[7357] = 32001;
+                                mapCosts[7485] = 32001;
+                                mapCosts[7613] = 32001;
+                                mapCosts[7741] = 32001;
+                                break;
                         default:
                 throw new IllegalArgumentException("Width " + width + " is not supported, should be between 20 and 60");
         }
@@ -3424,8 +3466,50 @@ public class BugNavLmx {
                                 mapCosts[7739] = 32001;
                                 mapCosts[7740] = 32001;
                                 break;
+                        case 60:
+                                mapCosts[7829] = 32001;
+                                mapCosts[7830] = 32001;
+                                mapCosts[7831] = 32001;
+                                mapCosts[7832] = 32001;
+                                mapCosts[7833] = 32001;
+                                mapCosts[7834] = 32001;
+                                mapCosts[7835] = 32001;
+                                mapCosts[7836] = 32001;
+                                mapCosts[7837] = 32001;
+                                mapCosts[7838] = 32001;
+                                mapCosts[7839] = 32001;
+                                mapCosts[7840] = 32001;
+                                mapCosts[7841] = 32001;
+                                mapCosts[7842] = 32001;
+                                mapCosts[7843] = 32001;
+                                mapCosts[7844] = 32001;
+                                mapCosts[7845] = 32001;
+                                mapCosts[7846] = 32001;
+                                mapCosts[7847] = 32001;
+                                mapCosts[7848] = 32001;
+                                mapCosts[7849] = 32001;
+                                mapCosts[7850] = 32001;
+                                mapCosts[7851] = 32001;
+                                mapCosts[7852] = 32001;
+                                mapCosts[7853] = 32001;
+                                mapCosts[7854] = 32001;
+                                mapCosts[7855] = 32001;
+                                mapCosts[7856] = 32001;
+                                mapCosts[7857] = 32001;
+                                mapCosts[7858] = 32001;
+                                mapCosts[7859] = 32001;
+                                mapCosts[7860] = 32001;
+                                mapCosts[7861] = 32001;
+                                mapCosts[7862] = 32001;
+                                mapCosts[7863] = 32001;
+                                mapCosts[7864] = 32001;
+                                mapCosts[7865] = 32001;
+                                mapCosts[7866] = 32001;
+                                mapCosts[7867] = 32001;
+                                mapCosts[7868] = 32001;
+                                break;
                         default:
-                throw new IllegalArgumentException("Width " + width + " is not supported, should be between 20 and 60");
+                throw new IllegalArgumentException("Height " + height + " is not supported, should be between 20 and 60");
         }
     }
 

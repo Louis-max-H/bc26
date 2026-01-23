@@ -8,9 +8,6 @@ import json
 from pathlib import Path
 
 import math
-import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
-import numpy as np
 
 ############################### Variables ###############################
 
