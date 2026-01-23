@@ -49,6 +49,7 @@ public class Communication extends Robot {
     public static final int TYPE_ENEMY_RAT    =   0b000101_000000000000_000000000000;
     public static final int TYPE_ALLY_RAT     =   0b000110_000000000000_000000000000;
     public static final int TYPE_MICRO        =   0b000111_000000000000_000000000000;
+    public static final int TYPE_MAKE_KING    =   0b001000_000000000000_000000000000;
     public static final int MASK_POSITION     =   0b000000_000000000000_111111111111;
     //                                                    _            |yyyyyyxxxxxx; // Bits 0-11 : 12 bits = log2(64*64)
     public static final int MASK_UNIT_ID      =   0b000000_111111111111_000000000000; // 12 bits 4096 values
@@ -108,6 +109,16 @@ public class Communication extends Robot {
             case TYPE_ENEMY_RAT:
                 debug("###Decoding enemy rat : at x: " + x + " y: " + y);
                 enemiesRats.add(new MapLocation(x, y), (msg & MASK_UNIT_ID) >> 12);
+                break;
+
+            case TYPE_MAKE_KING:
+                debug("###Decoding make king : at x: " + x + " y: " + y);
+                MapLocation loc = new MapLocation(x, y);
+                if(nearestCallForKing == null || myLoc.distanceSquaredTo(loc) < myLoc.distanceSquaredTo(nearestCallForKing)){
+                    nearestCallForKing = loc;
+                    nearestCallForKingTurn = rc.getRoundNum();
+                }
+                rc.setIndicatorLine(myLoc, loc, 236, 153, 73);
                 break;
 
             case TYPE_ALLY_RAT:
@@ -277,6 +288,9 @@ public class Communication extends Robot {
     }
     public static void addMessageKing(MapLocation loc, int id, int priority) {
         addMessage("addMessageKing", TYPE_KING | ((id % 4096) << 12) | loc.x + (loc.y << 6), priority);
+    }
+    public static void addMessageCreateKing(MapLocation loc, int priority) {
+        addMessage("addMessageKing", TYPE_MAKE_KING | loc.x + (loc.y << 6), priority);
     }
 
     /////////////////////////////////////// Send messages from MessageLIFO ///////////////////////////////////////

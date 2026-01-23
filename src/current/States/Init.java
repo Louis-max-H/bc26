@@ -20,6 +20,7 @@ public class Init extends State {
         Robot.spawnLoc = rc.getLocation();
         Robot.spawnRound = rc.getRoundNum();
         Robot.isKing = rc.getType().isRatKingType();
+        Robot.isFirstKing = rc.getType().isRatKingType();
 
         Robot.mapType = 0; // Small
         if(rc.getMapWidth() * rc.getMapHeight() > 32*32){
@@ -43,11 +44,16 @@ public class Init extends State {
         lastInitRound = round;
         isKing = rc.getType().isRatKingType();
         myLoc = rc.getLocation();
+        forceMovingEndOfTurn = true;
 
         // Utils
         PathFinding.resetScores();
         VisionUtils.resetDirections();
 
+        // Reset kings every 10 turn, like that, if one die, it will be cleared
+        if(rc.getRoundNum() % 10 == 0){
+            kings.clear();
+        }
 
         // Game phase
         if      (round <  100) { gamePhase = PHASE_START;}
@@ -219,12 +225,16 @@ public class Init extends State {
             rc.setIndicatorLine(rc.getLocation(), nearestEnemyRat, 255, 0, 0);
         }*/
 
-        if(isKing){
+        /*if(isKing){
             for (int j = 0; j < cheeseMines.size; j++) {
                 rc.setIndicatorLine(rc.getLocation(), cheeseMines.locs[j], 0, 0, 255);
             }
-        }
+        }*/
 
+        /*
+        for (int j = 0; j < kings.size; j++) {
+            rc.setIndicatorLine(rc.getLocation(), kings.locs[j], 0, 255, 0);
+        }*/
 
         return new Result(OK, "");
     }

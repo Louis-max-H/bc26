@@ -1,0 +1,71 @@
+package current.States;
+
+import battlecode.common.Direction;
+import battlecode.common.GameActionException;
+import battlecode.common.MapLocation;
+import current.Communication.Communication;
+import current.Params;
+
+import java.util.Map;
+
+import static current.States.Code.*;
+
+public class AskNewKing extends State {
+    public int costCap;
+    public AskNewKing(){
+        this.name = "AskNewKing";
+    }
+
+
+    // Position where we can ask for new king
+    public static int shiftX[] = {03, 03, 03, -3, -3, -3, 00, 03, -3, 00, 03, -3};
+    public static int shiftY[] = {00, 03, -3, 00, 03, -3, 03, 03, 03, -3, -3, -3};
+
+
+    @Override
+    public Result run() throws GameActionException {
+
+        // If don't need king
+        if(kings.size >= 2){
+            return new Result(OK, "Already have 2 kings");
+        }
+
+        // Wait a little because when spawn, kings array is not initialized
+        if(spawnRound + 4 < rc.getRoundNum()){
+            return new Result(OK, "Wait after spawn before asking new king");
+        }
+
+        // Check placement for new king
+        MapLocation newKingCenter = null;
+        for (int i = 0; i < 12; i++) {
+            newKingCenter = myLoc.translate(shiftX[i], shiftY[i]);
+
+            // Check if all cells are passable
+            for(Direction dir: Direction.values()){
+                // Out of the map
+                if(!rc.onTheMap(newKingCenter.add(dir))){
+                    newKingCenter = null;
+                    break;
+                }
+
+                // Location passable
+                if(!rc.senseMapInfo(newKingCenter.add(dir)).isPassable()){
+                    newKingCenter = null;
+                    break;
+                }
+            }
+
+            break;
+        }
+        
+        // If no placement found
+        if(newKingCenter == null){
+            return new Result(WARN, "No placement found for new king");
+        }
+
+        // Else, call for king
+        Communication.addMessageCreateKing(newKingCenter, PRIORITY_CRIT);
+        rc.setIndicatorLine(rc.getLocation(), newKingCenter, 0, 255, 0);
+        return new Result(WARN, "Ask for king at " + newKingCenter);
+    };
+}

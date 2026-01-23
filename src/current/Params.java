@@ -18,9 +18,9 @@ public class Params {
     public static int PARAMS_ATTACK_BONUS_DONT_MOVE        = 17; // [1, 30]
     public static int PARAMS_ATTACK_BONUS_CANT_SEE         = 10; // [1, 30]
 
-    public static int PARAMS_MAX_RATS_MAP_SMALL = 15; // [15, 40]
+    public static int PARAMS_MAX_RATS_MAP_SMALL  = 15; // [15, 40]
     public static int PARAMS_MAX_RATS_MAP_MEDIUM = 15; // [15, 60]
-    public static int PARAMS_MAX_RATS_MAP_LARGE = 15; // [15, 60]
+    public static int PARAMS_MAX_RATS_MAP_LARGE  = 20; // [15, 60]
     public static int maxRats;
 
     // Not tested since we haven't prefix P A R A M S
@@ -43,7 +43,7 @@ public class Params {
             case 2 -> PARAMS_MAX_RATS_MAP_LARGE;
             default -> throw new IllegalStateException("Unexpected value: MAP_type " + Robot.mapType);
         };
-        maxRats = 4;
+        // maxRats = 4;
 
         aggresivity = switch (Robot.mapType){
             case 0 -> new int[]{PARAMS_aggressivityMAP_SMALL1,PARAMS_aggressivityMAP_SMALL1,PARAMS_aggressivityMAP_SMALL1*10,PARAMS_aggressivityMAP_SMALL1*10};

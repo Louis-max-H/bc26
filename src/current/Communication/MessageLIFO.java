@@ -13,7 +13,7 @@ public class MessageLIFO {
             case 1: buffer1.add(msg); return;
             case 0: buffer0.add(msg); return;
             default:
-                System.out.println("ERR: Message priority should be in [0, 3] 0 is LOW, 3 is CRIT");
+                System.out.println("ERR: Message priority should be in [0, 3] 0 is LOW, 3 is CRIT, got " + priority);
         }
     }
 

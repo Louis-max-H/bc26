@@ -36,37 +36,30 @@ public class Baby extends Robot {
     public void updateState(Result resultBefore){
         boolean nowKing = isKing || rc.getType().isRatKingType();
         if (nowKing) {
-            currentState = switch (currentState.name) {
-                case "Init" -> moveKing;
-                case "MoveKing" -> avoidCat;
-                case "AvoidCat" -> spawn;
-                case "Spawn" -> endTurn;
-                case "EndTurn" -> init;
-                default -> {
-                    Robot.err(currentState.name + " don't match any states. Fallback to init");
-                    yield init;
+            Robot robot = new King();
+            Robot.rc.setTimelineMarker("King creation", 236, 153, 73);
+            while(true) {
+                try {
+                    robot.run(rc);
+                } catch (Exception e) {
+                    e.printStackTrace(System.out);
+                    Robot.rc.setTimelineMarker(e.getMessage(), 255, 0, 0);
                 }
-            };
-            return;
+            }
         }
 
         currentState = switch (currentState.name) {
             case "Init" -> avoidCat;
-            case "AvoidCat" -> becomeKing;
+            case "AvoidCat" -> attackEnemy;
 
             // Only if low on cheese
             case "AttackEnemy" -> throwToWalls;
-            case "ThrowToWalls" -> attackCat;
+            case "ThrowToWalls" -> becomeKing;
+            case "BecomeKing" -> attackCat;
             case "AttackCat" -> cheeseToKing;
 
             // Go back to normal mode
             case "CheeseToKing" -> placeTrap;
-            case "BecomeKing" -> {
-                if(rc.getRawCheese() > 0) {
-                    yield cheeseToKing;
-                }
-                yield attackEnemy;
-            }
             case "PlaceTrap" -> collectCheese;
             case "CollectCheese" -> explore;
             case "Explore" -> endTurn;

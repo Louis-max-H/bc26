@@ -1,8 +1,11 @@
 package current.States;
 
+import battlecode.common.Direction;
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;
 import battlecode.common.RobotInfo;
+import current.Communication.Communication;
+import current.Utils.BugNavLmx;
 import current.Utils.PathFinding;
 import current.Utils.VisionUtils;
 
@@ -19,14 +22,51 @@ public class BecomeKing extends State {
 
     @Override
     public Result run() throws GameActionException {
-
-        if(rc.getType().isRatKingType() && rc.canBecomeRatKing()){
+        // If I can create a king, make it
+        if(rc.canBecomeRatKing()){
             rc.becomeRatKing();
-            return new Result(OK, "Became rat king");
         }
 
-        return new Result(OK, "Need to be updated");
 
+        // No one asking
+        if(nearestCallForKing == null){
+            return new Result(OK, "No call for king nearby");
+        }
+
+        // Already 2 kings
+        if(kings.size >= 2){
+            nearestCallForKing = null;
+            return new Result(OK, "Already many kings");
+        }
+
+        // Outdated
+        if(nearestCallForKingTurn + 10 < rc.getRoundNum()){
+            nearestCallForKing = null;
+            return new Result(OK, "Call for king outdated");
+        }
+
+       // Too far
+        if(myLoc.distanceSquaredTo(nearestCallForKing) > 64){
+            nearestCallForKing = null;
+            return new Result(OK, "Call for king too far");
+        }
+
+        forceMovingEndOfTurn = false;
+
+        // if not in the square, move to it
+        if(!myLoc.isWithinDistanceSquared(nearestCallForKing, 2)){
+            PathFinding.smartMoveTo(nearestCallForKing);
+            return new Result(OK, "Moving to call for king at " + nearestCallForKing);
+        }
+
+        // Add score to stay in the square
+        long[] scores = new long[]{0, 0, 0, 0, 0, 0, 0, 0, 0};
+        for (Direction dir: directions) {
+            scores[dir.ordinal()] = (nearestCallForKing.isAdjacentTo(myLoc.add(dir)) ? 1 : -1);
+        }
+        PathFinding.addScoresWithNormalization(scores, 100);
+        PathFinding.moveBest();
+        return new Result(OK, "Staying in call for king at " + nearestCallForKing);
 
         /*
 

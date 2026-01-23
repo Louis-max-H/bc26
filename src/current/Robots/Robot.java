@@ -22,6 +22,8 @@ public class Robot {
     public static MapLocation myLoc;
     public static int round;
     public static int roundRatnap; // The round number we have ratnaped enemy
+    public static boolean isFirstKing = false;
+    public static boolean forceMovingEndOfTurn = true;
 
     // Meta variables
     public static boolean moveRandom = false; // Move random direction each 10 moves
@@ -36,6 +38,10 @@ public class Robot {
     public static MapLocation nearestMine;
     public static MapLocation nearestDirt;
     public static MapLocation nearestCheese;
+
+    // Turn
+    public static MapLocation nearestCallForKing;
+    public static int nearestCallForKingTurn;
 
     // Nearest ID, ID are mod 4096
     public static int nearestAllyRatID;
@@ -58,9 +64,9 @@ public class Robot {
     public static char[] directionEnemyRats = Tools.arrayOf4096Chars();
 
     // Messages
-    public static int PRIORITY_CRIT   = 3; // King being attacked, rush order
-    public static int PRIORITY_HIGH   = 2; // Enemy in view, cat position
-    public static int PRIORITY_NORMAL = 1; // King position, cheese mine
+    public static int PRIORITY_CRIT   = 2; // King being attacked, rush order
+    public static int PRIORITY_HIGH   = 1; // Enemy in view, cat position
+    public static int PRIORITY_NORMAL = 0; // King position, cheese mine
 
     // Phases
     public static int gamePhase;

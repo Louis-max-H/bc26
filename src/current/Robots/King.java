@@ -6,11 +6,13 @@ import current.States.*;
 public class King extends Robot {
     State moveKing;
     State spawn;
+    State askForKing;
 
     @Override
     public void init() throws GameActionException {
         this.init = new Init();
         this.moveKing = new MoveKing();
+        this.askForKing = new AskNewKing();
         this.endTurn = new EndTurn();
         this.spawn = new Spawn();
     }
@@ -20,7 +22,8 @@ public class King extends Robot {
         currentState = switch (currentState.name) {
             case "Init" -> moveKing;
             case "MoveKing" -> avoidCat;
-            case "AvoidCat" -> spawn;
+            case "AvoidCat" -> askForKing;
+            case "AskNewKing" -> spawn;
             case "Spawn" -> endTurn;
             case "EndTurn" -> init;
             default -> {

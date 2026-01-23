@@ -5285,9 +5285,6 @@ public class BugNavLmx {
             for (;;) {
                 iterationsNormal++;
 
-                if(withReturn){  rc.setIndicatorDot(new MapLocation((xy & 0b111111) - 1, (xy >> 7) - 1), 0, 10, 10); // Blue
-                    }else{           rc.setIndicatorDot(new MapLocation((xy & 0b111111) - 1, (xy >> 7) - 1), 206, 174, 243); // Violet
-                    }
                 if(Clock.getBytecodesLeft() < stopBellowBytecodeRemaining){
                     break mainLoop;
                 }
@@ -6493,7 +6490,6 @@ public class BugNavLmx {
 
                                         modeSplitGoLeft: {
                     // debug messages
-                                            int locIndicator = xyLeft; rc.setIndicatorDot(new MapLocation((locIndicator & 0b111111) - 1, (locIndicator >> 7) - 1), 173, 216, 230);
                     
                     // We dont want to rush destination if we haven't turn enough
                     if(ctrLeft <= 0){ switch (mapDirections[xyEndDir - xyLeft]){
@@ -7600,7 +7596,6 @@ public class BugNavLmx {
                     }else{
                                         modeSplitGoRight: {
                     // debug messages
-                                            int locIndicator = xyRight; rc.setIndicatorDot(new MapLocation((locIndicator & 0b111111) - 1, (locIndicator >> 7) - 1), 255, 228, 181);
                     
                     // We dont want to rush destination if we haven't turn enough
                     if(ctrRight <= 0){ switch (mapDirections[xyEndDir - xyRight]){
@@ -8779,7 +8774,6 @@ public class BugNavLmx {
 
             // Debug
             int returnDirection = mapResult[xyReturn];
-                        rc.setIndicatorDot(new MapLocation((xyReturn & 0b111111) - 1, (xyReturn >> 7) - 1), 206, 174, 243);
             switch(mapDirections[xyStartDir - xyReturn]){
                 case 0:
                     if(0 != returnDirection && mapCosts[xyReturn + 128] <= cost_max_per_cell){

@@ -1,6 +1,7 @@
 package current.States;
 
 import battlecode.common.*;
+import current.Robots.Robot;
 import current.Utils.PathFinding;
 
 import static current.States.Code.*;
@@ -21,6 +22,25 @@ public class MoveKing extends State {
 
     @Override
     public Result run() throws GameActionException {
+
+        // If only one king, dont move
+        if(Robot.kings.size <= 1){
+            return new Result(OK, "Only one king, playing safe");
+        }
+
+        // Move only if we have the lower id in kings
+        boolean canMove = false;
+        int myId = rc.getID() % 4096;
+        for(int i = 0; i < Robot.kings.size; i++){
+            if(Robot.kings.ids[i] < myId){
+                canMove = true;
+                break;
+            }
+        }
+        if(!canMove){
+            return new Result(OK, "I am not the lowest ID, not moving");
+        }
+
         // Check if we can move and turn
         if(!rc.isMovementReady()){
             return new Result(CANT, "Can't move");

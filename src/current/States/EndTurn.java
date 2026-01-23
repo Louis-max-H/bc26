@@ -22,7 +22,7 @@ public class EndTurn extends State {
         }
 
         // Force move at end of turn
-        if(!isKing && rc.getMovementCooldownTurns() == 0){
+        if(!isKing && rc.getMovementCooldownTurns() == 0 && forceMovingEndOfTurn){
             print("Force moving at end of turn");
             PathFinding.moveBest();
         }
