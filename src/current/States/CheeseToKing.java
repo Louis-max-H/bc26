@@ -34,7 +34,7 @@ public class CheeseToKing extends State {
     public Result run() throws GameActionException {
 
         // Check if we have cheese
-        if(rc.getRawCheese() == 0){
+        if(rc.getRawCheese() <= 10){
             return new Result(OK, "");
         }
 

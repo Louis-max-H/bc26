@@ -127,7 +127,7 @@ public class {{ className }} {
     public static void initScore(int width, int height){
         // Width
         switch(width){
-            {% for x in range(30, 61) %}
+            {% for x in range(20, 61) %}
             case {{x}}:
                 if({{x}} == width + 8){break;}
                 {% for y in range(0, 60 ) %} scores[{{ encodeXY((x, y), 8) }}] = 0; {% endfor %}
@@ -140,7 +140,7 @@ public class {{ className }} {
 
         // height
         switch(height){
-            {% for y in range(30, 61) %}
+            {% for y in range(20, 61) %}
             case {{y}}:
                 if({{y}} == height + 8){break;}
                 {% for x in range(0, 60 ) %}scores[{{ encodeXY((x, y), 8) }}] = 0; {% endfor %}

@@ -48,8 +48,6 @@ public class PathFinding {
             }
 
             if(!rc.canMove(dir)) {
-                char cellType = BugNavLmx.mapCosts[loc.x + (loc.y<<7) + 128];
-
                 // If we have a wall, can't dig
                 if (cellType >= BugNavLmx.SCORE_CELL_WALL) {
                     scores[dir.ordinal()] = 0;
@@ -66,7 +64,7 @@ public class PathFinding {
                         rc.move(dir); // Will fail
                     }catch (GameActionException e){
                         if(e.getMessage().contains("is occupied by a different robot")){
-                            System.out.println("Can't move because robot " + dir + " : " + e.getMessage());
+                            // System.out.println("Can't move because robot " + dir + " : " + e.getMessage());
                             scores[dir.ordinal()] = 0;
                         }
                     }
@@ -243,7 +241,7 @@ public class PathFinding {
             Robot.lastDirection = dir;
 
             Robot.rc.move(dir);
-            Robot.myLoc = Robot.myLoc.add(dir);
+            Robot.myLoc = Robot.rc.getLocation();
             return new Result(OK, "Moved to " + dir.toString());
         } else {
             return new Result(CANT, "Can't move to " + dir.toString());

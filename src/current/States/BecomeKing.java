@@ -19,6 +19,17 @@ public class BecomeKing extends State {
 
     @Override
     public Result run() throws GameActionException {
+
+        if(rc.getType().isRatKingType() && rc.canBecomeRatKing()){
+            rc.becomeRatKing();
+            return new Result(OK, "Became rat king");
+        }
+
+        return new Result(OK, "Need to be updated");
+
+
+        /*
+
         if (rc.getType().isRatKingType()) {
             return new Result(OK, "Already a king");
         }
@@ -58,5 +69,6 @@ public class BecomeKing extends State {
         }
 
         return new Result(OK, "Cannot become rat king");
+        */
     }
 }

@@ -130,20 +130,30 @@ public class Communication extends Robot {
         int startBytecode = Clock.getBytecodeNum();
         char sendCooldown = (char) (round + COOLDOWN_SEND_AGAIN_ARRAY);
 
-        for(int index = 0; index <= 60; index += 3){
-            int message = (sharedArray[index] << 20) | (sharedArray[index + 1] << 10) | (sharedArray[index + 2]);
+        for(;;){
+            // debug("Reading message at index : " + lastMessageIndex);
 
-            if(message == lastDecodedMessages[index]){
-                continue;
+            // Assuming it's long
+            int message = (sharedArray[lastMessageIndex] << 20) | (sharedArray[lastMessageIndex + 1] << 10) | (sharedArray[lastMessageIndex + 2]);
+
+            // If same content, no need to read more
+            if(message == lastDecodedMessages[lastMessageIndex]){
+                break;
             }
-            lastDecodedMessages[index] = message;
 
+            lastDecodedMessages[lastMessageIndex] = message;
+            lastMessageIndex += 3;
             decodeMessage(message, true);
             lastTimeSeenMessage[message & MASK_14BITS] = sendCooldown;
             nDecoded++;
+
+            // Wrap around because a circular array
+            if(lastMessageIndex > 60){ // Need more gap if message of size 3
+                lastMessageIndex = 0;
+            }
         }
 
-        debug("End reading shared array");
+        debug("End reading messages at index : " + lastMessageIndex);
         print("Shared Array : " + nDecoded + " messages in " + (Clock.getBytecodeNum() - startBytecode) + " bytecode(s)");
     }
 

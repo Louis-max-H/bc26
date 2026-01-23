@@ -99,10 +99,16 @@ public class {{ className }} {
 
     // Add border to mapCosts
     public static void init(int width, int height){
+        setWidth(width);
+        setHeight(height);
+        mapCosts[{{encodeCellPathfinding("width", "height")}}] = {{SCORE_CELL_BORDER}};
+    }
+
+    public static void setWidth(int width){
         switch(width){
-            {% for w in range(20, 61)%}
+            {% for w in range(20, 61)%} {# w is in [20, 60], so iter to 61#}
             case {{w}}:
-                {% for y in range(20, 60)%}
+                {% for y in range(0, 60)%} {# y is in [0, 59], so iter to 60#}
                 mapCosts[{{encodeCellPathfinding(w, y)}}] = {{SCORE_CELL_BORDER}};
                 {% endfor%}
                 break;
@@ -110,11 +116,13 @@ public class {{ className }} {
             default:
                 throw new IllegalArgumentException("Width " + width + " is not supported, should be between 20 and 60");
         }
+    }
 
+    public static void setHeight(int height){
         switch(height){
             {% for h in range(20, 61)%}
             case {{h}}:
-                {% for x in range(20, 60)%}
+                {% for x in range(0, 60)%}
                 mapCosts[{{encodeCellPathfinding(x, h)}}] = {{SCORE_CELL_BORDER}};
                 {% endfor%}
                 break;
@@ -148,7 +156,7 @@ public class {{ className }} {
         Direction dir = DIRECTIONS[mapResult[startXY]];
 
         // Check if we can reuse previous path
-        if(timeBeforeRefresh > 0 && lastDestination.equals(endLoc)){
+        if(false && timeBeforeRefresh > 0 && lastDestination.equals(endLoc)){
             if(dir != Direction.CENTER){
                 if({{getRound}} < {{MAX_DEBUG_ROUND}}){System.out.println("Pathfinding: Reuse previous path -> " + dir);}
                 timeBeforeRefresh -= 3;
@@ -167,7 +175,8 @@ public class {{ className }} {
                 System.out.println("Pathfinding: Warning return code : " + resultCode + " : " + dir);
             }    
             timeBeforeRefresh = 0; // Don't save query result
-            
+            return null;
+
         }else{
             if({{ getRound }} < {{ MAX_DEBUG_ROUND }}){
                 System.out.println("Pathfinding: SUCCESS -> " + dir);
@@ -270,7 +279,7 @@ public class {{ className }} {
                         {# Check if we can move to this cell -#}
                         xyTmp = xy + {{dirsShift7Bxy[dir]}};
                         if(mapCosts[xyTmp] > cost_max_per_cell){
-                            {% if DEBUG -%}System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=WALL");
+                            {% if DEBUG -%}System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=WALL score: " + (int)mapCosts[xyTmp] + " for cell " + xyTmp);
                             {% endif -%}
 
                             xyLastWallHit = xyTmp;

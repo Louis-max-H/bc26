@@ -9,6 +9,7 @@ package current.States;
 
 import battlecode.common.*;
 import current.Utils.BugNavLmx;
+import current.Utils.PathFinding;
 
 import static current.States.Code.*;
 
@@ -86,18 +87,14 @@ public class ThrowToWalls extends State {
 
         // Moving back for 1
         if(score == 1 && rc.canMove(dir.opposite())){
-            lastLocation = myLoc;
             lastDirection = dir.opposite();
-            rc.move(dir.opposite());
-            myLoc = myLoc.add(dir.opposite());
+            PathFinding.move(dir.opposite());
         }
 
         // Moving front to make more damage
         if(score > 1 && rc.canMove(dir)){
-            lastLocation = myLoc;
             lastDirection = dir;
-            rc.move(dir);
-            myLoc = myLoc.add(dir);
+            PathFinding.move(dir);
         }
 
         // can't throw ?

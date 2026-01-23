@@ -199,10 +199,6 @@ public class Init extends State {
             nearestMine = cheeseMines.locs[i];
         }
 
-        for (int j = 0; j < kings.size; j++) {
-            BugNavLmx.set3x3Score(kings.locs[j], (char)(BugNavLmx.SCORE_CELL_WALL));
-        }
-
         /// // debug lines
         /*if(nearestKing != null){
             rc.setIndicatorLine(rc.getLocation(), nearestKing, 0, 10, 10);
