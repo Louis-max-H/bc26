@@ -12,7 +12,7 @@ import static java.lang.Math.min;
 
 public class PathFinding {
     public static long scores[]; // Contain score for each direction
-    public static long SCORE_BASIS = 100_000;
+    public static long SCORE_BASIS = 100_000_000;
     //////////////////////////////////// public functions //////////////////////////////////////////////////////////////
     /// All functions you may need
 
@@ -21,7 +21,7 @@ public class PathFinding {
 
     public static void resetScores(){
         // Default score of 1 everywhere
-        scores = new long[]{100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 100_000, 0};
+        scores = new long[]{100_000_000, 100_000_000, 100_000_000, 100_000_000, 100_000_000, 100_000_000, 100_000_000, 100_000_000, 0};
     }
     public static boolean digEnable = true;
 
@@ -146,11 +146,17 @@ public class PathFinding {
         // SCORE_CELL_IF_DIG :2001
         // If unit : rc.getRound
 
+        if(Robot.bugnavBugging + 10 > Robot.rc.getRoundNum()){
+            isLmxBugnav = false;
+            return BugNavChenyx512.bugNavGetMoveDir(loc);
+        }
+
+        isLmxBugnav = true;
         return BugNavLmx.pathTo(
                 Robot.rc.getLocation(), loc,
                 BugNavLmx.SCORE_CELL_IF_DIG * 30, // Max 30 cells
                 BugNavLmx.SCORE_CELL_IF_DIG, // Avoid units
-                max(1000, min(Clock.getBytecodesLeft() - 2000, 6000)) // Number bytecode used
+                max(3000, min(Clock.getBytecodesLeft() - 4000, 6000)) // Number bytecode used
         );
     }
 
@@ -165,13 +171,7 @@ public class PathFinding {
         }
 
         // First try, bugnav of Louis-Max
-        Direction bugNavDir = BugNavLmx.pathTo(
-            Robot.rc.getLocation(), loc,
-            BugNavLmx.SCORE_CELL_PASSABLE * 30, // Max 30 cells
-                BugNavLmx.SCORE_CELL_IF_DIG, // Avoid units
-            max(1000, min(Clock.getBytecodesLeft() - 2000, 6000)) // Number bytecode used
-        );
-        isLmxBugnav = true;
+        Direction bugNavDir = BugNavLmx(loc);
 
         // Fallback to Chenyx512 if failed
         if(bugNavDir == null || bugNavDir == Direction.CENTER){
@@ -252,14 +252,14 @@ public class PathFinding {
 
     public static void modificatorOrientation(Direction dir){
         // Add bonus for moving
-        scores[0] += 100_000;
-        scores[1] += 100_000;
-        scores[2] += 100_000;
-        scores[3] += 100_000;
-        scores[4] += 100_000;
-        scores[5] += 100_000;
-        scores[6] += 100_000;
-        scores[7] += 100_000;
+        scores[0] += 100_000_000;
+        scores[1] += 100_000_000;
+        scores[2] += 100_000_000;
+        scores[3] += 100_000_000;
+        scores[4] += 100_000_000;
+        scores[5] += 100_000_000;
+        scores[6] += 100_000_000;
+        scores[7] += 100_000_000;
 
         // Boost score toward direction
         scores[dir.rotateLeft().ordinal()] *= 4;
@@ -274,28 +274,18 @@ public class PathFinding {
         scores[opposite.rotateRight().rotateRight().ordinal()] *= 2;
     }
 
-    public static void modificatorOrientationSoft(Direction dir){
-        // Add bonus for moving
-        scores[0] += 100_000;
-        scores[1] += 100_000;
-        scores[2] += 100_000;
-        scores[3] += 100_000;
-        scores[4] += 100_000;
-        scores[5] += 100_000;
-        scores[6] += 100_000;
-        scores[7] += 100_000;
-
+    public static void modificatorOrientationSoft(Direction dir, long coef){
         // Boost score toward direction
-        scores[dir.rotateLeft().ordinal()] += 350_000 ;
-        scores[dir.ordinal()] += 400_000;
-        scores[dir.rotateRight().ordinal()] += 350_000;
+        scores[dir.rotateLeft().ordinal()] += 250_000_000 * coef;
+        scores[dir.ordinal()] += 300_000_000 * coef;
+        scores[dir.rotateRight().ordinal()] += 250_000_000 * coef;
 
         Direction opposite = dir.opposite();
-        scores[opposite.rotateLeft().rotateLeft().ordinal()] += 250_000;
-        scores[opposite.rotateLeft().ordinal()] += 150_000;
-        scores[opposite.ordinal()] += 50_000;
-        scores[opposite.rotateRight().ordinal()] += 150_000;
-        scores[opposite.rotateRight().rotateRight().ordinal()] += 250_000;
+        scores[opposite.rotateLeft().rotateLeft().ordinal()] += 150_000_000 * coef;
+        scores[opposite.rotateLeft().ordinal()] += 100_000_000 * coef;
+        scores[opposite.ordinal()] += 500_000 * coef;
+        scores[opposite.rotateRight().ordinal()] += 100_000_000 * coef;
+        scores[opposite.rotateRight().rotateRight().ordinal()] += 150_000_000 * coef;
     }
 
     //////////////////////////////////// Heuristic  ////////////////////////////////////////////////////////////////////
@@ -306,14 +296,14 @@ public class PathFinding {
     // You don't need to go further this point
     //////////////////////////////////// Scoring ///////////////////////////////////////////////////////////////////////
 
-    public static void addScoresWithNormalization(long[] newScores, long coef){
+    public static void addScoresWithNormalization(long[] newScores, int coef){
         long max = Tools.maxLong9(newScores);
         if(max == 0){return;}
 
         /** Normalize to 100.000.000
          * */
         printScores("Before adding score WithNormalization");
-        long normalize = 100_000_000 * coef / max;
+        long normalize = 100_000_000L * coef / max;
         // Robot.print("Noramize with coef : " + coef + " and max : " + max + " -> " + (normalize));
         // Robot.print("Adding : i=" + 0 + " " + newScores[0] * normalize);
         // Robot.print("Adding : i=" + 1 + " " + newScores[1] * normalize);

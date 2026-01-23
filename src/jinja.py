@@ -220,16 +220,16 @@ def xyToMapLocation(xy):
     return "INVALID_XY"
 
 def generateEmptyMapCosts7B(passableValue, mod2value, borderValue, invalidValue):
-    costs = [invalidValue for _ in range(62 + (62 << 7))]
-    for x in range(62):
-        for y in range(62):
+    costs = [invalidValue for _ in range(encodeCellPathfinding(61, 61) + 1)]
+    for x in range(-1, 62):
+        for y in range(-1, 62):
             # Valid cells are between 1 and 60
-            if x == 0 or x == 61 or y == 0 or y == 61:
-                costs[x + (y << 7)] = borderValue
+            if x == -1 or x == 61 or y == -1 or y == 61:
+                costs[encodeCellPathfinding(x, y)] = borderValue
             elif x % 2 == 0 and y % 2 == 0:
-                costs[x + (y << 7)] = mod2value
+                costs[encodeCellPathfinding(x, y)] = mod2value
             else:
-                costs[x + (y << 7)] = passableValue
+                costs[encodeCellPathfinding(x, y)] = passableValue
     return "\"" + "".join([intToChar(cost) for cost in costs]) + "\".toCharArray()"
 
 ############################### Utils ###############################

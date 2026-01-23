@@ -8,6 +8,7 @@ public class King extends Robot {
     State spawn;
     State askForKing;
     State kingDig;
+    State kingCheese;
 
     @Override
     public void init() throws GameActionException {
@@ -17,6 +18,7 @@ public class King extends Robot {
         this.endTurn = new EndTurn();
         this.spawn = new Spawn();
         this.kingDig = new KingDig();
+        this.kingCheese = new KingCheese();
     }
 
     @Override
@@ -27,7 +29,8 @@ public class King extends Robot {
             case "AvoidCat" -> askForKing;
             case "AskNewKing" -> spawn;
             case "Spawn" -> kingDig;
-            case "KingDig" -> endTurn;
+            case "KingDig" -> kingCheese;
+            case "KingCheese" -> endTurn;
             case "EndTurn" -> init;
             default -> {
                 Robot.err(currentState.name + " don't match any states. Fallback to init");

@@ -1,36 +1,74 @@
 package current.States;
 
 import battlecode.common.*;
+import current.Utils.BugNavLmx;
 import current.Utils.PathFinding;
 import current.Utils.VisionUtils;
 
 import java.util.Random;
 
 import static current.States.Code.*;
+import static java.lang.Math.sqrt;
 
 public class Explore extends State {
-    /**
-     * Explore use a init in Init state.
-     * We have a big array of interrest, and we move/turn to the zone with the biggest score.
-     * */
+    MapLocation targetExplore;
+    int lastTargetRoundSet;
+    int initialDistance;
+
+
     MapLocation target;
     public Explore(){
         this.name = "Explore";
-    }
+    
+    
+        // Init target explore using orientation given at spawn
+        int width = rc.getMapWidth();
+        int height = rc.getMapHeight();
+        targetExplore = switch(rc.getDirection()){
+            case Direction.NORTHEAST -> new MapLocation(height - 1, width - 1);
+            case Direction.SOUTHEAST -> new MapLocation(0, width - 1);
+            case Direction.SOUTHWEST -> new MapLocation(0, 0);
+            case Direction.NORTHWEST -> new MapLocation(0, height / 2);
+            case Direction.NORTH     -> new MapLocation(width / 2, height - 1);
+            case Direction.SOUTH     -> new MapLocation(width / 2, 0);
+            case Direction.EAST      -> new MapLocation(width - 1, height / 2);
+            case Direction.WEST      -> new MapLocation(height - 1, 0);
+            case Direction.CENTER    -> null;
+        };
 
+        initialDistance = (int)sqrt(rc.getLocation().distanceSquaredTo(targetExplore));
+        lastTargetRoundSet = rc.getRoundNum();
+    }
+    
     @Override
     public Result run() throws GameActionException {
-        // Check if we can move and turn
+        // Check if we can move
         if(rc.getMovementCooldownTurns() != 0){
             return new Result(CANT, "Can't move");
         }
 
+        // Check if we can turn
         if(rc.getTurningCooldownTurns() != 0){
             return new Result(CANT, "Can't turn");
         }
 
-        UnitType unitType = rc.getType();
+        if(targetExplore == null || lastTargetRoundSet + 100 < rc.getRoundNum()){
+            targetExplore = nearestMine;
+        }
+
+        // Add bonus to target
+        if (targetExplore != null) {
+            Direction dir = PathFinding.BugNavLmx(targetExplore);
+            if(BugNavLmx.resultCode <= 10){
+                targetExplore = null;
+                print("BugNavLmx return " + BugNavLmx.resultCode + ", targetExplore set to null");
+            }else{
+                PathFinding.modificatorOrientationSoft(dir, 5); // Coef 5
+            }
+        }
+
         // For each nearby cells, add their heuristic to the direction that lead to this cell
+        UnitType unitType = rc.getType();
         PathFinding.printScores("At begining explore");
 
         // Heuristic based on Vision
@@ -65,13 +103,13 @@ public class Explore extends State {
             }
         }
 
+        // Move to best dir
+        Result result = PathFinding.moveBest();
+
         // Turn to direction
         if(rc.canTurn() && bestLookDir != Direction.CENTER && bestLookScore > bestMoveScore * 12 / 10){
             rc.turn(bestLookDir);
         }
-
-        // Move to best dir
-        Result result = PathFinding.moveBest();
         Result resultTurn = VisionUtils.smartLook();
         return new Result(OK, "Move result : " + result.msg + " Turn result : " + resultTurn.msg);
 

@@ -24,6 +24,8 @@ public class Robot {
     public static int roundRatnap; // The round number we have ratnaped enemy
     public static boolean isFirstKing = false;
     public static boolean forceMovingEndOfTurn = true;
+    public static char numberTimesOnPositions[];
+    public static int bugnavBugging; // Last turn cycle detected
 
     // Meta variables
     public static boolean moveRandom = false; // Move random direction each 10 moves

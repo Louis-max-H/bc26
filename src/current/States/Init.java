@@ -4,10 +4,7 @@ import battlecode.common.*;
 import current.Communication.SenseForComs;
 import current.Params;
 import current.Robots.Robot;
-import current.Utils.BugNavLmx;
-import current.Utils.Micro;
-import current.Utils.PathFinding;
-import current.Utils.VisionUtils;
+import current.Utils.*;
 import current.Communication.Communication;
 
 import static current.Communication.Communication.TYPE_KING;
@@ -30,10 +27,15 @@ public class Init extends State {
             mapType = 2; // Big
         }
 
+        if(!isKing){
+            numberTimesOnPositions = ArrayUtils.char3600();
+        }
+
         // Init utils
         VisionUtils.initScore(rc.getMapWidth(), rc.getMapHeight());
         BugNavLmx.init(rc.getMapWidth(), rc.getMapHeight());
         Micro.init(rc);
+
     }
 
     @Override
@@ -53,6 +55,16 @@ public class Init extends State {
         // Reset kings every 10 turn, like that, if one die, it will be cleared
         if(rc.getRoundNum() % 10 == 0){
             kings.clear();
+        }
+
+        if(!isKing){
+            numberTimesOnPositions[myLoc.x + myLoc.y*60]++;
+            if(numberTimesOnPositions[myLoc.x + myLoc.y*60] > 8){
+                bugnavBugging = rc.getRoundNum();
+                numberTimesOnPositions = ArrayUtils.char3600();
+            }else{
+                bugnavBugging = -999;
+            }
         }
 
         // Game phase
@@ -234,6 +246,11 @@ public class Init extends State {
         /*
         for (int j = 0; j < kings.size; j++) {
             rc.setIndicatorLine(rc.getLocation(), kings.locs[j], 0, 255, 0);
+        }*/
+
+        /*
+        for (int j = 0; j < cheeseMines.size; j++) {
+            rc.setIndicatorLine(rc.getLocation(), cheeseMines.locs[j], 0, 255, 0);
         }*/
 
         return new Result(OK, "");

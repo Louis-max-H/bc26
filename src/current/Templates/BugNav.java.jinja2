@@ -4,13 +4,13 @@
 {% set SCORE_CELL_PASSABLE  =    1000 %}
 {% set SCORE_CELL_IF_DIG    =    1100 %}
 {% set SCORE_CELL_WALL      =   32000 %}
-{% set SCORE_CELL_BORDER    =   32000 %}
+{% set SCORE_CELL_BORDER    =   32001 %}
 
 {# Parametres pour la génération du code -#}
-{% set DEBUG = false %}
+{% set DEBUG = true %}
 {% set BATTLECODE = true %}
 {% set MAX_DEBUG_ROUND = 200 %}
-{% set DOT_DEBUG_LEVEL = 0 %} {# Level of debug for battlecode0: None, 1: Only reverse path, 2: All -#}
+{% set DOT_DEBUG_LEVEL = 2 %} {# Level of debug for battlecode0: None, 1: Only reverse path, 2: All -#}
 {% set colorLeft = "173, 216, 230" %}
 {% set colorRight = "255, 228, 181" %}
 {% set getBytecodeRemaining = "Clock.getBytecodesLeft()" if BATTLECODE else "1" %}
@@ -58,11 +58,16 @@ public class {{ className }} {
     public static int SCORE_CELL_BORDER = {{ SCORE_CELL_BORDER }};
 
     // Attributs for caching
-    public static int timeBeforeRefresh = 0;
+    public static int lastRoundCalculation = -2;
     public static MapLocation lastDestination;
 
     // Used for REVERSEtracking
-    public static int resultCode = 0; // 1 : Ok, -1: Not enought bytecode
+    public static int resultCode = 0;
+    //  1 : Ok
+    // -1: Not enought bytecode
+    //-10: Border both side split mode
+    //-11: Circle arround target without finding a way
+
     public static String mode = "DEFAULT";
     public static int xyLastWallHit = -1;
     public static int xyLastWallLeave = -1;
@@ -98,10 +103,12 @@ public class {{ className }} {
     }
 
     // Add border to mapCosts
-    public static void init(int width, int height){
+    public static void init(int width, int height) throws GameActionException{
         setWidth(width);
         setHeight(height);
-        mapCosts[{{encodeCellPathfinding("width", "height")}}] = {{SCORE_CELL_BORDER}};
+        mapCosts[{{encodeCellPathfinding("width", "height")}}] = {{SCORE_CELL_BORDER}}; // For top right corner
+
+        {#plotBORDER();#}
     }
 
     public static void setWidth(int width){
@@ -156,16 +163,16 @@ public class {{ className }} {
         Direction dir = DIRECTIONS[mapResult[startXY]];
 
         // Check if we can reuse previous path
-        if(false && timeBeforeRefresh > 0 && lastDestination.equals(endLoc)){
+        if(lastRoundCalculation + 1 >= {{ getRound }} && lastDestination.equals(endLoc)){
             if(dir != Direction.CENTER){
                 if({{getRound}} < {{MAX_DEBUG_ROUND}}){System.out.println("Pathfinding: Reuse previous path -> " + dir);}
-                timeBeforeRefresh -= 3;
+                lastRoundCalculation = -2;
                 return dir;
             }
         }
 
         // Generate path
-        resultCode = generatePathTo(startXY, {{ encodeCellPathfinding("endLoc.x", "endLoc.y") }}, MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
+        generatePathTo(startXY, {{ encodeCellPathfinding("endLoc.x", "endLoc.y") }}, MAX_SCORE, true, cost_max_per_cell, maxBytecodeUsed);
         dir = DIRECTIONS[mapResult[startXY]];
         {% if DEBUG -%}System.out.println("Get result of pathfinding: DIRECTIONS[mapResult[startXY]]=DIRECTIONS[" + (int)mapResult[startXY] + "] with startXY=" + startXY);{% endif -%}
 
@@ -174,23 +181,21 @@ public class {{ className }} {
             if({{ getRound }} < {{ MAX_DEBUG_ROUND }}){
                 System.out.println("Pathfinding: Warning return code : " + resultCode + " : " + dir);
             }    
-            timeBeforeRefresh = 0; // Don't save query result
+            lastRoundCalculation = -2; // Don't save query result
             return null;
-
-        }else{
-            if({{ getRound }} < {{ MAX_DEBUG_ROUND }}){
-                System.out.println("Pathfinding: SUCCESS -> " + dir);
-            }
-            timeBeforeRefresh = 3; // Save query result for 3 rounds
-            lastDestination = endLoc;
         }
 
-        // Return result
+
+        if({{ getRound }} < {{ MAX_DEBUG_ROUND }}){
+            System.out.println("Pathfinding: SUCCESS -> " + dir);
+        }
+        lastRoundCalculation = {{ getRound }}; // Save query result
+        lastDestination = endLoc;
         return dir;
     }
 
 
-    private static int generatePathTo(
+    private static void generatePathTo(
         int xyStart /* startloc */, int xyEnd /* endloc */, 
         int MAX_SCORE, boolean withReturn, 
         int cost_max_per_cell, int maxBytecodeUsed){% if BATTLECODE %} throws GameActionException {% endif -%}{
@@ -236,6 +241,9 @@ public class {{ className }} {
         }else{
             stopBellowBytecodeRemaining = {% if BATTLECODE %} Clock.getBytecodesLeft() - maxBytecodeUsed {% else %} 0 {% endif -%};
         }
+        if(stopBellowBytecodeRemaining < 0){
+            stopBellowBytecodeRemaining += 17500; // Max bytecode used by unit
+        }
 
 
 
@@ -261,8 +269,9 @@ public class {{ className }} {
 
                 {# Check if we have enough bytecode remaining -#}
                 if({{getBytecodeRemaining}} < stopBellowBytecodeRemaining){
-                    {% if DEBUG -%}System.out.println("MSG=not enough bytecode remaining");
+                    {% if DEBUG -%}System.out.println("MSG=not enough bytecode remaining mode default");
                     {% endif -%}
+                    resultCode = -1; // Not enought bytecode
                     break mainLoop;
                 }
 
@@ -289,7 +298,7 @@ public class {{ className }} {
                         {# Move to this direction -#}
                         {% if DEBUG -%}
                         System.out.println("POS=" + xy + ", DIR={{dir}}, RESULT=OK score: " + (int)mapCosts[xyTmp]);
-                        System.out.println("Writte " + {{dirsOrdsOpposite[dir]}} + "dursOrdsOpposite[{{dir}}] = {{dirsOpposite[dir]}} at " + (int)xyTmp);
+                        System.out.println("Writte mapResult[" + xyTmp + "] = " + DIRECTIONS[{{dirsOrdsOpposite[dir]}}] + "dursOrdsOpposite[{{dir}}] = {{dirsOpposite[dir]}} at " + (int)xyTmp);
                         {% endif -%}
                         xy = xyTmp;
                         mapResult[xyTmp] = {{dirsOrdsOpposite[dir]}};
@@ -349,6 +358,7 @@ public class {{ className }} {
                         xy{{side}} = xy + {{dirsShift7Bxy[dirTest]}};
                         lastDirection{{side}} = {{dirsOrds[dirTest]}};
                         mapResult[xy{{side}}] = {{dirsOrdsOpposite[dirTest]}};
+                        {% if DEBUG -%}System.out.println("MAPRESULT[" + xy{{side}} + "] = " + DIRECTIONS[{{dirsOrdsOpposite[dirTest]}}]);{% endif -%}
 
                         {# Debug messages -#}
                         {% if DEBUG -%}
@@ -385,12 +395,14 @@ public class {{ className }} {
             /// We advance side with the lowest score, with score = distance for example
             /// When dir is not blocked anymore, we go REVERSE to modeDefault
 
+            int ctrMaxRepeat = 10; // Max number of times split left or right can be on already observed cells
             modeSplit:
             for (;;) {
                 iterationsSplit++;
                 if({{getBytecodeRemaining}} < stopBellowBytecodeRemaining){
-                    {% if DEBUG -%}System.out.println("MSG=not enough bytecode remaining");
+                    {% if DEBUG -%}System.out.println("MSG=not enough bytecode remaining mode split");
                     {% endif -%}
+                    resultCode = -1; // Not enought bytecode
                     break mainLoop;
                 }
 
@@ -467,7 +479,7 @@ public class {{ className }} {
                                 {% if DEBUG -%}System.out.println("MODE={{ side }}, POS=" + xy + ", DIR={{dirTesting}}, RESULT=BORDER");
                                 {% endif -%}
 
-                                score{{side}} = MAX_SCORE;
+                                score{{side}} = MAX_SCORE+111;
                                 break modeSplitGo{{side}};
                             }
 
@@ -479,6 +491,14 @@ public class {{ className }} {
 
                                 xy{{side}} = xyTmp;
                                 ctr{{side}} += {{i}};
+                                if(mapResult[xyTmp] != 8){//TODOLMX
+                                    ctrMaxRepeat--;
+                                    if(ctrMaxRepeat <= 0){
+                                        resultCode = -11; // Circle arround target without finding a way
+                                        break mainLoop;
+                                    }
+                                }
+
                                 mapResult[xyTmp] = {{dirsOrdsOpposite[dirTesting]}};
                                 {% if DEBUG -%}System.out.println("MAPRESULT[" + xyTmp + "] = " + DIRECTIONS[{{dirsOrdsOpposite[dirTesting]}}]);
                                 {% endif -%}
@@ -522,6 +542,12 @@ public class {{ className }} {
             }// End main for loop
         } // End mainLoopLabel
 
+        // Check if split mode failed
+        if(xyLeft == MAX_SCORE+111 && xyRight == MAX_SCORE+111){
+            resultCode = -10; // Border both side split mode
+            return;
+        }
+
         if(!withReturn){
             if( {{ getRound }} < {{ MAX_DEBUG_ROUND }}){
                 System.out.println("===Pathfinding report : REVERSE ===");
@@ -535,9 +561,16 @@ public class {{ className }} {
 
             {{ className }}.mapResult = mapResult;
             if(xy != xyEnd){ {# Reversemode: We haven't reached the start of pathfinding -#}
-                return -1;
+                if(resultCode < 0){
+                    // Already an error, we don't want to overwrite it
+                }else{
+                    resultCode = -9; // Unknown error
+                }
+            }else{
+                // We have reach the destination
+                resultCode = 0;
             }
-            return 1;
+            return;
         }
 
         {% if DEBUG -%}System.out.println("Return mode");
@@ -550,7 +583,7 @@ public class {{ className }} {
         // 3) xy
 
         int xyReturn;
-        if(xyLastWallLeave != -1){
+        if(xyLastWallLeave >= 0){
             xyReturn = xyLastWallLeave; // 1)
             {% if DEBUG -%}System.out.println("POS=" + xy + ", RESULT=RETURN = last wall leave");
             {% endif -%}
@@ -558,6 +591,7 @@ public class {{ className }} {
         }else{
             {% if DEBUG -%}System.out.println("xyLastWallLeave is " + xyLastWallLeave + " trying other values for xyReturn");
             {% endif -%}
+
             if(xyLeft == -1){
                 {% if DEBUG -%}System.out.println("locLeft is null, returning xyRight");
                 {% endif -%}
@@ -577,7 +611,6 @@ public class {{ className }} {
                         xyReturn = xyLeft;
                         {% if DEBUG -%}System.out.println("locLeft is closer to end, returning xyLeft");
                         {% endif -%}
-
 
                     }else{
                         xyReturn = xyRight;
@@ -611,8 +644,9 @@ public class {{ className }} {
 
             // Check bytecode limits
             if({{getBytecodeRemaining}} < stopBellowBytecodeRemaining){
-                {% if DEBUG -%}System.out.println("MSG=not enough bytecode remaining");
+                {% if DEBUG -%}System.out.println("MSG=not enough bytecode remaining reverse loop");
                 {% endif -%}
+                resultCode = -1; // Not enought bytecode
                 break ReverseLoop;
             }
 
@@ -645,11 +679,13 @@ public class {{ className }} {
                 case 8: // Center
                     if({{getRound}} < {{MAX_DEBUG_ROUND}}){System.out.println("MSG=Destination reached directly by reverse path");}
                     if(returnDirection == 8){
-                        return 1;
+                        resultCode = 1;
+                        return; // TODO; Why 2 cases ?
                     }
                     xyReturn += dirsShift7Bxy[returnDirection];
                     mapResult[xyReturn] = dirsOrdsOpposite[returnDirection];
-                    return 1;
+                    resultCode = 1;
+                    return;
 
                 default:
                     {{ impossible(MSG="REVERSE mode: Invalid direction to start. : \" + (int)mapDirections[xyStartDir - xyReturn] + \" ") }}
@@ -658,7 +694,8 @@ public class {{ className }} {
             {# Go up one move and writte direction -#}
             // TODO: Check this good ?
             if(returnDirection == 8){
-                return 1;
+                resultCode = 1;
+                return;
             }
             xyReturn += dirsShift7Bxy[returnDirection];
             mapResult[xyReturn] = dirsOrdsOpposite[returnDirection];
@@ -673,7 +710,7 @@ public class {{ className }} {
             System.out.println("");
         }
 
-        return generatePathTo(
+        generatePathTo(
             xyReturn, xyStart, 
             MAX_SCORE, false /* withReturn */, 
             cost_max_per_cell, maxBytecodeUsed
@@ -685,7 +722,21 @@ public class {{ className }} {
         return {{ generateEmptyMapCosts7B(SCORE_CELL_PASSABLE, SCORE_CELL_PASSABLE, SCORE_CELL_BORDER, SCORE_CELL_BORDER) }};
     }
 
+    {#
+    public static void plotBORDER() throws GameActionException{
+        RobotController rc = Robot.rc;
+        {% for x in range(0, 20) %}
+        {% for y in range(0, 20) %}
+        if(mapCosts[{{encodeCellPathfinding(x, y)}}] == {{SCORE_CELL_BORDER}}){
+            rc.setIndicatorDot(new MapLocation({{x}}, {{y}}), 255, 0, 0);
+        }
+        {% endfor %}
+        {% endfor %}
+        rc.resign();
+    }
+    #}
+
     public static char[] getMap7B(){
-        return "{%for x in range(maxIndex)%}\u0000{%endfor%}".toCharArray();
+        return "{%for x in range(maxIndex)%}\u0008{%endfor%}".toCharArray();
     }
 }

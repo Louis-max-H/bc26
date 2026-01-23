@@ -25,13 +25,15 @@ public class AskNewKing extends State {
     @Override
     public Result run() throws GameActionException {
 
-        // If don't need king
-        if(kings.size >= 2){
-            return new Result(OK, "Already have 2 kings");
+        // If another king exist
+        for (int i = 0; i < kings.size; i++) {
+            if(kings.ids[i] != rc.getID() % 4096){
+                return new Result(OK, "Already have another king " + kings.ids[i]);
+            }
         }
 
         // Wait a little because when spawn, kings array is not initialized
-        if(spawnRound + 4 < rc.getRoundNum()){
+        if(spawnRound + 4 > rc.getRoundNum()){
             return new Result(OK, "Wait after spawn before asking new king");
         }
 
