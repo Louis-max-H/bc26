@@ -1,16 +1,16 @@
 // Destination: Utils/BugNavLmx.java
 
 {# Scores pour franchir une cellule-#}
-{% set SCORE_CELL_PASSABLE  =    200 %}
-{% set SCORE_CELL_IF_DIG    =    220 %}
-{% set SCORE_CELL_WALL      =  32000 %}
-{% set SCORE_CELL_BORDER    =  32001 %}
+{% set SCORE_CELL_PASSABLE  =    1000 %}
+{% set SCORE_CELL_IF_DIG    =    1100 %}
+{% set SCORE_CELL_WALL      =   32000 %}
+{% set SCORE_CELL_BORDER    =   32000 %}
 
 {# Parametres pour la génération du code -#}
 {% set DEBUG = false %}
 {% set BATTLECODE = true %}
-{% set MAX_DEBUG_ROUND = 2000 %}
-{% set DOT_DEBUG_LEVEL = 1%} {# Level of debug for battlecode0: None, 1: Only reverse path, 2: All -#}
+{% set MAX_DEBUG_ROUND = 200 %}
+{% set DOT_DEBUG_LEVEL = 2%} {# Level of debug for battlecode0: None, 1: Only reverse path, 2: All -#}
 {% set colorLeft = "173, 216, 230" %}
 {% set colorRight = "255, 228, 181" %}
 {% set getBytecodeRemaining = "Clock.getBytecodesLeft()" if BATTLECODE else "1" %}
@@ -88,6 +88,14 @@ public class {{ className }} {
             Direction.NORTHWEST,
             Direction.CENTER
     };
+
+    // Add score 3x3
+    public static void set3x3Score(MapLocation loc, char score){
+        int xy = {{ encodeCellPathfinding("loc.x", "loc.y") }};
+        {% for dir in dirs -%}
+            mapCosts[xy + {{dirsShift7Bxy[dir]}}] = score;
+        {% endfor %}
+    }
 
     // Add border to mapCosts
     public static void init(int width, int height){

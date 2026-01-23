@@ -43,6 +43,7 @@ public class Params {
             case 2 -> PARAMS_MAX_RATS_MAP_LARGE;
             default -> throw new IllegalStateException("Unexpected value: MAP_type " + Robot.mapType);
         };
+        maxRats = 4;
 
         aggresivity = switch (Robot.mapType){
             case 0 -> new int[]{PARAMS_aggressivityMAP_SMALL1,PARAMS_aggressivityMAP_SMALL1,PARAMS_aggressivityMAP_SMALL1*10,PARAMS_aggressivityMAP_SMALL1*10};

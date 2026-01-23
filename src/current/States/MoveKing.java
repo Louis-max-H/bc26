@@ -129,6 +129,7 @@ public class MoveKing extends State {
             scores[myLoc.directionTo(info.location).ordinal()] += info.cheeseAmount;
         }
 
+
         PathFinding.addScoresWithNormalization(scores, 5);
         PathFinding.moveBest();
         return new Result(OK, "Done updating scores");

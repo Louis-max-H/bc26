@@ -25,7 +25,6 @@ public class AvoidCat extends State {
         }
 
         int safetyDist = isKing ? SAFE_DISTANCE_KING_SQUARED : SAFE_DISTANCE_SQUARED;
-        int catDist = myLoc.distanceSquaredTo(nearestCat);
 
         // Set scores: only allow left/right of away direction, penalize all others
         long[] scores = new long[9];
@@ -33,7 +32,7 @@ public class AvoidCat extends State {
             long distance = myLoc.add(dir).distanceSquaredTo(nearestCat);
             if (distance < safetyDist) {
 
-                long level = 4 - (distance * 4) / safetyDist; // Level 4 is when very cloose of cat
+                long level = 6 - (distance * 6) / safetyDist; // Level 6 is when very cloose of cat
                 scores[dir.ordinal()] = - level; // High score when close to cat
             }
         }

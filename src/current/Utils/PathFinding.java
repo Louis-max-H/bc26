@@ -17,6 +17,7 @@ public class PathFinding {
     /// All functions you may need
 
     public static int numberMove = 0;
+    public static boolean isLmxBugnav = false; // is lmxBugNav used ?
 
     public static void resetScores(){
         // Default score of 1 everywhere
@@ -28,11 +29,15 @@ public class PathFinding {
         RobotController rc = Robot.rc;
         MapLocation myLoc = Robot.rc.getLocation();
 
-        // Check if we can afford digging this turn.
-        digEnable = rc.getGlobalCheese() >= GameConstants.DIG_DIRT_CHEESE_COST;
+        // TODO: Consider we can always dig
+        // Check if we can dig
+        // if(rc.getGlobalCheese() < GameConstants.DIG_DIRT_CHEESE_COST){
+        //    digEnable = false;
+        // }
 
 
         // Check all direction
+        // printScores("Before move constrainte");
         for(Direction dir : Direction.values()){
             MapLocation loc = myLoc.add(dir);
             int cellType = BugNavLmx.mapCosts[loc.x + (loc.y<<7) + 129];
@@ -43,8 +48,10 @@ public class PathFinding {
             }
 
             if(!rc.canMove(dir)) {
+                char cellType = BugNavLmx.mapCosts[loc.x + (loc.y<<7) + 128];
+
                 // If we have a wall, can't dig
-                if (cellType == BugNavLmx.SCORE_CELL_WALL) {
+                if (cellType >= BugNavLmx.SCORE_CELL_WALL) {
                     scores[dir.ordinal()] = 0;
 
                 // Dirt
@@ -55,10 +62,27 @@ public class PathFinding {
 
                 // Other (units)
                 } else {
-                    scores[dir.ordinal()] = 0;
+                    try{
+                        rc.move(dir); // Will fail
+                    }catch (GameActionException e){
+                        if(e.getMessage().contains("is occupied by a different robot")){
+                            System.out.println("Can't move because robot " + dir + " : " + e.getMessage());
+                            scores[dir.ordinal()] = 0;
+                        }
+                    }
                 }
             }
         }
+    }
+
+    public static void printScores(String msg){
+        Robot.debug(msg + ":");
+        Robot.debug("              " +  scores[Direction.NORTH.ordinal()]);
+        Robot.debug(String.format("%10s  ↖️⬆️↗️  %10s", scores[Direction.NORTHWEST.ordinal()], scores[Direction.NORTHEAST.ordinal()]));
+        Robot.debug(String.format("%10s  ⬅️⏹️➡️  %10s", scores[Direction.WEST.ordinal()], scores[Direction.EAST.ordinal()]));
+        Robot.debug(String.format("%10s  ↙️⬇️↘️  %10s", scores[Direction.SOUTHWEST.ordinal()], scores[Direction.SOUTHEAST.ordinal()]));
+        Robot.debug("              " +  scores[Direction.SOUTH.ordinal()] + "     CENTER : " + scores[Direction.CENTER.ordinal()]);
+
     }
 
     public static Direction bestDir() {
@@ -119,6 +143,19 @@ public class PathFinding {
         return bestDir;
     }
 
+    public static Direction BugNavLmx(MapLocation loc) throws GameActionException {
+        // SCORE_CELL_WALL : 60000
+        // SCORE_CELL_IF_DIG :2001
+        // If unit : rc.getRound
+
+        return BugNavLmx.pathTo(
+                Robot.rc.getLocation(), loc,
+                BugNavLmx.SCORE_CELL_IF_DIG * 30, // Max 30 cells
+                BugNavLmx.SCORE_CELL_IF_DIG, // Avoid units
+                max(1000, min(Clock.getBytecodesLeft() - 2000, 6000)) // Number bytecode used
+        );
+    }
+
     // Smart movement using BugNav when direct path is blocked
     // Uses BugNav algorithm inspired by Battlecode 2024 chenyx512 (US_QUAL)
     public static Result smartMoveTo(MapLocation loc) throws GameActionException {
@@ -128,19 +165,21 @@ public class PathFinding {
         if (loc.equals(Robot.rc.getLocation())) {
             return new Result(OK, "Already at target");
         }
-        
+
         // First try, bugnav of Louis-Max
         Direction bugNavDir = BugNavLmx.pathTo(
             Robot.rc.getLocation(), loc,
             BugNavLmx.SCORE_CELL_PASSABLE * 30, // Max 30 cells
-                (digEnable) ? BugNavLmx.SCORE_CELL_IF_DIG : BugNavLmx.SCORE_CELL_PASSABLE, // Allow digging
-            max(1000, min(Clock.getBytecodesLeft() - 1000, 6000)) // Number bytecode used
+                BugNavLmx.SCORE_CELL_IF_DIG, // Avoid units
+            max(1000, min(Clock.getBytecodesLeft() - 2000, 6000)) // Number bytecode used
         );
+        isLmxBugnav = true;
 
         // Fallback to Chenyx512 if failed
         if(bugNavDir == null || bugNavDir == Direction.CENTER){
             System.out.println("BugNavLmx return null or center, trying BugNavChenyx512");
             Robot.rc.setIndicatorLine(Robot.rc.getLocation(), loc, 255, 0, 255);
+            isLmxBugnav = false;
             bugNavDir = BugNavChenyx512.bugNavGetMoveDir(loc);
         }
 
@@ -193,6 +232,12 @@ public class PathFinding {
             dir = Direction.values()[randomDir];
         }
 
+        if(!Robot.rc.canMove(dir)){
+            if(Robot.rc.canTurn()){
+                Robot.rc.turn(dir);
+            }
+        }
+
         if(Robot.rc.canMove(dir)){
             Robot.lastLocation = Robot.myLoc;
             Robot.lastDirection = dir;
@@ -231,11 +276,28 @@ public class PathFinding {
         scores[opposite.rotateRight().rotateRight().ordinal()] *= 2;
     }
 
-    public static void modificatorHortogonal(){
-        scores[Direction.NORTH.ordinal()] *= 2;
-        scores[Direction.EAST.ordinal()]  *= 2;
-        scores[Direction.SOUTH.ordinal()] *= 2;
-        scores[Direction.WEST.ordinal()]  *= 2;
+    public static void modificatorOrientationSoft(Direction dir){
+        // Add bonus for moving
+        scores[0] += 100_000;
+        scores[1] += 100_000;
+        scores[2] += 100_000;
+        scores[3] += 100_000;
+        scores[4] += 100_000;
+        scores[5] += 100_000;
+        scores[6] += 100_000;
+        scores[7] += 100_000;
+
+        // Boost score toward direction
+        scores[dir.rotateLeft().ordinal()] += 350_000 ;
+        scores[dir.ordinal()] += 400_000;
+        scores[dir.rotateRight().ordinal()] += 350_000;
+
+        Direction opposite = dir.opposite();
+        scores[opposite.rotateLeft().rotateLeft().ordinal()] += 250_000;
+        scores[opposite.rotateLeft().ordinal()] += 150_000;
+        scores[opposite.ordinal()] += 50_000;
+        scores[opposite.rotateRight().ordinal()] += 150_000;
+        scores[opposite.rotateRight().rotateRight().ordinal()] += 250_000;
     }
 
     //////////////////////////////////// Heuristic  ////////////////////////////////////////////////////////////////////
@@ -252,8 +314,18 @@ public class PathFinding {
 
         /** Normalize to 100.000.000
          * */
+        printScores("Before adding score WithNormalization");
         long normalize = 100_000_000 * coef / max;
-        Robot.print("Normalize coef : " + normalize);
+        // Robot.print("Noramize with coef : " + coef + " and max : " + max + " -> " + (normalize));
+        // Robot.print("Adding : i=" + 0 + " " + newScores[0] * normalize);
+        // Robot.print("Adding : i=" + 1 + " " + newScores[1] * normalize);
+        // Robot.print("Adding : i=" + 2 + " " + newScores[2] * normalize);
+        // Robot.print("Adding : i=" + 3 + " " + newScores[3] * normalize);
+        // Robot.print("Adding : i=" + 4 + " " + newScores[4] * normalize);
+        // Robot.print("Adding : i=" + 5 + " " + newScores[5] * normalize);
+        // Robot.print("Adding : i=" + 6 + " " + newScores[6] * normalize);
+        // Robot.print("Adding : i=" + 7 + " " + newScores[7] * normalize);
+        // Robot.print("Adding : i=" + 8 + " " + newScores[8] * normalize);
         scores[0] += newScores[0] * normalize;
         scores[1] += newScores[1] * normalize;
         scores[2] += newScores[2] * normalize;
@@ -266,6 +338,7 @@ public class PathFinding {
     }
 
     public static void addScoresWithoutNormalization(long[] newScores){
+        printScores("Before adding score Without Normalization");
         scores[0] += newScores[0];
         scores[1] += newScores[1];
         scores[2] += newScores[2];
