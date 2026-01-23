@@ -127,7 +127,7 @@ public class {{ className }} {
     public static void initScore(int width, int height){
         // Width
         switch(width){
-            {% for x in range(30, 60) %}
+            {% for x in range(30, 61) %}
             case {{x}}:
                 if({{x}} == width + 8){break;}
                 {% for y in range(0, 60 ) %} scores[{{ encodeXY((x, y), 8) }}] = 0; {% endfor %}
@@ -289,7 +289,9 @@ public class {{ className }} {
         for(MapInfo infos: rc.senseNearbyMapInfos()){
             MapLocation loc = infos.getMapLocation();
             int xy = loc.x + (loc.y<<7) + 129;
-            if (infos.isPassable()) {
+            if (infos.getTrap() != TrapType.NONE) {
+                scores[xy] = wall;
+            } else if (infos.isPassable()) {
                 scores[xy] = passable;
             } else if (infos.isDirt()) {
                 scores[xy] = dirt;

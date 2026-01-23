@@ -34,7 +34,7 @@ public class CheeseToKing extends State {
     public Result run() throws GameActionException {
 
         // Check if we have cheese
-        if(rc.getRawCheese() < 5){
+        if(rc.getRawCheese() == 0){
             return new Result(OK, "");
         }
 
@@ -71,8 +71,8 @@ public class CheeseToKing extends State {
         PathFinding.smartMoveTo(nearestKing);
 
         // Try to transfer
-        if(rc.canTransferCheese(nearestKing, rc.getAllCheese())){
-            rc.transferCheese(nearestKing, rc.getAllCheese());
+        if(rc.canTransferCheese(nearestKing, rc.getRawCheese())){
+            rc.transferCheese(nearestKing, rc.getRawCheese());
             return new Result(OK, "Cheese transferred!");
         }
 

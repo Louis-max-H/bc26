@@ -7173,6 +7173,9 @@ public class BugNavLmx {
                 
                 case 8: // Center
                     if(rc.getRoundNum() < 2000){System.out.println("MSG=Destination reached directly by reverse path");}
+                    if(returnDirection == 8){
+                        return 1;
+                    }
                     xyReturn += dirsShift7Bxy[returnDirection];
                     mapResult[xyReturn] = dirsOrdsOpposite[returnDirection];
                     return 1;
@@ -7182,6 +7185,9 @@ public class BugNavLmx {
             }
 
             // TODO: Check this good ?
+            if(returnDirection == 8){
+                return 1;
+            }
             xyReturn += dirsShift7Bxy[returnDirection];
             mapResult[xyReturn] = dirsOrdsOpposite[returnDirection];
         }// End ReverseLoop

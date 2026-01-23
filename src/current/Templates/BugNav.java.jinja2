@@ -627,6 +627,9 @@ public class {{ className }} {
 
                 case 8: // Center
                     if({{getRound}} < {{MAX_DEBUG_ROUND}}){System.out.println("MSG=Destination reached directly by reverse path");}
+                    if(returnDirection == 8){
+                        return 1;
+                    }
                     xyReturn += dirsShift7Bxy[returnDirection];
                     mapResult[xyReturn] = dirsOrdsOpposite[returnDirection];
                     return 1;
@@ -637,6 +640,9 @@ public class {{ className }} {
 
             {# Go up one move and writte direction -#}
             // TODO: Check this good ?
+            if(returnDirection == 8){
+                return 1;
+            }
             xyReturn += dirsShift7Bxy[returnDirection];
             mapResult[xyReturn] = dirsOrdsOpposite[returnDirection];
         }// End ReverseLoop

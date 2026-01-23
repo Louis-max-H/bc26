@@ -35,10 +35,14 @@ public class PathFinding {
         // Check all direction
         for(Direction dir : Direction.values()){
             MapLocation loc = myLoc.add(dir);
+            int cellType = BugNavLmx.mapCosts[loc.x + (loc.y<<7) + 129];
+
+            if (cellType == BugNavLmx.SCORE_CELL_WALL) {
+                scores[dir.ordinal()] = 0;
+                continue;
+            }
 
             if(!rc.canMove(dir)) {
-                int cellType = BugNavLmx.mapCosts[loc.x + (loc.y<<7) + 129];
-
                 // If we have a wall, can't dig
                 if (cellType == BugNavLmx.SCORE_CELL_WALL) {
                     scores[dir.ordinal()] = 0;
@@ -62,12 +66,44 @@ public class PathFinding {
         addCanMoveConstraint();
 
         // Take best score
+        Direction backDir = Direction.CENTER;
+        if (Robot.lastDirection != null) {
+            backDir = Robot.lastDirection.opposite();
+        } else if (Robot.lastLocation != null) {
+            backDir = Robot.myLoc.directionTo(Robot.lastLocation);
+        }
+
         long bestScore = scores[Direction.CENTER.ordinal()];
         Direction bestDir = Direction.CENTER;
+        long secondBestScore = Long.MIN_VALUE;
+        Direction secondBestDir = Direction.CENTER;
         for(Direction dir: Direction.values()){
-            if(bestScore < scores[dir.ordinal()]){
-                bestScore = scores[dir.ordinal()];
+            long score = scores[dir.ordinal()];
+            if(score > bestScore){
+                secondBestScore = bestScore;
+                secondBestDir = bestDir;
+                bestScore = score;
                 bestDir = dir;
+            } else if (dir != bestDir && score > secondBestScore){
+                secondBestScore = score;
+                secondBestDir = dir;
+            }
+        }
+
+        // Avoid immediate backtracking unless it's clearly the best option.
+        if (backDir != Direction.CENTER && bestDir == backDir) {
+            if (secondBestDir != Direction.CENTER && secondBestScore > 0 && secondBestScore * 13 >= bestScore * 10) {
+                bestDir = secondBestDir;
+                bestScore = secondBestScore;
+            }
+        }
+
+        // Prefer continuing in the same direction when scores are close.
+        if (Robot.lastDirection != null && Robot.lastDirection != Direction.CENTER) {
+            long continueScore = scores[Robot.lastDirection.ordinal()];
+            if (continueScore > 0 && continueScore * 10 >= bestScore * 9) {
+                bestDir = Robot.lastDirection;
+                bestScore = continueScore;
             }
         }
 
@@ -88,6 +124,9 @@ public class PathFinding {
     public static Result smartMoveTo(MapLocation loc) throws GameActionException {
         if (loc == null) {
             return new Result(ERR, "No target location");
+        }
+        if (loc.equals(Robot.rc.getLocation())) {
+            return new Result(OK, "Already at target");
         }
         
         // First try, bugnav of Louis-Max
