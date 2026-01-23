@@ -14,7 +14,22 @@ public class Explore extends State {
     MapLocation targetExplore;
     int lastTargetRoundSet;
     int initialDistance;
+    public static int height;
+    public static int width;
 
+    public static MapLocation getExploreLocation(Direction dir){
+        return switch(rc.getDirection()){
+            case Direction.NORTHEAST -> new MapLocation(width - 1, height - 1);
+            case Direction.SOUTHEAST -> new MapLocation(0, height - 1);
+            case Direction.SOUTHWEST -> new MapLocation(0, 0);
+            case Direction.NORTHWEST -> new MapLocation(0, height / 2);
+            case Direction.NORTH     -> new MapLocation(width / 2, height - 1);
+            case Direction.SOUTH     -> new MapLocation(width / 2, 0);
+            case Direction.EAST      -> new MapLocation(width - 1, height / 2);
+            case Direction.WEST      -> new MapLocation(width - 1, 0);
+            case Direction.CENTER    -> null;
+        };
+    }
 
     MapLocation target;
     public Explore(){
@@ -22,19 +37,9 @@ public class Explore extends State {
     
     
         // Init target explore using orientation given at spawn
-        int width = rc.getMapWidth();
-        int height = rc.getMapHeight();
-        targetExplore = switch(rc.getDirection()){
-            case Direction.NORTHEAST -> new MapLocation(height - 1, width - 1);
-            case Direction.SOUTHEAST -> new MapLocation(0, width - 1);
-            case Direction.SOUTHWEST -> new MapLocation(0, 0);
-            case Direction.NORTHWEST -> new MapLocation(0, height / 2);
-            case Direction.NORTH     -> new MapLocation(width / 2, height - 1);
-            case Direction.SOUTH     -> new MapLocation(width / 2, 0);
-            case Direction.EAST      -> new MapLocation(width - 1, height / 2);
-            case Direction.WEST      -> new MapLocation(height - 1, 0);
-            case Direction.CENTER    -> null;
-        };
+        width = rc.getMapWidth();
+        height = rc.getMapHeight();
+        targetExplore = getExploreLocation(rc.getDirection());
 
         initialDistance = (int)sqrt(rc.getLocation().distanceSquaredTo(targetExplore));
         lastTargetRoundSet = rc.getRoundNum();
@@ -43,6 +48,10 @@ public class Explore extends State {
     @Override
     public Result run() throws GameActionException {
         // Check if we can move
+        if(false && targetExplore != null) {
+            rc.setIndicatorLine(rc.getLocation(), targetExplore, 0, 255, 0);
+        }
+
         if(rc.getMovementCooldownTurns() != 0){
             return new Result(CANT, "Can't move");
         }
@@ -52,7 +61,19 @@ public class Explore extends State {
             return new Result(CANT, "Can't turn");
         }
 
+        // Cheese mine depleted if nearby and no cheese
+        if(targetExplore != null && myLoc.distanceSquaredTo(targetExplore) < 8 && nearestCheese == null){
+            isMineDepleted[targetExplore.x + targetExplore.y * 60] = (char) (rc.getRoundNum() + 800);
+            targetExplore = null;
+        }
+
         if(targetExplore == null || lastTargetRoundSet + 100 < rc.getRoundNum()){
+            // Set previous mine has depleted (force explore another one)
+            if(targetExplore != null) {
+                isMineDepleted[targetExplore.x + targetExplore.y * 60] = (char) (rc.getRoundNum() + 800);
+            }
+
+            // Take nearest one
             for (int i = 0; i < cheeseMines.size; i++) {
                 MapLocation loc = cheeseMines.locs[i];
 
@@ -64,15 +85,21 @@ public class Explore extends State {
                     }
                 }
             }
+
+            // Else, take random destinaiton
+            if(targetExplore == null){
+                print("Taking random target of dir " + directions[rc.getRoundNum() % 8]);
+                targetExplore = getExploreLocation(directions[rc.getRoundNum() % 8]);
+            }
+
+            lastTargetRoundSet = rc.getRoundNum();
         }
 
         // Add bonus to target
         if (targetExplore != null) {
             Direction dir = PathFinding.BugNavLmx(targetExplore);
             if(BugNavLmx.resultCode <= -10 || dir == null){
-                if(targetExplore != null){
-                    isMineDepleted[targetExplore.x + targetExplore.y * 60] = (char) (rc.getRoundNum() + 150);
-                }
+                isMineDepleted[targetExplore.x + targetExplore.y * 60] = (char) (rc.getRoundNum() + 400);
                 targetExplore = null;
                 print("BugNavLmx return " + BugNavLmx.resultCode + ", targetExplore set to null");
             }else{

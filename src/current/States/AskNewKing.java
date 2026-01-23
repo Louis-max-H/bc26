@@ -18,12 +18,16 @@ public class AskNewKing extends State {
 
 
     // Position where we can ask for new king
-    public static int shiftX[] = {03, 03, 03, -3, -3, -3, 00, 03, -3, 00, 03, -3};
-    public static int shiftY[] = {00, 03, -3, 00, 03, -3, 03, 03, 03, -3, -3, -3};
+    public static int shiftX[] = {03, 03, 03, -3, -3, -3, 00, 02, -2, 00, 02, -2};
+    public static int shiftY[] = {00, 02, -2, 00, 02, -2, 03, 03, 03, -3, -3, -3};
 
 
     @Override
     public Result run() throws GameActionException {
+
+        if(round % 100 == 0 && nearestMine != null){
+            Communication.addMessageCreateKing(nearestMine, PRIORITY_CRIT);
+        }
 
         // If another king exist
         for (int i = 0; i < kings.size; i++) {
@@ -45,6 +49,7 @@ public class AskNewKing extends State {
 
         // Check placement for new king
         MapLocation newKingCenter = null;
+        labelLookForKingCenter:
         for (int i = 0; i < 12; i++) {
             newKingCenter = myLoc.translate(shiftX[i], shiftY[i]);
 
@@ -63,7 +68,9 @@ public class AskNewKing extends State {
                 }
             }
 
-            break;
+            if(newKingCenter != null){
+                break;
+            }
         }
         
         // If no placement found

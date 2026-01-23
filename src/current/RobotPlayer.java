@@ -25,7 +25,7 @@ public class RobotPlayer {
             }
 
             // Resign if not competitive and not king
-            if (!Robot.competitiveMode && rc.getTeam() == Team.A && !rc.getType().isRatKingType()) {
+            if (false && !Robot.competitiveMode && rc.getTeam() == Team.A && !rc.getType().isRatKingType()) {
                 System.out.println("\nNot in competitive mode. We have found an error, I will surrender to be sure the error is seen by the debugger ;)");
                 rc.resign();
             }

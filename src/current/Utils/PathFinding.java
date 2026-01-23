@@ -156,7 +156,7 @@ public class PathFinding {
                 Robot.rc.getLocation(), loc,
                 BugNavLmx.SCORE_CELL_IF_DIG * 30, // Max 30 cells
                 BugNavLmx.SCORE_CELL_IF_DIG, // Avoid units
-                max(3000, min(Clock.getBytecodesLeft() - 4000, 6000)) // Number bytecode used
+                max(1000, min(Clock.getBytecodesLeft() - 4000, 6000)) // Number bytecode used
         );
     }
 
@@ -233,10 +233,14 @@ public class PathFinding {
         }
 
         if(Robot.rc.canMove(dir)){
+            try {
+                Robot.rc.move(dir);
+            } catch (GameActionException e) {
+                Robot.print("ERRRR : " + e.getMessage());
+            }
             Robot.lastLocation = Robot.myLoc;
             Robot.lastDirection = dir;
 
-            Robot.rc.move(dir);
             Robot.myLoc = Robot.rc.getLocation();
             return new Result(OK, "Moved to " + dir.toString());
         } else {

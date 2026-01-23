@@ -13,9 +13,7 @@ import scala.collection.Map;
 import static current.States.Code.*;
 
 public class BecomeKing extends State {
-    private static final int LOW_KING_HEALTH = 150;
-    private static final int KING_LOOK_RADIUS_SQUARED = 36;
-    private static final int KING_RALLY_RADIUS_SQUARED = 64;
+    public static int lastNumberKing = 0;
 
     public BecomeKing() {
         this.name = "BecomeKing";
@@ -35,8 +33,9 @@ public class BecomeKing extends State {
             return new Result(OK, "No call for king nearby");
         }
 
-        // Already 2 kings
-        if(kings.size >= 2){
+        // We have one more king
+        if(kings.size > lastNumberKing){
+            lastNumberKing = kings.size;
             nearestCallForKing = null;
             return new Result(OK, "Already many kings");
         }

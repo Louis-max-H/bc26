@@ -248,8 +248,7 @@ public class Init extends State {
             rc.setIndicatorLine(rc.getLocation(), kings.locs[j], 0, 255, 0);
         }*/
 
-        /*
-        for (int j = 0; j < cheeseMines.size; j++) {
+        /*for (int j = 0; j < cheeseMines.size; j++) {
             rc.setIndicatorLine(rc.getLocation(), cheeseMines.locs[j], 0, 255, 0);
         }*/
 
