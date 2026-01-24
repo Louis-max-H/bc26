@@ -9,6 +9,7 @@ import current.Params;
 import java.util.Map;
 
 import static current.States.Code.*;
+import static java.lang.Math.min;
 
 public class AskNewKing extends State {
     public int consecutiveNoKing = 0;
@@ -26,7 +27,21 @@ public class AskNewKing extends State {
     public Result run() throws GameActionException {
 
         if(round % 100 == 0 && nearestMine != null){
-            Communication.addMessageCreateKing(nearestMine, PRIORITY_CRIT);
+            // Send king spawn message on mines
+            for (int i = 0; i < cheeseMines.size; i++) {
+
+                // Take nearest king
+                int minDist = Integer.MAX_VALUE;
+                for (int j = 0; j < kings.size; j++) {
+                    minDist = min(cheeseMines.locs[i].distanceSquaredTo(kings.locs[j]), minDist);
+                }
+
+                // If king is too far, ask for a king
+                if(minDist > 100){
+                    Communication.addMessageCreateKing(nearestMine, PRIORITY_CRIT);
+                    break;
+                }
+            }
         }
 
         // If another king exist
