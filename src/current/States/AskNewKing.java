@@ -26,7 +26,7 @@ public class AskNewKing extends State {
     @Override
     public Result run() throws GameActionException {
 
-        if(round % 100 == 0 && nearestMine != null){
+        if(rc.getRoundNum() % 75 <= 30 && nearestMine != null){
             // Send king spawn message on mines
             for (int i = 0; i < cheeseMines.size; i++) {
 
@@ -37,7 +37,7 @@ public class AskNewKing extends State {
                 }
 
                 // If king is too far, ask for a king
-                if(minDist > 100){
+                if(minDist > 150){
                     Communication.addMessageCreateKing(nearestMine, PRIORITY_CRIT);
                     break;
                 }

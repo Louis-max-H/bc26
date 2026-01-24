@@ -67,7 +67,7 @@ public class BecomeKing extends State {
         }
         PathFinding.addScoresWithNormalization(scores, 100);
         PathFinding.moveBest();
-        return new Result(OK, "Staying in call for king at " + nearestCallForKing);
+        return new Result(END_OF_TURN, "Staying in call for king at " + nearestCallForKing);
 
         /*
 

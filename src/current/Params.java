@@ -18,9 +18,9 @@ public class Params {
     public static int PARAMS_ATTACK_BONUS_DONT_MOVE        = 17; // [1, 30]
     public static int PARAMS_ATTACK_BONUS_CANT_SEE         = 10; // [1, 30]
 
-    public static int PARAMS_MAX_RATS_MAP_SMALL  = 15; // [15, 40]
-    public static int PARAMS_MAX_RATS_MAP_MEDIUM = 15; // [15, 60]
-    public static int PARAMS_MAX_RATS_MAP_LARGE  = 20; // [15, 60]
+    public static int PARAMS_MAX_RATS_MAP_SMALL  = 20; // [15, 40]
+    public static int PARAMS_MAX_RATS_MAP_MEDIUM = 20; // [15, 60]
+    public static int PARAMS_MAX_RATS_MAP_LARGE  = 30; // [15, 60]
     public static int maxRats;
 
     // Not tested since we haven't prefix P A R A M S

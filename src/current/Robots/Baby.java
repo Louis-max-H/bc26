@@ -34,20 +34,6 @@ public class Baby extends Robot {
 
     @Override
     public void updateState(Result resultBefore){
-        boolean nowKing = isKing || rc.getType().isRatKingType();
-        if (nowKing) {
-            Robot robot = new King();
-            Robot.rc.setTimelineMarker("King creation", 236, 153, 73);
-            while(true) {
-                try {
-                    robot.run(rc);
-                } catch (Exception e) {
-                    e.printStackTrace(System.out);
-                    Robot.rc.setTimelineMarker(e.getMessage(), 255, 0, 0);
-                }
-            }
-        }
-
         currentState = switch (currentState.name) {
             case "Init" -> avoidCat;
             case "AvoidCat" -> attackEnemy;
