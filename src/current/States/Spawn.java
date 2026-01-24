@@ -58,23 +58,33 @@ public class Spawn extends State {
     @Override
     public Result run() throws GameActionException {
         int cheeseStock = rc.getAllCheese();
+        int babyCount = alliesRats.size;
+        int kingCount = Math.max(1, kings.size);
+        int minBabies = Math.max(4, kingCount * 6);
+        boolean needBabies = babyCount < minBabies;
+        int spawnCost = rc.getCurrentRatCost();
 
         if(!isKing){
             return new Result(ERR, "Unit should be king to spawn rats.");
         }
 
-        // Calculate minimum cheese needed for 200 rounds
-        // Rat king consumes 2 cheese per round, so 200 rounds = 400 cheese minimum
-        // Add buffer for potential spawn costs (current cost can be up to ~50+)
-        int minCheeseFor200Rounds = 400 * kings.size; // 400 for consumption + 100 buffer = 500 minimum
-        if(minCheeseFor200Rounds > cheeseStock){
-            return new Result(OK, "Not enough cheese: " + cheeseStock + " (min: " + minCheeseFor200Rounds + ")");
+        if(!needBabies){
+            // Rat king consumes 2 cheese per round, so 200 rounds = 400 cheese minimum
+            int minCheeseFor200Rounds = 400 * kingCount;
+            if(minCheeseFor200Rounds > cheeseStock){
+                return new Result(OK, "Not enough cheese: " + cheeseStock + " (min: " + minCheeseFor200Rounds + ")");
+            }
+        }else{
+            int minReserve = kingCount * 10; // keep 5 rounds of cheese per king
+            if(cheeseStock < spawnCost + minReserve){
+                return new Result(OK, "Not enough cheese to safely spawn (stock: " + cheeseStock + ")");
+            }
         }
 
 
         // Don't spawn if costs is too high
         int maxAcceptableCost = 10 + (Params.maxRats / 4)*10 ; // 10 cheese per 4 rats
-        if(rc.getCurrentRatCost() >= maxAcceptableCost){
+        if(!needBabies && rc.getCurrentRatCost() >= maxAcceptableCost){
             return new Result(OK, "Cost too high: " + rc.getCurrentRatCost() + " (max: " + maxAcceptableCost + ")");
         }
 

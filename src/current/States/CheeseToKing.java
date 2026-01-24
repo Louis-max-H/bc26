@@ -1,7 +1,7 @@
 package current.States;
 
 import battlecode.common.*;
-import current.Robots.King;
+import current.Robots.Robot;
 import current.Utils.PathFinding;
 import current.Utils.VisionUtils;
 
@@ -33,14 +33,19 @@ public class CheeseToKing extends State {
     @Override
     public Result run() throws GameActionException {
 
-        // Check if we have cheese
-        if(rc.getRawCheese() <= 10){
+        int rawCheese = rc.getRawCheese();
+        if(rawCheese == 0){
             return new Result(OK, "");
         }
 
         // Check if we have a king to go
         if(nearestKing == null){
             return new Result(WARN, "I have no king to drop cheese");
+        }
+
+        int minCheeseToDeliver = 1;
+        if(rawCheese < minCheeseToDeliver){
+            return new Result(OK, "");
         }
 
         // Check if we can sense location, and if so, check if king
@@ -62,8 +67,8 @@ public class CheeseToKing extends State {
         }
 
         // Try to transfer
-        if(rc.canTransferCheese(nearestKing, rc.getRawCheese())){
-            rc.transferCheese(nearestKing, rc.getRawCheese());
+        if(rc.canTransferCheese(nearestKing, rawCheese)){
+            rc.transferCheese(nearestKing, rawCheese);
             return new Result(OK, "Cheese transferred!");
         }
 
@@ -71,8 +76,8 @@ public class CheeseToKing extends State {
         PathFinding.smartMoveTo(nearestKing);
 
         // Try to transfer
-        if(rc.canTransferCheese(nearestKing, rc.getRawCheese())){
-            rc.transferCheese(nearestKing, rc.getRawCheese());
+        if(rc.canTransferCheese(nearestKing, rawCheese)){
+            rc.transferCheese(nearestKing, rawCheese);
             return new Result(OK, "Cheese transferred!");
         }
 

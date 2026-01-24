@@ -34,8 +34,12 @@ public class AttackEnemy extends State {
 
     @Override
     public Result run() throws GameActionException {
+        if(Robot.isCheeseEmergency() && !Robot.isKingThreatened()){
+            return new Result(OK, "Cheese emergency, skip attack");
+        }
+
         // Check if enemy
-        if (nearestEnemyRat == null || myLoc.distanceSquaredTo(nearestEnemyRat) > 18) {
+        if (nearestEnemyRat == null || myLoc.distanceSquaredTo(nearestEnemyRat) > 64) {
             noAttackStreak = 0;
             return new Result(OK, "No enemy or too far");
         }

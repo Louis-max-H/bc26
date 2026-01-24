@@ -31,7 +31,10 @@ public class Robot {
 
     // Meta variables
     public static boolean moveRandom = false; // Move random direction each 10 moves
-    public static boolean competitiveMode = false;
+    public static boolean competitiveMode = true;
+    public static final int CHEESE_EMERGENCY_PER_KING = 40;
+    public static final int KING_THREAT_CAT_RANGE_SQUARED = 100;
+    public static final int KING_THREAT_ENEMY_RANGE_SQUARED = 25;
 
     // Nearest locations
     public static MapLocation nearestCat;
@@ -92,6 +95,28 @@ public class Robot {
             Direction.NORTHWEST,
     };
     public static final Random rng = new Random(6147);
+
+    public static int cheeseEmergencyThreshold() {
+        return CHEESE_EMERGENCY_PER_KING * Math.max(1, kings.size);
+    }
+
+    public static boolean isCheeseEmergency() {
+        return rc.getGlobalCheese() < cheeseEmergencyThreshold();
+    }
+
+    public static boolean isKingThreatened() {
+        if (nearestKing == null) {
+            return false;
+        }
+        if (nearestCat != null && nearestKing.distanceSquaredTo(nearestCat) <= KING_THREAT_CAT_RANGE_SQUARED) {
+            return true;
+        }
+        if (nearestEnemyRat != null && nearestKing.distanceSquaredTo(nearestEnemyRat) <= KING_THREAT_ENEMY_RANGE_SQUARED) {
+            return true;
+        }
+        return nearestEnemyKing != null
+            && nearestKing.distanceSquaredTo(nearestEnemyKing) <= KING_THREAT_ENEMY_RANGE_SQUARED;
+    }
 
     // State Machine
     public State init;

@@ -1,6 +1,7 @@
 package current.States;
 
 import battlecode.common.*;
+import current.Robots.Robot;
 import current.Utils.PathFinding;
 
 import static current.States.Code.*;
@@ -30,7 +31,10 @@ public class AttackCat extends State {
         }
 
         int catDistance = myLoc.distanceSquaredTo(nearestCat);
-        if (catDistance > ATTACK_DISTANCE_SQUARED) {
+        int attackDistanceSquared = rc.getType().isRatKingType()
+            ? GameConstants.RAT_KING_ATTACK_DISTANCE_SQUARED
+            : ATTACK_DISTANCE_SQUARED;
+        if (catDistance > attackDistanceSquared) {
             return new Result(OK, "No cat to attack");
         }
 
@@ -68,7 +72,11 @@ public class AttackCat extends State {
         }
 
         // Use some cheese for a stronger bite if we have it
-        int cheeseToSpend = Math.min(Math.max(rc.getRawCheese(), rc.getGlobalCheese()), 25);
+        int cheeseToSpend = Math.min(rc.getRawCheese(), 25);
+        if(!Robot.isCheeseEmergency()){
+            int spareGlobal = Math.max(0, rc.getGlobalCheese() - Robot.cheeseEmergencyThreshold());
+            cheeseToSpend = Math.min(25, cheeseToSpend + spareGlobal);
+        }
         
         // Attack the cat
         rc.attack(nearestCat, cheeseToSpend);

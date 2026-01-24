@@ -17,8 +17,31 @@ public class CollectCheese extends State {
     @Override
     public Result run() throws GameActionException {
 
-        // If cheese
         if(nearestCheese == null){
+            if(targetMine == null && Robot.cheeseMines.size > 0){
+                int minDist = Integer.MAX_VALUE;
+                for(char i = 0; i < Robot.cheeseMines.size; i++){
+                    MapLocation mine = Robot.cheeseMines.locs[i];
+                    if(mine == null){
+                        continue;
+                    }
+                    int dist = myLoc.distanceSquaredTo(mine);
+                    if(dist < minDist){
+                        minDist = dist;
+                        targetMine = mine;
+                    }
+                }
+            }
+
+            if(targetMine != null){
+                int distToMine = myLoc.distanceSquaredTo(targetMine);
+                if(distToMine > MINE_STAY_RADIUS_SQUARED){
+                    PathFinding.smartMoveTo(targetMine);
+                    return new Result(END_OF_TURN, "Moving to mine at " + targetMine);
+                }
+                return new Result(END_OF_TURN, "Holding near mine " + targetMine);
+            }
+
             return new Result(OK, "No cheese nearby");
         }
 
@@ -31,7 +54,7 @@ public class CollectCheese extends State {
 
             if(rc.canPickUpCheese(nearestCheese)){
                 rc.pickUpCheese(nearestCheese);
-                return new Result(OK, "Cheese picked up at "  + nearestCheese);
+                return new Result(END_OF_TURN, "Cheese picked up at "  + nearestCheese);
             }
 
             return new Result(WARN, "Can't pickupt cheese");
@@ -49,7 +72,7 @@ public class CollectCheese extends State {
 
             if(rc.canPickUpCheese(nearestCheese)){
                 rc.pickUpCheese(nearestCheese);
-                return new Result(OK, "Cheese picked up at "  + nearestCheese);
+                return new Result(END_OF_TURN, "Cheese picked up at "  + nearestCheese);
             }
 
             return new Result(WARN, "Can't pickupt cheese");

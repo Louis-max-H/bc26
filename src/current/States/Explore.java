@@ -1,6 +1,7 @@
 package current.States;
 
 import battlecode.common.*;
+import current.Robots.Robot;
 import current.Utils.BugNavLmx;
 import current.Utils.PathFinding;
 import current.Utils.VisionUtils;
@@ -59,6 +60,18 @@ public class Explore extends State {
         // Check if we can turn
         if(rc.getTurningCooldownTurns() != 0){
             return new Result(CANT, "Can't turn");
+        }
+
+        if(Robot.isCheeseEmergency() || Robot.isKingThreatened()){
+            if(nearestKing != null){
+                Result result = PathFinding.smartMoveTo(nearestKing);
+                return new Result(END_OF_TURN, "Emergency: moving to king (" + result.msg + ")");
+            }
+            if(nearestMine != null){
+                Result result = PathFinding.smartMoveTo(nearestMine);
+                return new Result(END_OF_TURN, "Emergency: moving to mine (" + result.msg + ")");
+            }
+            return new Result(OK, "Emergency: holding position");
         }
 
         // Cheese mine depleted if nearby and no cheese

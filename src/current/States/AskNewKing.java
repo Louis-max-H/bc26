@@ -25,23 +25,13 @@ public class AskNewKing extends State {
 
     @Override
     public Result run() throws GameActionException {
+        if(kings.size >= 2){
+            consecutiveNoKing = 0;
+            return new Result(OK, "Already have enough kings");
+        }
 
         if(rc.getRoundNum() % 75 <= 30 && nearestMine != null){
-            // Send king spawn message on mines
-            for (int i = 0; i < cheeseMines.size; i++) {
-
-                // Take nearest king
-                int minDist = Integer.MAX_VALUE;
-                for (int j = 0; j < kings.size; j++) {
-                    minDist = min(cheeseMines.locs[i].distanceSquaredTo(kings.locs[j]), minDist);
-                }
-
-                // If king is too far, ask for a king
-                if(minDist > 150){
-                    Communication.addMessageCreateKing(nearestMine, PRIORITY_CRIT);
-                    break;
-                }
-            }
+            Communication.addMessageCreateKing(nearestMine, PRIORITY_CRIT);
         }
 
         // If another king exist
@@ -53,7 +43,7 @@ public class AskNewKing extends State {
         }
 
         consecutiveNoKing++;
-        if(consecutiveNoKing < 3){
+        if(consecutiveNoKing < 2){
             return new Result(OK, "Maybe create new king : consectiveNoKing: " + consecutiveNoKing);
         }
 

@@ -21,11 +21,9 @@ public class BecomeKing extends State {
 
     @Override
     public Result run() throws GameActionException {
-        // If I can create a king, make it
-        if(rc.canBecomeRatKing()){
-            rc.becomeRatKing();
-            print("We need to make a crash to restore parameters and reload the bot");
-            rc.senseMapInfo(new MapLocation(61, 61));
+        if(kings.size >= 2){
+            nearestCallForKing = null;
+            return new Result(OK, "Already have enough kings");
         }
 
         // No one asking
@@ -47,8 +45,7 @@ public class BecomeKing extends State {
         }
 
        // Too far
-        if(myLoc.distanceSquaredTo(nearestCallForKing) > 64){
-            nearestCallForKing = null;
+        if(myLoc.distanceSquaredTo(nearestCallForKing) > 400){
             return new Result(OK, "Call for king too far");
         }
 
@@ -58,6 +55,12 @@ public class BecomeKing extends State {
         if(!myLoc.isWithinDistanceSquared(nearestCallForKing, 2)){
             PathFinding.smartMoveTo(nearestCallForKing);
             return new Result(OK, "Moving to call for king at " + nearestCallForKing);
+        }
+
+        if(myLoc.equals(nearestCallForKing) && rc.canBecomeRatKing()){
+            rc.becomeRatKing();
+            nearestCallForKing = null;
+            return new Result(END_OF_TURN, "Became rat king at call");
         }
 
         // Add score to stay in the square

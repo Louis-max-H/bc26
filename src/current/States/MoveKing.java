@@ -7,7 +7,7 @@ import current.Utils.PathFinding;
 import static current.States.Code.*;
 
 public class MoveKing extends State {
-    private static final int SAFE_DISTANCE_KING_SQUARED = 25;
+    private static final int SAFE_DISTANCE_KING_SQUARED = 64;
     private static final int MINE_THREAT_DISTANCE_SQUARED = 144;
     private static final int ENEMY_THREAT_DISTANCE_SQUARED = 25;
     private static final int MINE_ENEMY_DISTANCE_SQUARED = 36;
@@ -22,24 +22,6 @@ public class MoveKing extends State {
 
     @Override
     public Result run() throws GameActionException {
-
-        // If only one king, dont move
-        if(Robot.kings.size <= 1){
-            return new Result(OK, "Only one king, playing safe");
-        }
-
-        // Move only if we have the lower id in kings
-        boolean canMove = false;
-        int myId = rc.getID() % 4096;
-        for(int i = 0; i < Robot.kings.size; i++){
-            if(Robot.kings.ids[i] < myId){
-                canMove = true;
-                break;
-            }
-        }
-        if(!canMove){
-            return new Result(OK, "I am not the lowest ID, not moving");
-        }
 
         // Check if we can move and turn
         if(!rc.isMovementReady()){
@@ -93,6 +75,24 @@ public class MoveKing extends State {
             PathFinding.addScoresWithNormalization(scores, 12);
             Result result = PathFinding.moveBest();
             return new Result(result.code, "Avoiding enemy at " + nearestThreat + " (" + result.msg + ")");
+        }
+
+        // If only one king, dont move unless threat handling was needed
+        if(Robot.kings.size <= 1){
+            return new Result(OK, "Only one king, playing safe");
+        }
+
+        // Move only if we have the lower id in kings
+        boolean canMove = false;
+        int myId = rc.getID() % 4096;
+        for(int i = 0; i < Robot.kings.size; i++){
+            if(Robot.kings.ids[i] < myId){
+                canMove = true;
+                break;
+            }
+        }
+        if(!canMove){
+            return new Result(OK, "I am not the lowest ID, not moving");
         }
 
         MapLocation targetMine = nearestMine;

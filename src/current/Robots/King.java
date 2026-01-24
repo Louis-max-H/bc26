@@ -9,6 +9,8 @@ public class King extends Robot {
     State askForKing;
     State kingDig;
     State kingCheese;
+    State attackCat;
+    State placeTrap;
 
     @Override
     public void init() throws GameActionException {
@@ -19,6 +21,8 @@ public class King extends Robot {
         this.spawn = new Spawn();
         this.kingDig = new KingDig();
         this.kingCheese = new KingCheese();
+        this.attackCat = new AttackCat();
+        this.placeTrap = new PlaceTrap();
     }
 
     @Override
@@ -26,7 +30,9 @@ public class King extends Robot {
         currentState = switch (currentState.name) {
             case "Init" -> moveKing;
             case "MoveKing" -> avoidCat;
-            case "AvoidCat" -> askForKing;
+            case "AvoidCat" -> attackCat;
+            case "AttackCat" -> placeTrap;
+            case "PlaceTrap" -> askForKing;
             case "AskNewKing" -> spawn;
             case "Spawn" -> kingDig;
             case "KingDig" -> kingCheese;
