@@ -14,6 +14,11 @@ public class SenseForComs extends Robot {
         // Give position of our king
         if(isKing){
             Communication.addMessageKing(myLoc, rc.getID(), PRIORITY_CRIT);
+
+            // Defend message
+            for(RobotInfo info: rc.senseNearbyRobots(-1, rc.getTeam().opponent())){
+                Communication.addMessageDefend(info.getLocation(), info.getID(), PRIORITY_CRIT);
+            }
         }
 
         // MessageLIFO.buffer2 PRIORITY_CRIT   = 3; // King being attacked, rush order

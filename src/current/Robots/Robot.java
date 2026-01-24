@@ -37,6 +37,8 @@ public class Robot {
     public static final int KING_THREAT_ENEMY_RANGE_SQUARED = 25;
 
     // Nearest locations
+    public static MapLocation nearestDefend;
+    public static int roundDefend;
     public static MapLocation nearestCat;
     public static MapLocation nearestKing;
     public static MapLocation nearestAllyRat;

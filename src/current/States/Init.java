@@ -47,6 +47,7 @@ public class Init extends State {
         isKing = rc.getType().isRatKingType();
         myLoc = rc.getLocation();
         forceMovingEndOfTurn = true;
+        nearestDefend = null;
 
         // Utils
         PathFinding.resetScores();
@@ -243,10 +244,9 @@ public class Init extends State {
             }
         }*/
 
-        /*
         for (int j = 0; j < kings.size; j++) {
             rc.setIndicatorLine(rc.getLocation(), kings.locs[j], 0, 255, 0);
-        }*/
+        }
 
         /*
         for (int j = 0; j < cheeseMines.size; j++) {

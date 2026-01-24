@@ -34,12 +34,22 @@ public class AttackEnemy extends State {
 
     @Override
     public Result run() throws GameActionException {
-        if(Robot.isCheeseEmergency() && !Robot.isKingThreatened()){
-            return new Result(OK, "Cheese emergency, skip attack");
+
+        if(nearestDefend != null){
+            if(nearestEnemyRat == null){
+                nearestEnemyRat = nearestDefend;
+                rc.setIndicatorLine(rc.getLocation(), nearestDefend, 0, 0, 255);
+            }
+
+            // Safe to ignore
+            if(rc.getLocation().distanceSquaredTo(nearestEnemyRat) > 18){
+                nearestEnemyRat = nearestDefend;
+                rc.setIndicatorLine(rc.getLocation(), nearestDefend, 0, 0, 255);
+            }
         }
 
         // Check if enemy
-        if (nearestEnemyRat == null || myLoc.distanceSquaredTo(nearestEnemyRat) > 64) {
+        if (nearestEnemyRat == null || myLoc.distanceSquaredTo(nearestEnemyRat) > 25) {
             noAttackStreak = 0;
             return new Result(OK, "No enemy or too far");
         }
@@ -103,8 +113,7 @@ public class AttackEnemy extends State {
 
             // Add vision score, if dist < 18, we can be ratnap if we move in his direction and enemy move to our direction
             // Score on empty cell is 21000
-            int score = (myLoc.distanceSquaredTo(enemiesRats.locs[i]) <= 18) ? 21000 * 10 : 21000;
-            VisionUtils.addScoreArroundUnit(targetLoc, score);
+            VisionUtils.addScoreArroundUnit(targetLoc, 2000000);
             i++;
         }
 
