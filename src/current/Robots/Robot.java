@@ -31,9 +31,11 @@ public class Robot {
 
     // Meta variables
     public static boolean moveRandom = false; // Move random direction each 10 moves
-    public static boolean competitiveMode = false;
+    public static boolean competitiveMode = true;
 
     // Nearest locations
+    public static MapLocation nearestDefend;
+    public static int roundDefend;
     public static MapLocation nearestCat;
     public static MapLocation nearestKing;
     public static MapLocation nearestAllyRat;
