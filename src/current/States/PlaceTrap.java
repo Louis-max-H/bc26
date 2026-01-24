@@ -26,6 +26,9 @@ public class PlaceTrap extends State {
         }
 
         boolean cheeseEmergency = Robot.isCheeseEmergency();
+        if(cheeseEmergency){
+            return new Result(OK, "Cheese emergency, skip traps");
+        }
 
         // Check for cat nearby - place cat trap
         if(nearestCat != null){
@@ -45,9 +48,6 @@ public class PlaceTrap extends State {
         }
 
         // Check for enemy rat or king nearby - place rat trap
-        if(cheeseEmergency){
-            return new Result(OK, "Cheese emergency, skip rat traps");
-        }
         if(nearestEnemyRat != null || nearestEnemyKing != null){
             MapLocation enemyLoc = nearestEnemyRat != null ? nearestEnemyRat : nearestEnemyKing;
             int enemyDist = myLoc.distanceSquaredTo(enemyLoc);

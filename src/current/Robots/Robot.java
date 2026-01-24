@@ -32,7 +32,7 @@ public class Robot {
     // Meta variables
     public static boolean moveRandom = false; // Move random direction each 10 moves
     public static boolean competitiveMode = true;
-    public static final int CHEESE_EMERGENCY_PER_KING = 40;
+    public static final int CHEESE_EMERGENCY_PER_KING = 80;
     public static final int KING_THREAT_CAT_RANGE_SQUARED = 100;
     public static final int KING_THREAT_ENEMY_RANGE_SQUARED = 25;
 

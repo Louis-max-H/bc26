@@ -34,6 +34,12 @@ public class AttackEnemy extends State {
 
     @Override
     public Result run() throws GameActionException {
+        boolean lateAggro = round >= 1500;
+        int attackRangeSquared = rc.getType().isRatKingType()
+            ? GameConstants.RAT_KING_ATTACK_DISTANCE_SQUARED
+            : 2;
+        boolean cheeseEmergency = Robot.isCheeseEmergency();
+        boolean kingThreatened = Robot.isKingThreatened();
 
         if(nearestDefend != null){
             if(nearestEnemyRat == null){
@@ -45,6 +51,46 @@ public class AttackEnemy extends State {
             if(rc.getLocation().distanceSquaredTo(nearestEnemyRat) > 18){
                 nearestEnemyRat = nearestDefend;
                 rc.setIndicatorLine(rc.getLocation(), nearestDefend, 0, 0, 255);
+            }
+        }
+
+        if (cheeseEmergency && !kingThreatened) {
+            return new Result(OK, "Cheese emergency, skip attack");
+        }
+
+        if (rc.isActionReady()) {
+            if (lateAggro && nearestEnemyKing != null && myLoc.distanceSquaredTo(nearestEnemyKing) <= attackRangeSquared) {
+                int spareGlobal = Math.max(0, rc.getGlobalCheese() - Robot.cheeseEmergencyThreshold());
+                int cheeseToSpend = Math.min(25, rc.getRawCheese() + spareGlobal);
+                if (rc.canAttack(nearestEnemyKing)) {
+                    rc.attack(nearestEnemyKing, cheeseToSpend);
+                    return new Result(OK, "Late aggro: attacked enemy king");
+                }
+            }
+
+            RobotInfo weakest = null;
+            RobotInfo[] nearbyEnemies = rc.senseNearbyRobots(attackRangeSquared, rc.getTeam().opponent());
+            for (RobotInfo info : nearbyEnemies) {
+                if (weakest == null || info.getHealth() < weakest.getHealth()) {
+                    weakest = info;
+                }
+            }
+            if (weakest != null) {
+                int cheeseToSpend = Math.min(lateAggro ? 25 : 9, rc.getRawCheese());
+                int bonus = (int) Math.ceil(Math.sqrt(cheeseToSpend));
+                int damage = GameConstants.RAT_BITE_DAMAGE + bonus;
+                if (weakest.getHealth() <= damage && rc.canAttack(weakest.getLocation())) {
+                    rc.attack(weakest.getLocation(), cheeseToSpend);
+                    return new Result(OK, "Quick kill on low health target");
+                }
+            }
+        }
+
+        if (lateAggro && nearestEnemyKing != null) {
+            int distToEnemyKing = myLoc.distanceSquaredTo(nearestEnemyKing);
+            if (distToEnemyKing > attackRangeSquared && distToEnemyKing <= 100 && rc.isMovementReady()) {
+                Result move = PathFinding.smartMoveTo(nearestEnemyKing);
+                return new Result(END_OF_TURN, "Late aggro: moving to enemy king (" + move.msg + ")");
             }
         }
 

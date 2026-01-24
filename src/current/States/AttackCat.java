@@ -72,10 +72,11 @@ public class AttackCat extends State {
         }
 
         // Use some cheese for a stronger bite if we have it
-        int cheeseToSpend = Math.min(rc.getRawCheese(), 25);
+        int cheeseToSpend = 0;
         if(!Robot.isCheeseEmergency()){
+            int raw = Math.min(rc.getRawCheese(), 25);
             int spareGlobal = Math.max(0, rc.getGlobalCheese() - Robot.cheeseEmergencyThreshold());
-            cheeseToSpend = Math.min(25, cheeseToSpend + spareGlobal);
+            cheeseToSpend = Math.min(25, raw + spareGlobal);
         }
         
         // Attack the cat

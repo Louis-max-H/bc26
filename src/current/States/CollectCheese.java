@@ -20,12 +20,13 @@ public class CollectCheese extends State {
         if(nearestCheese == null){
             if(targetMine == null && Robot.cheeseMines.size > 0){
                 int minDist = Integer.MAX_VALUE;
+                MapLocation anchor = Robot.isCheeseEmergency() && nearestKing != null ? nearestKing : myLoc;
                 for(char i = 0; i < Robot.cheeseMines.size; i++){
                     MapLocation mine = Robot.cheeseMines.locs[i];
                     if(mine == null){
                         continue;
                     }
-                    int dist = myLoc.distanceSquaredTo(mine);
+                    int dist = anchor.distanceSquaredTo(mine);
                     if(dist < minDist){
                         minDist = dist;
                         targetMine = mine;

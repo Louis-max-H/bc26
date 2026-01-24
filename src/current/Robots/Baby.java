@@ -36,7 +36,22 @@ public class Baby extends Robot {
     public void updateState(Result resultBefore){
         currentState = switch (currentState.name) {
             case "Init" -> avoidCat;
-            case "AvoidCat" -> attackEnemy;
+            case "AvoidCat" -> {
+                if (Robot.rc.getRawCheese() > 0) {
+                    yield cheeseToKing;
+                }
+                if (Robot.isKingThreatened()) {
+                    if (nearestCat != null && nearestKing != null
+                        && nearestKing.distanceSquaredTo(nearestCat) <= Robot.KING_THREAT_CAT_RANGE_SQUARED) {
+                        yield attackCat;
+                    }
+                    yield attackEnemy;
+                }
+                if (Robot.isCheeseEmergency()) {
+                    yield cheeseToKing;
+                }
+                yield attackEnemy;
+            }
 
             // Only if low on cheese
             case "AttackEnemy" -> throwToWalls;
@@ -45,9 +60,9 @@ public class Baby extends Robot {
             case "AttackCat" -> cheeseToKing;
 
             // Go back to normal mode
-            case "CheeseToKing" -> placeTrap;
+            case "CheeseToKing" -> Robot.isCheeseEmergency() ? collectCheese : placeTrap;
             case "PlaceTrap" -> collectCheese;
-            case "CollectCheese" -> explore;
+            case "CollectCheese" -> Robot.rc.getRawCheese() > 0 ? cheeseToKing : explore;
             case "Explore" -> endTurn;
             case "EndTurn" -> init;
             default -> {
